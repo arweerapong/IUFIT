@@ -164,7 +164,7 @@ h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 <div class="app">
 <header>
   <svg class="logo" viewBox="0 0 32 32" style="color:var(--coral)"><use href="#i-fit"/></svg>
-  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.8</small></h1>
+  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.9</small></h1>
   <button class="iconbtn" onclick="openHelp()" title="Help" style="font-size:16px;font-weight:700">?</button>
   <button class="iconbtn" onclick="toggleLang()" id="langbtn" title="Language" style="font-size:11.5px;font-weight:700">EN</button>
   <button class="iconbtn" onclick="openSettings()" title="Settings"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
@@ -983,11 +983,14 @@ let SN={};
 function openSnake(){GAME_VIEW='snake';go('game')}
 let GAME_VIEW='menu';
 function renderGame(){
+ if(GAME_VIEW==='quest')return renderQuest();
  if(GAME_VIEW==='snake')return renderSnake();
  if(GAME_VIEW==='quiz')return renderQuiz();
  if(GAME_VIEW==='g2048')return render2048();
  const e=LANG==='en';
- const games=[['snake','🐍',e?'Snake':'เกมงู',e?'Nokia classic — best for rest sets':'คลาสสิกโนเกีย เหมาะตอนพักเซ็ต',S.snakeHi],
+ const qst=(S.quest||{})[S.active];
+ const games=[['quest','🗺️',e?'IUFIT Quest':'ตะลุยด่าน',e?'Real-life missions, endless stages':'เคลียร์ด่านด้วยภารกิจสุขภาพจริง ไม่มีสิ้นสุด',qst&&qst.stage>1?(e?'Stage ':'ด่าน ')+qst.stage:''],
+  ['snake','🐍',e?'Snake':'เกมงู',e?'Nokia classic — best for rest sets':'คลาสสิกโนเกีย เหมาะตอนพักเซ็ต',S.snakeHi],
   ['quiz','🧠',e?'Health Quiz':'ควิซสุขภาพ',e?'No timer — play while running':'ไม่จับเวลา เล่นตอนวิ่ง/เดินได้',S.quizHi],
   ['g2048','🔢','2048',e?'Swipe and merge, turn-based':'ปัดรวมตัวเลข เล่นเป็นตาๆ',S.g2048Hi]];
  $('#view').innerHTML=`<h3 style="margin:14px 2px 4px">🎮 ${e?'Mini games for cardio':'มินิเกมคลายเบื่อตอนคาร์ดิโอ'}</h3>
@@ -1011,6 +1014,74 @@ function renderSnake(){const e=LANG==='en';
   <button class="btn mint" style="margin-left:8px" onclick="snStart()">🔄 ${e?'Restart':'เริ่มใหม่'}</button></div>
  <p class="muted" style="font-size:11px;text-align:center;margin:7px 0 0">${e?'Swipe or arrows · eat to score · speeds up every 5 points':'ปัดบนกระดานหรือกดปุ่มลูกศร · ทุก 5 แต้มงูเร็วขึ้น'}</p></div>`;
  snStart()}
+
+/* ===== ตะลุยด่าน IUFIT Quest (ภารกิจสุขภาพจริง) ===== */
+const QTITLES=[['มือใหม่ไฟแรง','Rookie'],['นักเดินหน้า','Mover'],['นักสู้สายเฮลตี้','Fighter'],['โปรฟิต','Fit Pro'],['แชมป์เปี้ยน','Champion'],['ตำนานสายแกร่ง','Legend']];
+function questSt(){const u=user();S.quest=S.quest||{};
+ return S.quest[u.id]=S.quest[u.id]||{stage:1,start:dstr()}}
+function questTitle(stage){const e=LANG==='en';
+ return QTITLES[Math.min(Math.floor((stage-1)/5),5)][e?1:0]}
+function questMissions(s){const arr=[];
+ for(let i=0;i<3;i++){const type=(s+i*2)%6;let X;
+  if(type===0)X=2+2*Math.min(s,15);
+  else if(type===1)X=Math.min(Math.ceil(s/2),14);
+  else if(type===2)X=Math.min(Math.ceil(s*0.8),20);
+  else if(type===3)X=Math.min(Math.ceil(s/2),14);
+  else if(type===4)X=Math.min(Math.ceil(s/3),6);
+  else X=Math.min(Math.ceil(s/2),14);
+  arr.push({type,X})}
+ return arr}
+function questLabel(type,X){const e=LANG==='en';
+ return [e?`Log ${X} meals`:`บันทึกอาหาร ${X} มื้อ`,
+  e?`Drink 8 glasses of water on ${X} day(s)`:`ดื่มน้ำครบ 8 แก้ว ${X} วัน`,
+  e?`Log ${X} workout(s)`:`บันทึกออกกำลังกาย ${X} ครั้ง`,
+  e?`Hit calorie target ±10% on ${X} day(s)`:`พลังงานเข้าเป้า ±10% ${X} วัน`,
+  e?`Weigh in ${X} time(s)`:`ชั่งน้ำหนัก ${X} ครั้ง`,
+  e?`Hit protein target on ${X} day(s)`:`โปรตีนถึงเป้า ${X} วัน`][type]}
+function questIcon(type){return ['🍽️','💧','🔥','🎯','⚖️','🥩'][type]}
+function questProg(type){const u=user(),st=questSt(),from=st.start;
+ const logs=S.logs.filter(l=>l.user===u.id&&l.date>=from);
+ if(type===0)return logs.length;
+ if(type===1){const days={};Object.entries(S.water||{}).forEach(([k,v])=>{const p=k.split('|');
+  if(p[0]===u.id&&p[1]>=from&&v>=8)days[p[1]]=1});return Object.keys(days).length}
+ if(type===2)return S.ex.filter(x=>x.user===u.id&&x.date>=from).length;
+ if(type===3||type===5){const t=target(),byday={};
+  logs.forEach(l=>{const n=nutOf(l.ings),e2=l.eaten??1;byday[l.date]=byday[l.date]||[0,0];
+   byday[l.date][0]+=n[0]*e2;byday[l.date][1]+=n[1]*e2});
+  return Object.values(byday).filter(v=>type===3?(v[0]>=t.kcal*0.9&&v[0]<=t.kcal*1.1):(v[1]>=t.prot)).length}
+ if(type===4)return S.body.filter(b=>b.user===u.id&&b.date>=from).length;
+ return 0}
+function renderQuest(){const e=LANG==='en',st=questSt(),s=st.stage;
+ const ms=questMissions(s);
+ const allDone=ms.every(m=>questProg(m.type)>=m.X);
+ // แผนที่ด่าน
+ let path='';const lo=Math.max(1,s-3);
+ for(let i=lo;i<=s+2;i++){const done=i<s,cur=i===s;
+  path+=`<div style="width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;flex:none;
+   background:${done?'var(--mint)':cur?'var(--coral)':'#d2e9f3'};color:${done||cur?'#fff':'var(--ink2)'};
+   border:2px solid ${cur?'var(--ink)':'transparent'}">${done?'✓':i}</div>
+   ${i<s+2?`<div style="flex:1;height:4px;background:${i<s?'var(--mint)':'#d2e9f3'};border-radius:2px;min-width:10px"></div>`:''}`}
+ let h=`<div style="margin-top:10px" class="row between">${gameBack()}
+  <span class="tag age">🏅 ${questTitle(s)}</span></div>
+ <div class="card"><h3>🗺️ ${e?'Stage':'ด่านที่'} ${s}</h3>
+  <div style="display:flex;align-items:center;gap:4px;margin:6px 0 12px;overflow-x:auto;padding:4px 0">${path}</div>
+  <p class="muted" style="font-size:12px;margin:0 0 8px">${e?'Complete all missions with real app activity (counted from':'เคลียร์ภารกิจด้วยการใช้งานจริง (นับตั้งแต่'} ${thDate(st.start)})</p>`;
+ ms.forEach(m=>{const p=questProg(m.type),done=p>=m.X,pc=Math.min(100,p/m.X*100);
+  h+=`<div style="margin:10px 0"><div class="row between" style="font-size:13.5px">
+   <span>${questIcon(m.type)} ${questLabel(m.type,m.X)}</span><b style="color:${done?'var(--mint)':'var(--ink2)'}">${done?'✓ ':''}${Math.min(p,m.X)}/${m.X}</b></div>
+   <div class="bar" style="margin-top:4px"><i style="width:${pc}%;${done?'':'background:var(--coral)'}"></i></div></div>`});
+ h+=`<button class="btn ${allDone?'pri':''}" style="width:100%;margin-top:12px" ${allDone?'':'disabled'} onclick="questClaim()">
+  ${allDone?(e?'🎉 Claim & next stage!':'🎉 ผ่านด่าน! ไปด่านถัดไป'):(e?'Complete all missions to advance':'เคลียร์ภารกิจให้ครบเพื่อไปต่อ')}</button></div>
+ <div class="card flat" style="background:var(--coral2)"><b style="font-size:13px">🏅 ${e?'Ranks':'เส้นทางยศ'}:</b>
+  <div style="font-size:12px;margin-top:4px">${QTITLES.map((t,i)=>`<span class="tag ${Math.floor((s-1)/5)===i?'age':''}" style="margin:2px">${e?t[1]:t[0]} (${e?'st.':'ด่าน'} ${i*5+1}+)</span>`).join('')}</div></div>
+ <p class="muted" style="font-size:11px;padding:0 4px">${e?'Tip: log meals, water, workouts and weigh-ins on the other tabs — progress updates automatically':'ทุกอย่างที่จดในแท็บอื่น (อาหาร น้ำ ออกกำลังกาย น้ำหนัก) นับเข้าภารกิจอัตโนมัติ'}</p>`;
+ $('#view').innerHTML=h}
+function questClaim(){const st=questSt(),e=LANG==='en';
+ const ms=questMissions(st.stage);
+ if(!ms.every(m=>questProg(m.type)>=m.X))return;
+ st.stage++;st.start=dstr();save();
+ toast((e?'Stage cleared! Welcome to stage ':'ผ่านด่าน! เข้าสู่ด่านที่ ')+st.stage+' 🎉');
+ renderQuest()}
 
 /* ===== ควิซสุขภาพ ===== */
 const QUIZ=[
@@ -1198,9 +1269,9 @@ const HELP=[
 ['💾 สำรองข้อมูล & ภาษา','💾 Backup & language',
 'ข้อมูลทั้งหมดอยู่ในเครื่องคุณเท่านั้น ไม่ผ่านเซิร์ฟเวอร์ใคร\nไปที่ ⚙️ ตั้งค่า → "สำรองข้อมูล" ได้ไฟล์ .json เก็บไว้ · ย้ายเครื่อง/ลงแอปใหม่ ใช้ "กู้คืนข้อมูล" เลือกไฟล์นั้น\nปุ่ม EN/ไทย มุมขวาบนสลับภาษาได้ทั้งแอป รวมถึงภาษาของผลค้นหาสูตรและวิดีโอ',
 'All data lives only on your device — no servers involved.\nGo to ⚙️ Settings → "Backup" for a .json file · when switching phones use "Restore" with that file.\nThe EN/ไทย button (top right) switches the whole app language, including recipe/video search results.'],
-['🎮 มินิเกม (งู · ควิซ · 2048)','🎮 Mini games (Snake · Quiz · 2048)',
-'แท็บ "เกม" มี 3 เกมไว้คลายเบื่อ:\n🐍 เกมงู — เหมาะตอนพักเซ็ตหรือปั่นจักรยาน\n🧠 ควิซสุขภาพ — คำถามโภชนาการ/ฟิตเนสปุ่มใหญ่ ไม่จับเวลา เหมาะตอนเดิน-วิ่งบนลู่ นับสถิติตอบถูกติดต่อกัน\n🔢 2048 — ปัดรวมตัวเลข เล่นเป็นตาๆ ไม่กดดัน\nคะแนนสูงสุดของทุกเกมถูกบันทึกและติดไปกับไฟล์สำรองข้อมูลด้วย',
-'The Game tab has 3 games:\n🐍 Snake — best for rest sets or cycling\n🧠 Health quiz — big-button nutrition and fitness questions with no timer, great while walking or running; tracks your best streak\n🔢 2048 — swipe to merge, turn-based and relaxed\nBest scores are saved and included in your backup file.']
+['🎮 เกม (ตะลุยด่าน · งู · ควิซ · 2048)','🎮 Games (Quest · Snake · Quiz · 2048)',
+'แท็บ "เกม" มี 4 เกม:\n🗺️ ตะลุยด่าน — เกมหลักของแอป! เคลียร์ด่านด้วยภารกิจสุขภาพจริง (บันทึกอาหาร ดื่มน้ำ ออกกำลังกาย เข้าเป้า) ด่านยิ่งสูงยิ่งท้าทาย มียศ 6 ระดับให้ไต่ถึงตำนาน\n🐍 เกมงู — เหมาะตอนพักเซ็ตหรือปั่นจักรยาน\n🧠 ควิซสุขภาพ — คำถามโภชนาการ/ฟิตเนสปุ่มใหญ่ ไม่จับเวลา เหมาะตอนเดิน-วิ่งบนลู่ นับสถิติตอบถูกติดต่อกัน\n🔢 2048 — ปัดรวมตัวเลข เล่นเป็นตาๆ ไม่กดดัน\nคะแนนสูงสุดของทุกเกมถูกบันทึกและติดไปกับไฟล์สำรองข้อมูลด้วย',
+'The Game tab has 4 games:\n🗺️ Quest — the main one! Clear endless stages with real health missions (log meals, water, workouts, hit targets); 6 ranks to climb\n🐍 Snake — best for rest sets or cycling\n🧠 Health quiz — big-button nutrition and fitness questions with no timer, great while walking or running; tracks your best streak\n🔢 2048 — swipe to merge, turn-based and relaxed\nBest scores are saved and included in your backup file.']
 ];
 function openHelp(){const e=LANG==='en';
  let h=`<h2>${e?'❓ How to use IUFIT':'❓ วิธีใช้งานแอป IUFIT'}</h2>
