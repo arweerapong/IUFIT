@@ -164,8 +164,9 @@ h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 <div class="app">
 <header>
   <svg class="logo" viewBox="0 0 32 32" style="color:var(--coral)"><use href="#i-fit"/></svg>
-  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v1.8</small></h1>
-  <button class="iconbtn" onclick="openHelp()" title="Help" style="font-size:16px;font-weight:700">?</button>\n  <button class="iconbtn" onclick="toggleLang()" id="langbtn" title="Language" style="font-size:11.5px;font-weight:700">EN</button>
+  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v1.9.1</small></h1>
+  <button class="iconbtn" onclick="openHelp()" title="Help" style="font-size:16px;font-weight:700">?</button>
+  <button class="iconbtn" onclick="toggleLang()" id="langbtn" title="Language" style="font-size:11.5px;font-weight:700">EN</button>
   <button class="iconbtn" onclick="openSettings()" title="Settings"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
 </header>
 <div id="childbar" style="padding:9px 2px 0;display:flex;gap:6px;flex-wrap:wrap"></div>
@@ -742,7 +743,8 @@ function woURL(nm,follow){const q=LANG==='en'?(trStr(nm)+(follow?' home workout 
 function renderWorkout(){
  let h=`<div class="seg" style="margin-top:12px">
   <button class="${WO_VIEW==='lib'?'on':''}" onclick="WO_VIEW='lib';renderWorkout()">📚 คลังท่า</button>
-  <button class="${WO_VIEW==='plan'?'on':''}" onclick="WO_VIEW='plan';renderWorkout()">📅 ตารางฝึกของฉัน</button></div>`;
+  <button class="${WO_VIEW==='plan'?'on':''}" onclick="WO_VIEW='plan';renderWorkout()">📅 ตารางฝึกของฉัน</button></div>
+ <div style="text-align:right;margin-top:7px"><button class="btn sm sun" onclick="openSnake()">🐍 เกมงูคาร์ดิโอ${S.snakeHi?' · 🏆 '+S.snakeHi:''}</button></div>`;
  if(WO_VIEW==='plan'){h+=wplanHtml();$('#view').innerHTML=h;return}
  h+=`<div class="card" style="background:var(--coral2);margin-top:9px"><p style="font-size:12.5px;margin:0">${svg('i-fit','width:18px;height:18px;vertical-align:-4px;color:var(--coral)')} แตะ ▶ ดูวิธีเล่นใน YouTube · แตะ ＋ เพิ่มท่าลงตารางฝึก</p></div>
  <div class="row" style="margin-top:8px"><div style="flex:1;position:relative">
@@ -895,6 +897,74 @@ function applyPlan(){const d=window._pp;if(!d)return;const u=user();
  if(d.t==='m'){S.mplan=S.mplan||{};S.mplan[u.id]=d.p;save();closeModal();toast('ใช้ตารางใหม่แล้ว 📅');FOOD_VIEW='plan';go('food')}
  else{S.wplan=S.wplan||{};S.wplan[u.id]=d.p;save();closeModal();toast('ใช้ตารางใหม่แล้ว 📅');WO_VIEW='plan';go('workout')}}
 
+/* ===== มินิเกมงู (เล่นตอนคาร์ดิโอ/พักเซ็ต) ===== */
+let SN={};
+function openSnake(){const e=LANG==='en';
+ openModal(`<h2>🐍 ${e?'Snake':'เกมงู'}</h2>
+ <div class="row between" style="margin:2px 0 6px"><span class="muted" style="font-size:12px">${e?'Pass the time during cardio or rest sets':'เล่นเพลินๆ ระหว่างคาร์ดิโอหรือพักเซ็ต'}</span><b id="sn-score" style="font-size:16px">0</b></div>
+ <canvas id="snake-cv" width="320" height="320" style="width:100%;max-width:360px;display:block;margin:0 auto;background:#eaf6f0;border:2.5px solid var(--ink);border-radius:14px 17px 13px 18px;touch-action:none"></canvas>
+ <div class="row" style="justify-content:center;margin-top:9px;gap:8px;align-items:center">
+  <button class="btn" style="width:56px;font-size:17px" onclick="snDir(-1,0)">◀</button>
+  <div style="display:flex;flex-direction:column;gap:8px">
+   <button class="btn" style="width:56px;font-size:17px" onclick="snDir(0,-1)">▲</button>
+   <button class="btn" style="width:56px;font-size:17px" onclick="snDir(0,1)">▼</button></div>
+  <button class="btn" style="width:56px;font-size:17px" onclick="snDir(1,0)">▶</button>
+  <button class="btn mint" style="margin-left:8px" onclick="snStart()">🔄 ${e?'Restart':'เริ่มใหม่'}</button></div>
+ <p class="muted" style="font-size:11px;text-align:center;margin:7px 0 0">${e?'Swipe on the board or use arrows · eat clean food, avoid walls and your tail · speeds up every 5 points!':'ปัดบนกระดานหรือกดปุ่มลูกศร · เก็บอาหารคลีน เลี่ยงกำแพงกับหางตัวเอง · ทุก 5 แต้มงูจะเร็วขึ้น!'}</p>`);
+ snStart()}
+function snStart(){const cv=document.getElementById('snake-cv');if(!cv)return;
+ SN={g:16,z:20,dir:[1,0],next:[1,0],snake:[[8,8],[7,8],[6,8]],food:null,score:0,dead:false,speed:170};
+ snFood();clearInterval(window._snT);window._snT=setInterval(snTick,SN.speed);
+ const sc=document.getElementById('sn-score');if(sc)sc.textContent='0';
+ cv.ontouchstart=ev=>{SN.tx=ev.touches[0].clientX;SN.ty=ev.touches[0].clientY;ev.preventDefault()};
+ cv.ontouchend=ev=>{const dx=ev.changedTouches[0].clientX-SN.tx,dy=ev.changedTouches[0].clientY-SN.ty;
+  if(Math.abs(dx)<12&&Math.abs(dy)<12)return;
+  if(Math.abs(dx)>Math.abs(dy))snDir(dx>0?1:-1,0);else snDir(0,dy>0?1:-1);ev.preventDefault()};
+ if(!window._snKey){window._snKey=true;
+  window.addEventListener('keydown',ev=>{if(!document.getElementById('snake-cv'))return;
+   const m={ArrowLeft:[-1,0],ArrowRight:[1,0],ArrowUp:[0,-1],ArrowDown:[0,1]}[ev.key];
+   if(m){snDir(m[0],m[1]);ev.preventDefault()}})}
+ snDraw()}
+function snDir(x,y){if(!SN.snake||SN.dead)return;
+ if(SN.dir[0]===-x&&SN.dir[1]===-y)return;SN.next=[x,y]}
+function snFood(){do{SN.food=[Math.floor(Math.random()*SN.g),Math.floor(Math.random()*SN.g)]}
+ while(SN.snake.some(s=>s[0]===SN.food[0]&&s[1]===SN.food[1]))}
+function snTick(){const cv=document.getElementById('snake-cv');
+ if(!cv){clearInterval(window._snT);return}
+ if(SN.dead)return;
+ SN.dir=SN.next;
+ const h=[SN.snake[0][0]+SN.dir[0],SN.snake[0][1]+SN.dir[1]];
+ if(h[0]<0||h[1]<0||h[0]>=SN.g||h[1]>=SN.g||SN.snake.some(s=>s[0]===h[0]&&s[1]===h[1])){snOver();return}
+ SN.snake.unshift(h);
+ if(h[0]===SN.food[0]&&h[1]===SN.food[1]){SN.score++;
+  const sc=document.getElementById('sn-score');if(sc)sc.textContent=SN.score;
+  snFood();
+  if(SN.score%5===0&&SN.speed>70){SN.speed-=14;clearInterval(window._snT);window._snT=setInterval(snTick,SN.speed)}}
+ else SN.snake.pop();
+ snDraw()}
+function snDraw(){const cv=document.getElementById('snake-cv');if(!cv||!cv.getContext)return;
+ const c=cv.getContext('2d'),z=SN.z;
+ c.fillStyle='#eaf6f0';c.fillRect(0,0,320,320);
+ c.fillStyle='#dcefe6';
+ for(let i=0;i<SN.g;i++)for(let j=0;j<SN.g;j++)if((i+j)%2===0)c.fillRect(i*z,j*z,z,z);
+ c.fillStyle='#ff7a59';c.beginPath();c.arc(SN.food[0]*z+z/2,SN.food[1]*z+z/2,z/2-3,0,7);c.fill();
+ c.fillStyle='#7bc09a';c.fillRect(SN.food[0]*z+z/2-1,SN.food[1]*z+2,2,4);
+ SN.snake.forEach((s,i)=>{c.fillStyle=i===0?'#1f8d7e':'#2FB5A3';
+  c.fillRect(s[0]*z+1.5,s[1]*z+1.5,z-3,z-3)});
+ const hd=SN.snake[0];c.fillStyle='#fff';
+ c.fillRect(hd[0]*z+5,hd[1]*z+5,3,3);c.fillRect(hd[0]*z+12,hd[1]*z+5,3,3)}
+function snOver(){SN.dead=true;clearInterval(window._snT);
+ S.snakeHi=Math.max(S.snakeHi||0,SN.score);save();
+ const e=LANG==='en';
+ const cv=document.getElementById('snake-cv');
+ if(cv&&cv.getContext){const c=cv.getContext('2d');
+  c.fillStyle='rgba(70,50,35,.55)';c.fillRect(0,0,320,320);
+  c.fillStyle='#fff';c.textAlign='center';c.font='bold 24px sans-serif';
+  c.fillText(e?'Game over!':'จบเกม!',160,140);
+  c.font='15px sans-serif';
+  c.fillText((e?'Score ':'ได้ ')+SN.score+(e?' · Best ':' แต้ม · สถิติ ')+(S.snakeHi||0),160,172)}
+ const sc=document.getElementById('sn-score');if(sc)sc.textContent=SN.score+' · 🏆 '+(S.snakeHi||0)}
+
 /* ===== หน้าวิธีใช้งาน (2 ภาษา) ===== */
 const HELP=[
 ['🚀 เริ่มต้น & เป้าหมาย','🚀 Getting started & goals',
@@ -929,7 +999,10 @@ const HELP=[
 'Open the app once while online and it stores itself on your device; afterwards it works offline (except YouTube/Google link buttons).\nNew versions install automatically next time you open with internet — check the version number under the logo.\nIf it does not change, fully close and reopen the app twice.'],
 ['💾 สำรองข้อมูล & ภาษา','💾 Backup & language',
 'ข้อมูลทั้งหมดอยู่ในเครื่องคุณเท่านั้น ไม่ผ่านเซิร์ฟเวอร์ใคร\nไปที่ ⚙️ ตั้งค่า → "สำรองข้อมูล" ได้ไฟล์ .json เก็บไว้ · ย้ายเครื่อง/ลงแอปใหม่ ใช้ "กู้คืนข้อมูล" เลือกไฟล์นั้น\nปุ่ม EN/ไทย มุมขวาบนสลับภาษาได้ทั้งแอป รวมถึงภาษาของผลค้นหาสูตรและวิดีโอ',
-'All data lives only on your device — no servers involved.\nGo to ⚙️ Settings → "Backup" for a .json file · when switching phones use "Restore" with that file.\nThe EN/ไทย button (top right) switches the whole app language, including recipe/video search results.']
+'All data lives only on your device — no servers involved.\nGo to ⚙️ Settings → "Backup" for a .json file · when switching phones use "Restore" with that file.\nThe EN/ไทย button (top right) switches the whole app language, including recipe/video search results.'],
+['🐍 มินิเกมงู','🐍 Snake mini game',
+'อยู่ในแท็บท่าฝึก ปุ่ม "🐍 เกมงูคาร์ดิโอ" — เกมงูสไตล์โนเกียไว้เล่นระหว่างคาร์ดิโอบนลู่หรือพักระหว่างเซ็ต\\nบังคับด้วยการปัดบนกระดานหรือปุ่มลูกศร เก็บอาหารให้ได้แต้มเยอะที่สุด ทุก 5 แต้มงูจะเร็วขึ้น คะแนนสูงสุดถูกบันทึกไว้ที่ปุ่ม 🏆',
+'In the Workout tab, tap "🐍 Cardio snake" — a Nokia-style snake game for treadmill cardio or rest between sets.\\nSwipe on the board or use the arrow buttons; eat food to score, speed rises every 5 points, and your best score is saved on the 🏆 button.']
 ];
 function openHelp(){const e=LANG==='en';
  let h=`<h2>${e?'❓ How to use IUFIT':'❓ วิธีใช้งานแอป IUFIT'}</h2>
@@ -1062,7 +1135,7 @@ const EN={
 /* — หน่วย (ไว้ท้ายๆ ให้คีย์ยาวกว่าจับก่อน) — */
 'กิโลแคลอรี':'kcal',' กก.':' kg','กก.':'kg','มก.':'mg',' ซม.':' cm','ซม.':'cm',' กรัม':' g','กรัม':'g',' ก.':' g',' ด.':' mo','เดือน':'month'
 };
-Object.assign(EN,{'📤 แชร์ตารางให้ลูกเทรน':'📤 Share plan to client','📥 รับตารางจากโค้ช':'📥 Get plan from coach','📤 แชร์ตารางฝึก':'📤 Share workout plan','ส่งลิงก์นี้ให้ลูกเทรน เปิดแล้วแอปจะถามว่าต้องการใช้ตารางนี้เลย':'Send this link to your client — opening it will offer to apply the plan','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด "รับตารางจากโค้ช" ในแอป':'Copy this code to your client — they paste it under "Get plan from coach"','📋 คัดลอก':'📋 Copy','คัดลอกแล้ว 📋':'Copied 📋','กดค้างที่ข้อความเพื่อคัดลอก':'Long-press the text to copy','📲 แชร์...':'📲 Share...','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา':'Paste the link or code from your trainer','วางที่นี่...':'Paste here...','ตรวจสอบตาราง':'Preview plan','โค้ดไม่ถูกต้อง ลองคัดลอกใหม่ทั้งหมด':'Invalid code — copy the whole thing and try again','📥 ตารางฝึก':'📥 Workout plan ','จาก ':'from ','รวม ':'Total ',' ท่า · ถ้ากดใช้ ตารางนี้จะแทนที่ตารางเดิมของคุณ':' moves · applying will replace your current plan','✅ ใช้ตารางนี้':'✅ Apply this plan','ใช้ตารางใหม่แล้ว 📅':'New plan applied 📅','ยังไม่มีท่าในตาราง เพิ่มก่อนนะ':'Your plan is empty — add moves first','ว่าง':'empty','📚 คลังเมนู':'📚 Menu library','📅 ตารางอาหาร':'📅 Meal plan','📤 แชร์ตารางอาหาร':'📤 Share meal plan','📥 รับตาราง':'📥 Get plan','จัดเมนูล่วงหน้าทั้งสัปดาห์ · แตะช่องเพื่อเลือกเมนูจากคลัง · หน้า \"วันนี้\" จะโชว์เมนูของวันนั้นพร้อมปุ่มบันทึกเร็ว':'Plan meals for the week · tap a slot to pick from the library · the Today page shows that day with quick-log buttons','เลือกเมนู ':'Pick: ','🗑️ ล้างช่องนี้':'🗑️ Clear slot','ตารางอาหารวัน':'Meals for ','กินแล้ว ✓':'Ate ✓','ตารางยังว่าง เพิ่มก่อนนะ':'Plan is empty — add items first','ตารางอาหาร':'Meal plan','ตารางฝึก':'Workout plan',' รายการ · ถ้ากดใช้ ตารางนี้จะแทนที่ตาราง':' items · applying will replace your current ','เดิมของคุณ':'','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา (ใช้ได้ทั้งตารางฝึกและตารางอาหาร)':'Paste the link or code from your trainer (works for both plan types)','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด \"รับตาราง\" ในแอป':'Copy this code to your client — they paste it under Get plan','📤 แชร์ตาราง':'📤 Share '});
+Object.assign(EN,{'📤 แชร์ตารางให้ลูกเทรน':'📤 Share plan to client','📥 รับตารางจากโค้ช':'📥 Get plan from coach','📤 แชร์ตารางฝึก':'📤 Share workout plan','ส่งลิงก์นี้ให้ลูกเทรน เปิดแล้วแอปจะถามว่าต้องการใช้ตารางนี้เลย':'Send this link to your client — opening it will offer to apply the plan','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด "รับตารางจากโค้ช" ในแอป':'Copy this code to your client — they paste it under "Get plan from coach"','📋 คัดลอก':'📋 Copy','คัดลอกแล้ว 📋':'Copied 📋','กดค้างที่ข้อความเพื่อคัดลอก':'Long-press the text to copy','📲 แชร์...':'📲 Share...','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา':'Paste the link or code from your trainer','วางที่นี่...':'Paste here...','ตรวจสอบตาราง':'Preview plan','โค้ดไม่ถูกต้อง ลองคัดลอกใหม่ทั้งหมด':'Invalid code — copy the whole thing and try again','📥 ตารางฝึก':'📥 Workout plan ','จาก ':'from ','รวม ':'Total ',' ท่า · ถ้ากดใช้ ตารางนี้จะแทนที่ตารางเดิมของคุณ':' moves · applying will replace your current plan','✅ ใช้ตารางนี้':'✅ Apply this plan','ใช้ตารางใหม่แล้ว 📅':'New plan applied 📅','ยังไม่มีท่าในตาราง เพิ่มก่อนนะ':'Your plan is empty — add moves first','ว่าง':'empty','🐍 เกมงูคาร์ดิโอ':'🐍 Cardio snake','📚 คลังเมนู':'📚 Menu library','📅 ตารางอาหาร':'📅 Meal plan','📤 แชร์ตารางอาหาร':'📤 Share meal plan','📥 รับตาราง':'📥 Get plan','จัดเมนูล่วงหน้าทั้งสัปดาห์ · แตะช่องเพื่อเลือกเมนูจากคลัง · หน้า \"วันนี้\" จะโชว์เมนูของวันนั้นพร้อมปุ่มบันทึกเร็ว':'Plan meals for the week · tap a slot to pick from the library · the Today page shows that day with quick-log buttons','เลือกเมนู ':'Pick: ','🗑️ ล้างช่องนี้':'🗑️ Clear slot','ตารางอาหารวัน':'Meals for ','กินแล้ว ✓':'Ate ✓','ตารางยังว่าง เพิ่มก่อนนะ':'Plan is empty — add items first','ตารางอาหาร':'Meal plan','ตารางฝึก':'Workout plan',' รายการ · ถ้ากดใช้ ตารางนี้จะแทนที่ตาราง':' items · applying will replace your current ','เดิมของคุณ':'','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา (ใช้ได้ทั้งตารางฝึกและตารางอาหาร)':'Paste the link or code from your trainer (works for both plan types)','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด \"รับตาราง\" ในแอป':'Copy this code to your client — they paste it under Get plan','📤 แชร์ตาราง':'📤 Share '});
 /* — วัตถุดิบ & เมนูในแอป — */
 Object.assign(EN,{
 'อกไก่ (สุก)':'Chicken breast (cooked)','สะโพกไก่':'Chicken thigh','ไข่ไก่ (ทั้งฟอง)':'Whole egg','ไข่ขาว':'Egg white','หมูสันใน/หมูไม่ติดมัน':'Lean pork','หมูสามชั้น':'Pork belly','เนื้อวัวไม่ติดมัน':'Lean beef','ทูน่ากระป๋อง (ในน้ำ)':'Canned tuna in water','แซลมอน':'Salmon','ปลานิล/ปลากะพง':'Tilapia / sea bass','กุ้ง':'Shrimp','ปลาหมึก':'Squid','เต้าหู้':'Tofu','เวย์โปรตีน (ผง)':'Whey protein powder','นมจืด':'Milk','นมพร่องมันเนย':'Low-fat milk','นมถั่วเหลือง (หวานน้อย)':'Soy milk (low sugar)','กรีกโยเกิร์ต':'Greek yogurt','โยเกิร์ตรสธรรมชาติ':'Plain yogurt','ชีส':'Cheese',
