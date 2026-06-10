@@ -164,8 +164,8 @@ h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 <div class="app">
 <header>
   <svg class="logo" viewBox="0 0 32 32" style="color:var(--coral)"><use href="#i-fit"/></svg>
-  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v1.6</small></h1>
-  <button class="iconbtn" onclick="toggleLang()" id="langbtn" title="Language" style="font-size:11.5px;font-weight:700">EN</button>
+  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v1.8</small></h1>
+  <button class="iconbtn" onclick="openHelp()" title="Help" style="font-size:16px;font-weight:700">?</button>\n  <button class="iconbtn" onclick="toggleLang()" id="langbtn" title="Language" style="font-size:11.5px;font-weight:700">EN</button>
   <button class="iconbtn" onclick="openSettings()" title="Settings"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
 </header>
 <div id="childbar" style="padding:9px 2px 0;display:flex;gap:6px;flex-wrap:wrap"></div>
@@ -293,7 +293,7 @@ function thDate(s){const d=new Date(s+'T00:00');return THD[d.getDay()]+'. '+d.ge
 let S;
 function load(){try{S=JSON.parse(localStorage.getItem('iufit'))}catch(e){}
  if(!S)S={users:[],active:null,logs:[],recipes:[],ings:[],body:[],ex:[],water:{}};
- ['logs','recipes','ings','body','ex'].forEach(k=>S[k]=S[k]||[]);S.water=S.water||{};S.users=S.users||[];S.wplan=S.wplan||{};LANG=S.lang||'th';mergeIngs()}
+ ['logs','recipes','ings','body','ex'].forEach(k=>S[k]=S[k]||[]);S.water=S.water||{};S.users=S.users||[];S.wplan=S.wplan||{};S.mplan=S.mplan||{};LANG=S.lang||'th';mergeIngs()}
 function save(){localStorage.setItem('iufit',JSON.stringify(S))}
 function user(){return S.users.find(u=>u.id===S.active)}
 function ageY(u){u=u||user();const b=new Date(u.bd+'T00:00'),n=new Date();let y=n.getFullYear()-b.getFullYear();
@@ -423,6 +423,13 @@ function renderToday(){const u=user(),t=target();
      <div style="flex:1"><b>${esc(l.name)}</b>${e!==1?` <span class="tag">×${e}</span>`:''}
       <div class="muted">${fmt(n[0]*e)} กิโลแคลอรี · โปรตีน ${fmt(n[1]*e,1)} ก. · คาร์บ ${fmt(n[3]*e)} ก. · ไขมัน ${fmt(n[2]*e,1)} ก.</div></div></div>`});
    h+='</div>'}});
+ // ตารางอาหารวันนี้
+ const mwd=(new Date(TODAY_DATE+'T00:00').getDay()+6)%7;
+ const mpl=((S.mplan||{})[u.id]||{})[mwd]||{};
+ const mks=Object.keys(MEALS).filter(k=>mpl[k]);
+ if(mks.length){h+=`<div class="card flat" style="background:var(--mint2)">
+  <b style="font-size:13.5px">🍽️ ตารางอาหารวัน${WDAYS[mwd]}:</b>
+  <div style="margin-top:3px">${mks.map(k=>`<div class="row between" style="margin:3px 0;font-size:12.5px"><span><b>${MEALS[k]}</b> · ${esc(mpl[k].n)} <span class="muted">(${fmt(mpl[k].k||0)} กิโลแคลอรี)</span></span><button class="btn sm" onclick="quickLogMP('${k}')">กินแล้ว ✓</button></div>`).join('')}</div></div>`}
  // ตารางฝึกวันนี้
  const wd=(new Date(TODAY_DATE+'T00:00').getDay()+6)%7;
  const wpl=((S.wplan||{})[u.id]||{})[wd]||[];
@@ -501,10 +508,14 @@ function delLog(id){if(!confirm(trStr('ลบบันทึกนี้?')))ret
 function logDetail(id){const l=S.logs.find(x=>x.id===id);if(!l)return;TODAY_DATE=l.date;logForm(l.meal,id)}
 
 /* ================= หน้า: อาหาร (คลังเมนู) ================= */
-let MENU_Q='',MENU_CAT='';
+let MENU_Q='',MENU_CAT='',FOOD_VIEW='lib';
 function renderFood(){
+ const sg=`<div class="seg" style="margin-top:12px">
+  <button class="${FOOD_VIEW==='lib'?'on':''}" onclick="FOOD_VIEW='lib';renderFood()">📚 คลังเมนู</button>
+  <button class="${FOOD_VIEW==='plan'?'on':''}" onclick="FOOD_VIEW='plan';renderFood()">📅 ตารางอาหาร</button></div>`;
+ if(FOOD_VIEW==='plan'){renderMPlan(sg);return}
  const cats=[...new Set(allRecipes().map(r=>r.c))];
- let h=`<div class="row" style="margin-top:12px">
+ let h=sg+`<div class="row" style="margin-top:9px">
   <div style="flex:1;position:relative">
    <input placeholder="ค้นหาเมนู / วัตถุดิบ..." value="${esc(MENU_Q)}" oninput="MENU_Q=this.value;drawFoodList()" style="padding-left:34px">
    <svg viewBox="0 0 32 32" style="width:17px;height:17px;position:absolute;left:11px;top:11px;color:var(--ink2)"><use href="#i-search"/></svg>
@@ -770,7 +781,8 @@ function drawWorkoutList(){const el=$('#wolist');if(!el)return;let h='',n=0;
 /* ===== ตารางฝึกรายสัปดาห์ ===== */
 function wplanHtml(){const u=user(),p=(S.wplan||{})[u.id]||{};
  const todayWd=(new Date().getDay()+6)%7;
- let h=`<p class="muted" style="margin:8px 2px;font-size:12.5px">จัดตารางประจำสัปดาห์ — เพิ่มท่าจากคลัง (ปุ่ม ＋) หรือกด "เพิ่มท่า" ในแต่ละวัน · แตะป้ายเซ็ตเพื่อแก้จำนวน</p>`;
+ let h=`<div class="row" style="margin:8px 0 2px"><button class="btn mint sm" onclick="sharePlan()">📤 แชร์ตารางให้ลูกเทรน</button><button class="btn sm" onclick="importPlanForm()">📥 รับตารางจากโค้ช</button></div>
+ <p class="muted" style="margin:4px 2px;font-size:12.5px">จัดตารางประจำสัปดาห์ — เพิ่มท่าจากคลัง (ปุ่ม ＋) หรือกด "เพิ่มท่า" ในแต่ละวัน · แตะป้ายเซ็ตเพื่อแก้จำนวน</p>`;
  WDAYS.forEach((d,i)=>{const items=p[i]||[];
   h+=`<div class="card pday" ${i===todayWd?'style="border-color:var(--coral);box-shadow:3px 3px 0 var(--coral2)"':''}>
    <div class="row between"><span class="dt">${d}${i===todayWd?' <span class="tag" style="background:var(--coral2)">วันนี้</span>':''} ${items.length?`<span class="muted" style="font-weight:400">· ${items.length} ท่า</span>`:''}</span>
@@ -800,6 +812,132 @@ function editWSets(d,j){const u=user(),it=S.wplan[u.id][d][j];
  const v=prompt(trStr('เซ็ต × ครั้ง (เช่น 3×12, 4×8 หรือ 30 วินาที)'),it.s);
  if(v===null)return;it.s=v.trim()||it.s;save();renderWorkout()}
 function delWPlan(d,j){const u=user();S.wplan[u.id][d].splice(j,1);save();renderWorkout()}
+
+
+/* ===== ตารางอาหารรายสัปดาห์ ===== */
+function renderMPlan(sg){const u=user(),p=(S.mplan||{})[u.id]||{};
+ let h=sg+`<div class="row" style="margin:8px 0 2px">
+  <button class="btn mint sm" onclick="sharePlanT('m')">📤 แชร์ตารางอาหาร</button>
+  <button class="btn sm" onclick="importPlanForm()">📥 รับตาราง</button></div>
+ <p class="muted" style="margin:4px 2px;font-size:12.5px">จัดเมนูล่วงหน้าทั้งสัปดาห์ · แตะช่องเพื่อเลือกเมนูจากคลัง · หน้า "วันนี้" จะโชว์เมนูของวันนั้นพร้อมปุ่มบันทึกเร็ว</p>`;
+ const todayWd=(new Date().getDay()+6)%7;
+ WDAYS.forEach((d,i)=>{const day=p[i]||{};
+  let dayK=0;Object.values(day).forEach(s=>{if(s&&s.k)dayK+=s.k});
+  h+=`<div class="card pday" ${i===todayWd?'style="border-color:var(--coral);box-shadow:3px 3px 0 var(--coral2)"':''}>
+   <div class="dt">${d}${dayK?` <span class="muted" style="font-weight:400">· ~${fmt(dayK)} กิโลแคลอรี</span>`:''}</div><div class="pslot">`;
+  Object.entries(MEALS).forEach(([mk,mn])=>{const s=day[mk];
+   h+=`<div class="ps ${s?'has':''}" onclick="mpPick(${i},'${mk}')"><b>${mn}</b>${s?esc(s.n):'<span class="muted">＋ เลือก</span>'}</div>`});
+  h+='</div></div>'});
+ $('#view').innerHTML=h}
+function mpPick(day,mk){let h=`<h2>เลือกเมนู ${MEALS[mk]} · ${WDAYS[day]}</h2>
+ <button class="btn sm ghost" style="margin-bottom:6px" onclick="mpSet(${day},'${mk}',null)">🗑️ ล้างช่องนี้</button>`;
+ allRecipes().sort((a,b)=>a.n.localeCompare(b.n,'th')).forEach(r=>{const n=nutOf(r.ings);
+  h+=`<div class="card flat rcard" style="margin:7px 0" onclick="mpSet(${day},'${mk}','${r.id}')">
+   <div class="ric" style="width:42px;height:42px"><svg viewBox="0 0 32 32" style="width:26px;height:26px"><use href="#${r.ic||'i-bowl'}"/></svg></div>
+   <div><div class="nm" style="font-size:13.5px">${esc(r.n)}</div><span class="muted">${fmt(n[0])} กิโลแคลอรี · P ${fmt(n[1])}</span></div></div>`});
+ openModal(h)}
+function mpSet(day,mk,rid){const u=user();S.mplan=S.mplan||{};S.mplan[u.id]=S.mplan[u.id]||{};
+ S.mplan[u.id][day]=S.mplan[u.id][day]||{};
+ if(!rid)delete S.mplan[u.id][day][mk];
+ else{const r=getRecipe(rid),nv=nutOf(r.ings);
+  S.mplan[u.id][day][mk]={rid,n:r.n,k:Math.round(nv[0]),pr:Math.round(nv[1])}}
+ save();closeModal();renderFood()}
+function quickLogMP(mk){const u=user();const wd=(new Date(TODAY_DATE+'T00:00').getDay()+6)%7;
+ const s=(((S.mplan||{})[u.id]||{})[wd]||{})[mk];if(!s)return;
+ const r=s.rid&&getRecipe(s.rid);
+ S.logs.push({id:uid(),user:S.active,date:TODAY_DATE,meal:mk,name:s.n,rid:r?r.id:null,ings:r?r.ings.map(x=>[...x]):[],eaten:1,note:''});
+ save();toast('บันทึกแล้ว 💪');renderToday()}
+
+/* ===== แชร์ตาราง (เทรนเนอร์ → ลูกเทรน) — ใช้ได้ทั้งตารางฝึก (w) และตารางอาหาร (m) ===== */
+function encodeShare(t){const u=user();const p=t==='m'?((S.mplan||{})[u.id]||{}):((S.wplan||{})[u.id]||{});
+ return btoa(unescape(encodeURIComponent(JSON.stringify({v:1,t,from:u.name,p})))).replace(/\+/g,'-').replace(/\//g,'_')}
+function decodePlan(code){try{
+ code=String(code||'').trim();const m=code.match(/plan=([A-Za-z0-9\-_=]+)/);if(m)code=m[1];
+ code=code.replace(/-/g,'+').replace(/_/g,'/');
+ const d=JSON.parse(decodeURIComponent(escape(atob(code))));
+ return d&&d.p?d:null}catch(e){return null}}
+function sharePlanT(t){const u=user();const p=t==='m'?((S.mplan||{})[u.id]||{}):((S.wplan||{})[u.id]||{});
+ const has=t==='m'?Object.values(p).some(d=>d&&Object.keys(d).length):Object.values(p).some(a=>a&&a.length);
+ if(!has){toast('ตารางยังว่าง เพิ่มก่อนนะ');return}
+ const code=encodeShare(t);
+ const link=(typeof location!=='undefined'&&location.protocol.indexOf('http')===0)?location.origin+location.pathname+'#plan='+code:'';
+ const text=link||code;
+ openModal(`<h2>📤 แชร์ตาราง${t==='m'?'อาหาร':'ฝึก'}</h2>
+  <p class="muted" style="font-size:12.5px">${link?'ส่งลิงก์นี้ให้ลูกเทรน เปิดแล้วแอปจะถามว่าต้องการใช้ตารางนี้เลย':'คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด "รับตาราง" ในแอป'}</p>
+  <textarea id="sh-code" rows="5" readonly style="font-size:11px">${text}</textarea>
+  <div class="row" style="margin-top:10px">
+   <button class="btn pri" style="flex:1" onclick="copyShare()">📋 คัดลอก</button>
+   ${(typeof navigator!=='undefined'&&navigator.share)?`<button class="btn mint" onclick="navigator.share({text:document.getElementById('sh-code').value})">📲 แชร์...</button>`:''}
+  </div>`)}
+function sharePlan(){sharePlanT('w')}
+function copyShare(){const t=$('#sh-code');t.select();
+ if(typeof navigator!=='undefined'&&navigator.clipboard)navigator.clipboard.writeText(t.value).then(()=>toast('คัดลอกแล้ว 📋'),()=>toast('กดค้างที่ข้อความเพื่อคัดลอก'));
+ else toast('กดค้างที่ข้อความเพื่อคัดลอก')}
+function importPlanForm(){openModal(`<h2>📥 รับตารางจากโค้ช</h2>
+ <p class="muted" style="font-size:12.5px">วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา (ใช้ได้ทั้งตารางฝึกและตารางอาหาร)</p>
+ <textarea id="im-code" rows="5" placeholder="วางที่นี่..."></textarea>
+ <button class="btn pri" style="width:100%;margin-top:10px" onclick="previewPlan(document.getElementById('im-code').value)">ตรวจสอบตาราง</button>`)}
+function previewPlan(code){const d=decodePlan(code);
+ if(!d){toast('โค้ดไม่ถูกต้อง ลองคัดลอกใหม่ทั้งหมด');return}
+ window._pp=d;showPlanPreview()}
+function showPlanPreview(){const d=window._pp;if(!d)return;const isM=d.t==='m';
+ let cnt=0,rows='';
+ WDAYS.forEach((w,i)=>{
+  if(isM){const day=d.p[i]||{};const ks=Object.keys(MEALS).filter(k=>day[k]);cnt+=ks.length;
+   if(ks.length)rows+=`<div style="font-size:12.5px;margin:3px 0;border-bottom:1px dashed #ecdfca;padding-bottom:3px"><b>${w}:</b> ${ks.map(k=>MEALS[k]+' '+esc(day[k].n)).join(' · ')}</div>`}
+  else{const a=d.p[i]||[];cnt+=a.length;
+   if(a.length)rows+=`<div style="font-size:12.5px;margin:3px 0;border-bottom:1px dashed #ecdfca;padding-bottom:3px"><b>${w}:</b> ${a.map(x=>esc(x.n)+' ('+esc(x.s||'')+')').join(' · ')}</div>`}});
+ openModal(`<h2>📥 ตาราง${isM?'อาหาร':'ฝึก'}${d.from?'จาก '+esc(d.from):''}</h2>
+  <div class="card flat" style="margin:8px 0">${rows||'<span class="muted">ว่าง</span>'}</div>
+  <p class="muted" style="font-size:12px">รวม ${cnt} รายการ · ถ้ากดใช้ ตารางนี้จะแทนที่ตาราง${isM?'อาหาร':'ฝึก'}เดิมของคุณ</p>
+  <button class="btn pri" style="width:100%" onclick="applyPlan()">✅ ใช้ตารางนี้</button>`)}
+function applyPlan(){const d=window._pp;if(!d)return;const u=user();
+ if(d.t==='m'){S.mplan=S.mplan||{};S.mplan[u.id]=d.p;save();closeModal();toast('ใช้ตารางใหม่แล้ว 📅');FOOD_VIEW='plan';go('food')}
+ else{S.wplan=S.wplan||{};S.wplan[u.id]=d.p;save();closeModal();toast('ใช้ตารางใหม่แล้ว 📅');WO_VIEW='plan';go('workout')}}
+
+/* ===== หน้าวิธีใช้งาน (2 ภาษา) ===== */
+const HELP=[
+['🚀 เริ่มต้น & เป้าหมาย','🚀 Getting started & goals',
+'สร้างโปรไฟล์ด้วยชื่อ เพศ วันเกิด ส่วนสูง น้ำหนัก ระดับกิจกรรม และเป้าหมาย (ลด/รักษา/เพิ่ม)\nแอปคำนวณ BMR และ TDEE ให้อัตโนมัติ แล้วตั้งเป้าพลังงาน-โปรตีน-ไขมัน-คาร์บรายวันตามเป้าหมายของคุณ\nเป้าจะอัปเดตเองตามน้ำหนักล่าสุดที่ชั่ง · เพิ่มได้หลายโปรไฟล์ สลับที่แถบบนสุด · แก้ข้อมูลได้ที่ ⚙️ ตั้งค่า',
+'Create a profile with name, sex, birth date, height, weight, activity level and goal (lose / maintain / gain).\nThe app calculates BMR and TDEE, then sets daily calorie, protein, fat and carb targets for your goal.\nTargets update with your latest weigh-in · add multiple profiles and switch at the top bar · edit in ⚙️ Settings.'],
+['🍚 หน้าวันนี้ — บันทึกประจำวัน','🍚 Today — daily logging',
+'บันทึกได้ 4 มื้อ: เลือกจากคลังเมนูหรือกรอกวัตถุดิบ+กรัมเอง แอปคำนวณสารอาหารให้ทันที\nเลือกปริมาณที่กิน (ครึ่งจาน/จานใหญ่) ค่าจะคูณให้อัตโนมัติ\nแถบด้านบนเทียบกับเป้ารายวัน 6 ค่า · จดน้ำดื่มด้วยปุ่ม +/− · บันทึกออกกำลังกายมีปุ่มลัด 10 กิจกรรม แอปคิดแคลอรีสุทธิ (กิน−เผา) ให้\nปุ่ม ‹ › เลื่อนดู/แก้บันทึกวันก่อนได้ · แตะรายการเพื่อแก้ไขหรือลบ',
+'Log 4 meals: pick from the library or enter ingredients + grams — nutrition is calculated instantly.\nChoose portion eaten (half / large) and values scale automatically.\nTop bars compare 6 values against your daily targets · track water with +/− · log workouts with 10 quick presets; the app shows net calories (eaten − burned).\nUse ‹ › to view/edit previous days · tap any entry to edit or delete.'],
+['🍱 อาหาร & วัตถุดิบของฉัน','🍱 Food & custom ingredients',
+'คลังเมนูไทย 24 จานพร้อมค่าโภชนาการจริงต่อจาน ค้นหา/กรองตามหมวดได้\nแตะเมนูเพื่อดูส่วนประกอบ คุณค่าทางโภชนาการ และวิธีทำ แล้วกด "กินมื้อนี้" เพื่อบันทึกเร็ว\nเพิ่มเมนูของตัวเองได้ (＋ เพิ่มเมนูของฉัน) และเพิ่มวัตถุดิบที่ไม่มีในระบบได้ที่ปุ่ม 🧺 โดยกรอกค่าจากฉลากต่อ 100 กรัม ของที่เพิ่มเองจะมี ★',
+'24 Thai dishes with real per-serving nutrition; search or filter by category.\nTap a dish for ingredients, nutrition and steps, then "Eat this" to quick-log.\nAdd your own recipes (+ My recipe) and custom ingredients via 🧺 using label values per 100 g — yours are marked ★.'],
+['📅 ตารางอาหาร & การส่งให้ลูกเทรน','📅 Meal plan & sending to clients',
+'ในแท็บอาหาร สลับไป "ตารางอาหาร" เพื่อจัดเมนู 7 วัน × 4 มื้อ แตะช่องแล้วเลือกจากคลัง แอปรวมแคลอรีต่อวันให้\nหน้า "วันนี้" จะแสดงเมนูตามตารางพร้อมปุ่ม "กินแล้ว ✓" บันทึกในแตะเดียว\nเทรนเนอร์: กด 📤 แชร์ตารางอาหาร → ส่งลิงก์ให้ลูกเทรนทาง Line ลูกเทรนเปิดลิงก์แล้วกดใช้ได้เลย หรือส่งเป็นโค้ดให้วางใน 📥 รับตาราง',
+'In the Food tab switch to "Meal plan" to plan 7 days × 4 meals; tap a slot and pick from the library — daily calories are totalled.\nThe Today page shows that day\u2019s plan with one-tap "Ate ✓" logging.\nTrainers: tap 📤 Share meal plan → send the link via chat; clients open it and apply instantly, or paste the code under 📥 Get plan.'],
+['💡 สูตร 300 เมนู','💡 300 recipe ideas',
+'รวมไอเดียเมนูเฮลตี้ 300 รายการใน 12 หมวด ค้นหาหรือกรองตามหมวดได้\nแตะ 🔍 เปิดผลค้นหาสูตรใน Google หรือ ▶ ดูวิธีทำใน YouTube (ผลค้นเปลี่ยนตามภาษาแอป)',
+'300 healthy menu ideas in 12 categories; search or filter.\nTap 🔍 for Google recipes or ▶ for YouTube videos (search language follows the app language).'],
+['💪 ท่าฝึก & ตารางฝึก','💪 Exercises & workout plan',
+'คลังท่า 91 รายการ แบ่ง 9 ส่วนของร่างกาย กรองได้: 🌱 มือใหม่ / 🏠 ไม่ใช้อุปกรณ์ / 🏋️ ใช้อุปกรณ์ และมีหมวด "เล่นตามคลิป" สำหรับออกกำลังกายที่บ้านโดยไม่ใช้อุปกรณ์\nทุกท่ามี ▶ เปิดวิดีโอสอนฟอร์มที่ถูกต้อง\nกด ＋ ที่ท่าเพื่อใส่ลงตารางประจำสัปดาห์ หรือจัดในแท็บ "ตารางฝึกของฉัน" แตะป้าย 3×10 เพื่อแก้เซ็ต/ครั้ง\nเทรนเนอร์ส่งตารางฝึกให้ลูกเทรนด้วยปุ่ม 📤 เหมือนตารางอาหาร · หน้า "วันนี้" แสดงตารางของวันนั้นพร้อมปุ่มบันทึกว่าเล่นแล้ว',
+'91 exercises across 9 body parts with filters: 🌱 Beginner / 🏠 No equipment / 🏋️ Equipment, plus a follow-along home workout section.\nEvery move has ▶ for a proper-form video.\nTap + to add a move to your weekly plan, or build it under "My plan"; tap the 3×10 badge to edit sets/reps.\nTrainers share plans with 📤 just like meal plans · the Today page shows that day\u2019s plan with quick logging.'],
+['📉 ร่างกาย & BMI','📉 Body & BMI',
+'บันทึกน้ำหนัก %ไขมัน และรอบเอวตามวันที่\nการ์ดสรุปแสดง BMI พร้อมแปลผลตามเกณฑ์เอเชีย (สมส่วน 18.5–22.9), น้ำหนักที่เปลี่ยนจากจุดเริ่มต้น, BMR และ TDEE\nกราฟน้ำหนักมีเส้นไกด์ BMI 18.5 / 23 / 25 ของส่วนสูงคุณ เห็นชัดว่ากำลังเคลื่อนเข้าหาโซนไหน',
+'Log weight, body fat % and waist by date.\nThe summary card shows BMI with Asian-cutoff interpretation (normal 18.5–22.9), change from start, BMR and TDEE.\nThe weight chart includes BMI 18.5 / 23 / 25 guide lines for your height so you can see which zone you are moving toward.'],
+['📊 สรุปรายเดือน','📊 Monthly stats',
+'ดูค่าเฉลี่ยแคลอรี/โปรตีนต่อวัน จำนวนวันที่เข้าเป้า ±10% จำนวนครั้งที่ออกกำลังกาย แคลอรีที่เผา น้ำหนักที่เปลี่ยนในเดือน เมนูยอดฮิต และกราฟพลังงานรายวัน (แตะแท่งเพื่อกระโดดไปดูวันนั้น) เลื่อนดูเดือนก่อนได้ด้วย ‹ ›',
+'See daily averages for calories/protein, days on target ±10%, workout count, calories burned, monthly weight change, top meals and a daily energy chart (tap a bar to jump to that day). Browse previous months with ‹ ›.'],
+['📱 ติดตั้งเป็นแอป + ไอคอนบนหน้าจอ','📱 Install as an app + home screen icon',
+'【Android】 1) เปิดลิงก์แอปด้วย Chrome  2) จะมีแถบ "ติดตั้งแอป" เด้งขึ้น กดติดตั้งได้เลย  3) ถ้าไม่เด้ง กดเมนู ⋮ มุมขวาบน → "เพิ่มลงในหน้าจอหลัก" / "ติดตั้งแอป"  4) ไอคอนดัมเบลจะขึ้นบนหน้าจอ เปิดแบบเต็มจอเหมือนแอปจริง\n【iPhone/iPad】 1) เปิดลิงก์ด้วย Safari เท่านั้น (Chrome บน iOS บางรุ่นไม่มีเมนูนี้)  2) กดปุ่มแชร์ (สี่เหลี่ยมลูกศรขึ้น แถบล่างกลาง)  3) เลื่อนลงหา "เพิ่มลงไปยังหน้าจอโฮม" (Add to Home Screen)  4) กด "เพิ่ม" มุมขวาบน — ไอคอนแอปขึ้นหน้าจอทันที\nไอคอนถูกฝังมากับแอปแล้ว ไม่ต้องตั้งค่าอะไรเพิ่ม · ติดตั้งแล้วเปิดใช้งานออฟไลน์ได้',
+'【Android】 1) Open the app link in Chrome  2) An "Install app" banner appears — tap it  3) If not, tap ⋮ (top right) → "Add to Home screen" / "Install app"  4) The dumbbell icon appears on your home screen and opens full-screen like a native app.\n【iPhone/iPad】 1) Open the link in Safari only (Chrome on iOS may lack this menu)  2) Tap the Share button (square with arrow, bottom center)  3) Scroll to "Add to Home Screen"  4) Tap "Add" — the icon appears instantly.\nThe icon ships with the app — nothing to configure · once installed it works offline.'],
+['📴 ใช้งานออฟไลน์ & การอัปเดต','📴 Offline use & updates',
+'เปิดแอปครั้งแรกตอนมีเน็ต 1 ครั้ง แอปจะเก็บตัวเองไว้ในเครื่อง หลังจากนั้นใช้ได้แม้ไม่มีเน็ต (ยกเว้นปุ่มลิงก์ YouTube/Google)\nเมื่อมีเวอร์ชันใหม่ แอปจะอัปเดตเองตอนเปิดครั้งถัดไปที่มีเน็ต — เช็กเลขเวอร์ชันได้ใต้โลโก้\nถ้าเวอร์ชันไม่เปลี่ยน ให้ปิดแอปสนิทแล้วเปิดใหม่ 2 รอบ',
+'Open the app once while online and it stores itself on your device; afterwards it works offline (except YouTube/Google link buttons).\nNew versions install automatically next time you open with internet — check the version number under the logo.\nIf it does not change, fully close and reopen the app twice.'],
+['💾 สำรองข้อมูล & ภาษา','💾 Backup & language',
+'ข้อมูลทั้งหมดอยู่ในเครื่องคุณเท่านั้น ไม่ผ่านเซิร์ฟเวอร์ใคร\nไปที่ ⚙️ ตั้งค่า → "สำรองข้อมูล" ได้ไฟล์ .json เก็บไว้ · ย้ายเครื่อง/ลงแอปใหม่ ใช้ "กู้คืนข้อมูล" เลือกไฟล์นั้น\nปุ่ม EN/ไทย มุมขวาบนสลับภาษาได้ทั้งแอป รวมถึงภาษาของผลค้นหาสูตรและวิดีโอ',
+'All data lives only on your device — no servers involved.\nGo to ⚙️ Settings → "Backup" for a .json file · when switching phones use "Restore" with that file.\nThe EN/ไทย button (top right) switches the whole app language, including recipe/video search results.']
+];
+function openHelp(){const e=LANG==='en';
+ let h=`<h2>${e?'❓ How to use IUFIT':'❓ วิธีใช้งานแอป IUFIT'}</h2>
+ <p class="muted" style="font-size:12px">${e?'Tap a topic to expand':'แตะหัวข้อเพื่อดูรายละเอียด'}</p>`;
+ HELP.forEach(([tt,te,bt,be])=>{h+=`<details style="margin:8px 0;background:var(--card);border:1.8px solid var(--ink);border-radius:13px 16px 12px 17px;padding:9px 12px">
+  <summary style="font-weight:700;cursor:pointer;font-size:13.5px">${e?te:tt}</summary>
+  <div style="font-size:12.8px;margin-top:7px;white-space:pre-line;line-height:1.55">${e?be:bt}</div></details>`});
+ openModal(h)}
 
 /* ================= ตั้งค่า / โปรไฟล์ ================= */
 function openSettings(){let h=`<h2>⚙️ ตั้งค่า</h2><h4 class="sec">โปรไฟล์</h4>`;
@@ -850,7 +988,7 @@ function exportData(){const b=new Blob([JSON.stringify(S,null,1)],{type:'applica
  a.download='IUFIT-สำรอง-'+dstr()+'.json';a.click();toast('ดาวน์โหลดไฟล์สำรองแล้ว')}
 function importData(inp){const f=inp.files[0];if(!f)return;
  const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);
-  if(!d.users)throw 0;S=d;['logs','recipes','ings','body','ex'].forEach(k=>S[k]=S[k]||[]);S.water=S.water||{};S.wplan=S.wplan||{};mergeIngs();
+  if(!d.users)throw 0;S=d;['logs','recipes','ings','body','ex'].forEach(k=>S[k]=S[k]||[]);S.water=S.water||{};S.wplan=S.wplan||{};S.mplan=S.mplan||{};mergeIngs();
   save();closeModal();toast('กู้คืนสำเร็จ ✓');renderAll()}
   catch(e){toast('ไฟล์ไม่ถูกต้อง')}};r.readAsText(f)}
 
@@ -924,6 +1062,7 @@ const EN={
 /* — หน่วย (ไว้ท้ายๆ ให้คีย์ยาวกว่าจับก่อน) — */
 'กิโลแคลอรี':'kcal',' กก.':' kg','กก.':'kg','มก.':'mg',' ซม.':' cm','ซม.':'cm',' กรัม':' g','กรัม':'g',' ก.':' g',' ด.':' mo','เดือน':'month'
 };
+Object.assign(EN,{'📤 แชร์ตารางให้ลูกเทรน':'📤 Share plan to client','📥 รับตารางจากโค้ช':'📥 Get plan from coach','📤 แชร์ตารางฝึก':'📤 Share workout plan','ส่งลิงก์นี้ให้ลูกเทรน เปิดแล้วแอปจะถามว่าต้องการใช้ตารางนี้เลย':'Send this link to your client — opening it will offer to apply the plan','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด "รับตารางจากโค้ช" ในแอป':'Copy this code to your client — they paste it under "Get plan from coach"','📋 คัดลอก':'📋 Copy','คัดลอกแล้ว 📋':'Copied 📋','กดค้างที่ข้อความเพื่อคัดลอก':'Long-press the text to copy','📲 แชร์...':'📲 Share...','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา':'Paste the link or code from your trainer','วางที่นี่...':'Paste here...','ตรวจสอบตาราง':'Preview plan','โค้ดไม่ถูกต้อง ลองคัดลอกใหม่ทั้งหมด':'Invalid code — copy the whole thing and try again','📥 ตารางฝึก':'📥 Workout plan ','จาก ':'from ','รวม ':'Total ',' ท่า · ถ้ากดใช้ ตารางนี้จะแทนที่ตารางเดิมของคุณ':' moves · applying will replace your current plan','✅ ใช้ตารางนี้':'✅ Apply this plan','ใช้ตารางใหม่แล้ว 📅':'New plan applied 📅','ยังไม่มีท่าในตาราง เพิ่มก่อนนะ':'Your plan is empty — add moves first','ว่าง':'empty','📚 คลังเมนู':'📚 Menu library','📅 ตารางอาหาร':'📅 Meal plan','📤 แชร์ตารางอาหาร':'📤 Share meal plan','📥 รับตาราง':'📥 Get plan','จัดเมนูล่วงหน้าทั้งสัปดาห์ · แตะช่องเพื่อเลือกเมนูจากคลัง · หน้า \"วันนี้\" จะโชว์เมนูของวันนั้นพร้อมปุ่มบันทึกเร็ว':'Plan meals for the week · tap a slot to pick from the library · the Today page shows that day with quick-log buttons','เลือกเมนู ':'Pick: ','🗑️ ล้างช่องนี้':'🗑️ Clear slot','ตารางอาหารวัน':'Meals for ','กินแล้ว ✓':'Ate ✓','ตารางยังว่าง เพิ่มก่อนนะ':'Plan is empty — add items first','ตารางอาหาร':'Meal plan','ตารางฝึก':'Workout plan',' รายการ · ถ้ากดใช้ ตารางนี้จะแทนที่ตาราง':' items · applying will replace your current ','เดิมของคุณ':'','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา (ใช้ได้ทั้งตารางฝึกและตารางอาหาร)':'Paste the link or code from your trainer (works for both plan types)','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด \"รับตาราง\" ในแอป':'Copy this code to your client — they paste it under Get plan','📤 แชร์ตาราง':'📤 Share '});
 /* — วัตถุดิบ & เมนูในแอป — */
 Object.assign(EN,{
 'อกไก่ (สุก)':'Chicken breast (cooked)','สะโพกไก่':'Chicken thigh','ไข่ไก่ (ทั้งฟอง)':'Whole egg','ไข่ขาว':'Egg white','หมูสันใน/หมูไม่ติดมัน':'Lean pork','หมูสามชั้น':'Pork belly','เนื้อวัวไม่ติดมัน':'Lean beef','ทูน่ากระป๋อง (ในน้ำ)':'Canned tuna in water','แซลมอน':'Salmon','ปลานิล/ปลากะพง':'Tilapia / sea bass','กุ้ง':'Shrimp','ปลาหมึก':'Squid','เต้าหู้':'Tofu','เวย์โปรตีน (ผง)':'Whey protein powder','นมจืด':'Milk','นมพร่องมันเนย':'Low-fat milk','นมถั่วเหลือง (หวานน้อย)':'Soy milk (low sugar)','กรีกโยเกิร์ต':'Greek yogurt','โยเกิร์ตรสธรรมชาติ':'Plain yogurt','ชีส':'Cheese',
@@ -967,7 +1106,7 @@ if(typeof MutationObserver!=='undefined'){
  .observe(document.body,{childList:true,subtree:true})}
 
 /* ================= เริ่มต้น ================= */
-load();renderAll();if(LANG==='en'){trEl(document.body);document.title='IUFIT 💪'}document.getElementById('langbtn').textContent=LANG==='en'?'ไทย':'EN';
+load();renderAll();if(LANG==='en'){trEl(document.body);document.title='IUFIT 💪'}document.getElementById('langbtn').textContent=LANG==='en'?'ไทย':'EN';if(typeof location!=='undefined'&&location.hash&&location.hash.indexOf('#plan=')===0){const _d=decodePlan(location.hash);try{history.replaceState(null,'',location.pathname+location.search)}catch(e){}if(_d&&S.users.length){window._pp=_d;setTimeout(showPlanPreview,400)}}
 if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){navigator.serviceWorker.register('./sw.js')}
 </script>
 </body>
