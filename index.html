@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#2FB5A3">
+<link rel="manifest" href="./manifest.json">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="IUFIT">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>IUFIT 💪</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF8EE; --ink:#5b4636; --ink2:#9a8270;
+  --coral:#2FB5A3; --coral2:#d9f2ee;
+  --mint:#7cc6a4; --mint2:#e0f3ea;
+  --sun:#FFC75F; --sun2:#fff1d6;
+  --berry:#7d8ce0; --berry2:#e6e9fb;
+  --red:#e35d5d; --card:#fffdf8;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Mali','Segoe UI',sans-serif;font-size:15px;line-height:1.45}
+.app{max-width:520px;margin:0 auto;padding:0 12px 92px}
+header{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 2px 6px;display:flex;align-items:center;gap:10px;border-bottom:2px dashed #e8d9c5}
+header .logo{width:44px;height:44px;flex:none}
+header h1{font-size:19px;margin:0;flex:1;line-height:1.2}
+header h1 small{display:block;font-size:11px;color:var(--ink2);font-weight:400}
+.iconbtn{background:var(--card);border:2px solid var(--ink);border-radius:14px 16px 13px 17px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink)}
+.iconbtn svg{width:21px;height:21px}
+.chip{display:inline-flex;align-items:center;gap:5px;background:var(--sun2);border:1.6px solid var(--ink);border-radius:14px 18px 15px 17px;padding:3px 11px;font-size:13px;cursor:pointer}
+.chip.sel{background:var(--coral);color:#fff}
+.chip.warn{background:#fde3e3;border-color:var(--red);color:var(--red)}
+.card{background:var(--card);border:2px solid var(--ink);border-radius:18px 22px 17px 23px;padding:13px 14px;margin:11px 0;box-shadow:3px 3px 0 #e9dcc8}
+.card.flat{box-shadow:none}
+.card h3{margin:0 0 8px;font-size:16px;display:flex;align-items:center;gap:7px}
+.card h3 svg{width:20px;height:20px;flex:none}
+.btn{font-family:inherit;font-size:14px;font-weight:600;background:var(--card);color:var(--ink);border:2px solid var(--ink);border-radius:13px 17px 14px 18px;padding:8px 15px;cursor:pointer;box-shadow:2px 2px 0 #d9c9b2}
+.btn:active{transform:translate(2px,2px);box-shadow:none}
+.btn.pri{background:var(--coral);color:#fff}
+.btn.mint{background:var(--mint);color:#fff}
+.btn.sun{background:var(--sun)}
+.btn.sm{font-size:12.5px;padding:5px 11px}
+.btn.ghost{box-shadow:none;border-style:dashed;background:transparent}
+.btn:disabled{opacity:.45;pointer-events:none}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row.between{justify-content:space-between}
+.muted{color:var(--ink2);font-size:12.5px}
+input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink);background:#fff;border:2px solid var(--ink);border-radius:11px 14px 12px 15px;padding:8px 10px;width:100%;outline:none}
+textarea{resize:vertical;min-height:60px}
+label.fl{display:block;font-size:12.5px;font-weight:600;margin:9px 0 4px;color:var(--ink2)}
+/* bottom nav */
+nav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--card);border-top:2px solid var(--ink);display:flex;max-width:520px;margin:0 auto;border-radius:22px 22px 0 0;box-shadow:0 -3px 0 #e9dcc8}
+nav button{flex:1;background:none;border:none;font-family:inherit;font-size:10.5px;color:var(--ink2);padding:8px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
+nav button svg{width:23px;height:23px}
+nav button.on{color:var(--coral);font-weight:700}
+nav button.on svg{stroke-width:2.4}
+/* meal log */
+.mealhead{display:flex;align-items:center;gap:8px;margin:14px 2px 4px}
+.mealhead .t{font-weight:700;font-size:15px}
+.logitem{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1.5px dashed #ecdfca}
+.logitem:last-child{border-bottom:none}
+.logitem .ic{width:38px;height:38px;flex:none;background:var(--sun2);border:1.8px solid var(--ink);border-radius:12px 14px 11px 15px;display:flex;align-items:center;justify-content:center}
+.logitem .ic svg{width:22px;height:22px}
+.bar{height:13px;background:#f1e7d6;border:1.6px solid var(--ink);border-radius:8px;overflow:hidden;position:relative}
+.bar i{display:block;height:100%;background:var(--mint);border-radius:0 6px 6px 0;transition:width .4s}
+.bar.over i{background:var(--sun)}
+.nutrow{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12.5px}
+.nutrow .nm{width:74px;flex:none;font-weight:600}
+.nutrow .bar{flex:1}
+.nutrow .vv{width:96px;flex:none;text-align:right;color:var(--ink2);font-size:11.5px}
+/* recipe cards */
+.rcard{display:flex;gap:11px;align-items:center;cursor:pointer}
+.rcard .ric{width:52px;height:52px;flex:none;background:var(--mint2);border:2px solid var(--ink);border-radius:16px 18px 15px 19px;display:flex;align-items:center;justify-content:center}
+.rcard .ric svg{width:32px;height:32px}
+.rcard .nm{font-weight:700;font-size:14.5px}
+.tag{display:inline-block;font-size:10.5px;background:var(--berry2);border:1.4px solid var(--ink);border-radius:8px 10px 9px 11px;padding:1px 7px;margin:2px 3px 0 0}
+.tag.age{background:var(--sun2)}
+.tag.al{background:#fde3e3;color:var(--red);border-color:var(--red)}
+/* modal */
+.mwrap{position:fixed;inset:0;background:rgba(70,50,35,.45);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.mwrap.show{display:flex}
+.modal{background:var(--bg);width:100%;max-width:520px;max-height:88vh;overflow-y:auto;border-radius:26px 26px 0 0;border:2.5px solid var(--ink);border-bottom:none;padding:16px 16px 28px;animation:up .22s ease}
+@keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
+.modal h2{font-size:18px;margin:2px 36px 10px 2px}
+.mclose{position:absolute;margin-left:auto;float:right;width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);background:#fff;font-size:16px;cursor:pointer;font-family:inherit}
+/* tables */
+table.nut{width:100%;border-collapse:collapse;font-size:12.5px}
+table.nut td{padding:3px 4px;border-bottom:1px dashed #e8d9c5}
+table.nut td:last-child{text-align:right;font-weight:600}
+.steps{padding-left:0;list-style:none;counter-reset:s}
+.steps li{counter-increment:s;display:flex;gap:9px;margin:8px 0;font-size:13.5px}
+.steps li::before{content:counter(s);flex:none;width:22px;height:22px;background:var(--coral);color:#fff;border:1.6px solid var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.inglist{font-size:13.5px}
+.inglist .it{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #e8d9c5}
+/* plan */
+.pday{margin:10px 0}
+.pday .dt{font-weight:700;font-size:13.5px;margin-bottom:4px}
+.pslot{display:flex;gap:6px;flex-wrap:wrap}
+.pslot .ps{flex:1;min-width:45%;background:#fff;border:1.7px dashed var(--ink2);border-radius:12px 14px 11px 15px;padding:6px 8px;font-size:12px;cursor:pointer;min-height:44px}
+.pslot .ps.has{border-style:solid;border-color:var(--ink);background:var(--mint2)}
+.pslot .ps b{display:block;font-size:11px;color:var(--ink2);font-weight:600}
+/* stats */
+.mchart{display:flex;align-items:flex-end;gap:2px;height:90px;padding:4px 2px;border-bottom:2px solid var(--ink)}
+.mchart i{flex:1;background:var(--coral);border-radius:4px 4px 0 0;min-height:2px;opacity:.85}
+.mchart i.lo{background:var(--sun)}
+.kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kpi{background:var(--sun2);border:1.8px solid var(--ink);border-radius:14px 17px 13px 18px;padding:8px 10px;text-align:center}
+.kpi b{font-size:19px;display:block}
+.kpi span{font-size:11px;color:var(--ink2)}
+/* trial */
+.trow{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1.5px dashed #ecdfca}
+.trow:last-child{border-bottom:none}
+.dot{width:12px;height:12px;border-radius:50%;border:1.6px solid var(--ink);flex:none}
+.dot.try{background:var(--sun)} .dot.pass{background:var(--mint)} .dot.fail{background:var(--red)}
+.empty{text-align:center;color:var(--ink2);padding:22px 8px;font-size:13.5px}
+.empty svg{width:54px;height:54px;opacity:.5;display:block;margin:0 auto 8px}
+.seg{display:flex;gap:0;border:2px solid var(--ink);border-radius:14px;overflow:hidden;background:#fff}
+.seg button{flex:1;border:none;background:none;font-family:inherit;font-size:12.5px;padding:7px 4px;cursor:pointer;color:var(--ink2)}
+.seg button.on{background:var(--coral);color:#fff;font-weight:700}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:var(--ink);color:#fff;padding:9px 18px;border-radius:16px;font-size:13.5px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none;max-width:88%;text-align:center}
+.toast.show{opacity:1}
+.ingrow{display:flex;gap:6px;margin:5px 0;align-items:center}
+.ingrow select{flex:1}
+.ingrow input{width:72px;flex:none}
+.ingrow .x{flex:none;width:30px;height:30px;border-radius:50%;border:1.8px solid var(--red);background:#fff;color:var(--red);cursor:pointer;font-family:inherit}
+.warnbox{background:#fde3e3;border:2px solid var(--red);border-radius:13px 16px 12px 17px;padding:8px 12px;color:var(--red);font-size:13px;margin:8px 0}
+.okbox{background:var(--mint2);border:2px solid var(--mint);border-radius:13px 16px 12px 17px;padding:8px 12px;font-size:13px;margin:8px 0}
+h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute">
+<defs>
+<g id="i-bowl"><path d="M4 13h24c0 6-4 11-12 11S4 19 4 13Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 13c0-2 2-4 7-4s7 2 7 4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 4c0 1.5 1 1.5 1 3M17 3c0 1.5 1 1.5 1 3" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/><circle cx="13" cy="17" r=".9" fill="currentColor"/><circle cx="19" cy="17" r=".9" fill="currentColor"/><path d="M14.5 19.5q1.5 1.5 3 0" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g>
+<g id="i-book"><path d="M5 6c4-2 8-2 11 0v18c-3-2-7-2-11 0V6Zm22 0c-4-2-8-2-11 0v18c3-2 7-2 11 0V6Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M8 11c2-.8 4-.8 5.5 0M8 15c2-.8 4-.8 5.5 0M19 11c2-.8 4-.8 5.5 0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></g>
+<g id="i-cal"><rect x="4" y="6" width="24" height="21" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path d="M4 12h24M10 3v6M22 3v6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="11" cy="18" r="1.4" fill="currentColor"/><circle cx="16" cy="18" r="1.4" fill="currentColor"/><circle cx="21" cy="18" r="1.4" fill="currentColor"/><circle cx="11" cy="23" r="1.4" fill="currentColor"/></g>
+<g id="i-leaf"><path d="M16 27C8 22 6 12 8 6c7 0 17 3 16 13-.6 6-5 8-8 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M11 10c3 4 7 9 10 14" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></g>
+<g id="i-chart"><path d="M5 4v23h23" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/><path d="M10 21v-6M16 21V9M22 21v-9" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/><circle cx="25" cy="7" r="2.4" fill="none" stroke="currentColor" stroke-width="1.7"/></g>
+<g id="i-gear"><circle cx="16" cy="16" r="5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 4v4M16 24v4M4 16h4M24 16h4M7.5 7.5l2.8 2.8M21.7 21.7l2.8 2.8M24.5 7.5l-2.8 2.8M10.3 21.7l-2.8 2.8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></g>
+<g id="i-baby"><circle cx="16" cy="13" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 4c-1 0-2-1.5-.5-2.5M13 12.5h.02M19 12.5h.02" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" fill="none"/><path d="M13.5 16q2.5 2 5 0" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/><path d="M8 25c2-2 14-2 16 0" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round"/></g>
+<g id="i-plus"><circle cx="16" cy="16" r="12" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 10v12M10 16h12" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></g>
+<g id="i-star"><path d="M16 4l3.4 7.4 8 .9-6 5.5 1.7 7.9L16 21.6l-7.1 4.1 1.7-7.9-6-5.5 8-.9L16 4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></g>
+<g id="i-banana"><path d="M6 8c-1 9 5 17 15 17 3 0 5-1 6-3-12 1-17-7-16-16l-2-1-3 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 6l2-2 2 1" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/></g>
+<g id="i-fish"><path d="M4 16c4-6 10-8 15-6l6-4v8l3 2-3 2v8l-6-4c-5 2-11 0-15-6Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="10" cy="15" r="1.2" fill="currentColor"/><path d="M14 12c1 2 1 5 0 7" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></g>
+<g id="i-egg"><path d="M16 4C11 9 7 15 7 20a9 9 0 0 0 18 0c0-5-4-11-9-16Z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="13" cy="19" r=".9" fill="currentColor"/><circle cx="19" cy="19" r=".9" fill="currentColor"/><path d="M14.5 22q1.5 1.3 3 0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></g>
+<g id="i-carrot"><path d="M19 13L7 27c-1 1-3-1-2-2L17 11" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M17 11c-1-3 1-6 4-6 0-1.5 2-2 3-1 1-1 3 0 2.5 2 2 .5 2 3 0 4 .5 3-3 5-6 3l-3.5-2Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 18l2 2M9 22l2 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></g>
+<g id="i-milk"><path d="M12 4h8v4l3 6v13a2 2 0 0 1-2 2H11a2 2 0 0 1-2-2V14l3-6V4Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 17h14" stroke="currentColor" stroke-width="1.8"/><path d="M12 8h8" stroke="currentColor" stroke-width="1.8"/><path d="M13 22c1.5-1.5 4.5-1.5 6 0" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round"/></g>
+<g id="i-pot"><path d="M5 12h22v8a7 7 0 0 1-7 7h-8a7 7 0 0 1-7-7v-8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M2 12h28M11 12V9m10 3V9" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M13 4c0 1.5 1 1.5 1 3M19 3c0 1.5 1 1.5 1 3" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></g>
+<g id="i-apple"><path d="M16 9c-2-2-5-2-7 0s-3 7 0 12 5 5 7 4c2 1 4 1 7-4s2-10 0-12-5-2-7 0Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M16 9c0-3 1-4 3-5" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/><path d="M19 6c2-1 3 0 3 1s-2 2-3 1" fill="none" stroke="currentColor" stroke-width="1.6"/></g>
+<g id="i-bread"><path d="M5 14c0-4 4-7 11-7s11 3 11 7c0 2-1 3-2 3v8a2 2 0 0 1-2 2H9a2 2 0 0 1-2-2v-8c-1 0-2-1-2-3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 13c1 1 1 3 0 4M17 13c1 1 1 3 0 4" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round"/></g>
+<g id="i-search"><circle cx="14" cy="14" r="9" fill="none" stroke="currentColor" stroke-width="2.2"/><path d="M21 21l7 7" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></g>
+<g id="i-grow"><path d="M5 28h22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 28V14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M16 18c-7 0-9-4-9-9 6 0 9 3 9 9Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M16 14c6 0 8-3 8-8-5 0-8 3-8 8Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M24 22l2-2 2 2M26 20v6" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round"/></g>
+<g id="i-fit"><path d="M11 16h10" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><rect x="6" y="10" width="4" height="12" rx="1.8" fill="none" stroke="currentColor" stroke-width="2"/><rect x="22" y="10" width="4" height="12" rx="1.8" fill="none" stroke="currentColor" stroke-width="2"/><path d="M3.5 13v6M28.5 13v6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></g>
+<g id="i-drop"><path d="M16 4C10 12 7 16.5 7 21a9 9 0 0 0 18 0c0-4.5-3-9-9-17Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 21a4.5 4.5 0 0 0 4 5" stroke="currentColor" stroke-width="1.7" fill="none" stroke-linecap="round"/></g>
+<g id="i-flame"><path d="M16 3c2 5-6 8-4 15 .8 3 3 5.5 4 5.5S26 21 24 14c-1-3.5-3-5-3-5s.5 3-1.5 4C19 9 18 6 16 3Z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><circle cx="16" cy="25" r="3.5" fill="none" stroke="currentColor" stroke-width="1.8"/></g>
+<g id="i-dice"><rect x="5" y="5" width="22" height="22" rx="6" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="11.5" cy="11.5" r="1.7" fill="currentColor"/><circle cx="20.5" cy="20.5" r="1.7" fill="currentColor"/><circle cx="20.5" cy="11.5" r="1.7" fill="currentColor"/><circle cx="11.5" cy="20.5" r="1.7" fill="currentColor"/></g>
+</defs>
+</svg>
+
+<div class="app">
+<header>
+  <svg class="logo" viewBox="0 0 32 32" style="color:var(--coral)"><use href="#i-fit"/></svg>
+  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้</small></h1>
+  <button class="iconbtn" onclick="openSettings()" title="ตั้งค่า"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
+</header>
+<div id="childbar" style="padding:9px 2px 0;display:flex;gap:6px;flex-wrap:wrap"></div>
+<main id="view"></main>
+</div>
+
+<nav id="nav"></nav>
+<div class="mwrap" id="mwrap" onclick="if(event.target===this)closeModal()"><div class="modal" id="modal"></div></div>
+<div class="mwrap" id="mwrap2" style="z-index:60" onclick="if(event.target===this)closeModal2()"><div class="modal" id="modal2"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= ฐานข้อมูลวัตถุดิบ (ต่อ 100 กรัม) =================
+   v:[พลังงาน kcal, โปรตีน g, ไขมัน g, คาร์บ g, ใยอาหาร g, โซเดียม mg, แคลเซียม mg, เหล็ก mg] */
+const ING={
+chickb:{n:'อกไก่ (สุก)',g:'โปรตีน',ic:'i-pot',v:[165,31,3.6,0,0,74,15,1]},
+chickt:{n:'สะโพกไก่',g:'โปรตีน',ic:'i-pot',v:[209,26,11,0,0,84,12,1.3]},
+egg:{n:'ไข่ไก่ (ทั้งฟอง)',g:'โปรตีน',a:'ไข่',ic:'i-egg',v:[155,13,11,1.1,0,124,56,1.8]},
+eggw:{n:'ไข่ขาว',g:'โปรตีน',a:'ไข่',ic:'i-egg',v:[52,11,0.2,0.7,0,166,7,0.1]},
+pork:{n:'หมูสันใน/หมูไม่ติดมัน',g:'โปรตีน',ic:'i-pot',v:[143,21,6,0,0,57,6,1]},
+porkb:{n:'หมูสามชั้น',g:'โปรตีน',ic:'i-pot',v:[518,9.3,53,0,0,40,5,0.7]},
+beef:{n:'เนื้อวัวไม่ติดมัน',g:'โปรตีน',ic:'i-pot',v:[250,26,15,0,0,72,18,2.6]},
+tuna:{n:'ทูน่ากระป๋อง (ในน้ำ)',g:'โปรตีน',a:'ปลา',ic:'i-fish',v:[116,26,1,0,0,247,10,1.5]},
+salmon:{n:'แซลมอน',g:'โปรตีน',a:'ปลา',ic:'i-fish',v:[208,20,13,0,0,59,9,0.3]},
+fishn:{n:'ปลานิล/ปลากะพง',g:'โปรตีน',a:'ปลา',ic:'i-fish',v:[96,20,1.7,0,0,52,10,0.6]},
+shrimp:{n:'กุ้ง',g:'โปรตีน',a:'กุ้ง/สัตว์น้ำมีเปลือก',ic:'i-fish',v:[99,24,0.3,0.2,0,111,70,0.5]},
+squid:{n:'ปลาหมึก',g:'โปรตีน',ic:'i-fish',v:[92,15.6,1.4,3,0,44,32,0.7]},
+tofu:{n:'เต้าหู้',g:'โปรตีน',a:'ถั่วเหลือง',ic:'i-egg',v:[76,8,4.8,1.9,0.3,7,200,1.6]},
+whey:{n:'เวย์โปรตีน (ผง)',g:'โปรตีน',a:'นมวัว',ic:'i-milk',v:[400,75,7,10,0,200,500,2]},
+milk:{n:'นมจืด',g:'นม',a:'นมวัว',ic:'i-milk',v:[61,3.2,3.3,4.8,0,44,113,0]},
+milklow:{n:'นมพร่องมันเนย',g:'นม',a:'นมวัว',ic:'i-milk',v:[42,3.4,1,5,0,44,122,0]},
+soymilk:{n:'นมถั่วเหลือง (หวานน้อย)',g:'นม',a:'ถั่วเหลือง',ic:'i-milk',v:[45,3,1.8,4,0.4,40,25,0.4]},
+gyogurt:{n:'กรีกโยเกิร์ต',g:'นม',a:'นมวัว',ic:'i-milk',v:[59,10,0.4,3.6,0,36,110,0]},
+yogurt:{n:'โยเกิร์ตรสธรรมชาติ',g:'นม',a:'นมวัว',ic:'i-milk',v:[61,3.5,3.3,4.7,0,46,121,0]},
+cheese:{n:'ชีส',g:'นม',a:'นมวัว',ic:'i-milk',v:[402,25,33,1.3,0,621,721,0.7]},
+rice:{n:'ข้าวสวย',g:'แป้ง/ธัญพืช',ic:'i-bowl',v:[130,2.7,0.3,28,0.4,1,10,0.2]},
+ricebr:{n:'ข้าวกล้องสุก',g:'แป้ง/ธัญพืช',ic:'i-bowl',v:[112,2.3,0.8,24,1.8,5,10,0.5]},
+sticky:{n:'ข้าวเหนียว',g:'แป้ง/ธัญพืช',ic:'i-bowl',v:[169,3.5,0.3,37,0.9,5,2,0.2]},
+bread:{n:'ขนมปังโฮลวีต',g:'แป้ง/ธัญพืช',a:'แป้งสาลี',ic:'i-bread',v:[247,13,3.4,41,7,455,107,2.5]},
+breadw:{n:'ขนมปังขาว',g:'แป้ง/ธัญพืช',a:'แป้งสาลี',ic:'i-bread',v:[265,9,3.2,49,2.7,490,144,3.6]},
+oat:{n:'ข้าวโอ๊ต (แห้ง)',g:'แป้ง/ธัญพืช',ic:'i-bowl',v:[389,16.9,6.9,66,10.6,2,54,4.7]},
+pasta:{n:'พาสต้า (สุก)',g:'แป้ง/ธัญพืช',a:'แป้งสาลี',ic:'i-bowl',v:[131,5,1.1,25,1.8,1,7,0.5]},
+noodle:{n:'เส้นก๋วยเตี๋ยว (สุก)',g:'แป้ง/ธัญพืช',ic:'i-bowl',v:[109,1.8,0.2,25,0.9,33,7,0.3]},
+instant:{n:'บะหมี่กึ่งสำเร็จรูป (แห้ง)',g:'แป้ง/ธัญพืช',a:'แป้งสาลี',ic:'i-bowl',v:[437,9,18,62,3,2500,20,1.7]},
+potato:{n:'มันฝรั่งต้ม',g:'แป้ง/ธัญพืช',ic:'i-carrot',v:[87,1.9,0.1,20,1.8,4,5,0.3]},
+sweetpot:{n:'มันหวานนึ่ง',g:'แป้ง/ธัญพืช',ic:'i-carrot',v:[90,2,0.2,21,3.3,36,30,0.6]},
+corn:{n:'ข้าวโพดหวาน',g:'แป้ง/ธัญพืช',ic:'i-carrot',v:[96,3.4,1.5,21,2.4,15,2,0.5]},
+granola:{n:'กราโนล่า',g:'แป้ง/ธัญพืช',ic:'i-bowl',v:[471,10,20,64,7,26,76,3.8]},
+oil:{n:'น้ำมันพืช',g:'ไขมัน',ic:'i-pot',v:[884,0,100,0,0,0,0,0]},
+butter:{n:'เนย',g:'ไขมัน',a:'นมวัว',ic:'i-milk',v:[717,0.9,81,0.1,0,11,24,0]},
+avocado:{n:'อะโวคาโด',g:'ไขมัน',ic:'i-apple',v:[160,2,15,9,6.7,7,12,0.6]},
+peanut:{n:'ถั่วลิสง',g:'ไขมัน',a:'ถั่วลิสง',ic:'i-leaf',v:[567,26,49,16,8.5,18,92,4.6]},
+almond:{n:'อัลมอนด์',g:'ไขมัน',a:'ถั่วเปลือกแข็ง',ic:'i-leaf',v:[579,21,50,22,12.5,1,269,3.7]},
+pbutter:{n:'เนยถั่ว',g:'ไขมัน',a:'ถั่วลิสง',ic:'i-leaf',v:[588,25,50,20,6,17,49,1.9]},
+chia:{n:'เมล็ดเจีย',g:'ไขมัน',ic:'i-leaf',v:[486,17,31,42,34,16,631,7.7]},
+coconutmilk:{n:'กะทิ',g:'ไขมัน',ic:'i-milk',v:[230,2.3,24,6,2.2,15,16,1.6]},
+broccoli:{n:'บรอกโคลี',g:'ผัก',ic:'i-leaf',v:[35,2.4,0.4,7,3.3,33,40,0.7]},
+kale:{n:'คะน้า',g:'ผัก',ic:'i-leaf',v:[35,3.3,0.6,5,2.5,38,150,1.5]},
+morning:{n:'ผักบุ้ง',g:'ผัก',ic:'i-leaf',v:[19,2.6,0.2,3.1,2.1,113,77,1.7]},
+cabbage:{n:'กะหล่ำปลี/ผักกาดขาว',g:'ผัก',ic:'i-leaf',v:[25,1.3,0.1,6,2.5,18,40,0.5]},
+lettuce:{n:'ผักสลัด',g:'ผัก',ic:'i-leaf',v:[15,1.4,0.2,2.9,1.3,28,36,0.9]},
+tomato:{n:'มะเขือเทศ',g:'ผัก',ic:'i-apple',v:[18,0.9,0.2,3.9,1.2,5,10,0.3]},
+cucumber:{n:'แตงกวา',g:'ผัก',ic:'i-leaf',v:[15,0.7,0.1,3.6,0.5,2,16,0.3]},
+carrot:{n:'แครอท',g:'ผัก',ic:'i-carrot',v:[41,0.9,0.2,10,2.8,69,33,0.3]},
+pumpkin:{n:'ฟักทอง',g:'ผัก',ic:'i-carrot',v:[26,1,0.1,6,0.5,1,21,0.4]},
+mushroom:{n:'เห็ด',g:'ผัก',ic:'i-leaf',v:[22,3.1,0.3,3.3,1,5,3,0.5]},
+onion:{n:'หอมใหญ่',g:'ผัก',ic:'i-leaf',v:[40,1.1,0.1,9,1.7,4,23,0.2]},
+banana:{n:'กล้วย',g:'ผลไม้',ic:'i-banana',v:[89,1.1,0.3,23,2.6,1,5,0.3]},
+apple:{n:'แอปเปิล',g:'ผลไม้',ic:'i-apple',v:[52,0.3,0.2,14,2.4,1,6,0.1]},
+orange:{n:'ส้ม',g:'ผลไม้',ic:'i-apple',v:[47,0.9,0.1,12,2.4,0,40,0.1]},
+papaya:{n:'มะละกอ',g:'ผลไม้',ic:'i-apple',v:[43,0.5,0.3,11,1.7,8,20,0.3]},
+mango:{n:'มะม่วงสุก',g:'ผลไม้',ic:'i-apple',v:[60,0.8,0.4,15,1.6,1,11,0.2]},
+watermelon:{n:'แตงโม',g:'ผลไม้',ic:'i-apple',v:[30,0.6,0.2,8,0.4,1,7,0.2]},
+guava:{n:'ฝรั่ง',g:'ผลไม้',ic:'i-apple',v:[68,2.6,1,14,5.4,2,18,0.3]},
+berry:{n:'เบอร์รีรวม',g:'ผลไม้',ic:'i-apple',v:[50,0.7,0.3,12,3,1,10,0.3]},
+sugar:{n:'น้ำตาล',g:'ปรุงรส',ic:'i-pot',v:[387,0,0,100,0,0,0,0]},
+honey:{n:'น้ำผึ้ง',g:'ปรุงรส',ic:'i-pot',v:[304,0.3,0,82,0.2,4,6,0.4]},
+fishsauce:{n:'น้ำปลา',g:'ปรุงรส',ic:'i-pot',v:[35,5,0,4,0,7850,43,1]},
+soysauce:{n:'ซีอิ๊ว/ซอสปรุงรส',g:'ปรุงรส',a:'ถั่วเหลือง',ic:'i-pot',v:[53,8,0.6,4.9,0.8,5490,33,2.4]}
+};
+const NUTL=[['kcal','พลังงาน','กิโลแคลอรี'],['prot','โปรตีน','กรัม'],['fat','ไขมัน','กรัม'],['carb','คาร์บ','กรัม'],['fib','ใยอาหาร','กรัม'],['na','โซเดียม','มก.'],['ca','แคลเซียม','มก.'],['fe','เหล็ก','มก.']];
+
+/* ================= คลังเมนู (ต่อ 1 ที่/จาน) ================= */
+const RECIPES=[
+{id:'d1',n:'ข้าวกะเพราไก่ไข่ดาว',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['chickt',100],['egg',55],['oil',12],['fishsauce',8],['soysauce',5]],tip:'ลดน้ำมันผัด/ทอดไข่ จะลดได้ ~100 กิโลแคลอรี'},
+{id:'d2',n:'อกไก่ย่าง + ข้าวกล้อง + บรอกโคลี',c:'คลีน/ฟิต',ic:'i-pot',ings:[['chickb',150],['ricebr',150],['broccoli',80]]},
+{id:'d3',n:'สลัดอกไก่อะโวคาโด',c:'คลีน/ฟิต',ic:'i-leaf',ings:[['chickb',100],['lettuce',80],['tomato',50],['cucumber',50],['avocado',30],['oil',5]]},
+{id:'d4',n:'ข้าวมันไก่',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['chickt',120],['oil',15],['cucumber',30]]},
+{id:'d5',n:'ผัดผักบุ้ง + ข้าวสวย',c:'จานเดียว',ic:'i-leaf',ings:[['rice',200],['morning',100],['oil',12],['soysauce',8]]},
+{id:'d6',n:'ก๋วยเตี๋ยวน้ำใสไก่',c:'จานเดียว',ic:'i-bowl',ings:[['noodle',150],['chickb',80],['cabbage',50],['fishsauce',5]]},
+{id:'d7',n:'ข้าวผัดกุ้งใส่ไข่',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['shrimp',60],['egg',55],['oil',15],['onion',20],['soysauce',8]]},
+{id:'d8',n:'ส้มตำไทย',c:'คลีน/ฟิต',ic:'i-leaf',ings:[['papaya',150],['peanut',15],['tomato',30],['fishsauce',10],['sugar',10]],tip:'โซเดียมสูงจากน้ำปลา สั่งหวานน้อย-เค็มน้อยได้'},
+{id:'d9',n:'ไก่ย่าง + ข้าวเหนียว',c:'จานเดียว',ic:'i-pot',ings:[['chickt',120],['sticky',150]]},
+{id:'d10',n:'ปลาย่าง/นึ่ง + ข้าวกล้อง + ผักลวก',c:'คลีน/ฟิต',ic:'i-fish',ings:[['fishn',150],['ricebr',150],['broccoli',80]]},
+{id:'d11',n:'โอ๊ตนมกล้วย',c:'มื้อเช้า/ว่าง',ic:'i-bowl',ings:[['oat',50],['milklow',200],['banana',100],['honey',10]]},
+{id:'d12',n:'สมูทตี้เวย์กล้วยเนยถั่ว',c:'มื้อเช้า/ว่าง',ic:'i-milk',ings:[['whey',30],['banana',100],['milklow',250],['pbutter',15]]},
+{id:'d13',n:'ไข่ต้ม 2 ฟอง',c:'มื้อเช้า/ว่าง',ic:'i-egg',ings:[['egg',110]]},
+{id:'d14',n:'แซนด์วิชทูน่า',c:'มื้อเช้า/ว่าง',ic:'i-bread',ings:[['breadw',70],['tuna',70],['gyogurt',20],['lettuce',30],['tomato',30]],tip:'ใช้กรีกโยเกิร์ตแทนมายองเนส ลดไขมันได้มาก'},
+{id:'d15',n:'ข้าวต้มหมูสับ',c:'จานเดียว',ic:'i-bowl',ings:[['rice',120],['pork',60],['cabbage',30]]},
+{id:'d16',n:'สเต๊กอกไก่ + มันบด',c:'คลีน/ฟิต',ic:'i-pot',ings:[['chickb',150],['potato',200],['butter',10],['broccoli',80]]},
+{id:'d17',n:'แกงเขียวหวานไก่ + ข้าว',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['chickt',100],['coconutmilk',100],['oil',5],['fishsauce',8]]},
+{id:'d18',n:'ผัดไทยกุ้ง',c:'จานเดียว',ic:'i-bowl',ings:[['noodle',150],['shrimp',60],['egg',55],['peanut',15],['oil',15],['sugar',10],['fishsauce',8]]},
+{id:'d19',n:'กรีกโยเกิร์ต + กราโนล่า + เบอร์รี',c:'มื้อเช้า/ว่าง',ic:'i-milk',ings:[['gyogurt',150],['granola',40],['berry',80]]},
+{id:'d20',n:'ข้าวไข่เจียว',c:'จานเดียว',ic:'i-egg',ings:[['rice',250],['egg',110],['oil',20],['fishsauce',5]]},
+{id:'d21',n:'เต้าหู้ผัดผักรวม + ข้าวกล้อง',c:'คลีน/ฟิต',ic:'i-leaf',ings:[['tofu',150],['ricebr',150],['broccoli',60],['carrot',30],['oil',10],['soysauce',8]]},
+{id:'d22',n:'บะหมี่กึ่งสำเร็จรูป + ไข่',c:'จานเดียว',ic:'i-bowl',ings:[['instant',60],['egg',55]],tip:'โซเดียมสูงมาก ใส่เครื่องปรุงแค่ครึ่งซองช่วยได้'},
+{id:'d23',n:'อกไก่ฉีก + ไข่ต้ม + ผักสลัด',c:'คลีน/ฟิต',ic:'i-leaf',ings:[['chickb',100],['egg',55],['lettuce',100],['tomato',50],['gyogurt',30]]},
+{id:'d24',n:'ข้าวหมูแดง',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['pork',90],['sugar',8],['soysauce',10],['cucumber',30]]}
+];
+
+/* ================= สถานะ & ตัวช่วย ================= */
+const MEALS={br:'มื้อเช้า',lu:'มื้อกลางวัน',di:'มื้อเย็น',sn:'ของว่าง'};
+const MEALIC={br:'i-egg',lu:'i-bowl',di:'i-pot',sn:'i-apple'};
+const EATEN=[[1,'หมดจาน'],[0.75,'เกือบหมด'],[0.5,'ครึ่งเดียว'],[1.5,'จานใหญ่ ×1.5'],[2,'สองที่ ×2']];
+const ACTS=[[1.2,'นั่งทำงาน แทบไม่ออกกำลังกาย'],[1.375,'ออกกำลังเบาๆ 1–3 วัน/สัปดาห์'],[1.55,'ออกกำลังปานกลาง 3–5 วัน/สัปดาห์'],[1.725,'ออกกำลังหนัก 6–7 วัน/สัปดาห์'],[1.9,'นักกีฬา/งานใช้แรงหนักมาก']];
+const GOALS={lose:'ลดน้ำหนัก/ลดไขมัน',keep:'รักษาน้ำหนัก/สุขภาพดี',gain:'เพิ่มกล้ามเนื้อ/เพิ่มน้ำหนัก'};
+const EXP=[['วิ่งเหยาะ 30 นาที',280],['เดินเร็ว 30 นาที',140],['ปั่นจักรยาน 30 นาที',230],['เวทเทรนนิ่ง 45 นาที',180],['ว่ายน้ำ 30 นาที',250],['คลาสแอโรบิก/เต้น 45 นาที',300],['โยคะ 60 นาที',180],['HIIT 20 นาที',250],['แบดมินตัน 60 นาที',300],['ฟุตบอล 60 นาที',420]];
+const $=q=>document.querySelector(q);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+function dstr(d){d=d||new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+const THD=['อา','จ','อ','พ','พฤ','ศ','ส'];
+const THM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+function thDate(s){const d=new Date(s+'T00:00');return THD[d.getDay()]+'. '+d.getDate()+' '+THM[d.getMonth()]}
+let S;
+function load(){try{S=JSON.parse(localStorage.getItem('iufit'))}catch(e){}
+ if(!S)S={users:[],active:null,logs:[],recipes:[],ings:[],body:[],ex:[],water:{}};
+ ['logs','recipes','ings','body','ex'].forEach(k=>S[k]=S[k]||[]);S.water=S.water||{};S.users=S.users||[];mergeIngs()}
+function save(){localStorage.setItem('iufit',JSON.stringify(S))}
+function user(){return S.users.find(u=>u.id===S.active)}
+function ageY(u){u=u||user();const b=new Date(u.bd+'T00:00'),n=new Date();let y=n.getFullYear()-b.getFullYear();
+ if(n.getMonth()<b.getMonth()||(n.getMonth()===b.getMonth()&&n.getDate()<b.getDate()))y--;return y}
+function allRecipes(){return RECIPES.concat(S.recipes)}
+function getRecipe(id){return allRecipes().find(r=>r.id===id)}
+function nutOf(ings){const t=[0,0,0,0,0,0,0,0];
+ (ings||[]).forEach(([id,g])=>{const it=ING[id];if(!it)return;it.v.forEach((v,i)=>t[i]+=v*g/100)});return t}
+function bodyRecs(u){u=u||user();return S.body.filter(b=>b.user===u.id).sort((a,b)=>a.date.localeCompare(b.date))}
+function curW(u){u=u||user();const b=bodyRecs(u);return b.length?b[b.length-1].w:(u.w0||60)}
+function bmr(u,w){u=u||user();w=w||curW(u);const a=ageY(u);
+ return u.sex==='f'?10*w+6.25*u.h-5*a-161:10*w+6.25*u.h-5*a+5}
+function target(){const u=user(),w=curW(u),t=bmr(u,w)*(u.act||1.375);
+ let k=u.goal==='lose'?Math.max(1200,t-500):u.goal==='gain'?t+300:t;
+ const prot=w*(u.goal==='gain'?2:u.goal==='lose'?1.8:1.4),fat=k*0.28/9,carb=Math.max(0,(k-prot*4-fat*9)/4);
+ return{kcal:Math.round(k),prot:Math.round(prot),fat:Math.round(fat),carb:Math.round(carb),fib:25,na:2000,tdee:Math.round(t),bmr:Math.round(bmr(u,w))}}
+function bmi(w,h){return w/Math.pow(h/100,2)}
+function bmiCat(b){if(b<18.5)return['น้ำหนักน้อยกว่าเกณฑ์','var(--sun2)','var(--ink)'];
+ if(b<23)return['สมส่วน','var(--mint2)','var(--ink)'];
+ if(b<25)return['น้ำหนักเกิน','var(--sun2)','var(--ink)'];
+ if(b<30)return['อ้วน (ระดับ 1)','#fde3e3','var(--red)'];
+ return['อ้วนมาก (ระดับ 2)','#fde3e3','var(--red)']}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200)}
+function fmt(n,d=0){return Number(n).toLocaleString('th-TH',{maximumFractionDigits:d,minimumFractionDigits:0})}
+function svg(id,st){return `<svg viewBox="0 0 32 32" ${st?`style="${st}"`:''}><use href="#${id}"/></svg>`}
+function ingOptions(sel){let h='<option value="">– เลือกวัตถุดิบ –</option>';const gs={};
+ Object.entries(ING).forEach(([id,it])=>{(gs[it.g]=gs[it.g]||[]).push([id,it])});
+ Object.entries(gs).forEach(([g,arr])=>{h+=`<optgroup label="${g}">`+arr.map(([id,it])=>`<option value="${id}" ${id===sel?'selected':''}>${it.n}${it.custom?' ★':''}</option>`).join('')+'</optgroup>'});
+ return h}
+function openModal(html){$('#modal').innerHTML='<button class="mclose" onclick="closeModal()">✕</button>'+html;$('#mwrap').classList.add('show')}
+function closeModal(){$('#mwrap').classList.remove('show')}
+function openModal2(html){$('#modal2').innerHTML='<button class="mclose" onclick="closeModal2()">✕</button>'+html;$('#mwrap2').classList.add('show')}
+function closeModal2(){$('#mwrap2').classList.remove('show')}
+function segSel(b){[...b.parentNode.children].forEach(x=>x.classList.remove('on'));b.classList.add('on')}
+
+/* ================= วัตถุดิบกำหนดเอง ================= */
+function mergeIngs(){(S.ings||[]).forEach(it=>{ING[it.id]={n:it.n,g:it.g,ic:'i-star',v:it.v,custom:true}})}
+function ingManager(){let h=`<h2>🧺 วัตถุดิบของฉัน</h2>
+ <p class="muted" style="font-size:12.5px;margin:4px 0 8px">เพิ่มอาหาร/วัตถุดิบที่ไม่มีในระบบ พร้อมค่าโภชนาการต่อ 100 กรัม (ดูจากฉลาก) — รายการของคุณจะมี ★</p>
+ <button class="btn pri sm" onclick="ingForm()">＋ เพิ่มวัตถุดิบใหม่</button>`;
+ if(S.ings.length){h+='<div class="card" style="margin-top:10px">';
+  S.ings.forEach(it=>{h+=`<div class="trow"><div style="flex:1"><b>${esc(it.n)}</b> <span class="tag">${esc(it.g)}</span>
+   <div class="muted">${fmt(it.v[0])} กิโลแคลอรี · โปรตีน ${fmt(it.v[1],1)} ก. ต่อ 100 ก.</div></div>
+   <button class="btn sm" onclick="ingForm('${it.id}')">✏️</button><button class="x" onclick="delIng('${it.id}')">✕</button></div>`});
+  h+='</div>'}else h+=`<div class="empty">ยังไม่มีวัตถุดิบที่เพิ่มเอง</div>`;
+ openModal(h)}
+function ingForm(editId){const ed=editId?S.ings.find(x=>x.id===editId):null;
+ const NL=[['พลังงาน (กิโลแคลอรี)',0],['โปรตีน (ก.)',1],['ไขมัน (ก.)',2],['คาร์โบไฮเดรต (ก.)',3],['ใยอาหาร (ก.)',4],['โซเดียม (มก.)',5],['แคลเซียม (มก.)',6],['เหล็ก (มก.)',7]];
+ openModal2(`<h2>${ed?'แก้ไขวัตถุดิบ':'เพิ่มวัตถุดิบใหม่'}</h2>
+  <label class="fl">ชื่อ</label><input id="if-n" value="${ed?esc(ed.n):''}" placeholder="เช่น ข้าวกล่อง 7-11, โปรตีนบาร์">
+  <label class="fl">หมวด</label><select id="if-g">${['โปรตีน','แป้ง/ธัญพืช','ผัก','ผลไม้','นม','ไขมัน','ปรุงรส','อื่นๆ'].map(g=>`<option ${ed&&ed.g===g?'selected':''}>${g}</option>`).join('')}</select>
+  <label class="fl">คุณค่าทางโภชนาการ ต่อ 100 กรัม (ไม่ทราบใส่ 0)</label>
+  <div class="kpis">${NL.map(([lb,i])=>`<div><label class="fl" style="margin:3px 0 2px">${lb}</label><input id="if-v${i}" type="number" min="0" step="0.01" value="${ed?ed.v[i]:''}" placeholder="0"></div>`).join('')}</div>
+  <button class="btn pri" style="width:100%;margin-top:13px" onclick="saveIng('${editId||''}')">💾 บันทึก</button>`)}
+function saveIng(editId){const n=$('#if-n').value.trim();
+ if(!n){toast('ใส่ชื่อก่อนนะ');return}
+ const v=[];for(let i=0;i<8;i++)v.push(+document.getElementById('if-v'+i).value||0);
+ const data={n,g:$('#if-g').value,v};
+ if(editId)Object.assign(S.ings.find(x=>x.id===editId),data);
+ else S.ings.push({id:'c'+uid(),...data});
+ mergeIngs();save();closeModal2();toast('บันทึกแล้ว 🧺');
+ if($('#lg-ings'))drawLogIngs();if($('#rf-ings'))drawRIngs();
+ if(($('#modal').innerHTML||'').includes('วัตถุดิบของฉัน'))ingManager()}
+function delIng(id){
+ const used=allRecipes().some(r=>r.ings.some(x=>x[0]===id))||S.logs.some(l=>(l.ings||[]).some(x=>x[0]===id));
+ if(used){toast('ลบไม่ได้ มีเมนูหรือบันทึกที่ใช้อยู่');return}
+ if(!confirm('ลบวัตถุดิบนี้?'))return;
+ S.ings=S.ings.filter(x=>x.id!==id);delete ING[id];save();ingManager()}
+
+/* ================= แถบโปรไฟล์ & แท็บ ================= */
+function renderChildBar(){const el=$('#childbar');
+ if(!S.users.length){el.innerHTML='';return}
+ el.innerHTML=S.users.map(u=>`<span class="chip ${u.id===S.active?'sel':''}" onclick="setActive('${u.id}')">💪 ${esc(u.name)}</span>`).join('')
+ +`<span class="chip" onclick="userForm()">＋ เพิ่ม</span>`}
+function setActive(id){S.active=id;save();renderAll()}
+const TABS=[['today','วันนี้','i-bowl'],['food','อาหาร','i-book'],['body','ร่างกาย','i-grow'],['stats','สรุป','i-chart']];
+let TAB='today';
+function renderNav(){$('#nav').innerHTML=TABS.map(([id,n,ic])=>`<button class="${TAB===id?'on':''}" onclick="go('${id}')">${svg(ic)}${n}</button>`).join('')}
+function go(t){TAB=t;renderAll();window.scrollTo(0,0)}
+function renderAll(){renderChildBar();renderNav();
+ if(!S.users.length){renderWelcome();return}
+ if(!user())S.active=S.users[0].id;
+ ({today:renderToday,food:renderFood,body:renderBody,stats:renderStats})[TAB]()}
+function renderWelcome(){$('#view').innerHTML=`
+ <div class="card" style="text-align:center;padding:28px 16px">
+  <svg viewBox="0 0 32 32" style="width:72px;height:72px;color:var(--coral)"><use href="#i-fit"/></svg>
+  <h3 style="justify-content:center">ยินดีต้อนรับสู่ IUFIT!</h3>
+  <p class="muted">กรอกข้อมูลร่างกายสั้นๆ เพื่อคำนวณเป้าหมาย<br>พลังงานและโปรตีนที่เหมาะกับคุณ</p>
+  <button class="btn pri" onclick="userForm()">เริ่มต้นใช้งาน 🚀</button>
+ </div>`}
+
+/* ================= หน้า: วันนี้ ================= */
+let TODAY_DATE=dstr();
+function renderToday(){const u=user(),t=target();
+ const logs=S.logs.filter(l=>l.user===u.id&&l.date===TODAY_DATE);
+ const exs=S.ex.filter(e=>e.user===u.id&&e.date===TODAY_DATE);
+ const burn=exs.reduce((s,e)=>s+e.kcal,0);
+ const tot=[0,0,0,0,0,0,0,0];
+ logs.forEach(l=>nutOf(l.ings).forEach((v,i)=>tot[i]+=v*(l.eaten??1)));
+ const net=tot[0]-burn;
+ const wkey=u.id+'|'+TODAY_DATE,glasses=S.water[wkey]||0;
+ const BARS=[['พลังงาน',0,t.kcal,'กิโลแคลอรี'],['โปรตีน',1,t.prot,'กรัม'],['ไขมัน',2,t.fat,'กรัม'],['คาร์บ',3,t.carb,'กรัม'],['ใยอาหาร',4,t.fib,'กรัม'],['โซเดียม',5,t.na,'มก.']];
+ let h=`<div class="row between" style="margin-top:10px">
+   <button class="btn sm ghost" onclick="shiftDay(-1)">‹ ก่อนหน้า</button>
+   <b>${TODAY_DATE===dstr()?'วันนี้ · ':''}${thDate(TODAY_DATE)}</b>
+   <button class="btn sm ghost" onclick="shiftDay(1)" ${TODAY_DATE>=dstr()?'disabled':''}>ถัดไป ›</button></div>`;
+ h+=`<div class="card"><h3>${svg('i-chart','width:20px;color:var(--coral)')} เป้าหมายวันนี้ <span class="muted" style="font-weight:400;font-size:11px">(${GOALS[u.goal||'keep']})</span></h3>`;
+ BARS.forEach(([nm,i,tg,un])=>{const p=Math.min(100,tot[i]/tg*100);
+  h+=`<div class="nutrow"><span class="nm">${nm}</span><span class="bar ${tot[i]>tg*(i===5?1:1.15)?'over':''}"><i style="width:${p}%"></i></span><span class="vv">${fmt(tot[i],i>0&&i<5?1:0)}/${fmt(tg)} ${un}</span></div>`});
+ h+=`<div class="row between" style="margin-top:8px;font-size:13px">
+   <span>🔥 เผาเพิ่ม <b>${fmt(burn)}</b> กิโลแคลอรี</span>
+   <span>สุทธิ <b style="color:${net>t.kcal?'var(--red)':'var(--coral)'}">${fmt(net)}</b> / ${fmt(t.kcal)}</span></div></div>`;
+ // น้ำ
+ h+=`<div class="card flat row between" style="background:var(--berry2)">
+  <span>${svg('i-drop','width:20px;height:20px;color:var(--berry);vertical-align:-4px')} ดื่มน้ำ <b>${glasses}</b>/8 แก้ว ${'💧'.repeat(Math.min(glasses,8))}</span>
+  <span><button class="btn sm" onclick="addWater(-1)">−</button> <button class="btn sm mint" onclick="addWater(1)">＋</button></span></div>`;
+ // มื้ออาหาร
+ Object.entries(MEALS).forEach(([mk,mn])=>{const ml=logs.filter(l=>l.meal===mk);
+  h+=`<div class="mealhead"><svg viewBox="0 0 32 32" style="width:20px;height:20px;color:var(--coral)"><use href="#${MEALIC[mk]}"/></svg><span class="t">${mn}</span>
+    ${ml.length?`<span class="muted">${fmt(ml.reduce((s,l)=>s+nutOf(l.ings)[0]*(l.eaten??1),0))} กิโลแคลอรี</span>`:''}
+    <button class="btn sm sun" style="margin-left:auto" onclick="logForm('${mk}')">＋ บันทึก</button></div>`;
+  if(!ml.length)h+=`<div class="muted" style="padding:2px 6px 6px">ยังไม่มีบันทึก</div>`;
+  else{h+='<div class="card flat" style="margin:4px 0 10px">';
+   ml.forEach(l=>{const n=nutOf(l.ings),e=l.eaten??1;
+    h+=`<div class="logitem" onclick="logDetail('${l.id}')" style="cursor:pointer">
+     <div class="ic"><svg viewBox="0 0 32 32"><use href="#${(l.rid&&getRecipe(l.rid)?.ic)||'i-bowl'}"/></svg></div>
+     <div style="flex:1"><b>${esc(l.name)}</b>${e!==1?` <span class="tag">×${e}</span>`:''}
+      <div class="muted">${fmt(n[0]*e)} กิโลแคลอรี · โปรตีน ${fmt(n[1]*e,1)} ก. · คาร์บ ${fmt(n[3]*e)} ก. · ไขมัน ${fmt(n[2]*e,1)} ก.</div></div></div>`});
+   h+='</div>'}});
+ // ออกกำลังกาย
+ h+=`<div class="mealhead"><svg viewBox="0 0 32 32" style="width:20px;height:20px;color:var(--coral)"><use href="#i-flame"/></svg><span class="t">ออกกำลังกาย</span>
+  <button class="btn sm mint" style="margin-left:auto" onclick="exForm()">＋ บันทึก</button></div>`;
+ if(!exs.length)h+=`<div class="muted" style="padding:2px 6px 6px">ยังไม่มีบันทึก</div>`;
+ else{h+='<div class="card flat" style="margin:4px 0 10px">';
+  exs.forEach(e=>{h+=`<div class="logitem"><div class="ic" style="background:var(--coral2)">${svg('i-flame','width:22px;height:22px')}</div>
+   <div style="flex:1"><b>${esc(e.n)}</b><div class="muted">เผา ${fmt(e.kcal)} กิโลแคลอรี</div></div>
+   <button class="x" onclick="delEx('${e.id}')">✕</button></div>`});
+  h+='</div>'}
+ $('#view').innerHTML=h}
+function shiftDay(d){const x=new Date(TODAY_DATE+'T00:00');x.setDate(x.getDate()+d);TODAY_DATE=dstr(x);renderToday()}
+function addWater(d){const u=user(),k=u.id+'|'+TODAY_DATE;
+ S.water[k]=Math.max(0,(S.water[k]||0)+d);save();renderToday()}
+function exForm(){openModal(`<h2>🔥 บันทึกออกกำลังกาย</h2>
+ <label class="fl">เลือกแบบเร็ว (ค่าประมาณสำหรับน้ำหนัก ~65 กก.)</label>
+ <div class="row">${EXP.map(([n,k])=>`<button class="btn sm" onclick="$('#ex-n').value='${n}';$('#ex-k').value=${k}">${n}</button>`).join('')}</div>
+ <label class="fl">กิจกรรม</label><input id="ex-n" placeholder="เช่น วิ่ง 5 กม.">
+ <label class="fl">พลังงานที่เผา (กิโลแคลอรี)</label><input id="ex-k" type="number" min="0" placeholder="เช่น 300">
+ <button class="btn pri" style="width:100%;margin-top:13px" onclick="saveEx()">💾 บันทึก</button>`)}
+function saveEx(){const n=$('#ex-n').value.trim(),k=+$('#ex-k').value;
+ if(!n||!k){toast('ใส่กิจกรรมและแคลอรีก่อนนะ');return}
+ S.ex.push({id:uid(),user:S.active,date:TODAY_DATE,n,kcal:k});
+ save();closeModal();toast('บันทึกแล้ว 🔥');renderToday()}
+function delEx(id){S.ex=S.ex.filter(e=>e.id!==id);save();renderToday()}
+
+/* ===== ฟอร์มบันทึกมื้อ ===== */
+function logForm(mk,editId){const ed=editId?S.logs.find(l=>l.id===editId):null;
+ window._logIngs=ed?ed.ings.map(x=>[...x]):[['',0]];
+ const recOpts=allRecipes().sort((a,b)=>a.n.localeCompare(b.n,'th')).map(r=>`<option value="${r.id}" ${ed&&ed.rid===r.id?'selected':''}>${r.n} (${fmt(nutOf(r.ings)[0])} กิโลแคลอรี)</option>`).join('');
+ openModal(`<h2>${ed?'แก้ไขบันทึก':'บันทึก'+MEALS[mk]}</h2>
+  <label class="fl">เลือกจากคลังเมนู (หรือพิมพ์เองด้านล่าง)</label>
+  <select id="lg-rec" onchange="logPickRecipe()"><option value="">– เมนูกำหนดเอง –</option>${recOpts}</select>
+  <label class="fl">ชื่อเมนู</label>
+  <input id="lg-name" value="${ed?esc(ed.name):''}" placeholder="เช่น ข้าวกล้อง + อกไก่">
+  <label class="fl">วัตถุดิบ + ปริมาณ (กรัม/มล.)</label>
+  <div id="lg-ings"></div>
+  <button class="btn sm ghost" onclick="window._logIngs.push(['',0]);drawLogIngs()">＋ เพิ่มวัตถุดิบ</button>
+  <button class="btn sm ghost" onclick="ingForm()">🆕 สร้างวัตถุดิบใหม่</button>
+  <div id="lg-nut" class="muted" style="margin-top:6px"></div>
+  <label class="fl">ปริมาณที่กิน</label>
+  <div class="seg" id="lg-eaten">${EATEN.map(([v,n])=>`<button class="${(ed?ed.eaten:1)===v?'on':''}" data-v="${v}" onclick="segSel(this)">${n}</button>`).join('')}</div>
+  <label class="fl">โน้ต</label>
+  <input id="lg-note" value="${ed?esc(ed.note||''):''}" placeholder="เช่น มื้อหลังเวท">
+  <div class="row" style="margin-top:14px">
+   <button class="btn pri" style="flex:1" onclick="saveLog('${mk}','${editId||''}')">💾 บันทึก</button>
+   ${ed?`<button class="btn" style="color:var(--red);border-color:var(--red)" onclick="delLog('${editId}')">ลบ</button>`:''}
+  </div>`);
+ drawLogIngs()}
+function logPickRecipe(){const rid=$('#lg-rec').value;if(!rid)return;const r=getRecipe(rid);
+ $('#lg-name').value=r.n;window._logIngs=r.ings.map(x=>[...x]);drawLogIngs()}
+function drawLogIngs(){const el=$('#lg-ings');if(!el)return;
+ el.innerHTML=window._logIngs.map((ig,i)=>`<div class="ingrow">
+   <select onchange="window._logIngs[${i}][0]=this.value;drawLogIngs()">${ingOptions(ig[0])}</select>
+   <input type="number" min="0" value="${ig[1]||''}" placeholder="กรัม" oninput="window._logIngs[${i}][1]=+this.value;updLogNut()">
+   <button class="x" onclick="window._logIngs.splice(${i},1);drawLogIngs()">✕</button></div>`).join('');
+ updLogNut()}
+function updLogNut(){const el=$('#lg-nut');if(!el)return;const n=nutOf(window._logIngs.filter(x=>x[0]));
+ el.innerHTML=`รวม: <b>${fmt(n[0])} กิโลแคลอรี</b> · โปรตีน ${fmt(n[1],1)} · ไขมัน ${fmt(n[2],1)} · คาร์บ ${fmt(n[3],1)} ก. · โซเดียม ${fmt(n[5])} มก.`}
+function saveLog(mk,editId){const name=$('#lg-name').value.trim();
+ if(!name){toast('ใส่ชื่อเมนูก่อนนะ');return}
+ const eaten=+($('#lg-eaten .on')?.dataset.v??1);
+ const ings=window._logIngs.filter(x=>x[0]&&x[1]>0);
+ const data={user:S.active,date:TODAY_DATE,meal:mk,name,rid:$('#lg-rec').value||null,ings,eaten,note:$('#lg-note').value.trim()};
+ if(editId)Object.assign(S.logs.find(x=>x.id===editId),data);
+ else S.logs.push({id:uid(),...data});
+ save();closeModal();toast('บันทึกแล้ว 💪');renderToday()}
+function delLog(id){if(!confirm('ลบบันทึกนี้?'))return;S.logs=S.logs.filter(l=>l.id!==id);save();closeModal();renderToday()}
+function logDetail(id){const l=S.logs.find(x=>x.id===id);if(!l)return;TODAY_DATE=l.date;logForm(l.meal,id)}
+
+/* ================= หน้า: อาหาร (คลังเมนู) ================= */
+let MENU_Q='',MENU_CAT='';
+function renderFood(){
+ const made={};S.logs.filter(l=>l.user===S.active&&l.rid).forEach(l=>made[l.rid]=(made[l.rid]||0)+1);
+ let list=allRecipes();
+ if(MENU_CAT)list=list.filter(r=>r.c===MENU_CAT);
+ if(MENU_Q)list=list.filter(r=>r.n.includes(MENU_Q)||r.ings.some(([id])=>ING[id]?.n.includes(MENU_Q)));
+ const cats=[...new Set(allRecipes().map(r=>r.c))];
+ let h=`<div class="row" style="margin-top:12px">
+  <div style="flex:1;position:relative">
+   <input placeholder="ค้นหาเมนู / วัตถุดิบ..." value="${esc(MENU_Q)}" oninput="MENU_Q=this.value;renderFood()" style="padding-left:34px">
+   <svg viewBox="0 0 32 32" style="width:17px;height:17px;position:absolute;left:11px;top:11px;color:var(--ink2)"><use href="#i-search"/></svg>
+  </div></div>
+ <div class="row" style="margin-top:8px">
+  <span class="chip ${!MENU_CAT?'sel':''}" onclick="MENU_CAT='';renderFood()">ทั้งหมด</span>
+  ${cats.map(c=>`<span class="chip ${MENU_CAT===c?'sel':''}" onclick="MENU_CAT='${c}';renderFood()">${c}</span>`).join('')}</div>
+ <div class="row" style="margin-top:9px">
+  <button class="btn sun sm" onclick="recipeForm()">＋ เพิ่มเมนูของฉัน</button>
+  <button class="btn sm" onclick="ingManager()">🧺 วัตถุดิบ${S.ings.length?' ('+S.ings.length+')':''}</button></div>`;
+ if(!list.length)h+=`<div class="empty">${svg('i-search')}ไม่พบเมนูที่ค้นหา</div>`;
+ list.forEach(r=>{const n=nutOf(r.ings);
+  h+=`<div class="card rcard" onclick="recipeDetail('${r.id}')">
+   <div class="ric"><svg viewBox="0 0 32 32"><use href="#${r.ic||'i-bowl'}"/></svg></div>
+   <div style="flex:1"><div class="nm">${esc(r.n)} ${r.id[0]==='u'?'<span class="tag" style="background:var(--coral2)">ของฉัน</span>':''}</div>
+    <div><span class="tag age">${r.c}</span>${made[r.id]?`<span class="tag" style="background:var(--mint2)">กิน ${made[r.id]} ครั้ง</span>`:''}</div>
+    <div class="muted" style="margin-top:2px">${fmt(n[0])} กิโลแคลอรี · P ${fmt(n[1])} · F ${fmt(n[2])} · C ${fmt(n[3])} ก.</div>
+   </div></div>`});
+ $('#view').innerHTML=h}
+function recipeDetail(id){const r=getRecipe(id);if(!r)return;
+ const n=nutOf(r.ings),t=target();
+ let h=`<h2>${esc(r.n)}</h2><div><span class="tag age">${r.c}</span></div>
+  ${r.tip?`<div class="okbox">💡 ${esc(r.tip)}</div>`:''}
+  <h4 class="sec">ส่วนประกอบ (1 ที่)</h4><div class="inglist card flat" style="margin:4px 0">`;
+ r.ings.forEach(([iid,g])=>{const it=ING[iid];if(it)h+=`<div class="it"><span>${it.n}</span><b>${g} ก.</b></div>`});
+ h+=`</div><h4 class="sec">คุณค่าทางโภชนาการ (ต่อที่)</h4><div class="card flat" style="margin:4px 0"><table class="nut">`;
+ NUTL.forEach(([k,nm,u],i)=>{h+=`<tr><td>${nm}</td><td>${fmt(n[i],1)} ${u}${i===0?` <span class="muted">(${Math.round(n[0]/t.kcal*100)}% ของเป้า)</span>`:''}</td></tr>`});
+ h+=`</table></div>`;
+ if(r.steps&&r.steps.length)h+=`<h4 class="sec">วิธีทำ</h4><ol class="steps">${r.steps.map(s=>`<li>${esc(s)}</li>`).join('')}</ol>`;
+ h+=`<button class="btn pri" style="width:100%;margin-top:12px" onclick="closeModal();TODAY_DATE=dstr();logFromRecipe('${r.id}')">🍽️ กินมื้อนี้</button>
+  ${r.id[0]==='u'?`<div class="row" style="margin-top:8px"><button class="btn sm" onclick="recipeForm('${r.id}')">✏️ แก้ไข</button><button class="btn sm" style="color:var(--red);border-color:var(--red)" onclick="delRecipe('${r.id}')">ลบเมนู</button></div>`:''}`;
+ openModal(h)}
+function logFromRecipe(rid){const h=new Date().getHours();
+ const mk=h<10?'br':h<14?'lu':h<17?'sn':'di';
+ logForm(mk);setTimeout(()=>{$('#lg-rec').value=rid;logPickRecipe()},50)}
+function delRecipe(id){if(!confirm('ลบเมนูนี้?'))return;S.recipes=S.recipes.filter(r=>r.id!==id);save();closeModal();renderFood()}
+function recipeForm(editId){const ed=editId?getRecipe(editId):null;
+ window._rIngs=ed?ed.ings.map(x=>[...x]):[['',0]];
+ openModal(`<h2>${ed?'แก้ไขเมนู':'เพิ่มเมนูของฉัน'}</h2>
+  <label class="fl">ชื่อเมนู</label><input id="rf-name" value="${ed?esc(ed.n):''}" placeholder="เช่น มื้อ meal prep ของฉัน">
+  <label class="fl">หมวด</label>
+  <select id="rf-c">${['คลีน/ฟิต','จานเดียว','มื้อเช้า/ว่าง','เครื่องดื่ม','อื่นๆ'].map(c=>`<option ${ed&&ed.c===c?'selected':''}>${c}</option>`).join('')}</select>
+  <label class="fl">วัตถุดิบ + กรัม</label><div id="rf-ings"></div>
+  <button class="btn sm ghost" onclick="window._rIngs.push(['',0]);drawRIngs()">＋ เพิ่มวัตถุดิบ</button>
+  <button class="btn sm ghost" onclick="ingForm()">🆕 สร้างวัตถุดิบใหม่</button>
+  <div id="rf-nut" class="muted" style="margin-top:5px"></div>
+  <label class="fl">วิธีทำ (ไม่บังคับ, 1 บรรทัดต่อขั้นตอน)</label>
+  <textarea id="rf-steps" rows="3">${ed&&ed.steps?esc(ed.steps.join('\n')):''}</textarea>
+  <button class="btn pri" style="width:100%;margin-top:13px" onclick="saveRecipe('${editId||''}')">💾 บันทึกเมนู</button>`);
+ drawRIngs()}
+function drawRIngs(){const el=$('#rf-ings');if(!el)return;
+ el.innerHTML=window._rIngs.map((ig,i)=>`<div class="ingrow">
+  <select onchange="window._rIngs[${i}][0]=this.value;drawRIngs()">${ingOptions(ig[0])}</select>
+  <input type="number" min="0" value="${ig[1]||''}" placeholder="กรัม" oninput="window._rIngs[${i}][1]=+this.value;updRNut()">
+  <button class="x" onclick="window._rIngs.splice(${i},1);drawRIngs()">✕</button></div>`).join('');updRNut()}
+function updRNut(){const el=$('#rf-nut');if(!el)return;const n=nutOf(window._rIngs.filter(x=>x[0]));
+ el.innerHTML=`รวม: <b>${fmt(n[0])} กิโลแคลอรี</b> · P ${fmt(n[1],1)} · F ${fmt(n[2],1)} · C ${fmt(n[3],1)} ก.`}
+function saveRecipe(editId){const n=$('#rf-name').value.trim();
+ if(!n){toast('ใส่ชื่อเมนูก่อนนะ');return}
+ const ings=window._rIngs.filter(x=>x[0]&&x[1]>0);
+ if(!ings.length){toast('เพิ่มวัตถุดิบอย่างน้อย 1 อย่าง');return}
+ const data={n,c:$('#rf-c').value,ic:'i-star',ings,steps:$('#rf-steps').value.split('\n').map(s=>s.trim()).filter(Boolean)};
+ if(editId)Object.assign(getRecipe(editId),data);else S.recipes.push({id:'u'+uid(),...data});
+ save();closeModal();toast('บันทึกเมนูแล้ว ⭐');renderFood()}
+
+/* ================= หน้า: ร่างกาย (BMI + กราฟ) ================= */
+function bodyChart(u){const recs=bodyRecs(u);if(recs.length<2)return'';
+ const W=340,H=200,pl=32,pr=10,pt=10,pb=20;
+ const t0=new Date(recs[0].date+'T00:00').getTime(),t1=new Date(recs[recs.length-1].date+'T00:00').getTime();
+ const ws=recs.map(r=>r.w);
+ const guides=[[18.5,'BMI 18.5'],[23,'BMI 23'],[25,'BMI 25']].map(([b,lb])=>[b*Math.pow(u.h/100,2),lb]);
+ let lo=Math.min(...ws,...guides.map(g=>g[0]).filter(v=>v>Math.min(...ws)-8&&v<Math.max(...ws)+8))-2;
+ let hi=Math.max(...ws)+2;lo=Math.floor(lo);hi=Math.ceil(hi);if(hi-lo<4){lo-=2;hi+=2}
+ const X=t=>pl+(t1===t0?0.5:(t-t0)/(t1-t0))*(W-pl-pr),Y=v=>pt+(1-(v-lo)/(hi-lo))*(H-pt-pb);
+ let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">`;
+ for(let v=lo;v<=hi;v+=Math.max(1,Math.round((hi-lo)/5)))s+=`<line x1="${pl}" y1="${Y(v)}" x2="${W-pr}" y2="${Y(v)}" stroke="#efe3d0"/><text x="${pl-4}" y="${Y(v)+3}" font-size="8" fill="#9a8270" text-anchor="end">${v}</text>`;
+ guides.forEach(([w,lb])=>{if(w>lo&&w<hi)s+=`<line x1="${pl}" y1="${Y(w)}" x2="${W-pr}" y2="${Y(w)}" stroke="#d8c7ab" stroke-dasharray="4 3"/><text x="${W-pr}" y="${Y(w)-2}" font-size="7.5" fill="#b39f85" text-anchor="end">${lb}</text>`});
+ s+=`<polyline points="${recs.map(r=>X(new Date(r.date+'T00:00').getTime()).toFixed(1)+','+Y(r.w).toFixed(1)).join(' ')}" fill="none" stroke="var(--coral)" stroke-width="2"/>`;
+ recs.forEach(r=>s+=`<circle cx="${X(new Date(r.date+'T00:00').getTime()).toFixed(1)}" cy="${Y(r.w).toFixed(1)}" r="3.2" fill="var(--coral)" stroke="#fff" stroke-width="1.3"/>`);
+ s+=`<text x="${pl}" y="${H-6}" font-size="8" fill="#9a8270">${thDate(recs[0].date)}</text><text x="${W-pr}" y="${H-6}" font-size="8" fill="#9a8270" text-anchor="end">${thDate(recs[recs.length-1].date)}</text>`;
+ return s+'</svg>'}
+function renderBody(){const u=user(),recs=bodyRecs(u),t=target();
+ const w=curW(u),b=bmi(w,u.h),[cat,bg,cl]=bmiCat(b);
+ const idLo=(18.5*Math.pow(u.h/100,2)).toFixed(1),idHi=(22.9*Math.pow(u.h/100,2)).toFixed(1);
+ const first=recs[0];
+ let h=`<div style="margin-top:10px"><button class="btn pri" style="width:100%" onclick="bodyForm()">＋ บันทึกน้ำหนัก/สัดส่วน</button></div>`;
+ h+=`<div class="card"><h3>${svg('i-grow','width:19px;color:var(--coral)')} ${esc(u.name)} · ${ageY(u)} ปี · ${u.h} ซม.</h3>
+  <div class="kpis">
+   <div class="kpi" style="background:${bg}"><b>${b.toFixed(1)}</b><span>BMI · <b style="color:${cl}">${cat}</b></span></div>
+   <div class="kpi"><b>${w} กก.</b><span>น้ำหนักปัจจุบัน${first&&first.w!==w?`<br>${w>first.w?'+':''}${(w-first.w).toFixed(1)} กก. จากเริ่มต้น`:''}</span></div>
+   <div class="kpi"><b>${fmt(t.bmr)}</b><span>BMR (กิโลแคลอรี/วัน)</span></div>
+   <div class="kpi"><b>${fmt(t.tdee)}</b><span>TDEE เผาทั้งวัน</span></div>
+  </div>
+  <div class="muted" style="font-size:11.5px;margin-top:7px">น้ำหนักสมส่วนของส่วนสูง ${u.h} ซม. คือ <b>${idLo}–${idHi} กก.</b> (BMI 18.5–22.9 เกณฑ์เอเชีย) · เป้าพลังงาน ${fmt(t.kcal)} กิโลแคลอรี/วัน ตามเป้าหมาย "${GOALS[u.goal||'keep']}"</div></div>`;
+ if(recs.length>1)h+=`<div class="card"><h3>📉 กราฟน้ำหนัก</h3>${bodyChart(u)}</div>`;
+ if(recs.length){h+=`<div class="card"><h3>📒 ประวัติ</h3>`;
+  [...recs].reverse().forEach(r=>{const rb=bmi(r.w,u.h);
+   h+=`<div class="trow"><div style="flex:1"><b>${thDate(r.date)}</b>
+    <div class="muted">⚖️ ${r.w} กก. · BMI ${rb.toFixed(1)}${r.fat?` · ไขมัน ${r.fat}%`:''}${r.waist?` · เอว ${r.waist} ซม.`:''}</div></div>
+    <button class="btn sm" onclick="bodyForm('${r.id}')">✏️</button><button class="x" onclick="delBody('${r.id}')">✕</button></div>`});
+  h+='</div>'}
+ else h+=`<div class="empty">${svg('i-grow')}ยังไม่มีบันทึก ชั่งน้ำหนักแล้วมาจดกัน!</div>`;
+ h+=`<p class="muted" style="font-size:10.5px;padding:0 4px">BMI เกณฑ์เอเชีย (WHO Asia-Pacific) · BMR สูตร Mifflin-St Jeor · ค่าประมาณเพื่อติดตามแนวโน้ม ไม่ใช่คำวินิจฉัยทางการแพทย์</p>`;
+ $('#view').innerHTML=h}
+function bodyForm(editId){const ed=editId?S.body.find(x=>x.id===editId):null;
+ openModal(`<h2>${ed?'แก้ไขบันทึก':'บันทึกร่างกาย'}</h2>
+  <label class="fl">วันที่</label><input id="bf-date" type="date" value="${ed?ed.date:dstr()}" max="${dstr()}">
+  <label class="fl">น้ำหนัก (กก.)</label><input id="bf-w" type="number" step="0.1" min="20" max="250" value="${ed?ed.w:''}" placeholder="เช่น 62.5">
+  <label class="fl">เปอร์เซ็นต์ไขมัน (ถ้ามีเครื่องวัด)</label><input id="bf-fat" type="number" step="0.1" min="3" max="60" value="${ed&&ed.fat?ed.fat:''}" placeholder="ไม่บังคับ">
+  <label class="fl">รอบเอว (ซม.)</label><input id="bf-waist" type="number" step="0.5" min="40" max="200" value="${ed&&ed.waist?ed.waist:''}" placeholder="ไม่บังคับ">
+  <button class="btn pri" style="width:100%;margin-top:13px" onclick="saveBody('${editId||''}')">💾 บันทึก</button>`)}
+function saveBody(editId){const date=$('#bf-date').value,w=+$('#bf-w').value;
+ if(!date||!w){toast('ใส่วันที่และน้ำหนักก่อนนะ');return}
+ const data={date,w,fat:+$('#bf-fat').value||null,waist:+$('#bf-waist').value||null};
+ if(editId)Object.assign(S.body.find(x=>x.id===editId),data);
+ else S.body.push({id:uid(),user:S.active,...data});
+ save();closeModal();toast('บันทึกแล้ว 📉');renderBody()}
+function delBody(id){if(!confirm('ลบบันทึกนี้?'))return;S.body=S.body.filter(x=>x.id!==id);save();renderBody()}
+
+/* ================= หน้า: สรุปรายเดือน ================= */
+let STAT_MONTH=dstr().slice(0,7);
+function renderStats(){const u=user(),t=target();
+ const[y,mo]=STAT_MONTH.split('-').map(Number),dim=new Date(y,mo,0).getDate();
+ const logs=S.logs.filter(l=>l.user===u.id&&l.date.startsWith(STAT_MONTH));
+ const exs=S.ex.filter(e=>e.user===u.id&&e.date.startsWith(STAT_MONTH));
+ const dayK={},dayP={};let sumK=0,sumP=0;
+ logs.forEach(l=>{const n=nutOf(l.ings),e=l.eaten??1;
+  sumK+=n[0]*e;sumP+=n[1]*e;dayK[l.date]=(dayK[l.date]||0)+n[0]*e;dayP[l.date]=(dayP[l.date]||0)+n[1]*e});
+ const days=Object.keys(dayK).length;
+ const okDays=Object.values(dayK).filter(k=>k>=t.kcal*0.9&&k<=t.kcal*1.1).length;
+ const burn=exs.reduce((s,e)=>s+e.kcal,0);
+ const top={};logs.forEach(l=>top[l.name]=(top[l.name]||0)+1);
+ const tops=Object.entries(top).sort((a,b)=>b[1]-a[1]).slice(0,5);
+ const brecs=bodyRecs(u).filter(r=>r.date.startsWith(STAT_MONTH));
+ window._pm=()=>{const d=new Date(y,mo-2,1);STAT_MONTH=dstr(d).slice(0,7);renderStats()};
+ window._nm=()=>{const d=new Date(y,mo,1);STAT_MONTH=dstr(d).slice(0,7);renderStats()};
+ let h=`<div class="row between" style="margin-top:10px">
+  <button class="btn sm ghost" onclick="_pm()">‹</button><b>📊 ${THM[mo-1]} ${y+543}</b>
+  <button class="btn sm ghost" onclick="_nm()" ${STAT_MONTH>=dstr().slice(0,7)?'disabled':''}>›</button></div>`;
+ h+=`<div class="card"><div class="kpis">
+  <div class="kpi"><b>${days}</b><span>วันที่มีบันทึก</span></div>
+  <div class="kpi"><b>${days?fmt(sumK/days):0}</b><span>กิโลแคลอรีเฉลี่ย/วัน</span></div>
+  <div class="kpi"><b>${days?fmt(sumP/days):0} ก.</b><span>โปรตีนเฉลี่ย/วัน (เป้า ${t.prot})</span></div>
+  <div class="kpi"><b>${okDays}</b><span>วันที่เข้าเป้า ±10%</span></div>
+  <div class="kpi"><b>${exs.length}</b><span>ครั้งที่ออกกำลังกาย</span></div>
+  <div class="kpi"><b>${fmt(burn)}</b><span>กิโลแคลอรีที่เผาเพิ่ม</span></div>
+ </div>
+ ${brecs.length>1?`<div class="okbox" style="margin-top:9px">⚖️ เดือนนี้น้ำหนัก ${brecs[0].w} → ${brecs[brecs.length-1].w} กก. (${(brecs[brecs.length-1].w-brecs[0].w>0?'+':'')+(brecs[brecs.length-1].w-brecs[0].w).toFixed(1)} กก.)</div>`:''}</div>`;
+ h+=`<div class="card"><h3>${svg('i-chart','width:19px;color:var(--coral)')} พลังงานรายวัน <span class="muted" style="font-size:11px;font-weight:400">เป้า ${fmt(t.kcal)}</span></h3><div class="mchart">`;
+ const mx=Math.max(t.kcal*1.2,...Object.values(dayK),1);
+ for(let d=1;d<=dim;d++){const ds=STAT_MONTH+'-'+String(d).padStart(2,'0'),k=dayK[ds]||0;
+  h+=`<i class="${k&&k<t.kcal*0.7?'lo':''}" style="height:${Math.max(2,k/mx*100)}%" onclick="TODAY_DATE='${ds}';go('today')"></i>`}
+ h+=`</div><div class="row between muted" style="font-size:10px"><span>1</span><span>${dim} ${THM[mo-1]}</span></div></div>`;
+ if(tops.length){h+=`<div class="card"><h3>${svg('i-star','width:19px;color:var(--sun)')} เมนูยอดฮิต</h3>`;
+  tops.forEach(([n,c],i)=>{h+=`<div class="row between" style="padding:4px 0;border-bottom:1px dashed #ecdfca"><span>${['🥇','🥈','🥉','4.','5.'][i]} ${esc(n)}</span><b>${c} ครั้ง</b></div>`});
+  h+='</div>'}
+ if(!logs.length)h+=`<div class="empty">${svg('i-chart')}เดือนนี้ยังไม่มีบันทึก</div>`;
+ $('#view').innerHTML=h}
+
+/* ================= ตั้งค่า / โปรไฟล์ ================= */
+function openSettings(){let h=`<h2>⚙️ ตั้งค่า</h2><h4 class="sec">โปรไฟล์</h4>`;
+ S.users.forEach(u=>{h+=`<div class="card flat row between" style="margin:6px 0">
+  <div><b>💪 ${esc(u.name)}</b><div class="muted">${u.sex==='f'?'หญิง':'ชาย'} · ${ageY(u)} ปี · ${u.h} ซม. · ${GOALS[u.goal||'keep']}</div></div>
+  <div><button class="btn sm" onclick="userForm('${u.id}')">✏️</button>
+  <button class="btn sm" style="color:var(--red);border-color:var(--red)" onclick="delUser('${u.id}')">ลบ</button></div></div>`});
+ h+=`<button class="btn sun sm" onclick="userForm()">＋ เพิ่มโปรไฟล์</button>
+ <h4 class="sec">ข้อมูล</h4>
+ <div class="row">
+  <button class="btn sm mint" onclick="exportData()">⬇️ สำรองข้อมูล</button>
+  <button class="btn sm" onclick="document.getElementById('impfile').click()">⬆️ กู้คืนข้อมูล</button></div>
+ <input type="file" id="impfile" accept=".json" style="display:none" onchange="importData(this)">
+ <p class="muted" style="font-size:11.5px">ข้อมูลเก็บในเครื่องนี้เท่านั้น แนะนำสำรองเป็นระยะ</p>
+ <h4 class="sec">วิธีติดตั้งเป็นแอป</h4>
+ <p class="muted" style="font-size:12.5px">Android: เปิดด้วย Chrome → ⋮ → "เพิ่มลงในหน้าจอหลัก" · iPhone: เปิดลิงก์ด้วย Safari → ปุ่มแชร์ → "เพิ่มลงไปยังหน้าจอโฮม"</p>
+ <p class="muted" style="font-size:11px">⚕️ ค่าโภชนาการ/BMI/TDEE เป็นค่าประมาณเพื่อการวางแผน ไม่ใช่คำแนะนำทางการแพทย์ ผู้มีโรคประจำตัวควรปรึกษาแพทย์หรือนักโภชนาการ</p>`;
+ openModal(h)}
+function userForm(editId){const ed=editId?S.users.find(u=>u.id===editId):null;
+ openModal(`<h2>${ed?'แก้ไขโปรไฟล์':'สร้างโปรไฟล์'}</h2>
+ <label class="fl">ชื่อ</label><input id="uf-name" value="${ed?esc(ed.name):''}" placeholder="เช่น ไอยู">
+ <label class="fl">เพศ</label><div class="seg" id="uf-sex">
+  <button data-v="m" class="${!ed||ed.sex==='m'?'on':''}" onclick="segSel(this)">👨 ชาย</button>
+  <button data-v="f" class="${ed&&ed.sex==='f'?'on':''}" onclick="segSel(this)">👩 หญิง</button></div>
+ <div class="row"><div style="flex:1"><label class="fl">วันเกิด</label><input id="uf-bd" type="date" value="${ed?ed.bd:''}" max="${dstr()}"></div>
+ <div style="flex:1"><label class="fl">ส่วนสูง (ซม.)</label><input id="uf-h" type="number" min="100" max="230" value="${ed?ed.h:''}" placeholder="165"></div></div>
+ ${ed?'':'<label class="fl">น้ำหนักปัจจุบัน (กก.)</label><input id="uf-w" type="number" step="0.1" min="20" max="250" placeholder="60">'}
+ <label class="fl">กิจกรรมในชีวิตประจำวัน</label>
+ <select id="uf-act">${ACTS.map(([v,n])=>`<option value="${v}" ${ed&&ed.act===v?'selected':''}>${n}</option>`).join('')}</select>
+ <label class="fl">เป้าหมาย</label>
+ <select id="uf-goal">${Object.entries(GOALS).map(([k,n])=>`<option value="${k}" ${ed&&ed.goal===k?'selected':''}>${n}</option>`).join('')}</select>
+ <button class="btn pri" style="width:100%;margin-top:13px" onclick="saveUser('${editId||''}')">💾 บันทึก</button>`)}
+function saveUser(editId){const name=$('#uf-name').value.trim(),bd=$('#uf-bd').value,h=+$('#uf-h').value;
+ if(!name||!bd||!h){toast('กรอกชื่อ วันเกิด และส่วนสูงก่อนนะ');return}
+ const sex=$('#uf-sex .on')?.dataset.v||'m',act=+$('#uf-act').value,goal=$('#uf-goal').value;
+ if(editId)Object.assign(S.users.find(u=>u.id===editId),{name,bd,h,sex,act,goal});
+ else{const id=uid(),w=+($('#uf-w')?.value)||60;
+  S.users.push({id,name,bd,h,sex,act,goal,w0:w});S.active=id;
+  S.body.push({id:uid(),user:id,date:dstr(),w})}
+ save();closeModal();toast('บันทึกแล้ว 💪');renderAll()}
+function delUser(id){if(!confirm('ลบโปรไฟล์นี้ รวมบันทึกทั้งหมด?'))return;
+ S.users=S.users.filter(u=>u.id!==id);S.logs=S.logs.filter(l=>l.user!==id);
+ S.body=S.body.filter(b=>b.user!==id);S.ex=S.ex.filter(e=>e.user!==id);
+ if(S.active===id)S.active=S.users[0]?.id||null;
+ save();closeModal();renderAll()}
+function exportData(){const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(b);
+ a.download='IUFIT-สำรอง-'+dstr()+'.json';a.click();toast('ดาวน์โหลดไฟล์สำรองแล้ว')}
+function importData(inp){const f=inp.files[0];if(!f)return;
+ const r=new FileReader();r.onload=()=>{try{const d=JSON.parse(r.result);
+  if(!d.users)throw 0;S=d;['logs','recipes','ings','body','ex'].forEach(k=>S[k]=S[k]||[]);S.water=S.water||{};mergeIngs();
+  save();closeModal();toast('กู้คืนสำเร็จ ✓');renderAll()}
+  catch(e){toast('ไฟล์ไม่ถูกต้อง')}};r.readAsText(f)}
+
+/* ================= เริ่มต้น ================= */
+load();renderAll();
+if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){navigator.serviceWorker.register('./sw.js')}
+</script>
+</body>
+</html>
