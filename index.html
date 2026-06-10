@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#0e1422">
+<meta name="theme-color" content="#eaf6fa">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="IUFIT">
@@ -15,30 +15,30 @@
 <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#0e1422; --ink:#e8edf5; --ink2:#8b97ab;
-  --coral:#4f8cff; --coral2:#1c2a47;
-  --mint:#2dd4bf; --mint2:#11302f;
-  --sun:#f5a623; --sun2:#33270f;
-  --berry:#818cf8; --berry2:#232a4a;
-  --red:#f06262; --card:#161f30;
+  --bg:#eaf6fa; --ink:#15394a; --ink2:#5e7f90;
+  --coral:#0e9bc7; --coral2:#d6effa;
+  --mint:#13b5a2; --mint2:#d7f4ef;
+  --sun:#f5a623; --sun2:#fdf0d5;
+  --berry:#5b7fd6; --berry2:#e3eafc;
+  --red:#e35d5d; --card:#ffffff;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:'Kanit','Segoe UI',sans-serif;font-size:15px;line-height:1.45}
 .app{max-width:520px;margin:0 auto;padding:0 12px 92px}
-header{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 2px 6px;display:flex;align-items:center;gap:10px;border-bottom:2px solid #223047}
+header{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 2px 6px;display:flex;align-items:center;gap:10px;border-bottom:2px solid #dcecf4}
 header .logo{width:44px;height:44px;flex:none}
 header h1{font-size:19px;margin:0;flex:1;line-height:1.2}
 header h1 small{display:block;font-size:11px;color:var(--ink2);font-weight:400}
-.iconbtn{background:var(--card);border:1.5px solid #2c3a52;border-radius:12px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink)}
+.iconbtn{background:var(--card);border:1.5px solid #b9d8e6;border-radius:12px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink)}
 .iconbtn svg{width:21px;height:21px}
-.chip{display:inline-flex;align-items:center;gap:5px;background:#1a2336;border:1px solid #2c3a52;border-radius:999px;padding:3px 11px;font-size:13px;cursor:pointer}
+.chip{display:inline-flex;align-items:center;gap:5px;background:#e3f2f9;border:1px solid #b9d8e6;border-radius:999px;padding:3px 11px;font-size:13px;cursor:pointer}
 .chip.sel{background:var(--coral);color:#fff}
-.chip.warn{background:#3a1b22;border-color:var(--red);color:var(--red)}
-.card{background:var(--card);border:1.5px solid #2c3a52;border-radius:14px;padding:13px 14px;margin:11px 0;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+.chip.warn{background:#fde3e3;border-color:var(--red);color:var(--red)}
+.card{background:var(--card);border:1.5px solid #b9d8e6;border-radius:14px;padding:13px 14px;margin:11px 0;box-shadow:0 4px 12px rgba(20,80,110,.13)}
 .card.flat{box-shadow:none}
 .card h3{margin:0 0 8px;font-size:16px;display:flex;align-items:center;gap:7px}
 .card h3 svg{width:20px;height:20px;flex:none}
-.btn{font-family:inherit;font-size:14px;font-weight:600;background:var(--card);color:var(--ink);border:1.5px solid #2c3a52;border-radius:12px;padding:8px 15px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.btn{font-family:inherit;font-size:14px;font-weight:600;background:var(--card);color:var(--ink);border:1.5px solid #b9d8e6;border-radius:12px;padding:8px 15px;cursor:pointer;box-shadow:0 2px 6px rgba(20,80,110,.12)}
 .btn:active{transform:translate(2px,2px);box-shadow:none}
 .btn.pri{background:var(--coral);color:#fff}
 .btn.mint{background:var(--mint);color:#fff}
@@ -49,11 +49,11 @@ header h1 small{display:block;font-size:11px;color:var(--ink2);font-weight:400}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .row.between{justify-content:space-between}
 .muted{color:var(--ink2);font-size:12.5px}
-input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink);background:#101827;border:1.5px solid #2c3a52;border-radius:10px;padding:8px 10px;width:100%;outline:none}
+input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink);background:#ffffff;border:1.5px solid #b9d8e6;border-radius:10px;padding:8px 10px;width:100%;outline:none}
 textarea{resize:vertical;min-height:60px}
 label.fl{display:block;font-size:12.5px;font-weight:600;margin:9px 0 4px;color:var(--ink2)}
 /* bottom nav */
-nav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--card);border-top:2px solid var(--ink);display:flex;max-width:520px;margin:0 auto;border-radius:18px 18px 0 0;box-shadow:0 -4px 16px rgba(0,0,0,.45)}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--card);border-top:2px solid var(--ink);display:flex;max-width:520px;margin:0 auto;border-radius:18px 18px 0 0;box-shadow:0 -4px 14px rgba(20,80,110,.16)}
 nav button{flex:1;background:none;border:none;font-family:inherit;font-size:10.5px;color:var(--ink2);padding:8px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
 nav button svg{width:23px;height:23px}
 nav button.on{color:var(--coral);font-weight:700}
@@ -61,11 +61,11 @@ nav button.on svg{stroke-width:2.4}
 /* meal log */
 .mealhead{display:flex;align-items:center;gap:8px;margin:14px 2px 4px}
 .mealhead .t{font-weight:700;font-size:15px}
-.logitem{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1.5px solid #223047}
+.logitem{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1.5px solid #dcecf4}
 .logitem:last-child{border-bottom:none}
-.logitem .ic{width:38px;height:38px;flex:none;background:#1a2336;border:1px solid #2c3a52;border-radius:10px;display:flex;align-items:center;justify-content:center}
+.logitem .ic{width:38px;height:38px;flex:none;background:#e3f2f9;border:1px solid #b9d8e6;border-radius:10px;display:flex;align-items:center;justify-content:center}
 .logitem .ic svg{width:22px;height:22px}
-.bar{height:13px;background:#0d1320;border:1px solid #2c3a52;border-radius:8px;overflow:hidden;position:relative}
+.bar{height:13px;background:#ddeef6;border:1px solid #b9d8e6;border-radius:8px;overflow:hidden;position:relative}
 .bar i{display:block;height:100%;background:var(--mint);border-radius:0 6px 6px 0;transition:width .4s}
 .bar.over i{background:var(--sun)}
 .nutrow{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12.5px}
@@ -74,33 +74,33 @@ nav button.on svg{stroke-width:2.4}
 .nutrow .vv{width:96px;flex:none;text-align:right;color:var(--ink2);font-size:11.5px}
 /* recipe cards */
 .rcard{display:flex;gap:11px;align-items:center;cursor:pointer}
-.rcard .ric{width:52px;height:52px;flex:none;background:var(--mint2);border:1.5px solid #2c3a52;border-radius:12px;display:flex;align-items:center;justify-content:center}
+.rcard .ric{width:52px;height:52px;flex:none;background:var(--mint2);border:1.5px solid #b9d8e6;border-radius:12px;display:flex;align-items:center;justify-content:center}
 .rcard .ric svg{width:32px;height:32px}
 .rcard .nm{font-weight:700;font-size:14.5px}
-.tag{display:inline-block;font-size:10.5px;background:var(--berry2);border:1px solid #324158;border-radius:6px;padding:1px 7px;margin:2px 3px 0 0}
+.tag{display:inline-block;font-size:10.5px;background:var(--berry2);border:1px solid #b9d8e6;border-radius:6px;padding:1px 7px;margin:2px 3px 0 0}
 .tag.age{background:var(--sun2)}
-.tag.al{background:#3a1b22;color:var(--red);border-color:var(--red)}
+.tag.al{background:#fde3e3;color:var(--red);border-color:var(--red)}
 /* modal */
-.mwrap{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.mwrap{position:fixed;inset:0;background:rgba(21,57,74,.45);z-index:50;display:none;align-items:flex-end;justify-content:center}
 .mwrap.show{display:flex}
-.modal{background:var(--bg);width:100%;max-width:520px;max-height:88vh;overflow-y:auto;border-radius:26px 26px 0 0;border:1.5px solid #2c3a52;border-bottom:none;padding:16px 16px 28px;animation:up .22s ease;position:relative}
+.modal{background:var(--bg);width:100%;max-width:520px;max-height:88vh;overflow-y:auto;border-radius:26px 26px 0 0;border:1.5px solid #b9d8e6;border-bottom:none;padding:16px 16px 28px;animation:up .22s ease;position:relative}
 @keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
 .modal h2{font-size:18px;margin:2px 36px 10px 2px}
-.mclose{position:absolute;top:12px;right:14px;width:34px;height:34px;border-radius:50%;border:1.5px solid #2c3a52;background:#101827;font-size:16px;color:var(--ink);cursor:pointer;font-family:inherit;z-index:2}
+.mclose{position:absolute;top:12px;right:14px;width:34px;height:34px;border-radius:50%;border:1.5px solid #b9d8e6;background:#ffffff;font-size:16px;color:var(--ink);cursor:pointer;font-family:inherit;z-index:2}
 /* tables */
 table.nut{width:100%;border-collapse:collapse;font-size:12.5px}
-table.nut td{padding:3px 4px;border-bottom:1px solid #223047}
+table.nut td{padding:3px 4px;border-bottom:1px solid #dcecf4}
 table.nut td:last-child{text-align:right;font-weight:600}
 .steps{padding-left:0;list-style:none;counter-reset:s}
 .steps li{counter-increment:s;display:flex;gap:9px;margin:8px 0;font-size:13.5px}
-.steps li::before{content:counter(s);flex:none;width:22px;height:22px;background:var(--coral);color:#fff;border:1px solid #2c3a52;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.steps li::before{content:counter(s);flex:none;width:22px;height:22px;background:var(--coral);color:#fff;border:1px solid #b9d8e6;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
 .inglist{font-size:13.5px}
-.inglist .it{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #223047}
+.inglist .it{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #dcecf4}
 /* plan */
 .pday{margin:10px 0}
 .pday .dt{font-weight:700;font-size:13.5px;margin-bottom:4px}
 .pslot{display:flex;gap:6px;flex-wrap:wrap}
-.pslot .ps{flex:1;min-width:45%;background:#101827;border:1.7px dashed var(--ink2);border-radius:10px;padding:6px 8px;font-size:12px;cursor:pointer;min-height:44px}
+.pslot .ps{flex:1;min-width:45%;background:#ffffff;border:1.7px dashed var(--ink2);border-radius:10px;padding:6px 8px;font-size:12px;cursor:pointer;min-height:44px}
 .pslot .ps.has{border-style:solid;border-color:var(--ink);background:var(--mint2)}
 .pslot .ps b{display:block;font-size:11px;color:var(--ink2);font-weight:600}
 /* stats */
@@ -108,26 +108,26 @@ table.nut td:last-child{text-align:right;font-weight:600}
 .mchart i{flex:1;background:var(--coral);border-radius:4px 4px 0 0;min-height:2px;opacity:.85}
 .mchart i.lo{background:var(--sun)}
 .kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.kpi{background:#1a2336;border:1px solid #2c3a52;border-radius:12px;padding:8px 10px;text-align:center}
+.kpi{background:#e3f2f9;border:1px solid #b9d8e6;border-radius:12px;padding:8px 10px;text-align:center}
 .kpi b{font-size:19px;display:block}
 .kpi span{font-size:11px;color:var(--ink2)}
 /* trial */
-.trow{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1.5px solid #223047}
+.trow{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1.5px solid #dcecf4}
 .trow:last-child{border-bottom:none}
-.dot{width:12px;height:12px;border-radius:50%;border:1px solid #2c3a52;flex:none}
+.dot{width:12px;height:12px;border-radius:50%;border:1px solid #b9d8e6;flex:none}
 .dot.try{background:var(--sun)} .dot.pass{background:var(--mint)} .dot.fail{background:var(--red)}
 .empty{text-align:center;color:var(--ink2);padding:22px 8px;font-size:13.5px}
 .empty svg{width:54px;height:54px;opacity:.5;display:block;margin:0 auto 8px}
-.seg{display:flex;gap:0;border:1.5px solid #2c3a52;border-radius:14px;overflow:hidden;background:#101827}
+.seg{display:flex;gap:0;border:1.5px solid #b9d8e6;border-radius:14px;overflow:hidden;background:#ffffff}
 .seg button{flex:1;border:none;background:none;font-family:inherit;font-size:12.5px;padding:7px 4px;cursor:pointer;color:var(--ink2)}
 .seg button.on{background:var(--coral);color:#fff;font-weight:700}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:#22304b;color:#fff;padding:9px 18px;border-radius:16px;font-size:13.5px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none;max-width:88%;text-align:center}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:#15394a;color:#fff;padding:9px 18px;border-radius:16px;font-size:13.5px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none;max-width:88%;text-align:center}
 .toast.show{opacity:1}
 .ingrow{display:flex;gap:6px;margin:5px 0;align-items:center}
 .ingrow select{flex:1}
 .ingrow input{width:72px;flex:none}
-.ingrow .x{flex:none;width:30px;height:30px;border-radius:50%;border:1.8px solid var(--red);background:#101827;color:var(--red);cursor:pointer;font-family:inherit}
-.warnbox{background:#3a1b22;border:2px solid var(--red);border-radius:10px;padding:8px 12px;color:var(--red);font-size:13px;margin:8px 0}
+.ingrow .x{flex:none;width:30px;height:30px;border-radius:50%;border:1.8px solid var(--red);background:#ffffff;color:var(--red);cursor:pointer;font-family:inherit}
+.warnbox{background:#fde3e3;border:2px solid var(--red);border-radius:10px;padding:8px 12px;color:var(--red);font-size:13px;margin:8px 0}
 .okbox{background:var(--mint2);border:2px solid var(--mint);border-radius:10px;padding:8px 12px;font-size:13px;margin:8px 0}
 h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 </style>
@@ -164,7 +164,7 @@ h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 <div class="app">
 <header>
   <svg class="logo" viewBox="0 0 32 32" style="color:var(--coral)"><use href="#i-fit"/></svg>
-  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.1</small></h1>
+  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.3.1</small></h1>
   <button class="iconbtn" onclick="openHelp()" title="Help" style="font-size:16px;font-weight:700">?</button>
   <button class="iconbtn" onclick="toggleLang()" id="langbtn" title="Language" style="font-size:11.5px;font-weight:700">EN</button>
   <button class="iconbtn" onclick="openSettings()" title="Settings"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
@@ -315,8 +315,8 @@ function bmi(w,h){return w/Math.pow(h/100,2)}
 function bmiCat(b){if(b<18.5)return['น้ำหนักน้อยกว่าเกณฑ์','var(--sun2)','var(--ink)'];
  if(b<23)return['สมส่วน','var(--mint2)','var(--ink)'];
  if(b<25)return['น้ำหนักเกิน','var(--sun2)','var(--ink)'];
- if(b<30)return['อ้วน (ระดับ 1)','#3a1b22','var(--red)'];
- return['อ้วนมาก (ระดับ 2)','#3a1b22','var(--red)']}
+ if(b<30)return['อ้วน (ระดับ 1)','#fde3e3','var(--red)'];
+ return['อ้วนมาก (ระดับ 2)','#fde3e3','var(--red)']}
 function toast(m){const t=$('#toast');t.textContent=typeof trStr==='function'?trStr(m):m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200)}
 function fmt(n,d=0){return Number(n).toLocaleString('th-TH',{maximumFractionDigits:d,minimumFractionDigits:0})}
 function svg(id,st){return `<svg viewBox="0 0 32 32" ${st?`style="${st}"`:''}><use href="#${id}"/></svg>`}
@@ -600,11 +600,11 @@ function bodyChart(u){const recs=bodyRecs(u);if(recs.length<2)return'';
  let hi=Math.max(...ws)+2;lo=Math.floor(lo);hi=Math.ceil(hi);if(hi-lo<4){lo-=2;hi+=2}
  const X=t=>pl+(t1===t0?0.5:(t-t0)/(t1-t0))*(W-pl-pr),Y=v=>pt+(1-(v-lo)/(hi-lo))*(H-pt-pb);
  let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">`;
- for(let v=lo;v<=hi;v+=Math.max(1,Math.round((hi-lo)/5)))s+=`<line x1="${pl}" y1="${Y(v)}" x2="${W-pr}" y2="${Y(v)}" stroke="#223047"/><text x="${pl-4}" y="${Y(v)+3}" font-size="8" fill="#8b97ab" text-anchor="end">${v}</text>`;
- guides.forEach(([w,lb])=>{if(w>lo&&w<hi)s+=`<line x1="${pl}" y1="${Y(w)}" x2="${W-pr}" y2="${Y(w)}" stroke="#3a4a63" stroke-dasharray="4 3"/><text x="${W-pr}" y="${Y(w)-2}" font-size="7.5" fill="#5a6a85" text-anchor="end">${lb}</text>`});
+ for(let v=lo;v<=hi;v+=Math.max(1,Math.round((hi-lo)/5)))s+=`<line x1="${pl}" y1="${Y(v)}" x2="${W-pr}" y2="${Y(v)}" stroke="#dcecf4"/><text x="${pl-4}" y="${Y(v)+3}" font-size="8" fill="#5e7f90" text-anchor="end">${v}</text>`;
+ guides.forEach(([w,lb])=>{if(w>lo&&w<hi)s+=`<line x1="${pl}" y1="${Y(w)}" x2="${W-pr}" y2="${Y(w)}" stroke="#a8cbdc" stroke-dasharray="4 3"/><text x="${W-pr}" y="${Y(w)-2}" font-size="7.5" fill="#7da4b8" text-anchor="end">${lb}</text>`});
  s+=`<polyline points="${recs.map(r=>X(new Date(r.date+'T00:00').getTime()).toFixed(1)+','+Y(r.w).toFixed(1)).join(' ')}" fill="none" stroke="var(--coral)" stroke-width="2"/>`;
  recs.forEach(r=>s+=`<circle cx="${X(new Date(r.date+'T00:00').getTime()).toFixed(1)}" cy="${Y(r.w).toFixed(1)}" r="3.2" fill="var(--coral)" stroke="#fff" stroke-width="1.3"/>`);
- s+=`<text x="${pl}" y="${H-6}" font-size="8" fill="#8b97ab">${thDate(recs[0].date)}</text><text x="${W-pr}" y="${H-6}" font-size="8" fill="#8b97ab" text-anchor="end">${thDate(recs[recs.length-1].date)}</text>`;
+ s+=`<text x="${pl}" y="${H-6}" font-size="8" fill="#5e7f90">${thDate(recs[0].date)}</text><text x="${W-pr}" y="${H-6}" font-size="8" fill="#5e7f90" text-anchor="end">${thDate(recs[recs.length-1].date)}</text>`;
  return s+'</svg>'}
 function renderBody(){const u=user(),recs=bodyRecs(u),t=target();
  const w=curW(u),b=bmi(w,u.h),[cat,bg,cl]=bmiCat(b);
@@ -679,7 +679,7 @@ function renderStats(){const u=user(),t=target();
   h+=`<i class="${k&&k<t.kcal*0.7?'lo':''}" style="height:${Math.max(2,k/mx*100)}%" onclick="TODAY_DATE='${ds}';go('today')"></i>`}
  h+=`</div><div class="row between muted" style="font-size:10px"><span>1</span><span>${dim} ${THM[mo-1]}</span></div></div>`;
  if(tops.length){h+=`<div class="card"><h3>${svg('i-star','width:19px;color:var(--sun)')} เมนูยอดฮิต</h3>`;
-  tops.forEach(([n,c],i)=>{h+=`<div class="row between" style="padding:4px 0;border-bottom:1px solid #223047"><span>${['🥇','🥈','🥉','4.','5.'][i]} ${esc(n)}</span><b>${c} ครั้ง</b></div>`});
+  tops.forEach(([n,c],i)=>{h+=`<div class="row between" style="padding:4px 0;border-bottom:1px solid #dcecf4"><span>${['🥇','🥈','🥉','4.','5.'][i]} ${esc(n)}</span><b>${c} ครั้ง</b></div>`});
   h+='</div>'}
  if(!logs.length)h+=`<div class="empty">${svg('i-chart')}เดือนนี้ยังไม่มีบันทึก</div>`;
  $('#view').innerHTML=h}
@@ -743,8 +743,7 @@ function woURL(nm,follow){const q=LANG==='en'?(trStr(nm)+(follow?' home workout 
 function renderWorkout(){
  let h=`<div class="seg" style="margin-top:12px">
   <button class="${WO_VIEW==='lib'?'on':''}" onclick="WO_VIEW='lib';renderWorkout()">📚 คลังท่า</button>
-  <button class="${WO_VIEW==='plan'?'on':''}" onclick="WO_VIEW='plan';renderWorkout()">📅 ตารางฝึกของฉัน</button></div>
- <div style="text-align:right;margin-top:7px"><button class="btn sm sun" onclick="openSnake()">🐍 เกมงูคาร์ดิโอ${S.snakeHi?' · 🏆 '+S.snakeHi:''}</button></div>`;
+  <button class="${WO_VIEW==='plan'?'on':''}" onclick="WO_VIEW='plan';renderWorkout()">📅 ตารางฝึกของฉัน</button></div>`;
  if(WO_VIEW==='plan'){h+=wplanHtml();$('#view').innerHTML=h;return}
  h+=`<div class="card" style="background:var(--coral2);margin-top:9px"><p style="font-size:12.5px;margin:0">${svg('i-fit','width:18px;height:18px;vertical-align:-4px;color:var(--coral)')} แตะ ▶ ดูวิธีเล่นใน YouTube · แตะ ＋ เพิ่มท่าลงตารางฝึก</p></div>
  <div class="row" style="margin-top:8px"><div style="flex:1;position:relative">
@@ -886,9 +885,9 @@ function showPlanPreview(){const d=window._pp;if(!d)return;const isM=d.t==='m';
  let cnt=0,rows='';
  WDAYS.forEach((w,i)=>{
   if(isM){const day=d.p[i]||{};const ks=Object.keys(MEALS).filter(k=>day[k]);cnt+=ks.length;
-   if(ks.length)rows+=`<div style="font-size:12.5px;margin:3px 0;border-bottom:1px solid #223047;padding-bottom:3px"><b>${w}:</b> ${ks.map(k=>MEALS[k]+' '+esc(day[k].n)).join(' · ')}</div>`}
+   if(ks.length)rows+=`<div style="font-size:12.5px;margin:3px 0;border-bottom:1px solid #dcecf4;padding-bottom:3px"><b>${w}:</b> ${ks.map(k=>MEALS[k]+' '+esc(day[k].n)).join(' · ')}</div>`}
   else{const a=d.p[i]||[];cnt+=a.length;
-   if(a.length)rows+=`<div style="font-size:12.5px;margin:3px 0;border-bottom:1px solid #223047;padding-bottom:3px"><b>${w}:</b> ${a.map(x=>esc(x.n)+' ('+esc(x.s||'')+')').join(' · ')}</div>`}});
+   if(a.length)rows+=`<div style="font-size:12.5px;margin:3px 0;border-bottom:1px solid #dcecf4;padding-bottom:3px"><b>${w}:</b> ${a.map(x=>esc(x.n)+' ('+esc(x.s||'')+')').join(' · ')}</div>`}});
  openModal(`<h2>📥 ตาราง${isM?'อาหาร':'ฝึก'}${d.from?'จาก '+esc(d.from):''}</h2>
   <div class="card flat" style="margin:8px 0">${rows||'<span class="muted">ว่าง</span>'}</div>
   <p class="muted" style="font-size:12px">รวม ${cnt} รายการ · ถ้ากดใช้ ตารางนี้จะแทนที่ตาราง${isM?'อาหาร':'ฝึก'}เดิมของคุณ</p>
@@ -899,11 +898,28 @@ function applyPlan(){const d=window._pp;if(!d)return;const u=user();
 
 /* ===== มินิเกมงู (เล่นตอนคาร์ดิโอ/พักเซ็ต) ===== */
 let SN={};
-function openSnake(){go('game')}
-function renderGame(){const e=LANG==='en';
- $('#view').innerHTML=`<div class="card" style="margin-top:12px"><h3>🐍 ${e?'Snake':'เกมงู'}${S.snakeHi?' · 🏆 '+S.snakeHi:''}</h3>
- <div class="row between" style="margin:2px 0 6px"><span class="muted" style="font-size:12px">${e?'Pass the time during cardio or rest sets':'เล่นเพลินๆ ระหว่างคาร์ดิโอหรือพักเซ็ต'}</span><b id="sn-score" style="font-size:16px">0</b></div>
- <canvas id="snake-cv" width="320" height="320" style="width:100%;max-width:360px;display:block;margin:0 auto;background:#0d1626;border:1.5px solid #2c3a52;border-radius:12px;touch-action:none"></canvas>
+function openSnake(){GAME_VIEW='snake';go('game')}
+let GAME_VIEW='menu';
+function renderGame(){
+ if(GAME_VIEW==='snake')return renderSnake();
+ if(GAME_VIEW==='quiz')return renderQuiz();
+ if(GAME_VIEW==='g2048')return render2048();
+ const e=LANG==='en';
+ const games=[['snake','🐍',e?'Snake':'เกมงู',e?'Nokia classic — best for rest sets':'คลาสสิกโนเกีย เหมาะตอนพักเซ็ต',S.snakeHi],
+  ['quiz','🧠',e?'Health Quiz':'ควิซสุขภาพ',e?'No timer — play while running':'ไม่จับเวลา เล่นตอนวิ่ง/เดินได้',S.quizHi],
+  ['g2048','🔢','2048',e?'Swipe and merge, turn-based':'ปัดรวมตัวเลข เล่นเป็นตาๆ',S.g2048Hi]];
+ $('#view').innerHTML=`<h3 style="margin:14px 2px 4px">🎮 ${e?'Mini games for cardio':'มินิเกมคลายเบื่อตอนคาร์ดิโอ'}</h3>
+  <p class="muted" style="margin:0 2px 6px;font-size:12px">${e?'Quiz and 2048 are self-paced — perfect while walking or on the treadmill':'ควิซกับ 2048 เล่นเป็นตาๆ ไม่กดดัน เหมาะตอนเดิน/วิ่งบนลู่'}</p>`+
+  games.map(g=>`<div class="card rcard" onclick="GAME_VIEW='${g[0]}';renderGame()">
+   <div class="ric" style="font-size:26px">${g[1]}</div>
+   <div style="flex:1"><div class="nm">${g[2]}</div><div class="muted">${g[3]}</div></div>
+   ${g[4]?`<span class="tag age">🏆 ${g[4]}</span>`:''}</div>`).join('')}
+function gameBack(){return `<button class="btn sm ghost" onclick="GAME_VIEW='menu';renderGame()">‹ ${LANG==='en'?'Games':'เกมอื่น'}</button>`}
+function renderSnake(){const e=LANG==='en';
+ $('#view').innerHTML=`<div style="margin-top:10px">${gameBack()}</div>
+ <div class="card" style="margin-top:8px"><h3>🐍 ${e?'Snake':'เกมงู'}${S.snakeHi?' · 🏆 '+S.snakeHi:''}</h3>
+ <div class="row between" style="margin:2px 0 6px"><span class="muted" style="font-size:12px">${e?'Best during rest sets or cycling':'เหมาะตอนพักเซ็ตหรือปั่นจักรยาน'}</span><b id="sn-score" style="font-size:16px">0</b></div>
+ <canvas id="snake-cv" width="320" height="320" style="width:100%;max-width:360px;display:block;margin:0 auto;background:#dff1f8;border:1.5px solid #b9d8e6;border-radius:12px;touch-action:none"></canvas>
  <div class="row" style="justify-content:center;margin-top:9px;gap:8px;align-items:center">
   <button class="btn" style="width:56px;font-size:17px" onclick="snDir(-1,0)">◀</button>
   <div style="display:flex;flex-direction:column;gap:8px">
@@ -911,8 +927,107 @@ function renderGame(){const e=LANG==='en';
    <button class="btn" style="width:56px;font-size:17px" onclick="snDir(0,1)">▼</button></div>
   <button class="btn" style="width:56px;font-size:17px" onclick="snDir(1,0)">▶</button>
   <button class="btn mint" style="margin-left:8px" onclick="snStart()">🔄 ${e?'Restart':'เริ่มใหม่'}</button></div>
- <p class="muted" style="font-size:11px;text-align:center;margin:7px 0 0">${e?'Swipe on the board or use arrows · eat clean food, avoid walls and your tail · speeds up every 5 points!':'ปัดบนกระดานหรือกดปุ่มลูกศร · เก็บอาหารคลีน เลี่ยงกำแพงกับหางตัวเอง · ทุก 5 แต้มงูจะเร็วขึ้น!'}</p></div>`;
+ <p class="muted" style="font-size:11px;text-align:center;margin:7px 0 0">${e?'Swipe or arrows · eat to score · speeds up every 5 points':'ปัดบนกระดานหรือกดปุ่มลูกศร · ทุก 5 แต้มงูเร็วขึ้น'}</p></div>`;
  snStart()}
+
+/* ===== ควิซสุขภาพ ===== */
+const QUIZ=[
+['ไข่ไก่ 1 ฟองให้โปรตีนประมาณเท่าไหร่?','About how much protein in one egg?',['6–7 กรัม','15 กรัม','2 กรัม','25 กรัม'],['6–7 g','15 g','2 g','25 g'],0,'ไข่ 1 ฟอง (~50 ก.) ให้โปรตีน ~6.5 ก. ครบกรดอะมิโนจำเป็น','One egg (~50 g) has ~6.5 g of complete protein'],
+['สารอาหารใดให้พลังงานต่อกรัมสูงที่สุด?','Which nutrient has the most calories per gram?',['ไขมัน (9 kcal/ก.)','โปรตีน','คาร์โบไฮเดรต','ใยอาหาร'],['Fat (9 kcal/g)','Protein','Carbs','Fiber'],0,'ไขมันให้ 9 kcal/ก. ส่วนโปรตีนและคาร์บให้ 4 kcal/ก.','Fat gives 9 kcal/g; protein and carbs give 4 kcal/g'],
+['WHO แนะนำคาร์ดิโอความหนักปานกลางขั้นต่ำกี่นาที/สัปดาห์?','WHO recommends at least how many minutes of moderate cardio per week?',['150 นาที','30 นาที','600 นาที','15 นาที'],['150 minutes','30 minutes','600 minutes','15 minutes'],0,'อย่างน้อย 150–300 นาที/สัปดาห์ หรือหนัก 75 นาที','At least 150–300 min/week, or 75 min vigorous'],
+['BMI สมส่วนตามเกณฑ์เอเชียคือช่วงใด?','Normal BMI range (Asian cutoff)?',['18.5–22.9','25–29.9','15–17.9','23–26.9'],['18.5–22.9','25–29.9','15–17.9','23–26.9'],0,'เกณฑ์เอเชีย: ต่ำกว่า 18.5 ผอม · 23 ขึ้นไปเริ่มเกิน','Asian cutoff: under 18.5 underweight, 23+ overweight'],
+['คนออกกำลังกายควรได้โปรตีนวันละประมาณ?','How much daily protein for active people?',['1.4–2 ก./กก.น้ำหนักตัว','0.2 ก./กก.','6 ก./กก.','ไม่จำเป็นต้องสนใจ'],['1.4–2 g per kg bodyweight','0.2 g/kg','6 g/kg','It does not matter'],0,'ช่วง 1.4–2 ก./กก. ช่วยสร้างและรักษากล้ามเนื้อ','1.4–2 g/kg supports building and keeping muscle'],
+['โซเดียมไม่ควรเกินวันละเท่าไหร่?','Daily sodium should stay under?',['2,000 มก.','10,000 มก.','200 มก.','6,500 มก.'],['2,000 mg','10,000 mg','200 mg','6,500 mg'],0,'WHO แนะนำไม่เกิน 2,000 มก. (เกลือ ~1 ช้อนชา)','WHO recommends under 2,000 mg (~1 tsp of salt)'],
+['กล้ามเนื้อเติบโตและซ่อมแซมมากที่สุดเมื่อใด?','When does muscle grow and repair the most?',['ตอนพักผ่อนและนอนหลับ','ระหว่างยกเวท','ระหว่างกินอาหาร','ตอนยืดเหยียด'],['During rest and sleep','While lifting','While eating','While stretching'],0,'การยกเวทสร้างแรงกระตุ้น แต่กล้ามโตตอนพักและหลับ','Lifting is the stimulus; growth happens during rest and sleep'],
+['เล่นกล้ามเนื้อกลุ่มเดิม ควรพักประมาณกี่ชั่วโมง?','How long should a muscle group rest between sessions?',['~48 ชั่วโมง','2 ชั่วโมง','ต้องครบ 1 สัปดาห์','ไม่ต้องพัก'],['~48 hours','2 hours','A full week','No rest needed'],0,'พัก ~48 ชม.ให้กล้ามฟื้นตัวก่อนเล่นซ้ำ','~48 hours lets the muscle recover before training again'],
+['กล้วยขนาดกลาง 1 ลูก ให้พลังงานราวๆ?','One medium banana has about?',['~100 กิโลแคลอรี','~500 กิโลแคลอรี','~20 กิโลแคลอรี','~300 กิโลแคลอรี'],['~100 kcal','~500 kcal','~20 kcal','~300 kcal'],0,'กล้วยกลาง ~105 kcal เป็นคาร์บก่อนซ้อมชั้นดี','~105 kcal — a great pre-workout carb'],
+['ข้อใดเป็นแหล่งโปรตีนที่ไขมันต่ำที่สุด?','Which protein source is leanest?',['อกไก่ไม่มีหนัง','หมูสามชั้น','เนยถั่ว','ชีส'],['Skinless chicken breast','Pork belly','Peanut butter','Cheese'],0,'อกไก่มีโปรตีน 31 ก. ไขมันแค่ 3.6 ก. ต่อ 100 ก.','Chicken breast: 31 g protein, only 3.6 g fat per 100 g'],
+['น้ำตาลที่เติมไม่ควรเกินวันละ?','Added sugar should stay under?',['~6 ช้อนชา (24 ก.)','~20 ช้อนชา','ไม่จำกัด','ห้ามแตะเลย'],['~6 tsp (24 g)','~20 tsp','Unlimited','Zero allowed'],0,'WHO แนะนำไม่เกิน ~6 ช้อนชา/วัน เพื่อสุขภาพที่ดี','WHO suggests under ~6 tsp/day for best health'],
+['คาร์ดิโอ "โซน 2" รู้สึกแบบไหน?','Zone 2 cardio feels like?',['เหนื่อยแต่ยังคุยเป็นประโยคได้','หอบจนพูดไม่ได้','เหมือนนั่งเฉยๆ','วิ่งสุดแรงเกือบหมดสติ'],['Breathing harder but can still talk','Gasping, cannot speak','Like sitting still','All-out sprint'],0,'โซน 2 = เหนื่อยปานกลาง คุยได้ เผาไขมันดี ฟื้นตัวง่าย','Zone 2 = conversational pace; great fat burning, easy recovery'],
+['ใยอาหารแนะนำวันละประมาณ?','Recommended daily fiber?',['25–38 กรัม','5 กรัม','150 กรัม','0 กรัม'],['25–38 g','5 g','150 g','0 g'],0,'ผัก ผลไม้ ธัญพืชเต็มเมล็ด ช่วยให้ถึงเป้า 25–38 ก.','Veggies, fruits and whole grains get you to 25–38 g'],
+['ควรดื่มน้ำวันละประมาณเท่าไหร่?','Roughly how much water per day?',['~2 ลิตร ปรับเพิ่มตามเหงื่อ','1 แก้วพอ','10 ลิตรขึ้นไป','ดื่มเฉพาะมื้ออาหาร'],['~2 liters, more when sweating','One glass is enough','Over 10 liters','Only with meals'],0,'~2 ลิตรเป็นจุดเริ่ม วันซ้อมหนัก/อากาศร้อนต้องเพิ่ม','~2 L is the baseline; add more on hard or hot days'],
+['การยืดแบบไดนามิก (ขยับตัว) เหมาะกับช่วงใด?','Dynamic stretching fits best?',['ก่อนออกกำลังกาย','ก่อนนอนเท่านั้น','แทนคาร์ดิโอได้','ตอนบาดเจ็บเฉียบพลัน'],['Before a workout','Only before bed','As cardio replacement','During acute injury'],0,'ไดนามิกก่อนเล่นช่วยวอร์มข้อต่อ ยืดค้างไว้ทำหลังเล่น','Dynamic before training; static holds after'],
+['อยากลดไขมัน หัวใจสำคัญที่สุดคือ?','The key to fat loss is?',['กินน้อยกว่าที่เผา (calorie deficit)','งดน้ำดื่ม','งดโปรตีน','ออกกำลังแล้วกินเท่าไหร่ก็ได้'],['Eat fewer calories than you burn','Stop drinking water','Cut all protein','Exercise lets you eat anything'],0,'ขาดดุลพลังงานวันละ ~300–500 kcal ลดได้ยั่งยืน','A 300–500 kcal daily deficit gives sustainable loss'],
+['ข้อใดคือคาร์บเชิงซ้อน?','Which is a complex carb?',['ข้าวกล้อง / ข้าวโอ๊ต','น้ำอัดลม','ลูกอม','น้ำเชื่อม'],['Brown rice / oats','Soda','Candy','Syrup'],0,'คาร์บเชิงซ้อนย่อยช้า อิ่มนาน น้ำตาลในเลือดนิ่งกว่า','Complex carbs digest slowly and keep blood sugar steady'],
+['อาการปวดกล้าม DOMS มักพีคเมื่อไหร่?','DOMS soreness usually peaks?',['24–72 ชม.หลังออกกำลังกาย','ทันทีที่เล่นเสร็จ','7 วันหลังเล่น','ไม่มีจริง'],['24–72 h after exercise','Immediately after','7 days later','It is a myth'],0,'ปวดแบบ DOMS ปกติพีค 1–3 วันแล้วค่อยๆ หาย','DOMS normally peaks at 1–3 days then fades'],
+['เวย์โปรตีน 1 สกู๊ป (~30 ก.) ให้โปรตีนราว?','One whey scoop (~30 g) has about?',['20–25 กรัม','5 กรัม','60 กรัม','100 กรัม'],['20–25 g','5 g','60 g','100 g'],0,'เวย์ทั่วไปให้โปรตีน ~70–80% ของน้ำหนักผง','Typical whey is ~70–80% protein by weight'],
+['ท่าสควอทเน้นกล้ามเนื้อหลักส่วนใด?','Squats mainly target?',['ต้นขาและสะโพก','ไหล่','ปลายแขน','คอ'],['Thighs and glutes','Shoulders','Forearms','Neck'],0,'สควอทคือราชาท่าท่อนล่าง ได้ทั้ง quad-glute-core','The king of lower-body moves: quads, glutes and core'],
+['ก่อนวิ่งควรทำอะไร?','Before a run you should?',['วอร์มอัพ 5–10 นาที','กินบุฟเฟ่ต์ให้อิ่มจัด','ยืดค้างนานๆ ทันที','ไม่ต้องเตรียมอะไร'],['Warm up 5–10 minutes','Eat a huge buffet','Long static holds right away','Nothing at all'],0,'เดินเร็ว+ไดนามิกสั้นๆ ลดเสี่ยงบาดเจ็บได้มาก','Brisk walk + light dynamic moves cut injury risk a lot'],
+['การนอน 7–9 ชั่วโมงช่วยอะไรกับฟิตเนส?','How does 7–9 h of sleep help fitness?',['ฟื้นฟูกล้ามเนื้อและสมดุลฮอร์โมน','ไม่เกี่ยวกันเลย','ทำให้กล้ามหาย','ลดโปรตีนในร่างกาย'],['Recovers muscle and balances hormones','Not related at all','Makes muscle disappear','Lowers body protein'],0,'โกรทฮอร์โมนหลั่งตอนหลับลึก นอนพอ = ฟื้นไว หิวน้อยลง','Growth hormone peaks in deep sleep; enough sleep = faster recovery, less hunger'],
+['มื้อหลังออกกำลังกายที่ดีควรมีอะไร?','A good post-workout meal has?',['โปรตีน + คาร์บ','ไขมันล้วนๆ','เครื่องดื่มแอลกอฮอล์','อดอาหารต่อ 6 ชม.'],['Protein + carbs','Pure fat','Alcohol','Fast 6 more hours'],0,'โปรตีนซ่อมกล้าม คาร์บเติมไกลโคเจน ภายใน ~2 ชม.หลังเล่น','Protein repairs, carbs refill glycogen — within ~2 h after'],
+['ชั่งน้ำหนักให้เทียบกันได้ดีที่สุด ควรชั่งตอน?','For consistent weigh-ins, weigh yourself?',['เช้าหลังตื่น ก่อนกินอาหาร','หลังมื้อเย็นทันที','หลังวิ่งเสร็จใหม่ๆ','เวลาไหนก็ได้ผลเท่ากัน'],['Morning after waking, before eating','Right after dinner','Right after a run','Any time is identical'],0,'ชั่งเวลาเดิมทุกครั้ง (เช้าก่อนกิน) จะเห็นแนวโน้มจริง','Same time every day (morning, fasted) shows the real trend']
+];
+let QZ={};
+function qzShuffle(){QZ={order:[...QUIZ.keys()].sort(()=>Math.random()-.5),i:0,streak:QZ.streak||0,answered:false}}
+function renderQuiz(){const e=LANG==='en';
+ if(!QZ.order)qzShuffle();
+ $('#view').innerHTML=`<div style="margin-top:10px" class="row between">${gameBack()}<b>🔥 ${QZ.streak||0} · 🏆 ${S.quizHi||0}</b></div><div id="qzbox"></div>
+ <p class="muted" style="font-size:11px;text-align:center">${e?'No timer — answer between breaths 🏃':'ไม่จับเวลา หายใจให้ทันก่อนค่อยตอบ 🏃'}</p>`;
+ qzDraw()}
+function qzDraw(){const e=LANG==='en';const q=QUIZ[QZ.order[QZ.i]];
+ QZ.perm=[0,1,2,3].sort(()=>Math.random()-.5);QZ.answered=false;
+ const ch=e?q[3]:q[2];
+ $('#qzbox').innerHTML=`<div class="card"><span class="tag age">${QZ.i+1}/${QUIZ.length}</span>
+  <div style="font-size:15.5px;font-weight:700;margin:8px 0 4px">${e?q[1]:q[0]}</div>
+  <div>${QZ.perm.map((p,i)=>`<button class="btn" style="display:block;width:100%;margin:8px 0;text-align:left;padding:12px 14px;font-size:14px" id="qz${i}" onclick="qzAns(${i})">${ch[p]}</button>`).join('')}</div>
+  <div id="qzwhy"></div></div>`}
+function qzAns(i){if(QZ.answered)return;QZ.answered=true;
+ const e=LANG==='en';const q=QUIZ[QZ.order[QZ.i]];
+ const ok=QZ.perm[i]===q[4],ci=QZ.perm.indexOf(q[4]);
+ const cb=document.getElementById('qz'+ci);if(cb){cb.style.background='var(--mint)';cb.style.color='#06281f'}
+ if(!ok){const wb=document.getElementById('qz'+i);if(wb){wb.style.background='var(--red)';wb.style.color='#fff'}}
+ QZ.streak=ok?(QZ.streak||0)+1:0;
+ if(QZ.streak>(S.quizHi||0)){S.quizHi=QZ.streak;save()}
+ document.getElementById('qzwhy').innerHTML=`<div class="${ok?'okbox':'warnbox'}" style="margin-top:10px">${ok?'✅':'❌'} ${e?q[6]:q[5]}</div>
+  <button class="btn pri" style="width:100%;margin-top:8px" onclick="qzNext()">${e?'Next question ▶':'ข้อต่อไป ▶'}</button>`}
+function qzNext(){QZ.i++;if(QZ.i>=QZ.order.length){const s=QZ.streak;qzShuffle();QZ.streak=s}renderQuiz()}
+
+/* ===== 2048 ===== */
+let G2={};
+function g2Init(){G2={b:Array.from({length:4},()=>[0,0,0,0]),score:0,over:false};g2Add();g2Add()}
+function g2Add(){const f=[];G2.b.forEach((r,i)=>r.forEach((v,j)=>{if(!v)f.push([i,j])}));
+ if(!f.length)return;const c=f[Math.floor(Math.random()*f.length)];G2.b[c[0]][c[1]]=Math.random()<0.9?2:4}
+function g2Slide(row){const a=row.filter(v=>v);
+ for(let i=0;i<a.length-1;i++){if(a[i]===a[i+1]){a[i]*=2;G2.score+=a[i];a.splice(i+1,1)}}
+ while(a.length<4)a.push(0);return a}
+function g2Can(){for(let i=0;i<4;i++)for(let j=0;j<4;j++){const v=G2.b[i][j];
+ if(!v)return true;if(i<3&&G2.b[i+1][j]===v)return true;if(j<3&&G2.b[i][j+1]===v)return true}return false}
+function g2Move(dir){if(!G2.b||G2.over)return;const o=JSON.stringify(G2.b);let b=G2.b;
+ if(dir===3)G2.b=b.map(r=>g2Slide(r));
+ else if(dir===1)G2.b=b.map(r=>g2Slide([...r].reverse()).reverse());
+ else if(dir===0){for(let j=0;j<4;j++){const c=g2Slide([b[0][j],b[1][j],b[2][j],b[3][j]]);for(let i=0;i<4;i++)b[i][j]=c[i]}}
+ else if(dir===2){for(let j=0;j<4;j++){const c=g2Slide([b[3][j],b[2][j],b[1][j],b[0][j]]);for(let i=0;i<4;i++)b[3-i][j]=c[i]}}
+ if(JSON.stringify(G2.b)!==o){g2Add();if(G2.score>(S.g2048Hi||0)){S.g2048Hi=G2.score;save()}}
+ if(!g2Can())G2.over=true;
+ render2048()}
+function render2048(){const e=LANG==='en';
+ if(!G2.b)g2Init();
+ $('#view').innerHTML=`<div style="margin-top:10px" class="row between">${gameBack()}<b>${G2.score} · 🏆 ${S.g2048Hi||0}</b></div>
+ <div id="g2board" style="touch-action:none;background:#d2e9f3;border:1.5px solid #b9d8e6;border-radius:12px;padding:8px;max-width:380px;margin:8px auto 0"></div>
+ <div class="row" style="justify-content:center;gap:8px;margin-top:9px;align-items:center">
+  <button class="btn" style="width:56px;font-size:17px" onclick="g2Move(3)">◀</button>
+  <div style="display:flex;flex-direction:column;gap:8px">
+   <button class="btn" style="width:56px;font-size:17px" onclick="g2Move(0)">▲</button>
+   <button class="btn" style="width:56px;font-size:17px" onclick="g2Move(2)">▼</button></div>
+  <button class="btn" style="width:56px;font-size:17px" onclick="g2Move(1)">▶</button>
+  <button class="btn mint" style="margin-left:8px" onclick="g2Init();render2048()">🔄</button></div>
+ <p class="muted" style="text-align:center;font-size:11px;margin:7px 0 0">${e?'Swipe the board or use arrows · merge tiles to reach 2048!':'ปัดบนกระดานหรือกดลูกศร · รวมเลขให้ถึง 2048!'}</p>`;
+ g2Draw();g2Touch()}
+function g2Draw(){const el=document.getElementById('g2board');if(!el)return;
+ const col=v=>({2:'#e7f4fa',4:'#cfe9f6',8:'#a8d9ef',16:'#7cc6e6',32:'#4fb1da',64:'#1995c9',128:'#0e84b8',256:'#0a6f9d',512:'#f5a623',1024:'#f7b84a',2048:'#ffd166'})[v]||'#ffd166';
+ el.innerHTML='<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px">'+
+  G2.b.map(r=>r.map(v=>`<div style="aspect-ratio:1;display:flex;align-items:center;justify-content:center;border-radius:9px;font-weight:700;font-size:${v>=1024?'19px':v>=128?'22px':'25px'};background:${v?col(v):'#c3dfec'};color:${v>=512?'#1c1405':(v>=64?'#fff':'#15394a')}">${v||''}</div>`).join('')).join('')+'</div>'
+ +(G2.over?`<div style="text-align:center;padding:8px;color:var(--red);font-weight:700">${LANG==='en'?'No more moves! Score ':'จบเกม! ได้ '}${G2.score}</div>`:'')}
+function g2Touch(){const el=document.getElementById('g2board');if(!el)return;
+ el.ontouchstart=ev=>{G2.tx=ev.touches[0].clientX;G2.ty=ev.touches[0].clientY;ev.preventDefault()};
+ el.ontouchend=ev=>{const dx=ev.changedTouches[0].clientX-G2.tx,dy=ev.changedTouches[0].clientY-G2.ty;
+  if(Math.abs(dx)<15&&Math.abs(dy)<15)return;
+  g2Move(Math.abs(dx)>Math.abs(dy)?(dx>0?1:3):(dy>0?2:0));ev.preventDefault()};
+ if(!window._g2Key){window._g2Key=true;
+  window.addEventListener('keydown',ev=>{if(!document.getElementById('g2board'))return;
+   const m={ArrowUp:0,ArrowRight:1,ArrowDown:2,ArrowLeft:3}[ev.key];
+   if(m!==undefined){g2Move(m);ev.preventDefault()}})}}
+
 function snStart(){const cv=document.getElementById('snake-cv');if(!cv)return;
  SN={g:16,z:20,dir:[1,0],next:[1,0],snake:[[8,8],[7,8],[6,8]],food:null,score:0,dead:false,speed:170};
  snFood();clearInterval(window._snT);window._snT=setInterval(snTick,SN.speed);
@@ -945,12 +1060,12 @@ function snTick(){const cv=document.getElementById('snake-cv');
  snDraw()}
 function snDraw(){const cv=document.getElementById('snake-cv');if(!cv||!cv.getContext)return;
  const c=cv.getContext('2d'),z=SN.z;
- c.fillStyle='#0d1626';c.fillRect(0,0,320,320);
- c.fillStyle='#13203a';
+ c.fillStyle='#dff1f8';c.fillRect(0,0,320,320);
+ c.fillStyle='#cfe7f2';
  for(let i=0;i<SN.g;i++)for(let j=0;j<SN.g;j++)if((i+j)%2===0)c.fillRect(i*z,j*z,z,z);
  c.fillStyle='#ff7a59';c.beginPath();c.arc(SN.food[0]*z+z/2,SN.food[1]*z+z/2,z/2-3,0,7);c.fill();
  c.fillStyle='#2dd4bf';c.fillRect(SN.food[0]*z+z/2-1,SN.food[1]*z+2,2,4);
- SN.snake.forEach((s,i)=>{c.fillStyle=i===0?'#2f6fe0':'#4f8cff';
+ SN.snake.forEach((s,i)=>{c.fillStyle=i===0?'#0a7aa0':'#0e9bc7';
   c.fillRect(s[0]*z+1.5,s[1]*z+1.5,z-3,z-3)});
  const hd=SN.snake[0];c.fillStyle='#fff';
  c.fillRect(hd[0]*z+5,hd[1]*z+5,3,3);c.fillRect(hd[0]*z+12,hd[1]*z+5,3,3)}
@@ -959,7 +1074,7 @@ function snOver(){SN.dead=true;clearInterval(window._snT);
  const e=LANG==='en';
  const cv=document.getElementById('snake-cv');
  if(cv&&cv.getContext){const c=cv.getContext('2d');
-  c.fillStyle='rgba(0,0,0,.65)';c.fillRect(0,0,320,320);
+  c.fillStyle='rgba(21,57,74,.55)';c.fillRect(0,0,320,320);
   c.fillStyle='#fff';c.textAlign='center';c.font='bold 24px sans-serif';
   c.fillText(e?'Game over!':'จบเกม!',160,140);
   c.font='15px sans-serif';
@@ -1001,14 +1116,14 @@ const HELP=[
 ['💾 สำรองข้อมูล & ภาษา','💾 Backup & language',
 'ข้อมูลทั้งหมดอยู่ในเครื่องคุณเท่านั้น ไม่ผ่านเซิร์ฟเวอร์ใคร\nไปที่ ⚙️ ตั้งค่า → "สำรองข้อมูล" ได้ไฟล์ .json เก็บไว้ · ย้ายเครื่อง/ลงแอปใหม่ ใช้ "กู้คืนข้อมูล" เลือกไฟล์นั้น\nปุ่ม EN/ไทย มุมขวาบนสลับภาษาได้ทั้งแอป รวมถึงภาษาของผลค้นหาสูตรและวิดีโอ',
 'All data lives only on your device — no servers involved.\nGo to ⚙️ Settings → "Backup" for a .json file · when switching phones use "Restore" with that file.\nThe EN/ไทย button (top right) switches the whole app language, including recipe/video search results.'],
-['🐍 มินิเกมงู','🐍 Snake mini game',
-'อยู่ที่แท็บ "เกม" ล่างขวา (หรือปุ่มลัดในแท็บท่าฝึก) — เกมงูสไตล์โนเกียไว้เล่นระหว่างคาร์ดิโอบนลู่หรือพักระหว่างเซ็ต\\nบังคับด้วยการปัดบนกระดานหรือปุ่มลูกศร เก็บอาหารให้ได้แต้มเยอะที่สุด ทุก 5 แต้มงูจะเร็วขึ้น คะแนนสูงสุดถูกบันทึกไว้ที่ปุ่ม 🏆',
-'Open the "Game" tab (or the shortcut in the Workout tab) — a Nokia-style snake game for treadmill cardio or rest between sets.\\nSwipe on the board or use the arrow buttons; eat food to score, speed rises every 5 points, and your best score is saved on the 🏆 button.']
+['🎮 มินิเกม (งู · ควิซ · 2048)','🎮 Mini games (Snake · Quiz · 2048)',
+'แท็บ "เกม" มี 3 เกมไว้คลายเบื่อ:\n🐍 เกมงู — เหมาะตอนพักเซ็ตหรือปั่นจักรยาน\n🧠 ควิซสุขภาพ — คำถามโภชนาการ/ฟิตเนสปุ่มใหญ่ ไม่จับเวลา เหมาะตอนเดิน-วิ่งบนลู่ นับสถิติตอบถูกติดต่อกัน\n🔢 2048 — ปัดรวมตัวเลข เล่นเป็นตาๆ ไม่กดดัน\nคะแนนสูงสุดของทุกเกมถูกบันทึกและติดไปกับไฟล์สำรองข้อมูลด้วย',
+'The Game tab has 3 games:\n🐍 Snake — best for rest sets or cycling\n🧠 Health quiz — big-button nutrition and fitness questions with no timer, great while walking or running; tracks your best streak\n🔢 2048 — swipe to merge, turn-based and relaxed\nBest scores are saved and included in your backup file.']
 ];
 function openHelp(){const e=LANG==='en';
  let h=`<h2>${e?'❓ How to use IUFIT':'❓ วิธีใช้งานแอป IUFIT'}</h2>
  <p class="muted" style="font-size:12px">${e?'Tap a topic to expand':'แตะหัวข้อเพื่อดูรายละเอียด'}</p>`;
- HELP.forEach(([tt,te,bt,be])=>{h+=`<details style="margin:8px 0;background:var(--card);border:1px solid #2c3a52;border-radius:10px;padding:9px 12px">
+ HELP.forEach(([tt,te,bt,be])=>{h+=`<details style="margin:8px 0;background:var(--card);border:1px solid #b9d8e6;border-radius:10px;padding:9px 12px">
   <summary style="font-weight:700;cursor:pointer;font-size:13.5px">${e?te:tt}</summary>
   <div style="font-size:12.8px;margin-top:7px;white-space:pre-line;line-height:1.55">${e?be:bt}</div></details>`});
  openModal(h)}
