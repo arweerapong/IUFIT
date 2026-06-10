@@ -164,7 +164,7 @@ h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 <div class="app">
 <header>
   <svg class="logo" viewBox="0 0 32 32" style="color:var(--coral)"><use href="#i-fit"/></svg>
-  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้</small></h1>
+  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v1.3</small></h1>
   <button class="iconbtn" onclick="openSettings()" title="ตั้งค่า"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
 </header>
 <div id="childbar" style="padding:9px 2px 0;display:flex;gap:6px;flex-wrap:wrap"></div>
@@ -368,14 +368,14 @@ function renderChildBar(){const el=$('#childbar');
  el.innerHTML=S.users.map(u=>`<span class="chip ${u.id===S.active?'sel':''}" onclick="setActive('${u.id}')">💪 ${esc(u.name)}</span>`).join('')
  +`<span class="chip" onclick="userForm()">＋ เพิ่ม</span>`}
 function setActive(id){S.active=id;save();renderAll()}
-const TABS=[['today','วันนี้','i-bowl'],['food','อาหาร','i-apple'],['links','สูตร','i-book'],['body','ร่างกาย','i-grow'],['stats','สรุป','i-chart']];
+const TABS=[['today','วันนี้','i-bowl'],['food','อาหาร','i-apple'],['links','สูตร','i-book'],['workout','ท่าฝึก','i-fit'],['body','ร่างกาย','i-grow'],['stats','สรุป','i-chart']];
 let TAB='today';
 function renderNav(){$('#nav').innerHTML=TABS.map(([id,n,ic])=>`<button class="${TAB===id?'on':''}" onclick="go('${id}')">${svg(ic)}${n}</button>`).join('')}
 function go(t){TAB=t;renderAll();window.scrollTo(0,0)}
 function renderAll(){renderChildBar();renderNav();
  if(!S.users.length){renderWelcome();return}
  if(!user())S.active=S.users[0].id;
- ({today:renderToday,food:renderFood,links:renderLinks,body:renderBody,stats:renderStats})[TAB]()}
+ ({today:renderToday,food:renderFood,links:renderLinks,workout:renderWorkout,body:renderBody,stats:renderStats})[TAB]()}
 function renderWelcome(){$('#view').innerHTML=`
  <div class="card" style="text-align:center;padding:28px 16px">
   <svg viewBox="0 0 32 32" style="width:72px;height:72px;color:var(--coral)"><use href="#i-fit"/></svg>
@@ -700,6 +700,41 @@ function drawLinkList(){const el=$('#linklist');if(!el)return;let h='',n=0;
   h+='</div>'});
  if(!n)h=`<div class="empty">${svg('i-search')}ไม่พบเมนูที่ค้นหา</div>`;
  el.innerHTML=h}
+
+/* ================= หน้า: ท่าออกกำลังกายตามส่วนร่างกาย ================= */
+const WORKOUTS=[
+['อก 💪',[['วิดพื้น (Push-up)','บอดี้เวท'],['วิดพื้นเข่า สำหรับมือใหม่','บอดี้เวท'],['ดัมเบลเบนช์เพรส','ดัมเบล'],['อินไคลน์ดัมเบลเพรส','ดัมเบล'],['ดัมเบลฟลาย','ดัมเบล'],['บาร์เบลเบนช์เพรส','บาร์เบล'],['เคเบิลครอสโอเวอร์','เคเบิล'],['ดิป (Dips)','บอดี้เวท']]],
+['หลัง 🔙',[['ดึงข้อ (Pull-up)','บอดี้เวท'],['แลทพูลดาวน์','เครื่อง'],['ดัมเบลโรว์','ดัมเบล'],['บาร์เบลโรว์','บาร์เบล'],['ซีทเต็ดเคเบิลโรว์','เครื่อง'],['เดดลิฟต์','บาร์เบล'],['ซูเปอร์แมน','บอดี้เวท'],['แบนด์พูลอะพาร์ท','ยางยืด']]],
+['ไหล่ 🙆',[['ดัมเบลโชลเดอร์เพรส','ดัมเบล'],['โอเวอร์เฮดเพรส','บาร์เบล'],['แลทเทอรัลเรส','ดัมเบล'],['ฟรอนต์เรส','ดัมเบล'],['รีเวิร์สฟลาย','ดัมเบล'],['อัพไรท์โรว์','ดัมเบล'],['ไพค์พุชอัพ','บอดี้เวท']]],
+['แขน 🦾',[['ดัมเบลเคิร์ล','ดัมเบล'],['แฮมเมอร์เคิร์ล','ดัมเบล'],['คอนเซนเทรชันเคิร์ล','ดัมเบล'],['ไดมอนด์พุชอัพ','บอดี้เวท'],['ไตรเซปส์ดิปกับเก้าอี้','บอดี้เวท'],['ทรัยเซปเอ็กซ์เทนชัน','ดัมเบล'],['เคเบิลพุชดาวน์','เคเบิล']]],
+['ขา / สะโพก 🦵',[['สควอท','บอดี้เวท'],['โกเบล็ตสควอท','ดัมเบล'],['ลันจ์','บอดี้เวท'],['บัลแกเรียนสปลิทสควอท','ดัมเบล'],['โรมาเนียนเดดลิฟต์ (RDL)','ดัมเบล'],['ฮิปทรัสต์','บาร์เบล'],['กลูตบริดจ์','บอดี้เวท'],['คาล์ฟเรส','บอดี้เวท'],['เลกเพรส','เครื่อง'],['สเต็ปอัพ','บอดี้เวท']]],
+['หน้าท้อง / แกนกลาง 🧘',[['แพลงก์','บอดี้เวท'],['ไซด์แพลงก์','บอดี้เวท'],['ครันช์','บอดี้เวท'],['เลกเรส','บอดี้เวท'],['รัสเซียนทวิสต์','บอดี้เวท'],['เมาน์เทนไคลม์เบอร์','บอดี้เวท'],['เดดบั๊ก','บอดี้เวท'],['เบิร์ดด็อก','บอดี้เวท'],['ฮอลโลว์โฮลด์','บอดี้เวท'],['แอบวีลโรลเอาท์','อุปกรณ์เสริม']]],
+['คาร์ดิโอ 🔥',[['กระโดดเชือก','อุปกรณ์เสริม'],['เบอร์พี','บอดี้เวท'],['จัมพ์ปิ้งแจ็ค','บอดี้เวท'],['วิ่งยกเข่าสูง (High knees)','บอดี้เวท'],['HIIT 20 นาทีที่บ้าน','บอดี้เวท'],['ทาบาทา 4 นาที','บอดี้เวท'],['คาร์ดิโอแรงกระแทกต่ำ (Low impact)','บอดี้เวท'],['เต้นแอโรบิก 30 นาที','บอดี้เวท']]],
+['ยืดเหยียด / ฟื้นฟู 🌿',[['ไดนามิกวอร์มอัพก่อนออกกำลังกาย','บอดี้เวท'],['คูลดาวน์ยืดกล้ามเนื้อหลังเล่น','บอดี้เวท'],['โยคะสำหรับมือใหม่','บอดี้เวท'],['ยืดสะโพกแก้ปวดหลัง','บอดี้เวท'],['ยืดคอบ่าไหล่ออฟฟิศซินโดรม','บอดี้เวท'],['โฟมโรลเลอร์คลายกล้ามเนื้อ','อุปกรณ์เสริม'],['ยืดเหยียดก่อนนอน','บอดี้เวท'],['ยืดเหยียดหลังตื่นนอน','บอดี้เวท']]]
+];
+let WO_Q='',WO_CAT='';
+function renderWorkout(){
+ let h=`<div class="card" style="background:var(--coral2);margin-top:12px"><p style="font-size:12.5px;margin:0">${svg('i-fit','width:18px;height:18px;vertical-align:-4px;color:var(--coral)')} คลังท่าออกกำลังกายแบ่งตามส่วนร่างกาย — แตะ ▶ เปิดวิดีโอสอนใน YouTube · เล่นเสร็จอย่าลืมมาบันทึกที่แท็บ "วันนี้" นะ</p></div>
+ <div class="row" style="margin-top:8px"><div style="flex:1;position:relative">
+  <input placeholder="ค้นหาท่า..." value="${esc(WO_Q)}" oninput="WO_Q=this.value;drawWorkoutList()" style="padding-left:34px">
+  <svg viewBox="0 0 32 32" style="width:17px;height:17px;position:absolute;left:11px;top:11px;color:var(--ink2)"><use href="#i-search"/></svg></div></div>
+ <div class="row" style="margin-top:8px">
+  <span class="chip ${!WO_CAT?'sel':''}" onclick="WO_CAT='';renderWorkout()">ทั้งหมด</span>
+  ${WORKOUTS.map(x=>`<span class="chip ${WO_CAT===x[0]?'sel':''}" onclick="WO_CAT='${x[0]}';renderWorkout()">${x[0]}</span>`).join('')}</div>
+ <div id="wolist"></div>`;
+ $('#view').innerHTML=h;drawWorkoutList()}
+function drawWorkoutList(){const el=$('#wolist');if(!el)return;let h='',n=0;
+ WORKOUTS.forEach(([cat,items])=>{
+  if(WO_CAT&&cat!==WO_CAT)return;
+  const its=items.filter(x=>!WO_Q||x[0].includes(WO_Q)||x[1].includes(WO_Q));
+  if(!its.length)return;
+  h+=`<h4 class="sec">${cat} (${its.length} ท่า)</h4><div class="card" style="margin:4px 0">`;
+  its.forEach(([nm,eq])=>{n++;const q=encodeURIComponent('สอนท่า '+nm+' ฟอร์มที่ถูกต้อง');
+   h+=`<div class="trow"><div style="flex:1;font-size:13.5px">${nm} <span class="tag">${eq}</span></div>
+    <a class="btn sm mint" style="text-decoration:none" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶ ดูวิธีเล่น</a></div>`});
+  h+='</div>'});
+ if(!n)h=`<div class="empty">${svg('i-search')}ไม่พบท่าที่ค้นหา</div>`;
+ el.innerHTML=h+`<p class="muted" style="font-size:11px;padding:0 4px">มือใหม่เริ่มจากท่าบอดี้เวทและน้ำหนักเบาก่อน เน้นฟอร์มถูกต้องมากกว่าหนัก ถ้ามีอาการบาดเจ็บควรปรึกษาผู้เชี่ยวชาญ</p>`}
 
 /* ================= ตั้งค่า / โปรไฟล์ ================= */
 function openSettings(){let h=`<h2>⚙️ ตั้งค่า</h2><h4 class="sec">โปรไฟล์</h4>`;
