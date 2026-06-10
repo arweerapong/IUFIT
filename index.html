@@ -1179,7 +1179,7 @@ function delUser(id){if(!confirm(trStr('ลบโปรไฟล์นี้ ร
  save();closeModal();renderAll()}
 /* ===== ระบบรหัสปลดล็อก (ขายแอป) ===== */
 const LIC_SECRET='XK92FH37QPL6D4ZM-IUFIT-2026';
-const LIC_CONTACT='LINE: @ใส่ไลน์ไอดีของคุณ';   // ← แก้ช่องทางติดต่อซื้อรหัสตรงนี้
+const LIC_CONTACT='LINE: mcz1497';
 function licCode(name){let s=(name||'').trim().toLowerCase().replace(/\s+/g,'')+'|IUFIT|'+LIC_SECRET;
  let h1=0x811c9dc5,h2=0x12345678;
  for(const ch of s){const c=ch.codePointAt(0);h1=((h1^c)*0x01000193)>>>0;h2=(((h2<<5)-h2+c))>>>0}
