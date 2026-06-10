@@ -83,10 +83,10 @@ nav button.on svg{stroke-width:2.4}
 /* modal */
 .mwrap{position:fixed;inset:0;background:rgba(70,50,35,.45);z-index:50;display:none;align-items:flex-end;justify-content:center}
 .mwrap.show{display:flex}
-.modal{background:var(--bg);width:100%;max-width:520px;max-height:88vh;overflow-y:auto;border-radius:26px 26px 0 0;border:2.5px solid var(--ink);border-bottom:none;padding:16px 16px 28px;animation:up .22s ease}
+.modal{background:var(--bg);width:100%;max-width:520px;max-height:88vh;overflow-y:auto;border-radius:26px 26px 0 0;border:2.5px solid var(--ink);border-bottom:none;padding:16px 16px 28px;animation:up .22s ease;position:relative}
 @keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
 .modal h2{font-size:18px;margin:2px 36px 10px 2px}
-.mclose{position:absolute;margin-left:auto;float:right;width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);background:#fff;font-size:16px;cursor:pointer;font-family:inherit}
+.mclose{position:absolute;top:12px;right:14px;width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);background:#fff;font-size:16px;cursor:pointer;font-family:inherit;z-index:2}
 /* tables */
 table.nut{width:100%;border-collapse:collapse;font-size:12.5px}
 table.nut td{padding:3px 4px;border-bottom:1px dashed #e8d9c5}
@@ -164,8 +164,9 @@ h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 <div class="app">
 <header>
   <svg class="logo" viewBox="0 0 32 32" style="color:var(--coral)"><use href="#i-fit"/></svg>
-  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v1.4</small></h1>
-  <button class="iconbtn" onclick="openSettings()" title="ตั้งค่า"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
+  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v1.6</small></h1>
+  <button class="iconbtn" onclick="toggleLang()" id="langbtn" title="Language" style="font-size:11.5px;font-weight:700">EN</button>
+  <button class="iconbtn" onclick="openSettings()" title="Settings"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
 </header>
 <div id="childbar" style="padding:9px 2px 0;display:flex;gap:6px;flex-wrap:wrap"></div>
 <main id="view"></main>
@@ -292,7 +293,7 @@ function thDate(s){const d=new Date(s+'T00:00');return THD[d.getDay()]+'. '+d.ge
 let S;
 function load(){try{S=JSON.parse(localStorage.getItem('iufit'))}catch(e){}
  if(!S)S={users:[],active:null,logs:[],recipes:[],ings:[],body:[],ex:[],water:{}};
- ['logs','recipes','ings','body','ex'].forEach(k=>S[k]=S[k]||[]);S.water=S.water||{};S.users=S.users||[];S.wplan=S.wplan||{};mergeIngs()}
+ ['logs','recipes','ings','body','ex'].forEach(k=>S[k]=S[k]||[]);S.water=S.water||{};S.users=S.users||[];S.wplan=S.wplan||{};LANG=S.lang||'th';mergeIngs()}
 function save(){localStorage.setItem('iufit',JSON.stringify(S))}
 function user(){return S.users.find(u=>u.id===S.active)}
 function ageY(u){u=u||user();const b=new Date(u.bd+'T00:00'),n=new Date();let y=n.getFullYear()-b.getFullYear();
@@ -315,7 +316,7 @@ function bmiCat(b){if(b<18.5)return['น้ำหนักน้อยกว่�
  if(b<25)return['น้ำหนักเกิน','var(--sun2)','var(--ink)'];
  if(b<30)return['อ้วน (ระดับ 1)','#fde3e3','var(--red)'];
  return['อ้วนมาก (ระดับ 2)','#fde3e3','var(--red)']}
-function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200)}
+function toast(m){const t=$('#toast');t.textContent=typeof trStr==='function'?trStr(m):m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200)}
 function fmt(n,d=0){return Number(n).toLocaleString('th-TH',{maximumFractionDigits:d,minimumFractionDigits:0})}
 function svg(id,st){return `<svg viewBox="0 0 32 32" ${st?`style="${st}"`:''}><use href="#${id}"/></svg>`}
 function ingOptions(sel){let h='<option value="">– เลือกวัตถุดิบ –</option>';const gs={};
@@ -359,7 +360,7 @@ function saveIng(editId){const n=$('#if-n').value.trim();
 function delIng(id){
  const used=allRecipes().some(r=>r.ings.some(x=>x[0]===id))||S.logs.some(l=>(l.ings||[]).some(x=>x[0]===id));
  if(used){toast('ลบไม่ได้ มีเมนูหรือบันทึกที่ใช้อยู่');return}
- if(!confirm('ลบวัตถุดิบนี้?'))return;
+ if(!confirm(trStr('ลบวัตถุดิบนี้?')))return;
  S.ings=S.ings.filter(x=>x.id!==id);delete ING[id];save();ingManager()}
 
 /* ================= แถบโปรไฟล์ & แท็บ ================= */
@@ -496,7 +497,7 @@ function saveLog(mk,editId){const name=$('#lg-name').value.trim();
  if(editId)Object.assign(S.logs.find(x=>x.id===editId),data);
  else S.logs.push({id:uid(),...data});
  save();closeModal();toast('บันทึกแล้ว 💪');renderToday()}
-function delLog(id){if(!confirm('ลบบันทึกนี้?'))return;S.logs=S.logs.filter(l=>l.id!==id);save();closeModal();renderToday()}
+function delLog(id){if(!confirm(trStr('ลบบันทึกนี้?')))return;S.logs=S.logs.filter(l=>l.id!==id);save();closeModal();renderToday()}
 function logDetail(id){const l=S.logs.find(x=>x.id===id);if(!l)return;TODAY_DATE=l.date;logForm(l.meal,id)}
 
 /* ================= หน้า: อาหาร (คลังเมนู) ================= */
@@ -547,7 +548,7 @@ function recipeDetail(id){const r=getRecipe(id);if(!r)return;
 function logFromRecipe(rid){const h=new Date().getHours();
  const mk=h<10?'br':h<14?'lu':h<17?'sn':'di';
  logForm(mk);setTimeout(()=>{$('#lg-rec').value=rid;logPickRecipe()},50)}
-function delRecipe(id){if(!confirm('ลบเมนูนี้?'))return;S.recipes=S.recipes.filter(r=>r.id!==id);save();closeModal();renderFood()}
+function delRecipe(id){if(!confirm(trStr('ลบเมนูนี้?')))return;S.recipes=S.recipes.filter(r=>r.id!==id);save();closeModal();renderFood()}
 function recipeForm(editId){const ed=editId?getRecipe(editId):null;
  window._rIngs=ed?ed.ings.map(x=>[...x]):[['',0]];
  openModal(`<h2>${ed?'แก้ไขเมนู':'เพิ่มเมนูของฉัน'}</h2>
@@ -629,7 +630,7 @@ function saveBody(editId){const date=$('#bf-date').value,w=+$('#bf-w').value;
  if(editId)Object.assign(S.body.find(x=>x.id===editId),data);
  else S.body.push({id:uid(),user:S.active,...data});
  save();closeModal();toast('บันทึกแล้ว 📉');renderBody()}
-function delBody(id){if(!confirm('ลบบันทึกนี้?'))return;S.body=S.body.filter(x=>x.id!==id);save();renderBody()}
+function delBody(id){if(!confirm(trStr('ลบบันทึกนี้?')))return;S.body=S.body.filter(x=>x.id!==id);save();renderBody()}
 
 /* ================= หน้า: สรุปรายเดือน ================= */
 let STAT_MONTH=dstr().slice(0,7);
@@ -700,10 +701,10 @@ function renderLinks(){
 function drawLinkList(){const el=$('#linklist');if(!el)return;let h='',n=0;
  LINKS.forEach(([cat,items])=>{
   if(LINK_CAT&&cat!==LINK_CAT)return;
-  const its=items.filter(x=>!LINK_Q||x.includes(LINK_Q));
+  const its=items.filter(x=>!LINK_Q||x.includes(LINK_Q)||trStr(x).toLowerCase().includes(LINK_Q.toLowerCase()));
   if(!its.length)return;
   h+=`<h4 class="sec">${cat} (${its.length})</h4><div class="card" style="margin:4px 0">`;
-  its.forEach(x=>{n++;const q=encodeURIComponent('สูตร '+x+' เฮลตี้');
+  its.forEach(x=>{n++;const q=encodeURIComponent(LANG==='en'?trStr(x)+' healthy recipe':'สูตร '+x+' เฮลตี้');
    h+=`<div class="trow"><div style="flex:1;font-size:13.5px">${x}</div>
     <a class="btn sm" style="text-decoration:none" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">🔍</a>
     <a class="btn sm mint" style="text-decoration:none" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶</a></div>`});
@@ -726,7 +727,7 @@ const WORKOUTS=[
 ];
 const WDAYS=['จันทร์','อังคาร','พุธ','พฤหัส','ศุกร์','เสาร์','อาทิตย์'];
 let WO_Q='',WO_CAT='',WO_FILT='',WO_VIEW='lib';
-function woURL(nm,follow){return 'https://www.youtube.com/results?search_query='+encodeURIComponent(follow?nm+' ออกกำลังกายตามที่บ้าน':'สอนท่า '+nm+' ฟอร์มที่ถูกต้อง')}
+function woURL(nm,follow){const q=LANG==='en'?(trStr(nm)+(follow?' home workout follow along':' exercise proper form tutorial')):(follow?nm+' ออกกำลังกายตามที่บ้าน':'สอนท่า '+nm+' ฟอร์มที่ถูกต้อง');return 'https://www.youtube.com/results?search_query='+encodeURIComponent(q)}
 function renderWorkout(){
  let h=`<div class="seg" style="margin-top:12px">
   <button class="${WO_VIEW==='lib'?'on':''}" onclick="WO_VIEW='lib';renderWorkout()">📚 คลังท่า</button>
@@ -751,7 +752,7 @@ function drawWorkoutList(){const el=$('#wolist');if(!el)return;let h='',n=0;
   if(WO_CAT&&cat!==WO_CAT)return;
   const follow=cat.includes('เล่นตามคลิป');
   const its=items.filter(x=>{
-   if(WO_Q&&!x[0].includes(WO_Q)&&!x[1].includes(WO_Q))return false;
+   if(WO_Q&&!x[0].includes(WO_Q)&&!x[1].includes(WO_Q)&&!trStr(x[0]).toLowerCase().includes(WO_Q.toLowerCase()))return false;
    if(WO_FILT==='bg'&&!x[2])return false;
    if(WO_FILT==='noeq'&&x[1]!=='บอดี้เวท')return false;
    if(WO_FILT==='eq'&&x[1]==='บอดี้เวท')return false;
@@ -796,7 +797,7 @@ function addToWPlanQ(d,nm,eq){const u=user();S.wplan=S.wplan||{};S.wplan[u.id]=S
  (S.wplan[u.id][d]=S.wplan[u.id][d]||[]).push({n:nm,eq,s:'3×10'});
  save();toast('＋ '+nm);if(WO_VIEW==='plan')renderWorkout()}
 function editWSets(d,j){const u=user(),it=S.wplan[u.id][d][j];
- const v=prompt('เซ็ต × ครั้ง (เช่น 3×12, 4×8 หรือ 30 วินาที)',it.s);
+ const v=prompt(trStr('เซ็ต × ครั้ง (เช่น 3×12, 4×8 หรือ 30 วินาที)'),it.s);
  if(v===null)return;it.s=v.trim()||it.s;save();renderWorkout()}
 function delWPlan(d,j){const u=user();S.wplan[u.id][d].splice(j,1);save();renderWorkout()}
 
@@ -839,7 +840,7 @@ function saveUser(editId){const name=$('#uf-name').value.trim(),bd=$('#uf-bd').v
   S.users.push({id,name,bd,h,sex,act,goal,w0:w});S.active=id;
   S.body.push({id:uid(),user:id,date:dstr(),w})}
  save();closeModal();toast('บันทึกแล้ว 💪');renderAll()}
-function delUser(id){if(!confirm('ลบโปรไฟล์นี้ รวมบันทึกทั้งหมด?'))return;
+function delUser(id){if(!confirm(trStr('ลบโปรไฟล์นี้ รวมบันทึกทั้งหมด?')))return;
  S.users=S.users.filter(u=>u.id!==id);S.logs=S.logs.filter(l=>l.user!==id);
  S.body=S.body.filter(b=>b.user!==id);S.ex=S.ex.filter(e=>e.user!==id);
  if(S.active===id)S.active=S.users[0]?.id||null;
@@ -853,8 +854,120 @@ function importData(inp){const f=inp.files[0];if(!f)return;
   save();closeModal();toast('กู้คืนสำเร็จ ✓');renderAll()}
   catch(e){toast('ไฟล์ไม่ถูกต้อง')}};r.readAsText(f)}
 
+
+/* ================= ระบบ 2 ภาษา (ไทย/EN) ================= */
+let LANG='th',EN_KEYS=null;
+const EN={
+/* — แท็บ/ส่วนกลาง — */
+'บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้':'Nutrition log & body tracking for a healthy you',
+'วันนี้':'Today','อาหาร':'Food','สูตร':'Recipes','ท่าฝึก':'Workout','ร่างกาย':'Body','สรุป':'Stats',
+'มื้อเช้า':'Breakfast','มื้อกลางวัน':'Lunch','มื้อเย็น':'Dinner','ของว่าง':'Snack',
+'หมดจาน':'Ate all','เกือบหมด':'Most of it','ครึ่งเดียว':'Half','จานใหญ่ ×1.5':'Large ×1.5','สองที่ ×2':'Double ×2',
+'ลดน้ำหนัก/ลดไขมัน':'Lose weight / fat','รักษาน้ำหนัก/สุขภาพดี':'Maintain / stay healthy','เพิ่มกล้ามเนื้อ/เพิ่มน้ำหนัก':'Build muscle / gain',
+'นั่งทำงาน แทบไม่ออกกำลังกาย':'Sedentary, little exercise','ออกกำลังเบาๆ 1–3 วัน/สัปดาห์':'Light, 1–3 days/wk','ออกกำลังปานกลาง 3–5 วัน/สัปดาห์':'Moderate, 3–5 days/wk','ออกกำลังหนัก 6–7 วัน/สัปดาห์':'Hard, 6–7 days/wk','นักกีฬา/งานใช้แรงหนักมาก':'Athlete / heavy labor',
+'จันทร์':'Monday','อังคาร':'Tuesday','พุธ':'Wednesday','พฤหัส':'Thursday','ศุกร์':'Friday','เสาร์':'Saturday','อาทิตย์':'Sunday',
+'อา. ':'Sun ','จ. ':'Mon ','อ. ':'Tue ','พ. ':'Wed ','พฤ. ':'Thu ','ศ. ':'Fri ','ส. ':'Sat ',
+'ม.ค.':'Jan','ก.พ.':'Feb','มี.ค.':'Mar','เม.ย.':'Apr','พ.ค.':'May','มิ.ย.':'Jun','ก.ค.':'Jul','ส.ค.':'Aug','ก.ย.':'Sep','ต.ค.':'Oct','พ.ย.':'Nov','ธ.ค.':'Dec',
+/* — หน้าวันนี้ — */
+'เป้าหมายวันนี้':'Daily targets','ก่อนหน้า':'Prev','ถัดไป':'Next',
+'พลังงาน':'Energy','โปรตีน':'Protein','ไขมัน':'Fat','คาร์โบไฮเดรต':'Carbs','คาร์บ':'Carbs','ใยอาหาร':'Fiber','โซเดียม':'Sodium','แคลเซียม':'Calcium','ธาตุเหล็ก':'Iron','เหล็ก':'Iron',
+'เผาเพิ่ม':'Burned','สุทธิ':'Net','ดื่มน้ำ':'Water','แก้ว':'glasses','ยังไม่มีบันทึก':'No entries yet',
+'ตารางฝึกวัน':'Plan for ','ดูตาราง':'View plan','🔥 บันทึกว่าเล่นแล้ว':'🔥 Log workout','ออกกำลังกาย':'Exercise',
+'＋ บันทึก':'+ Log','บันทึกมื้อเช้า':'Log breakfast','บันทึกมื้อกลางวัน':'Log lunch','บันทึกมื้อเย็น':'Log dinner','บันทึกของว่าง':'Log snack',
+'🔥 บันทึกออกกำลังกาย':'🔥 Log exercise','เลือกแบบเร็ว (ค่าประมาณสำหรับน้ำหนัก ~65 กก.)':'Quick pick (approx. for ~65 kg)','กิจกรรม':'Activity','พลังงานที่เผา (กิโลแคลอรี)':'Calories burned (kcal)',
+'วิ่งเหยาะ 30 นาที':'Jogging 30 min','เดินเร็ว 30 นาที':'Brisk walk 30 min','ปั่นจักรยาน 30 นาที':'Cycling 30 min','เวทเทรนนิ่ง 45 นาที':'Weight training 45 min','ว่ายน้ำ 30 นาที':'Swimming 30 min','คลาสแอโรบิก/เต้น 45 นาที':'Aerobics/dance 45 min','โยคะ 60 นาที':'Yoga 60 min','HIIT 20 นาที':'HIIT 20 min','แบดมินตัน 60 นาที':'Badminton 60 min','ฟุตบอล 60 นาที':'Football 60 min',
+'เลือกจากคลังเมนู (หรือพิมพ์เองด้านล่าง)':'Pick from menu library (or type below)','– เมนูกำหนดเอง –':'– Custom meal –','ชื่อเมนู':'Meal name','วัตถุดิบ + ปริมาณ (กรัม/มล.)':'Ingredients + amount (g/ml)','วัตถุดิบ + กรัม':'Ingredients + grams','＋ เพิ่มวัตถุดิบ':'+ Add ingredient','🆕 สร้างวัตถุดิบใหม่':'🆕 New ingredient','ปริมาณที่กิน':'How much eaten','โน้ต':'Note','💾 บันทึก':'💾 Save','แก้ไขบันทึก':'Edit entry','รวม:':'Total:',
+/* — หน้าอาหาร — */
+'ค้นหาเมนู / วัตถุดิบ...':'Search meals / ingredients...','ค้นหาเมนู...':'Search...','ค้นหาท่า...':'Search exercises...','ทั้งหมด':'All','＋ เพิ่มเมนูของฉัน':'+ My recipe','ของฉัน':'Mine','ไม่พบเมนูที่ค้นหา':'No results','กิน ':'eaten ',' ครั้ง':' times',
+'จานเดียว':'One-dish','คลีน/ฟิต':'Clean / fit','มื้อเช้า/ว่าง':'Breakfast / snack','เครื่องดื่ม':'Drinks','อื่นๆ':'Others',
+'ส่วนประกอบ (1 ที่)':'Ingredients (1 serving)','คุณค่าทางโภชนาการ (ต่อที่)':'Nutrition (per serving)','ของเป้า':'of target','วิธีทำ':'Steps','🍽️ กินมื้อนี้':'🍽️ Eat this','ลบเมนู':'Delete recipe','แก้ไขเมนู':'Edit recipe','เพิ่มเมนูของฉัน':'Add my recipe','หมวด':'Category','วิธีทำ (ไม่บังคับ, 1 บรรทัดต่อขั้นตอน)':'Steps (optional, one per line)','💾 บันทึกเมนู':'💾 Save recipe',
+'🧺 วัตถุดิบ':'🧺 Ingredients','🧺 วัตถุดิบของฉัน':'🧺 My ingredients','＋ เพิ่มวัตถุดิบใหม่':'+ New ingredient','ยังไม่มีวัตถุดิบที่เพิ่มเอง':'No custom ingredients yet','เพิ่มวัตถุดิบใหม่':'New ingredient','แก้ไขวัตถุดิบ':'Edit ingredient','ชื่อวัตถุดิบ':'Ingredient name','คุณค่าทางโภชนาการ ต่อ 100 กรัม (ไม่ทราบใส่ 0)':'Nutrition per 100 g (use 0 if unknown)','💾 บันทึกวัตถุดิบ':'💾 Save ingredient',' ต่อ 100 ก.':' per 100 g',
+'เพิ่มวัตถุดิบที่ไม่มีในระบบ พร้อมค่าโภชนาการต่อ 100 กรัม (ดูจากฉลาก) — รายการของคุณจะมี ★':'Add foods not in the database with nutrition per 100 g (check the label) — yours are marked ★',
+'พลังงาน (กิโลแคลอรี)':'Energy (kcal)','โปรตีน (ก.)':'Protein (g)','ไขมัน (ก.)':'Fat (g)','คาร์โบไฮเดรต (ก.)':'Carbs (g)','ใยอาหาร (ก.)':'Fiber (g)','โซเดียม (มก.)':'Sodium (mg)','แคลเซียม (มก.)':'Calcium (mg)','เหล็ก (มก.)':'Iron (mg)',
+'แป้ง/ธัญพืช':'Grains / starch','ผัก':'Vegetables','ผลไม้':'Fruits','นม':'Dairy','ปรุงรส':'Condiments',
+/* — หน้าสูตร — */
+'รวม ':'','300 ไอเดียเมนูเฮลตี้':'300 healthy menu ideas',' — แตะ 🔍 ค้นสูตรใน Google หรือ ▶ ดูวิธีทำใน YouTube ได้เลย':' — tap 🔍 to find recipes on Google or ▶ to watch on YouTube',
+/* — หน้าท่าฝึก — */
+'📚 คลังท่า':'📚 Exercise library','📅 ตารางฝึกของฉัน':'📅 My plan','ทุกระดับ':'All levels','🌱 มือใหม่':'🌱 Beginner','🏠 ไม่ใช้อุปกรณ์':'🏠 No equipment','🏋️ ใช้อุปกรณ์':'🏋️ Equipment','ทุกส่วน':'All parts','มือใหม่':'Beginner','ไม่พบท่าที่ค้นหา':'No exercises found',' ท่า':' moves',' คลิป':' clips',
+' แตะ ▶ ดูวิธีเล่นใน YouTube · แตะ ＋ เพิ่มท่าลงตารางฝึก':' Tap ▶ to watch on YouTube · tap + to add to your plan',
+'มือใหม่เริ่มจากท่า 🌱 และน้ำหนักเบา เน้นฟอร์มถูกต้องก่อนเพิ่มความหนัก ถ้ามีอาการบาดเจ็บควรปรึกษาผู้เชี่ยวชาญ':'Beginners: start with 🌱 moves and light weights, master form before adding load. If injured, consult a professional.',
+'บอดี้เวท':'Bodyweight','ดัมเบล':'Dumbbell','บาร์เบล':'Barbell','ยางยืด':'Band','เครื่อง':'Machine','อุปกรณ์เสริม':'Accessory',
+'อก 💪':'Chest 💪','หลัง 🔙':'Back 🔙','ไหล่ 🙆':'Shoulders 🙆','แขน 🦾':'Arms 🦾','ขา / สะโพก 🦵':'Legs / Glutes 🦵','หน้าท้อง / แกนกลาง 🧘':'Core / Abs 🧘','คาร์ดิโอ 🔥':'Cardio 🔥','ยืดเหยียด / ฟื้นฟู 🌿':'Stretch / Recovery 🌿','เล่นตามคลิป ไม่ใช้อุปกรณ์ 🏠':'Follow-along, no equipment 🏠',
+'วิดพื้นเข่า':'Knee push-up','วิดพื้น (Push-up)':'Push-up','อินไคลน์พุชอัพ (มือยันโต๊ะ)':'Incline push-up','เดคไลน์พุชอัพ':'Decline push-up','ไวด์พุชอัพ':'Wide push-up','ดัมเบลเบนช์เพรส':'Dumbbell bench press','อินไคลน์ดัมเบลเพรส':'Incline dumbbell press','ดัมเบลฟลาย':'Dumbbell fly','บาร์เบลเบนช์เพรส':'Barbell bench press','เคเบิลครอสโอเวอร์':'Cable crossover','ดิป (Dips)':'Dips',
+'ซูเปอร์แมน':'Superman','รีเวิร์สสโนว์เอนเจิล':'Reverse snow angel','แบนด์พูลอะพาร์ท':'Band pull-apart','ดัมเบลโรว์':'Dumbbell row','อินเวิร์ตโรว์ (โหนใต้โต๊ะ)':'Inverted row','ดึงข้อ (Pull-up)':'Pull-up','แลทพูลดาวน์':'Lat pulldown','บาร์เบลโรว์':'Barbell row','ซีทเต็ดเคเบิลโรว์':'Seated cable row','เดดลิฟต์':'Deadlift',
+'แลทเทอรัลเรส':'Lateral raise','ฟรอนต์เรส':'Front raise','ดัมเบลโชลเดอร์เพรส':'Dumbbell shoulder press','อาร์โนลด์เพรส':'Arnold press','โอเวอร์เฮดเพรส':'Overhead press','รีเวิร์สฟลาย':'Reverse fly','เฟซพูล':'Face pull','อัพไรท์โรว์':'Upright row','ไพค์พุชอัพ':'Pike push-up',
+'ดัมเบลเคิร์ล':'Dumbbell curl','แฮมเมอร์เคิร์ล':'Hammer curl','ไตรเซปส์ดิปกับเก้าอี้':'Chair triceps dip','เคิร์ลยางยืด':'Band curl','คอนเซนเทรชันเคิร์ล':'Concentration curl','ไดมอนด์พุชอัพ':'Diamond push-up','ทรัยเซปเอ็กซ์เทนชัน':'Triceps extension','สกัลครัชเชอร์':'Skull crusher','เคเบิลพุชดาวน์':'Cable pushdown',
+'สควอท':'Squat','วอลล์ซิท (นั่งพิงกำแพง)':'Wall sit','ลันจ์':'Lunge','ไซด์ลันจ์':'Side lunge','กลูตบริดจ์':'Glute bridge','คาล์ฟเรส':'Calf raise','สเต็ปอัพ':'Step-up','โกเบล็ตสควอท':'Goblet squat','บัลแกเรียนสปลิทสควอท':'Bulgarian split squat','โรมาเนียนเดดลิฟต์ (RDL)':'Romanian deadlift','ฮิปทรัสต์':'Hip thrust','เลกเพรส':'Leg press',
+'แพลงก์แตะไหล่':'Plank shoulder tap','แพลงก์':'Plank','ครันช์จักรยาน':'Bicycle crunch','ครันช์':'Crunch','เดดบั๊ก':'Dead bug','เบิร์ดด็อก':'Bird dog','ไซด์แพลงก์':'Side plank','เลกเรส':'Leg raise','รัสเซียนทวิสต์':'Russian twist','เมาน์เทนไคลม์เบอร์':'Mountain climber','ฮอลโลว์โฮลด์':'Hollow hold','แอบวีลโรลเอาท์':'Ab wheel rollout',
+'เดินเร็ว / เดินขึ้นบันได':'Brisk walk / stair climb','จัมพ์ปิ้งแจ็ค':'Jumping jacks','วิ่งยกเข่าสูง (High knees)':'High knees','กระโดดเชือก':'Jump rope','สเต็ปแตะข้าง (Low impact)':'Side step (low impact)','เบอร์พี':'Burpee','สควอทจัมพ์':'Jump squat','สเก็ตเตอร์จัมพ์':'Skater jump','ทาบาทา 4 นาที':'Tabata 4 min',
+'ไดนามิกวอร์มอัพก่อนเล่น':'Dynamic warm-up','คูลดาวน์หลังออกกำลังกาย':'Post-workout cooldown','โยคะสำหรับมือใหม่':'Beginner yoga','ยืดสะโพกแก้ปวดหลัง':'Hip stretch for back pain','ยืดคอบ่าไหล่ออฟฟิศซินโดรม':'Neck & shoulder stretch','ยืดเหยียดก่อนนอน':'Bedtime stretch','ยืดเหยียดหลังตื่นนอน':'Morning stretch','โฟมโรลเลอร์คลายกล้ามเนื้อ':'Foam rolling',
+'ฟูลบอดี้ 20 นาที ไม่ใช้อุปกรณ์':'Full body 20 min, no equipment','มือใหม่เริ่มออกกำลังกาย 15 นาที':'Beginner workout 15 min','คาร์ดิโอลดไขมัน 30 นาที ที่บ้าน':'Fat-burn cardio 30 min at home','HIIT เผาผลาญ ไม่มีกระโดด 20 นาที':'No-jump HIIT 20 min','หน้าท้อง 10 นาที':'Abs 10 min','ต้นขาเฟิร์ม 15 นาที':'Legs & thighs 15 min','แขนกระชับ 10 นาที ไม่ใช้อุปกรณ์':'Arms 10 min, no equipment','ออกกำลังกายตอนเช้า 10 นาที':'Morning workout 10 min','โยคะ Flow 20 นาที':'Yoga flow 20 min','สลายพุง 30 วัน ที่บ้าน':'30-day belly fat challenge',
+'จัดตารางประจำสัปดาห์ — เพิ่มท่าจากคลัง (ปุ่ม ＋) หรือกด "เพิ่มท่า" ในแต่ละวัน · แตะป้ายเซ็ตเพื่อแก้จำนวน':'Build your weekly plan — add moves from the library (+ button) or "Add move" on each day · tap the sets badge to edit',
+'＋ เพิ่มท่า':'+ Add move','วันพัก 😴':'Rest day 😴','ลงตารางวันไหน?':'Add to which day?','เพิ่มท่าลงวัน':'Add moves to ','แตะท่าเพื่อเพิ่ม (เพิ่มได้หลายท่าต่อเนื่อง)':'Tap to add (multiple allowed)','เพิ่มลงวัน':'Added to ','เซ็ต × ครั้ง (เช่น 3×12, 4×8 หรือ 30 วินาที)':'Sets × reps (e.g. 3×12, 4×8 or 30 sec)','เพิ่ม "':'Add "',
+/* — หน้าร่างกาย — */
+'＋ บันทึกน้ำหนัก/สัดส่วน':'+ Log weight / measurements','บันทึกร่างกาย':'Log body data','น้ำหนักปัจจุบัน (กก.)':'Current weight (kg)','น้ำหนัก (กก.)':'Weight (kg)','เปอร์เซ็นต์ไขมัน (ถ้ามีเครื่องวัด)':'Body fat % (if available)','รอบเอว (ซม.)':'Waist (cm)','ไม่บังคับ':'optional',
+'น้ำหนักน้อยกว่าเกณฑ์':'Underweight','สมส่วน':'Normal','น้ำหนักเกิน':'Overweight','อ้วน (ระดับ 1)':'Obese (class 1)','อ้วนมาก (ระดับ 2)':'Obese (class 2)',
+'น้ำหนักปัจจุบัน':'Current weight','จากเริ่มต้น':'from start','BMR (กิโลแคลอรี/วัน)':'BMR (kcal/day)','TDEE เผาทั้งวัน':'TDEE total burn','📉 กราฟน้ำหนัก':'📉 Weight chart','📒 ประวัติ':'📒 History','ไขมัน ':'fat ','เอว ':'waist ','ยังไม่มีบันทึก ชั่งน้ำหนักแล้วมาจดกัน!':'No records yet — weigh in and log it!',
+'น้ำหนักสมส่วนของส่วนสูง':'Healthy weight for height','คือ':'is','(BMI 18.5–22.9 เกณฑ์เอเชีย)':'(BMI 18.5–22.9, Asian cutoff)','เป้าพลังงาน':'Energy target','ตามเป้าหมาย':'for goal','กิโลแคลอรี/วัน':'kcal/day',
+'BMI เกณฑ์เอเชีย (WHO Asia-Pacific) · BMR สูตร Mifflin-St Jeor · ค่าประมาณเพื่อติดตามแนวโน้ม ไม่ใช่คำวินิจฉัยทางการแพทย์':'BMI uses WHO Asia-Pacific cutoffs · BMR via Mifflin-St Jeor · estimates for tracking trends, not medical diagnosis',
+/* — หน้าสรุป — */
+'วันที่มีบันทึก':'Days logged','กิโลแคลอรีเฉลี่ย/วัน':'Avg kcal/day','โปรตีนเฉลี่ย/วัน (เป้า':'Avg protein/day (target','วันที่เข้าเป้า ±10%':'Days on target ±10%','ครั้งที่ออกกำลังกาย':'Workout sessions','กิโลแคลอรีที่เผาเพิ่ม':'Extra kcal burned','พลังงานรายวัน':'Daily energy','เป้า ':'Target ','เมนูยอดฮิต':'Top meals','เดือนนี้ยังไม่มีบันทึก':'No entries this month','เดือนนี้น้ำหนัก':'This month weight',
+/* — ตั้งค่า — */
+'⚙️ ตั้งค่า':'⚙️ Settings','โปรไฟล์':'Profiles','＋ เพิ่มโปรไฟล์':'+ Add profile','ข้อมูล':'Data','⬇️ สำรองข้อมูล':'⬇️ Backup','⬆️ กู้คืนข้อมูล':'⬆️ Restore','สร้างโปรไฟล์':'Create profile','แก้ไขโปรไฟล์':'Edit profile','ชื่อเล่น':'Nickname','ชื่อ':'Name','เพศ':'Sex','👨 ชาย':'👨 Male','👩 หญิง':'👩 Female','หญิง':'Female','ชาย':'Male','วันเกิด':'Birth date','ส่วนสูง (ซม.)':'Height (cm)','กิจกรรมในชีวิตประจำวัน':'Daily activity','เป้าหมาย':'Goal',' ปี':' yr',
+'ข้อมูลเก็บในเครื่องนี้เท่านั้น แนะนำสำรองเป็นระยะ':'All data stays on this device — back up regularly',
+'วิธีติดตั้งเป็นแอป':'Install as an app',
+'Android: เปิดด้วย Chrome → ⋮ → "เพิ่มลงในหน้าจอหลัก" · iPhone: เปิดลิงก์ด้วย Safari → ปุ่มแชร์ → "เพิ่มลงไปยังหน้าจอโฮม"':'Android: open in Chrome → ⋮ → "Add to Home screen" · iPhone: open in Safari → Share → "Add to Home Screen"',
+'⚕️ ค่าโภชนาการ/BMI/TDEE เป็นค่าประมาณเพื่อการวางแผน ไม่ใช่คำแนะนำทางการแพทย์ ผู้มีโรคประจำตัวควรปรึกษาแพทย์หรือนักโภชนาการ':'⚕️ Nutrition/BMI/TDEE values are planning estimates, not medical advice. Consult a doctor or dietitian if you have health conditions.',
+'ยินดีต้อนรับสู่ IUFIT!':'Welcome to IUFIT!','กรอกข้อมูลร่างกายสั้นๆ เพื่อคำนวณเป้าหมาย':'Enter a few body details to calculate','พลังงานและโปรตีนที่เหมาะกับคุณ':'your calorie and protein targets','เริ่มต้นใช้งาน 🚀':'Get started 🚀','＋ เพิ่ม':'+ Add',
+/* — toast/ยืนยัน — */
+'บันทึกแล้ว 💪':'Saved 💪','บันทึกแล้ว 🔥':'Saved 🔥','บันทึกแล้ว 📉':'Saved 📉','บันทึกเมนูแล้ว ⭐':'Recipe saved ⭐','บันทึกวัตถุดิบแล้ว 🧺':'Ingredient saved 🧺','ดาวน์โหลดไฟล์สำรองแล้ว':'Backup downloaded','กู้คืนสำเร็จ ✓':'Restored ✓','ไฟล์ไม่ถูกต้อง':'Invalid file','ใส่ชื่อเมนูก่อนนะ':'Please enter a meal name','ใส่ชื่อก่อนนะ':'Please enter a name','ใส่กิจกรรมและแคลอรีก่อนนะ':'Enter activity and calories','ใส่วันที่และน้ำหนักก่อนนะ':'Enter date and weight','เพิ่มวัตถุดิบอย่างน้อย 1 อย่าง':'Add at least one ingredient','กรอกชื่อ วันเกิด และส่วนสูงก่อนนะ':'Enter name, birth date and height','ลบไม่ได้ มีเมนูหรือบันทึกที่ใช้อยู่':'Cannot delete: used by a recipe or log','ลบบันทึกนี้?':'Delete this entry?','ลบเมนูนี้?':'Delete this recipe?','ลบวัตถุดิบนี้?':'Delete this ingredient?','ลบโปรไฟล์นี้ รวมบันทึกทั้งหมด?':'Delete this profile and all its data?','แล้ว 📅':' 📅','วันที่':'Date','วันที่วัด':'Date measured','ลบ':'Delete',
+/* — หน่วย (ไว้ท้ายๆ ให้คีย์ยาวกว่าจับก่อน) — */
+'กิโลแคลอรี':'kcal',' กก.':' kg','กก.':'kg','มก.':'mg',' ซม.':' cm','ซม.':'cm',' กรัม':' g','กรัม':'g',' ก.':' g',' ด.':' mo','เดือน':'month'
+};
+/* — วัตถุดิบ & เมนูในแอป — */
+Object.assign(EN,{
+'อกไก่ (สุก)':'Chicken breast (cooked)','สะโพกไก่':'Chicken thigh','ไข่ไก่ (ทั้งฟอง)':'Whole egg','ไข่ขาว':'Egg white','หมูสันใน/หมูไม่ติดมัน':'Lean pork','หมูสามชั้น':'Pork belly','เนื้อวัวไม่ติดมัน':'Lean beef','ทูน่ากระป๋อง (ในน้ำ)':'Canned tuna in water','แซลมอน':'Salmon','ปลานิล/ปลากะพง':'Tilapia / sea bass','กุ้ง':'Shrimp','ปลาหมึก':'Squid','เต้าหู้':'Tofu','เวย์โปรตีน (ผง)':'Whey protein powder','นมจืด':'Milk','นมพร่องมันเนย':'Low-fat milk','นมถั่วเหลือง (หวานน้อย)':'Soy milk (low sugar)','กรีกโยเกิร์ต':'Greek yogurt','โยเกิร์ตรสธรรมชาติ':'Plain yogurt','ชีส':'Cheese',
+'ข้าวสวย':'White rice','ข้าวกล้องสุก':'Brown rice (cooked)','ข้าวเหนียว':'Sticky rice','ขนมปังโฮลวีต':'Whole-wheat bread','ขนมปังขาว':'White bread','ข้าวโอ๊ต (แห้ง)':'Oats (dry)','พาสต้า (สุก)':'Pasta (cooked)','เส้นก๋วยเตี๋ยว (สุก)':'Rice noodles (cooked)','บะหมี่กึ่งสำเร็จรูป (แห้ง)':'Instant noodles (dry)','มันฝรั่งต้ม':'Boiled potato','มันหวานนึ่ง':'Steamed sweet potato','ข้าวโพดหวาน':'Sweet corn','กราโนล่า':'Granola',
+'น้ำมันพืช':'Vegetable oil','เนยถั่ว':'Peanut butter','เนย':'Butter','อะโวคาโด':'Avocado','ถั่วลิสง':'Peanuts','อัลมอนด์':'Almonds','เมล็ดเจีย':'Chia seeds','กะทิ':'Coconut milk',
+'บรอกโคลี':'Broccoli','คะน้า':'Chinese kale','ผักบุ้ง':'Morning glory','กะหล่ำปลี/ผักกาดขาว':'Cabbage','ผักสลัด':'Lettuce','มะเขือเทศ':'Tomato','แตงกวา':'Cucumber','แครอท':'Carrot','ฟักทอง':'Pumpkin','เห็ด':'Mushroom','หอมใหญ่':'Onion',
+'กล้วย':'Banana','แอปเปิล':'Apple','ส้ม':'Orange','มะละกอ':'Papaya','มะม่วงสุก':'Ripe mango','แตงโม':'Watermelon','ฝรั่ง':'Guava','เบอร์รีรวม':'Mixed berries','น้ำตาล':'Sugar','น้ำผึ้ง':'Honey','น้ำปลา':'Fish sauce','ซีอิ๊ว/ซอสปรุงรส':'Soy sauce',
+'ข้าวกะเพราไก่ไข่ดาว':'Basil chicken rice + fried egg','อกไก่ย่าง + ข้าวกล้อง + บรอกโคลี':'Grilled chicken + brown rice + broccoli','สลัดอกไก่อะโวคาโด':'Chicken avocado salad','ข้าวมันไก่':'Hainanese chicken rice','ผัดผักบุ้ง + ข้าวสวย':'Stir-fried morning glory + rice','ก๋วยเตี๋ยวน้ำใสไก่':'Clear chicken noodle soup','ข้าวผัดกุ้งใส่ไข่':'Shrimp & egg fried rice','ส้มตำไทย':'Som tam papaya salad','ไก่ย่าง + ข้าวเหนียว':'Grilled chicken + sticky rice','ปลาย่าง/นึ่ง + ข้าวกล้อง + ผักลวก':'Grilled fish + brown rice + greens','โอ๊ตนมกล้วย':'Banana milk oatmeal','สมูทตี้เวย์กล้วยเนยถั่ว':'Whey banana PB smoothie','ไข่ต้ม 2 ฟอง':'2 boiled eggs','แซนด์วิชทูน่า':'Tuna sandwich','ข้าวต้มหมูสับ':'Pork rice porridge','สเต๊กอกไก่ + มันบด':'Chicken steak + mashed potato','แกงเขียวหวานไก่ + ข้าว':'Green curry chicken + rice','ผัดไทยกุ้ง':'Pad thai with shrimp','กรีกโยเกิร์ต + กราโนล่า + เบอร์รี':'Greek yogurt, granola & berries','ข้าวไข่เจียว':'Omelet over rice','เต้าหู้ผัดผักรวม + ข้าวกล้อง':'Tofu veggie stir-fry + brown rice','บะหมี่กึ่งสำเร็จรูป + ไข่':'Instant noodles + egg','อกไก่ฉีก + ไข่ต้ม + ผักสลัด':'Shredded chicken & egg salad','ข้าวหมูแดง':'Red BBQ pork rice',
+'ลดน้ำมันผัด/ทอดไข่ จะลดได้ ~100 กิโลแคลอรี':'Use less oil when frying to save ~100 kcal','โซเดียมสูงจากน้ำปลา สั่งหวานน้อย-เค็มน้อยได้':'High sodium from fish sauce — ask for less salty/sweet','ใช้กรีกโยเกิร์ตแทนมายองเนส ลดไขมันได้มาก':'Greek yogurt instead of mayo cuts a lot of fat','โซเดียมสูงมาก ใส่เครื่องปรุงแค่ครึ่งซองช่วยได้':'Very high sodium — use only half the seasoning packet'});
+/* — สูตร 300 เมนู — */
+Object.assign(EN,{
+'ไก่ / อกไก่':'Chicken / breast','ปลา / ซีฟู้ด':'Fish / seafood','หมู / เนื้อ ไม่ติดมัน':'Lean pork / beef','ไข่':'Eggs','เต้าหู้ / เห็ด / วีแกน':'Tofu / mushroom / vegan','สลัด / ยำ':'Salads / spicy salads','ข้าว / เส้น':'Rice / noodles','ซุป / แกง / ต้ม':'Soups / curries','มื้อเช้า':'Breakfast','อบ / หม้อทอดไร้น้ำมัน':'Oven / air fryer','ของว่าง / ของหวานคลีน':'Clean snacks / desserts','เครื่องดื่ม / สมูทตี้':'Drinks / smoothies',
+'อกไก่ย่างซอสงาดำ':'Grilled chicken, black sesame sauce','สเต๊กอกไก่ซอสมะนาว':'Chicken steak, lemon sauce','อกไก่ผัดขิง':'Ginger chicken stir-fry','ลาบอกไก่':'Chicken larb','ยำอกไก่ฉีกสมุนไพร':'Herb shredded chicken salad','อกไก่หมักโยเกิร์ตอบ':'Yogurt-marinated baked chicken','ไก่ผัดเม็ดมะม่วงน้ำมันน้อย':'Cashew chicken (light oil)','อกไก่ม้วนชีสอบ':'Baked cheese-stuffed chicken roll','ข้าวกล้องอบไก่':'Baked chicken brown rice','สลัดโรลอกไก่':'Chicken salad rolls','อกไก่ผัดพริกหยวก':'Chicken & bell pepper stir-fry','ไก่ย่างสมุนไพรไม่ติดหนัง':'Skinless herb grilled chicken','อกไก่นึ่งจิ้มแจ่ว':'Steamed chicken with jaew dip','ไก่ผัดกระเทียมพริกไทยน้ำมันน้อย':'Garlic pepper chicken (light oil)','อกไก่ผัดฉ่า':'Spicy herb chicken pad cha','ไก่ตุ๋นมะนาวดอง':'Braised chicken, pickled lime','อกไก่ซูวี':'Sous-vide chicken breast','ไก่ผัดโหระพา':'Sweet basil chicken','อกไก่ซอสเทอริยากิหวานน้อย':'Teriyaki chicken (low sugar)','ไก่ย่างจิ้มแจ่ว':'Grilled chicken with jaew','อกไก่สไลซ์ลวกจิ้มซีฟู้ด':'Poached chicken, seafood dip','ไก่ผัดขึ้นฉ่าย':'Chicken & celery stir-fry','อกไก่ผัดพริกแกงน้ำมันน้อย':'Chili-paste chicken (light oil)','ลาบไก่คั่ว':'Toasted chicken larb','ไก่นึ่งซีอิ๊วขิง':'Steamed soy-ginger chicken','ยำไก่แซ่บ':'Spicy chicken yum','สะเต๊ะอกไก่ย่าง':'Grilled chicken satay','ไก่ผัดเปรี้ยวหวานผักรวม':'Sweet & sour chicken with veggies','เบอร์เกอร์อกไก่คลีน':'Clean chicken burger','ไก่อบมะนาวกระเทียม':'Lemon garlic baked chicken',
+'แซลมอนย่างซอสมิโสะ':'Miso grilled salmon','แซลมอนอบกระเทียม':'Garlic baked salmon','ปลากะพงนึ่งมะนาว':'Steamed sea bass with lime','ปลานิลเผาเกลือ':'Salt-grilled tilapia','ปลาทูย่างน้ำพริกผักสด':'Grilled mackerel, chili dip & veggies','ลาบปลานิล':'Tilapia larb','ยำทูน่าสูตรคลีน':'Clean spicy tuna salad','ทูน่าคลุกข้าวกล้อง':'Tuna brown rice bowl','กุ้งอบวุ้นเส้น':'Baked shrimp glass noodles','แซลมอนดองซีอิ๊ว':'Soy-marinated salmon','ปลากะพงนึ่งซีอิ๊ว':'Steamed sea bass in soy','แซลมอนผัดบรอกโคลี':'Salmon broccoli stir-fry','กุ้งย่างจิ้มซีฟู้ด':'Grilled shrimp, seafood sauce','ปลาหมึกย่าง':'Grilled squid','ปลาดอลลี่นึ่งมะนาว':'Steamed dory with lime','ปลาช่อนเผาเกลือ':'Salt-grilled snakehead fish','ปลาอินทรีย่าง':'Grilled king mackerel','กุ้งผัดบรอกโคลี':'Shrimp & broccoli stir-fry','ปลานึ่งบ๊วย':'Steamed fish with plum','ฉู่ฉี่ปลาทูน้ำมันน้อย':'Mackerel chu chi curry (light)','ปลาผัดขึ้นฉ่าย':'Fish & celery stir-fry','ข้าวหน้าปลาแซลมอน (ซาเกะด้ง)':'Salmon rice bowl (sake don)','ทูน่าสเต๊ก':'Tuna steak','กุ้งซอสมะขามหวานน้อย':'Shrimp in tamarind sauce (low sugar)','ปลานิลนึ่งจิ้มแจ่ว':'Steamed tilapia, jaew dip','หอยแมลงภู่อบสมุนไพร':'Herb baked mussels','ปลาแมคเคอเรลย่าง':'Grilled mackerel','กุ้งนึ่งกระเทียม':'Garlic steamed shrimp','ลวกจิ้มทะเลรวม':'Poached seafood with spicy dip','ห่อหมกปลาสูตรคลีน':'Clean fish hor mok',
+'หมูสันในย่างจิ้มแจ่ว':'Grilled pork tenderloin, jaew','สเต๊กหมูสันใน':'Pork tenderloin steak','หมูผัดขิง':'Ginger pork stir-fry','ลาบหมูสูตรคลีน':'Clean pork larb','หมูปิ้งเตาอบไม่ติดมัน':'Oven moo ping (lean)','หมูสันในผัดพริกไทยดำ':'Black pepper pork','หมูตุ๋นเห็ดหอม':'Braised pork & shiitake','เนื้อย่างจิ้มแจ่ว':'Grilled beef with jaew','สเต๊กเนื้อสันใน':'Beef tenderloin steak','เนื้อผัดกระเทียม':'Garlic beef stir-fry','เนื้อตุ๋นมะเขือเทศ':'Tomato braised beef','กะเพราหมูสับไขมันต่ำ':'Low-fat basil minced pork','หมูสับคั่วสมุนไพร':'Toasted herb minced pork','เนื้อย่างเกาหลีหวานน้อย':'Korean BBQ beef (low sugar)','หมูสันในซูวี':'Sous-vide pork tenderloin','ชาบูหมูสไลซ์น้ำจิ้มแจ่ว':'Pork shabu, jaew dip','เนื้อผัดกะเพรา':'Basil beef stir-fry','หมูอบซอสมัสตาร์ด':'Mustard baked pork','พริกอ่องหมูสับน้ำมันน้อย':'Nam prik ong (light oil)','ยำหมูย่างมะนาว':'Grilled pork lime salad',
+'ไข่ตุ๋นทรงเครื่อง':'Loaded steamed egg','ไข่ขาวเจียวเตาอบ':'Oven egg-white omelet','ออมเล็ตผักโขม':'Spinach omelet','ไข่กระทะอะโวคาโด':'Avocado egg skillet','ยำไข่ต้ม':'Spicy boiled egg salad','ไข่ตุ๋นเต้าหู้':'Steamed egg with tofu','สลัดไข่ต้มกรีกโยเกิร์ต':'Egg salad with Greek yogurt','ไข่ม้วนญี่ปุ่นทามาโกะ':'Tamagoyaki rolled egg','ไข่ลูกเขยหวานน้อย':'Son-in-law eggs (low sugar)','ไข่พะโล้สูตรหวานน้อย':'Five-spice egg stew (low sugar)','ไข่ต้มยางมะตูมซุปใส':'Soft-boiled eggs in clear soup','ไข่คนนมสด':'Creamy scrambled eggs','ไข่ดาวน้ำ (โพชด์เอ้ก)':'Poached eggs','ไข่อบถ้วยผักรวม':'Veggie egg cups','ไข่ตุ๋นนมสด':'Milk steamed egg','ออมเล็ตเห็ด':'Mushroom omelet','ไข่ขาวคนทูน่า':'Tuna egg-white scramble','ฟริตทาทาผักรวม':'Veggie frittata','ไข่อบอะโวคาโด':'Egg baked in avocado','ชัคชูก้าไข่ในซอสมะเขือเทศ':'Shakshuka',
+'เต้าหู้ทรงเครื่องนึ่ง':'Steamed loaded tofu','สเต๊กเต้าหู้':'Tofu steak','ลาบเต้าหู้':'Tofu larb','ผัดกะเพราเต้าหู้เห็ด':'Basil tofu & mushroom','เต้าหู้ผัดซอสเกาหลี':'Korean sauce tofu','เต้าหู้อบงาดำ':'Black sesame baked tofu','ผัดเปรี้ยวหวานเต้าหู้':'Sweet & sour tofu','มาโปเต้าหู้สูตรคลีน':'Clean mapo tofu','เต้าหู้ย่างซอสถั่ว':'Grilled tofu, peanut sauce','ลาบเห็ดรวม':'Mixed mushroom larb','เห็ดย่างซีอิ๊ว':'Soy grilled mushrooms','น้ำตกเห็ด':'Mushroom nam tok','เห็ดออรินจิย่างกระเทียม':'Garlic king oyster mushroom','ผัดเห็ดรวมขิง':'Ginger mushroom stir-fry','เต้าหู้ไข่นึ่งซีอิ๊ว':'Steamed egg tofu in soy','เทมเป้ผัดซอส':'Tempeh stir-fry','เต้าหู้สครัมเบิล':'Tofu scramble','เต้าหู้ซอสมะขาม':'Tamarind tofu','เกี๊ยวเต้าหู้นึ่ง':'Steamed tofu dumplings','เต้าหู้คลุกงาดำอะโวคาโด':'Tofu avocado sesame bowl','ยำเต้าหู้สมุนไพร':'Herb tofu salad','เต้าหู้ผัดคะน้า':'Tofu & kale stir-fry','เห็ดหอมตุ๋นซีอิ๊ว':'Braised shiitake in soy','ผัดฟักทองเต้าหู้':'Pumpkin tofu stir-fry','เต้าหู้อบสมุนไพร':'Herb baked tofu','สเต๊กเห็ดออรินจิ':'King oyster mushroom steak','เต้าหู้ม้วนสาหร่ายนึ่ง':'Steamed tofu seaweed rolls','แกงเขียวหวานเต้าหู้':'Green curry tofu','มะเขือยาวย่างซอสเต้าเจี้ยว':'Grilled eggplant, soybean sauce','ผัดถั่วงอกเต้าหู้':'Bean sprout & tofu stir-fry',
+'สลัดควินัว':'Quinoa salad','สลัดแซลมอนย่าง':'Grilled salmon salad','ยำผักกูดกุ้งสด':'Fern shoot & shrimp salad','สลัดผลไม้โยเกิร์ต':'Fruit yogurt salad','ซีซาร์สลัดสูตรเบา':'Light caesar salad','ยำเส้นแก้วกุ้งสด':'Glass noodle shrimp salad','ยำส้มโอกุ้งสด':'Pomelo shrimp salad','สลัดทูน่าอะโวคาโด':'Tuna avocado salad','ยำวุ้นเส้นเต้าหู้':'Glass noodle tofu salad','สลัดโรลกุ้ง':'Shrimp salad rolls','สลัดข้าวกล้องญี่ปุ่น':'Japanese brown rice salad','โพเกะโบวล์แซลมอน':'Salmon poke bowl','สลัดอกไก่ซอสงาญี่ปุ่น':'Chicken salad, sesame dressing','ยำมะม่วงกุ้งสด':'Mango shrimp salad','ยำมะเขือยาวย่าง':'Grilled eggplant salad','ยำทะเลรวมแซ่บ':'Spicy seafood salad','ยำสาหร่ายวากาเมะ':'Wakame seaweed salad','สลัดผักเคลอะโวคาโด':'Kale avocado salad','สลัดกรีก':'Greek salad','แทบูเลห์สลัดควินัวเลบานอน':'Quinoa tabbouleh','ซูโนะโมโนะสลัดแตงกวาญี่ปุ่น':'Cucumber sunomono','ส้มตำไทยหวานน้อย':'Som tam (low sugar)','ตำแตงกวา':'Cucumber som tam','ตำถั่วฝักยาว':'Long bean som tam','สลัดคาปรีเซ่':'Caprese salad','สลัดธัญพืช 5 สี':'5-color grain salad','ยำไก่ย่างตะไคร้':'Lemongrass grilled chicken salad','สลัดผักย่างบัลซามิก':'Balsamic grilled veggie salad','โคลสลอว์กรีกโยเกิร์ต':'Greek yogurt coleslaw',
+'ข้าวกล้องผัดอกไก่':'Chicken brown fried rice','ข้าวยำสมุนไพร':'Herb rice salad (khao yam)','ข้าวคลุกกะปิสูตรคลีน':'Clean shrimp-paste rice','ข้าวอบธัญพืชไก่':'Baked grain rice with chicken','ผัดไทยสูตรคลีน':'Clean pad thai','ก๋วยเตี๋ยวน้ำใสอกไก่':'Clear noodle soup, chicken','เส้นบุกผัดขี้เมา':'Drunken konjac noodles','สปาเกตตีโฮลวีตซอสมะเขือเทศ':'Whole-wheat spaghetti marinara','เส้นบุกยำแซ่บ':'Spicy konjac noodle salad','คิมบับข้าวกล้อง':'Brown rice kimbap','ข้าวไรซ์เบอร์รีผัดกุ้ง':'Riceberry shrimp fried rice','โซบะเย็นซอสงา':'Cold soba, sesame sauce','ข้าวหน้าไก่เทอริยากิหวานน้อย':'Teriyaki chicken bowl (low sugar)','ข้าวหน้าแซลมอนไข่ออนเซ็น':'Salmon bowl, onsen egg','ข้าวกล้องหน้าเนื้อย่าง':'Grilled beef brown rice bowl','สปาเกตตีผัดกะเพราไก่':'Basil chicken spaghetti','พาสต้าอกไก่ซอสเพสโต้':'Chicken pesto pasta','อูด้งซุปใสไก่':'Chicken udon, clear broth','เฝอเวียดนามเนื้อ':'Beef pho','ก๋วยจั๊บญวนไก่':'Vietnamese chicken noodle soup','ข้าวผัดกิมจิข้าวกล้อง':'Kimchi brown fried rice','ข้าวผัดสับปะรดกุ้ง':'Pineapple shrimp fried rice','ผัดซีอิ๊วเส้นบุกไก่':'Konjac pad see ew, chicken','ราดหน้าหมี่ไก่ผักเยอะ':'Noodles in gravy, extra veggies','เทมากิข้าวกล้องห่อสาหร่าย':'Brown rice temaki','บูริโตโบวล์ข้าวกล้อง':'Brown rice burrito bowl','ข้าวแกงกะหรี่ไก่สูตรคลีน':'Clean chicken curry rice','เส้นแก้วผัดทูน่า':'Glass noodle tuna stir-fry','ริซอตโต้ข้าวโอ๊ตเห็ด':'Mushroom oat risotto','หมี่ซั่วผัดไก่ฉีก':'Misua noodles, shredded chicken',
+'แกงจืดวุ้นเส้นหมูสับ':'Glass noodle pork soup','แกงเลียงกุ้งสด':'Kaeng liang shrimp soup','ต้มยำกุ้งน้ำใส':'Clear tom yum goong','แกงส้มผักรวม':'Sour veggie curry','ซุปฟักทอง':'Pumpkin soup','ซุปมิโสะเต้าหู้':'Miso tofu soup','ซุปไก่ใส่ขิง':'Ginger chicken soup','แกงป่าไก่':'Jungle curry chicken','ต้มจืดมะระยัดไส้':'Stuffed bitter gourd soup','ซุปมะเขือเทศโฮมเมด':'Homemade tomato soup','ต้มยำไก่ใส่เห็ด':'Tom yum chicken & mushroom','ต้มข่าไก่':'Tom kha gai','แกงจืดตำลึงหมูสับ':'Ivy gourd pork soup','แกงจืดสาหร่ายเต้าหู้':'Seaweed tofu soup','ซุปหัวหอม':'Onion soup','ซุปบรอกโคลี':'Broccoli soup','ซุปเห็ดรวม':'Mixed mushroom soup','ซุปข้าวโพดไก่ฉีก':'Corn & chicken soup','ต้มจับฉ่ายผักรวม':'Jap chai veggie stew','แกงอ่อมไก่':'Kaeng om chicken','ต้มแซ่บเห็ด':'Spicy mushroom tom saep','ซุปเลนทิลถั่ว':'Lentil soup','ซุปไก่บาร์เลย์':'Chicken barley soup','มิยอกกุกซุปสาหร่ายเกาหลี':'Korean seaweed soup','ซุปกะหล่ำปลี':'Cabbage soup','ต้มส้มปลาทู':'Tom som mackerel','แกงจืดฟักไก่สับ':'Winter melon chicken soup','ซุปผักโขม':'Spinach soup','ต้มยำปลาน้ำใส':'Clear tom yum fish','สตูว์ไก่ผักราก':'Chicken root-veggie stew',
+'โอเวอร์ไนท์โอ๊ต':'Overnight oats','กราโนล่าโยเกิร์ตโบวล์':'Granola yogurt bowl','แพนเค้กกล้วยข้าวโอ๊ต':'Banana oat pancakes','ขนมปังโฮลวีตอะโวคาโดไข่ดาว':'Avocado toast with egg','สมูทตี้โบวล์':'Smoothie bowl','ข้าวต้มธัญพืช':'Multigrain rice porridge','แซนด์วิชไข่ขาวทูน่า':'Egg-white tuna sandwich','เจียพุดดิ้ง':'Chia pudding','โจ๊กข้าวโอ๊ตไก่ฉีก':'Oat congee, shredded chicken','โอนิกิริทูน่าข้าวกล้อง':'Brown rice tuna onigiri','แรปไข่ผักโฮลวีต':'Whole-wheat egg veggie wrap','เฟรนช์โทสต์โฮลวีตคลีน':'Clean whole-wheat french toast','มูสลีนมอัลมอนด์':'Muesli with almond milk','โยเกิร์ตพาร์เฟ่ต์':'Yogurt parfait','เบเกิลแซลมอนรมควัน':'Smoked salmon bagel','ข้าวเหนียวดำนมถั่วเหลืองหวานน้อย':'Black sticky rice in soy milk','แพนเค้กโปรตีน':'Protein pancakes','ไข่คนขนมปังโฮลวีต':'Scrambled eggs on whole-wheat','ข้าวโพดต้มไข่ต้ม':'Boiled corn & eggs','โอ๊ตอุ่นกล้วยอบเชย':'Warm banana cinnamon oats',
+'ไก่กรอบหม้อทอดไร้น้ำมัน':'Air-fryer crispy chicken','เฟรนช์ฟรายส์มันหวานอบ':'Baked sweet potato fries','ปลาทอดหม้อทอดไร้น้ำมัน':'Air-fryer fish','หมูปิ้งเตาอบ':'Oven moo ping','ไก่เทอริยากิอบ':'Baked teriyaki chicken','ผักรวมอบสมุนไพร':'Herb roasted veggies','มันฝรั่งอบกรอบไร้น้ำมัน':'Oil-free crispy potatoes','เต้าหู้กรอบหม้อทอด':'Air-fryer crispy tofu','นักเก็ตอกไก่อบ':'Baked chicken nuggets','น่องไก่อบกระเทียม':'Garlic baked drumsticks','แซลมอนอบฟอยล์':'Foil-baked salmon','กุ้งอบเกลือ':'Salt-baked shrimp','ข้าวโพดอบ':'Roasted corn','บรอกโคลีอบชีส':'Cheesy baked broccoli','ฟักทองอบน้ำผึ้ง':'Honey roasted pumpkin','มะเขือยาวอบมิโสะ':'Miso baked eggplant','มัฟฟินไข่อบผัก':'Veggie egg muffins','ขนมปังกระเทียมโฮลวีต':'Whole-wheat garlic bread','เห็ดอบกระเทียม':'Garlic roasted mushrooms','กล้วยอบอบเชย':'Cinnamon baked banana',
+'เอเนอร์จีบอลถั่วอินทผลัม':'Date-nut energy balls','โยเกิร์ตบาร์กแช่แข็ง':'Frozen yogurt bark','กล้วยตากอบธรรมชาติ':'Natural dried banana','ถั่วอบรวมสมุนไพร':'Herb roasted nuts','มันม่วงนึ่ง':'Steamed purple sweet potato','วุ้นผลไม้ไม่ใส่น้ำตาล':'Sugar-free fruit jelly','กล้วยจุ่มดาร์กช็อกแช่แข็ง':'Frozen dark-choc banana','ป๊อปคอร์นโฮมเมด':'Homemade popcorn','แครกเกอร์โฮลวีตเนยถั่ว':'Whole-wheat crackers & PB','ผลไม้รวมโยเกิร์ตดิป':'Fruit with yogurt dip','เค้กกล้วยโฮลวีต':'Whole-wheat banana cake','คุกกี้ข้าวโอ๊ตกล้วย':'Banana oat cookies','บราวนี่ถั่วดำ':'Black bean brownies','ชีสเค้กกรีกโยเกิร์ต':'Greek yogurt cheesecake','ไอศกรีมกล้วยปั่น':'Banana nice cream','พุดดิ้งอะโวคาโดโกโก้':'Avocado cocoa pudding','แอปเปิลอบอบเชย':'Baked cinnamon apple','เยลลี่ชาเขียวหวานน้อย':'Green tea jelly (low sugar)','ลูกชิ้นอกไก่นึ่ง':'Steamed chicken meatballs','ดาร์กช็อกโกแลตอัลมอนด์':'Dark chocolate almonds',
+'สมูทตี้เขียวผักโขมกล้วย':'Green spinach banana smoothie','สมูทตี้เบอร์รีโยเกิร์ต':'Berry yogurt smoothie','น้ำปั่นแตงโมมิ้นต์':'Watermelon mint cooler','สมูทตี้มะม่วงเสาวรส':'Mango passion smoothie','นมถั่วเหลืองปั่นกล้วย':'Banana soy milk shake','สมูทตี้อะโวคาโดนมอัลมอนด์':'Avocado almond-milk smoothie','โกโก้ร้อนไม่ใส่น้ำตาล':'Sugar-free hot cocoa','มัทฉะลาเต้หวานน้อย':'Matcha latte (low sugar)','สมูทตี้เวย์ช็อกโกแลต':'Chocolate whey smoothie','สมูทตี้แตงไทย':'Thai melon smoothie','น้ำขิงอุ่น':'Warm ginger tea','ชามะนาวไม่ใส่น้ำตาล':'Sugar-free lemon tea','น้ำมะพร้าวปั่น':'Blended coconut water','สมูทตี้สับปะรดขิง':'Pineapple ginger smoothie','สมูทตี้แครอทส้ม':'Carrot orange smoothie','อเมริกาโน่เย็น':'Iced americano','โปรตีนเชคกล้วยเนยถั่ว':'Banana PB protein shake','สมูทตี้แก้วมังกร':'Dragon fruit smoothie','น้ำเสาวรสโซดา':'Passion fruit soda (no sugar)','ลาเต้นมโอ๊ต':'Oat milk latte'});
+/* — เครื่องมือแปล — */
+function trStr(s){if(LANG!=='en'||!s||!/[฀-๿]/.test(s))return s;
+ if(!EN_KEYS)EN_KEYS=Object.keys(EN).sort((a,b)=>b.length-a.length);
+ for(const k of EN_KEYS){if(s.includes(k))s=s.split(k).join(EN[k])}
+ return s}
+function trEl(n){if(LANG!=='en'||!n)return;
+ if(n.nodeType===3){const v=trStr(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v;return}
+ if(n.nodeType!==1)return;
+ const w=document.createTreeWalker(n,NodeFilter.SHOW_TEXT),arr=[];
+ while(w.nextNode())arr.push(w.currentNode);
+ arr.forEach(t=>{const v=trStr(t.nodeValue);if(v!==t.nodeValue)t.nodeValue=v});
+ if(n.querySelectorAll)n.querySelectorAll('input,textarea').forEach(i=>{if(i.placeholder)i.placeholder=trStr(i.placeholder)});
+ if((n.tagName==='INPUT'||n.tagName==='TEXTAREA')&&n.placeholder)n.placeholder=trStr(n.placeholder)}
+function toggleLang(){S.lang=(LANG==='th'?'en':'th');save();location.reload()}
+if(typeof MutationObserver!=='undefined'){
+ new MutationObserver(ms=>{if(LANG!=='en')return;ms.forEach(m=>m.addedNodes&&m.addedNodes.forEach(n=>trEl(n)))})
+ .observe(document.body,{childList:true,subtree:true})}
+
 /* ================= เริ่มต้น ================= */
-load();renderAll();
+load();renderAll();if(LANG==='en'){trEl(document.body);document.title='IUFIT 💪'}document.getElementById('langbtn').textContent=LANG==='en'?'ไทย':'EN';
 if('serviceWorker' in navigator&&location.protocol.indexOf('http')===0){navigator.serviceWorker.register('./sw.js')}
 </script>
 </body>
