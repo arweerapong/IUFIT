@@ -164,7 +164,7 @@ h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 <div class="app">
 <header>
   <svg class="logo" viewBox="0 0 32 32" style="color:var(--coral)"><use href="#i-fit"/></svg>
-  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v1.9.1</small></h1>
+  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.0</small></h1>
   <button class="iconbtn" onclick="openHelp()" title="Help" style="font-size:16px;font-weight:700">?</button>
   <button class="iconbtn" onclick="toggleLang()" id="langbtn" title="Language" style="font-size:11.5px;font-weight:700">EN</button>
   <button class="iconbtn" onclick="openSettings()" title="Settings"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
@@ -370,14 +370,14 @@ function renderChildBar(){const el=$('#childbar');
  el.innerHTML=S.users.map(u=>`<span class="chip ${u.id===S.active?'sel':''}" onclick="setActive('${u.id}')">💪 ${esc(u.name)}</span>`).join('')
  +`<span class="chip" onclick="userForm()">＋ เพิ่ม</span>`}
 function setActive(id){S.active=id;save();renderAll()}
-const TABS=[['today','วันนี้','i-bowl'],['food','อาหาร','i-apple'],['links','สูตร','i-book'],['workout','ท่าฝึก','i-fit'],['body','ร่างกาย','i-grow'],['stats','สรุป','i-chart']];
+const TABS=[['today','วันนี้','i-bowl'],['food','อาหาร','i-apple'],['links','สูตร','i-book'],['workout','ท่าฝึก','i-fit'],['body','ร่างกาย','i-grow'],['stats','สรุป','i-chart'],['game','เกม','i-dice']];
 let TAB='today';
 function renderNav(){$('#nav').innerHTML=TABS.map(([id,n,ic])=>`<button class="${TAB===id?'on':''}" onclick="go('${id}')">${svg(ic)}${n}</button>`).join('')}
 function go(t){TAB=t;renderAll();window.scrollTo(0,0)}
 function renderAll(){renderChildBar();renderNav();
  if(!S.users.length){renderWelcome();return}
  if(!user())S.active=S.users[0].id;
- ({today:renderToday,food:renderFood,links:renderLinks,workout:renderWorkout,body:renderBody,stats:renderStats})[TAB]()}
+ ({today:renderToday,food:renderFood,links:renderLinks,workout:renderWorkout,body:renderBody,stats:renderStats,game:renderGame})[TAB]()}
 function renderWelcome(){$('#view').innerHTML=`
  <div class="card" style="text-align:center;padding:28px 16px">
   <svg viewBox="0 0 32 32" style="width:72px;height:72px;color:var(--coral)"><use href="#i-fit"/></svg>
@@ -899,8 +899,9 @@ function applyPlan(){const d=window._pp;if(!d)return;const u=user();
 
 /* ===== มินิเกมงู (เล่นตอนคาร์ดิโอ/พักเซ็ต) ===== */
 let SN={};
-function openSnake(){const e=LANG==='en';
- openModal(`<h2>🐍 ${e?'Snake':'เกมงู'}</h2>
+function openSnake(){go('game')}
+function renderGame(){const e=LANG==='en';
+ $('#view').innerHTML=`<div class="card" style="margin-top:12px"><h3>🐍 ${e?'Snake':'เกมงู'}${S.snakeHi?' · 🏆 '+S.snakeHi:''}</h3>
  <div class="row between" style="margin:2px 0 6px"><span class="muted" style="font-size:12px">${e?'Pass the time during cardio or rest sets':'เล่นเพลินๆ ระหว่างคาร์ดิโอหรือพักเซ็ต'}</span><b id="sn-score" style="font-size:16px">0</b></div>
  <canvas id="snake-cv" width="320" height="320" style="width:100%;max-width:360px;display:block;margin:0 auto;background:#eaf6f0;border:2.5px solid var(--ink);border-radius:14px 17px 13px 18px;touch-action:none"></canvas>
  <div class="row" style="justify-content:center;margin-top:9px;gap:8px;align-items:center">
@@ -910,7 +911,7 @@ function openSnake(){const e=LANG==='en';
    <button class="btn" style="width:56px;font-size:17px" onclick="snDir(0,1)">▼</button></div>
   <button class="btn" style="width:56px;font-size:17px" onclick="snDir(1,0)">▶</button>
   <button class="btn mint" style="margin-left:8px" onclick="snStart()">🔄 ${e?'Restart':'เริ่มใหม่'}</button></div>
- <p class="muted" style="font-size:11px;text-align:center;margin:7px 0 0">${e?'Swipe on the board or use arrows · eat clean food, avoid walls and your tail · speeds up every 5 points!':'ปัดบนกระดานหรือกดปุ่มลูกศร · เก็บอาหารคลีน เลี่ยงกำแพงกับหางตัวเอง · ทุก 5 แต้มงูจะเร็วขึ้น!'}</p>`);
+ <p class="muted" style="font-size:11px;text-align:center;margin:7px 0 0">${e?'Swipe on the board or use arrows · eat clean food, avoid walls and your tail · speeds up every 5 points!':'ปัดบนกระดานหรือกดปุ่มลูกศร · เก็บอาหารคลีน เลี่ยงกำแพงกับหางตัวเอง · ทุก 5 แต้มงูจะเร็วขึ้น!'}</p></div>`;
  snStart()}
 function snStart(){const cv=document.getElementById('snake-cv');if(!cv)return;
  SN={g:16,z:20,dir:[1,0],next:[1,0],snake:[[8,8],[7,8],[6,8]],food:null,score:0,dead:false,speed:170};
@@ -1001,8 +1002,8 @@ const HELP=[
 'ข้อมูลทั้งหมดอยู่ในเครื่องคุณเท่านั้น ไม่ผ่านเซิร์ฟเวอร์ใคร\nไปที่ ⚙️ ตั้งค่า → "สำรองข้อมูล" ได้ไฟล์ .json เก็บไว้ · ย้ายเครื่อง/ลงแอปใหม่ ใช้ "กู้คืนข้อมูล" เลือกไฟล์นั้น\nปุ่ม EN/ไทย มุมขวาบนสลับภาษาได้ทั้งแอป รวมถึงภาษาของผลค้นหาสูตรและวิดีโอ',
 'All data lives only on your device — no servers involved.\nGo to ⚙️ Settings → "Backup" for a .json file · when switching phones use "Restore" with that file.\nThe EN/ไทย button (top right) switches the whole app language, including recipe/video search results.'],
 ['🐍 มินิเกมงู','🐍 Snake mini game',
-'อยู่ในแท็บท่าฝึก ปุ่ม "🐍 เกมงูคาร์ดิโอ" — เกมงูสไตล์โนเกียไว้เล่นระหว่างคาร์ดิโอบนลู่หรือพักระหว่างเซ็ต\\nบังคับด้วยการปัดบนกระดานหรือปุ่มลูกศร เก็บอาหารให้ได้แต้มเยอะที่สุด ทุก 5 แต้มงูจะเร็วขึ้น คะแนนสูงสุดถูกบันทึกไว้ที่ปุ่ม 🏆',
-'In the Workout tab, tap "🐍 Cardio snake" — a Nokia-style snake game for treadmill cardio or rest between sets.\\nSwipe on the board or use the arrow buttons; eat food to score, speed rises every 5 points, and your best score is saved on the 🏆 button.']
+'อยู่ที่แท็บ "เกม" ล่างขวา (หรือปุ่มลัดในแท็บท่าฝึก) — เกมงูสไตล์โนเกียไว้เล่นระหว่างคาร์ดิโอบนลู่หรือพักระหว่างเซ็ต\\nบังคับด้วยการปัดบนกระดานหรือปุ่มลูกศร เก็บอาหารให้ได้แต้มเยอะที่สุด ทุก 5 แต้มงูจะเร็วขึ้น คะแนนสูงสุดถูกบันทึกไว้ที่ปุ่ม 🏆',
+'Open the "Game" tab (or the shortcut in the Workout tab) — a Nokia-style snake game for treadmill cardio or rest between sets.\\nSwipe on the board or use the arrow buttons; eat food to score, speed rises every 5 points, and your best score is saved on the 🏆 button.']
 ];
 function openHelp(){const e=LANG==='en';
  let h=`<h2>${e?'❓ How to use IUFIT':'❓ วิธีใช้งานแอป IUFIT'}</h2>
@@ -1135,7 +1136,7 @@ const EN={
 /* — หน่วย (ไว้ท้ายๆ ให้คีย์ยาวกว่าจับก่อน) — */
 'กิโลแคลอรี':'kcal',' กก.':' kg','กก.':'kg','มก.':'mg',' ซม.':' cm','ซม.':'cm',' กรัม':' g','กรัม':'g',' ก.':' g',' ด.':' mo','เดือน':'month'
 };
-Object.assign(EN,{'📤 แชร์ตารางให้ลูกเทรน':'📤 Share plan to client','📥 รับตารางจากโค้ช':'📥 Get plan from coach','📤 แชร์ตารางฝึก':'📤 Share workout plan','ส่งลิงก์นี้ให้ลูกเทรน เปิดแล้วแอปจะถามว่าต้องการใช้ตารางนี้เลย':'Send this link to your client — opening it will offer to apply the plan','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด "รับตารางจากโค้ช" ในแอป':'Copy this code to your client — they paste it under "Get plan from coach"','📋 คัดลอก':'📋 Copy','คัดลอกแล้ว 📋':'Copied 📋','กดค้างที่ข้อความเพื่อคัดลอก':'Long-press the text to copy','📲 แชร์...':'📲 Share...','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา':'Paste the link or code from your trainer','วางที่นี่...':'Paste here...','ตรวจสอบตาราง':'Preview plan','โค้ดไม่ถูกต้อง ลองคัดลอกใหม่ทั้งหมด':'Invalid code — copy the whole thing and try again','📥 ตารางฝึก':'📥 Workout plan ','จาก ':'from ','รวม ':'Total ',' ท่า · ถ้ากดใช้ ตารางนี้จะแทนที่ตารางเดิมของคุณ':' moves · applying will replace your current plan','✅ ใช้ตารางนี้':'✅ Apply this plan','ใช้ตารางใหม่แล้ว 📅':'New plan applied 📅','ยังไม่มีท่าในตาราง เพิ่มก่อนนะ':'Your plan is empty — add moves first','ว่าง':'empty','🐍 เกมงูคาร์ดิโอ':'🐍 Cardio snake','📚 คลังเมนู':'📚 Menu library','📅 ตารางอาหาร':'📅 Meal plan','📤 แชร์ตารางอาหาร':'📤 Share meal plan','📥 รับตาราง':'📥 Get plan','จัดเมนูล่วงหน้าทั้งสัปดาห์ · แตะช่องเพื่อเลือกเมนูจากคลัง · หน้า \"วันนี้\" จะโชว์เมนูของวันนั้นพร้อมปุ่มบันทึกเร็ว':'Plan meals for the week · tap a slot to pick from the library · the Today page shows that day with quick-log buttons','เลือกเมนู ':'Pick: ','🗑️ ล้างช่องนี้':'🗑️ Clear slot','ตารางอาหารวัน':'Meals for ','กินแล้ว ✓':'Ate ✓','ตารางยังว่าง เพิ่มก่อนนะ':'Plan is empty — add items first','ตารางอาหาร':'Meal plan','ตารางฝึก':'Workout plan',' รายการ · ถ้ากดใช้ ตารางนี้จะแทนที่ตาราง':' items · applying will replace your current ','เดิมของคุณ':'','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา (ใช้ได้ทั้งตารางฝึกและตารางอาหาร)':'Paste the link or code from your trainer (works for both plan types)','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด \"รับตาราง\" ในแอป':'Copy this code to your client — they paste it under Get plan','📤 แชร์ตาราง':'📤 Share '});
+Object.assign(EN,{'📤 แชร์ตารางให้ลูกเทรน':'📤 Share plan to client','📥 รับตารางจากโค้ช':'📥 Get plan from coach','📤 แชร์ตารางฝึก':'📤 Share workout plan','ส่งลิงก์นี้ให้ลูกเทรน เปิดแล้วแอปจะถามว่าต้องการใช้ตารางนี้เลย':'Send this link to your client — opening it will offer to apply the plan','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด "รับตารางจากโค้ช" ในแอป':'Copy this code to your client — they paste it under "Get plan from coach"','📋 คัดลอก':'📋 Copy','คัดลอกแล้ว 📋':'Copied 📋','กดค้างที่ข้อความเพื่อคัดลอก':'Long-press the text to copy','📲 แชร์...':'📲 Share...','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา':'Paste the link or code from your trainer','วางที่นี่...':'Paste here...','ตรวจสอบตาราง':'Preview plan','โค้ดไม่ถูกต้อง ลองคัดลอกใหม่ทั้งหมด':'Invalid code — copy the whole thing and try again','📥 ตารางฝึก':'📥 Workout plan ','จาก ':'from ','รวม ':'Total ',' ท่า · ถ้ากดใช้ ตารางนี้จะแทนที่ตารางเดิมของคุณ':' moves · applying will replace your current plan','✅ ใช้ตารางนี้':'✅ Apply this plan','ใช้ตารางใหม่แล้ว 📅':'New plan applied 📅','ยังไม่มีท่าในตาราง เพิ่มก่อนนะ':'Your plan is empty — add moves first','ว่าง':'empty','🐍 เกมงูคาร์ดิโอ':'🐍 Cardio snake','เกม':'Game','📚 คลังเมนู':'📚 Menu library','📅 ตารางอาหาร':'📅 Meal plan','📤 แชร์ตารางอาหาร':'📤 Share meal plan','📥 รับตาราง':'📥 Get plan','จัดเมนูล่วงหน้าทั้งสัปดาห์ · แตะช่องเพื่อเลือกเมนูจากคลัง · หน้า \"วันนี้\" จะโชว์เมนูของวันนั้นพร้อมปุ่มบันทึกเร็ว':'Plan meals for the week · tap a slot to pick from the library · the Today page shows that day with quick-log buttons','เลือกเมนู ':'Pick: ','🗑️ ล้างช่องนี้':'🗑️ Clear slot','ตารางอาหารวัน':'Meals for ','กินแล้ว ✓':'Ate ✓','ตารางยังว่าง เพิ่มก่อนนะ':'Plan is empty — add items first','ตารางอาหาร':'Meal plan','ตารางฝึก':'Workout plan',' รายการ · ถ้ากดใช้ ตารางนี้จะแทนที่ตาราง':' items · applying will replace your current ','เดิมของคุณ':'','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา (ใช้ได้ทั้งตารางฝึกและตารางอาหาร)':'Paste the link or code from your trainer (works for both plan types)','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด \"รับตาราง\" ในแอป':'Copy this code to your client — they paste it under Get plan','📤 แชร์ตาราง':'📤 Share '});
 /* — วัตถุดิบ & เมนูในแอป — */
 Object.assign(EN,{
 'อกไก่ (สุก)':'Chicken breast (cooked)','สะโพกไก่':'Chicken thigh','ไข่ไก่ (ทั้งฟอง)':'Whole egg','ไข่ขาว':'Egg white','หมูสันใน/หมูไม่ติดมัน':'Lean pork','หมูสามชั้น':'Pork belly','เนื้อวัวไม่ติดมัน':'Lean beef','ทูน่ากระป๋อง (ในน้ำ)':'Canned tuna in water','แซลมอน':'Salmon','ปลานิล/ปลากะพง':'Tilapia / sea bass','กุ้ง':'Shrimp','ปลาหมึก':'Squid','เต้าหู้':'Tofu','เวย์โปรตีน (ผง)':'Whey protein powder','นมจืด':'Milk','นมพร่องมันเนย':'Low-fat milk','นมถั่วเหลือง (หวานน้อย)':'Soy milk (low sugar)','กรีกโยเกิร์ต':'Greek yogurt','โยเกิร์ตรสธรรมชาติ':'Plain yogurt','ชีส':'Cheese',
