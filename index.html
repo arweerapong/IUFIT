@@ -164,7 +164,7 @@ h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 <div class="app">
 <header>
   <svg class="logo" viewBox="0 0 32 32" style="color:var(--coral)"><use href="#i-fit"/></svg>
-  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.3.1</small></h1>
+  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.4</small></h1>
   <button class="iconbtn" onclick="openHelp()" title="Help" style="font-size:16px;font-weight:700">?</button>
   <button class="iconbtn" onclick="toggleLang()" id="langbtn" title="Language" style="font-size:11.5px;font-weight:700">EN</button>
   <button class="iconbtn" onclick="openSettings()" title="Settings"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
@@ -1138,7 +1138,8 @@ function openSettings(){let h=`<h2>⚙️ ตั้งค่า</h2><h4 class="s
  <h4 class="sec">ข้อมูล</h4>
  <div class="row">
   <button class="btn sm mint" onclick="exportData()">⬇️ สำรองข้อมูล</button>
-  <button class="btn sm" onclick="document.getElementById('impfile').click()">⬆️ กู้คืนข้อมูล</button></div>
+  <button class="btn sm" onclick="document.getElementById('impfile').click()">⬆️ กู้คืนข้อมูล</button>
+  <button class="btn sm sun" onclick="exportCSVForm()">📊 Export CSV</button></div>
  <input type="file" id="impfile" accept=".json" style="display:none" onchange="importData(this)">
  <p class="muted" style="font-size:11.5px">ข้อมูลเก็บในเครื่องนี้เท่านั้น แนะนำสำรองเป็นระยะ</p>
  <h4 class="sec">วิธีติดตั้งเป็นแอป</h4>
@@ -1172,6 +1173,30 @@ function delUser(id){if(!confirm(trStr('ลบโปรไฟล์นี้ ร
  S.body=S.body.filter(b=>b.user!==id);S.ex=S.ex.filter(e=>e.user!==id);
  if(S.active===id)S.active=S.users[0]?.id||null;
  save();closeModal();renderAll()}
+/* ===== Export CSV ===== */
+function csvDl(name,rows){const csv='\ufeff'+rows.map(r=>r.map(c=>'"'+String(c??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');
+ const b=new Blob([csv],{type:'text/csv;charset=utf-8'});
+ const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;a.click();toast('ดาวน์โหลดแล้ว 📊')}
+function exportCSV(type){const u=user(),e=LANG==='en';const dn=dstr();
+ if(type==='logs'){const rows=[[e?'Date':'วันที่',e?'Meal':'มื้อ',e?'Menu':'เมนู',e?'Portion':'สัดส่วนที่กิน',e?'Energy (kcal)':'พลังงาน (กิโลแคลอรี)',e?'Protein (g)':'โปรตีน (ก.)',e?'Fat (g)':'ไขมัน (ก.)',e?'Carbs (g)':'คาร์บ (ก.)',e?'Fiber (g)':'ใยอาหาร (ก.)',e?'Sodium (mg)':'โซเดียม (มก.)',e?'Note':'โน้ต']];
+  S.logs.filter(l=>l.user===u.id).sort((a,b)=>a.date.localeCompare(b.date)).forEach(l=>{const n=nutOf(l.ings),x=l.eaten??1;
+   rows.push([l.date,(e?{br:'Breakfast',lu:'Lunch',di:'Dinner',sn:'Snack'}:MEALS)[l.meal]||l.meal,e?trStr(l.name):l.name,'×'+x,(n[0]*x).toFixed(0),(n[1]*x).toFixed(1),(n[2]*x).toFixed(1),(n[3]*x).toFixed(1),(n[4]*x).toFixed(1),(n[5]*x).toFixed(0),l.note||''])});
+  if(rows.length<2){toast(e?'No meal logs yet':'ยังไม่มีบันทึกมื้ออาหาร');return}
+  csvDl('IUFIT-meals-'+dn+'.csv',rows)}
+ if(type==='body'){const rows=[[e?'Date':'วันที่',e?'Weight (kg)':'น้ำหนัก (กก.)','BMI',e?'Body fat (%)':'ไขมัน (%)',e?'Waist (cm)':'รอบเอว (ซม.)']];
+  bodyRecs(u).forEach(r=>rows.push([r.date,r.w,bmi(r.w,u.h).toFixed(1),r.fat||'',r.waist||'']));
+  if(rows.length<2){toast(e?'No body records yet':'ยังไม่มีบันทึกร่างกาย');return}
+  csvDl('IUFIT-body-'+dn+'.csv',rows)}
+ if(type==='ex'){const rows=[[e?'Date':'วันที่',e?'Activity':'กิจกรรม',e?'Calories burned':'แคลอรีที่เผา']];
+  S.ex.filter(x=>x.user===u.id).sort((a,b)=>a.date.localeCompare(b.date)).forEach(x=>rows.push([x.date,e?trStr(x.n):x.n,x.kcal]));
+  if(rows.length<2){toast(e?'No workout logs yet':'ยังไม่มีบันทึกออกกำลังกาย');return}
+  csvDl('IUFIT-workouts-'+dn+'.csv',rows)}}
+function exportCSVForm(){const e=LANG==='en';
+ openModal(`<h2>📊 Export CSV</h2>
+ <p class="muted" style="font-size:12.5px">${e?'Download your data as CSV files — open in Excel or Google Sheets (data for the current profile)':'ดาวน์โหลดข้อมูลเป็นไฟล์ CSV เปิดใน Excel หรือ Google Sheets ได้เลย (ข้อมูลของโปรไฟล์ที่ใช้อยู่)'}</p>
+ <button class="btn" style="display:block;width:100%;margin:8px 0;text-align:left;padding:12px 14px" onclick="exportCSV('logs')">🍽️ ${e?'Meal logs + nutrition':'บันทึกมื้ออาหาร + สารอาหาร'}</button>
+ <button class="btn" style="display:block;width:100%;margin:8px 0;text-align:left;padding:12px 14px" onclick="exportCSV('body')">⚖️ ${e?'Body records + BMI':'บันทึกร่างกาย + BMI'}</button>
+ <button class="btn" style="display:block;width:100%;margin:8px 0;text-align:left;padding:12px 14px" onclick="exportCSV('ex')">🔥 ${e?'Workout logs':'บันทึกออกกำลังกาย'}</button>`)}
 function exportData(){const b=new Blob([JSON.stringify(S,null,1)],{type:'application/json'});
  const a=document.createElement('a');a.href=URL.createObjectURL(b);
  a.download='IUFIT-สำรอง-'+dstr()+'.json';a.click();toast('ดาวน์โหลดไฟล์สำรองแล้ว')}
