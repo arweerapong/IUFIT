@@ -164,7 +164,7 @@ h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 <div class="app">
 <header>
   <svg class="logo" viewBox="0 0 32 32" style="color:var(--coral)"><use href="#i-fit"/></svg>
-  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.7</small></h1>
+  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.8</small></h1>
   <button class="iconbtn" onclick="openHelp()" title="Help" style="font-size:16px;font-weight:700">?</button>
   <button class="iconbtn" onclick="toggleLang()" id="langbtn" title="Language" style="font-size:11.5px;font-weight:700">EN</button>
   <button class="iconbtn" onclick="openSettings()" title="Settings"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
@@ -274,7 +274,83 @@ const RECIPES=[
 {id:'d21',n:'เต้าหู้ผัดผักรวม + ข้าวกล้อง',c:'คลีน/ฟิต',ic:'i-leaf',ings:[['tofu',150],['ricebr',150],['broccoli',60],['carrot',30],['oil',10],['soysauce',8]]},
 {id:'d22',n:'บะหมี่กึ่งสำเร็จรูป + ไข่',c:'จานเดียว',ic:'i-bowl',ings:[['instant',60],['egg',55]],tip:'โซเดียมสูงมาก ใส่เครื่องปรุงแค่ครึ่งซองช่วยได้'},
 {id:'d23',n:'อกไก่ฉีก + ไข่ต้ม + ผักสลัด',c:'คลีน/ฟิต',ic:'i-leaf',ings:[['chickb',100],['egg',55],['lettuce',100],['tomato',50],['gyogurt',30]]},
-{id:'d24',n:'ข้าวหมูแดง',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['pork',90],['sugar',8],['soysauce',10],['cucumber',30]]}
+{id:'d24',n:'ข้าวหมูแดง',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['pork',90],['sugar',8],['soysauce',10],['cucumber',30]]},
+{id:'d25',n:'ข้าวกะเพราหมูสับ',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['pork',100],['oil',12],['fishsauce',8],['soysauce',5]]},
+{id:'d26',n:'ข้าวกะเพรากุ้ง',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['shrimp',90],['oil',12],['fishsauce',8]]},
+{id:'d27',n:'ข้าวหมูกระเทียม',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['pork',100],['oil',10],['soysauce',10]]},
+{id:'d28',n:'ข้าวไก่กระเทียม',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['chickb',110],['oil',10],['soysauce',10]]},
+{id:'d29',n:'ข้าวผัดไก่',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['chickb',80],['egg',55],['oil',15],['onion',20],['soysauce',8]]},
+{id:'d30',n:'ข้าวผัดหมู',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['pork',80],['egg',55],['oil',15],['onion',20],['soysauce',8]]},
+{id:'d31',n:'ข้าวผัดทูน่า',c:'จานเดียว',ic:'i-fish',ings:[['rice',230],['tuna',80],['egg',55],['oil',12],['onion',20],['soysauce',8]]},
+{id:'d32',n:'ข้าวหน้าเนื้อ (กิวด้ง)',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['beef',100],['onion',30],['soysauce',10],['sugar',5]]},
+{id:'d33',n:'ข้าวคะน้าหมูกรอบ',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['porkb',80],['kale',80],['oil',10],['soysauce',8]]},
+{id:'d34',n:'ข้าวผัดพริกแกงไก่',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['chickt',90],['oil',12],['fishsauce',6]]},
+{id:'d35',n:'ข้าวไข่ข้นกุ้ง',c:'จานเดียว',ic:'i-egg',ings:[['rice',250],['shrimp',70],['egg',110],['milk',30],['oil',10]]},
+{id:'d36',n:'ข้าวหน้าไก่เทอริยากิ',c:'จานเดียว',ic:'i-bowl',ings:[['rice',250],['chickt',110],['soysauce',12],['sugar',8],['onion',20]]},
+{id:'d37',n:'ผัดซีอิ๊วหมู',c:'จานเดียว',ic:'i-bowl',ings:[['noodle',200],['pork',70],['egg',55],['cabbage',50],['oil',15],['soysauce',12]]},
+{id:'d38',n:'ผัดซีอิ๊วไก่',c:'จานเดียว',ic:'i-bowl',ings:[['noodle',200],['chickb',70],['egg',55],['kale',50],['oil',15],['soysauce',12]]},
+{id:'d39',n:'ราดหน้าหมู',c:'จานเดียว',ic:'i-bowl',ings:[['noodle',180],['pork',70],['kale',60],['oil',12],['soysauce',10]]},
+{id:'d40',n:'ก๋วยเตี๋ยวต้มยำหมูสับ',c:'จานเดียว',ic:'i-bowl',ings:[['noodle',150],['pork',60],['peanut',10],['fishsauce',8],['sugar',5]]},
+{id:'d41',n:'บะหมี่หมูแดง',c:'จานเดียว',ic:'i-bowl',ings:[['noodle',150],['pork',80],['kale',40],['soysauce',8],['sugar',5]]},
+{id:'d42',n:'ก๋วยเตี๋ยวไก่ฉีก',c:'จานเดียว',ic:'i-bowl',ings:[['noodle',150],['chickb',80],['cabbage',40],['fishsauce',6]]},
+{id:'d43',n:'สุกี้น้ำรวม',c:'จานเดียว',ic:'i-pot',ings:[['noodle',100],['chickb',90],['cabbage',80],['egg',55],['fishsauce',6]]},
+{id:'d44',n:'สุกี้แห้งทะเล',c:'จานเดียว',ic:'i-fish',ings:[['noodle',100],['shrimp',60],['squid',60],['cabbage',80],['egg',55],['oil',10]]},
+{id:'d45',n:'ผัดมาม่าใส่ไข่',c:'จานเดียว',ic:'i-bowl',ings:[['instant',60],['egg',55],['cabbage',40],['oil',10]]},
+{id:'d46',n:'ข้าวต้มปลา',c:'จานเดียว',ic:'i-fish',ings:[['rice',120],['fishn',90],['cabbage',30]]},
+{id:'d47',n:'ข้าวต้มไก่ฉีก',c:'จานเดียว',ic:'i-bowl',ings:[['rice',120],['chickb',80],['cabbage',30]]},
+{id:'d48',n:'โจ๊กหมูใส่ไข่',c:'จานเดียว',ic:'i-bowl',ings:[['rice',100],['pork',70],['egg',55]]},
+{id:'d49',n:'แกงเขียวหวานเนื้อ + ข้าว',c:'จานเดียว',ic:'i-pot',ings:[['rice',250],['beef',90],['coconutmilk',100],['oil',5],['fishsauce',8]]},
+{id:'d50',n:'พะแนงไก่ + ข้าว',c:'จานเดียว',ic:'i-pot',ings:[['rice',250],['chickt',90],['coconutmilk',80],['oil',5],['fishsauce',8],['sugar',5]]},
+{id:'d51',n:'ต้มยำกุ้งน้ำข้น + ข้าว',c:'จานเดียว',ic:'i-pot',ings:[['rice',200],['shrimp',100],['mushroom',50],['coconutmilk',60],['fishsauce',8]]},
+{id:'d52',n:'ต้มยำไก่น้ำใส + ข้าว',c:'คลีน/ฟิต',ic:'i-pot',ings:[['rice',200],['chickb',90],['mushroom',50],['fishsauce',8]]},
+{id:'d53',n:'แกงจืดเต้าหู้สาหร่าย + ข้าว',c:'คลีน/ฟิต',ic:'i-pot',ings:[['rice',200],['tofu',60],['pork',40],['cabbage',30]]},
+{id:'d54',n:'แกงส้มกุ้ง + ข้าว',c:'จานเดียว',ic:'i-pot',ings:[['rice',200],['shrimp',80],['cabbage',60],['fishsauce',8],['sugar',5]]},
+{id:'d55',n:'ผัดผักบุ้งหมูกรอบ + ข้าว',c:'จานเดียว',ic:'i-leaf',ings:[['rice',250],['porkb',60],['morning',100],['oil',10],['soysauce',8]]},
+{id:'d56',n:'ผัดบรอกโคลีหมู + ข้าว',c:'คลีน/ฟิต',ic:'i-leaf',ings:[['rice',230],['pork',70],['broccoli',100],['oil',10],['soysauce',8]]},
+{id:'d57',n:'ไก่ผัดเม็ดมะม่วง + ข้าว',c:'จานเดียว',ic:'i-bowl',ings:[['rice',230],['chickb',80],['peanut',25],['onion',20],['oil',12],['soysauce',8]]},
+{id:'d58',n:'หมูผัดขิง + ข้าว',c:'จานเดียว',ic:'i-bowl',ings:[['rice',230],['pork',80],['onion',20],['mushroom',30],['oil',10],['soysauce',8]]},
+{id:'d59',n:'เต้าหู้ทรงเครื่อง + ข้าว',c:'คลีน/ฟิต',ic:'i-egg',ings:[['rice',220],['tofu',120],['pork',40],['mushroom',30],['oil',10],['soysauce',8]]},
+{id:'d60',n:'ปลาทอดน้ำปลา + ข้าว',c:'จานเดียว',ic:'i-fish',ings:[['rice',250],['fishn',120],['oil',15],['fishsauce',8]]},
+{id:'d61',n:'ปลานึ่งมะนาว + ข้าว',c:'คลีน/ฟิต',ic:'i-fish',ings:[['rice',220],['fishn',150],['fishsauce',6]]},
+{id:'d62',n:'กุ้งอบเส้น',c:'จานเดียว',ic:'i-fish',ings:[['noodle',120],['shrimp',90],['oil',8],['soysauce',8]]},
+{id:'d63',n:'ข้าวหน้าแซลมอนซาชิมิ',c:'คลีน/ฟิต',ic:'i-fish',ings:[['rice',220],['salmon',100],['soysauce',8]]},
+{id:'d64',n:'ไข่เจียวหมูสับ + ข้าว',c:'จานเดียว',ic:'i-egg',ings:[['rice',250],['egg',110],['pork',50],['oil',20],['fishsauce',5]]},
+{id:'d65',n:'ไข่พะโล้ + ข้าว',c:'จานเดียว',ic:'i-egg',ings:[['rice',230],['egg',110],['tofu',50],['sugar',8],['soysauce',10]]},
+{id:'d66',n:'กะเพราเต้าหู้เห็ด + ข้าว (เจ)',c:'คลีน/ฟิต',ic:'i-leaf',ings:[['rice',250],['tofu',120],['mushroom',60],['oil',10],['soysauce',10]]},
+{id:'d67',n:'ผัดฟักทองใส่ไข่ + ข้าว',c:'จานเดียว',ic:'i-carrot',ings:[['rice',220],['pumpkin',120],['egg',55],['oil',10],['soysauce',6]]},
+{id:'d68',n:'สลัดทูน่า',c:'คลีน/ฟิต',ic:'i-leaf',ings:[['lettuce',100],['tuna',80],['tomato',50],['cucumber',50],['onion',10],['oil',8]]},
+{id:'d69',n:'สลัดไข่ต้ม',c:'คลีน/ฟิต',ic:'i-egg',ings:[['lettuce',100],['egg',110],['tomato',50],['cucumber',50],['gyogurt',30]]},
+{id:'d70',n:'สลัดแซลมอนย่าง',c:'คลีน/ฟิต',ic:'i-fish',ings:[['lettuce',90],['salmon',100],['tomato',50],['avocado',30],['oil',5]]},
+{id:'d71',n:'สเต๊กแซลมอน + ผัก',c:'คลีน/ฟิต',ic:'i-fish',ings:[['salmon',150],['potato',150],['broccoli',80],['butter',8]]},
+{id:'d72',n:'สเต๊กหมู + สลัด',c:'คลีน/ฟิต',ic:'i-pot',ings:[['pork',150],['lettuce',60],['tomato',40],['potato',120],['oil',8]]},
+{id:'d73',n:'สเต๊กเนื้อ + มันบด',c:'คลีน/ฟิต',ic:'i-pot',ings:[['beef',160],['potato',180],['butter',10],['broccoli',60]]},
+{id:'d74',n:'อกไก่ย่าง + มันหวาน',c:'คลีน/ฟิต',ic:'i-pot',ings:[['chickb',150],['sweetpot',150],['broccoli',60]]},
+{id:'d75',n:'อกไก่พริกไทยดำ + ข้าวกล้อง',c:'คลีน/ฟิต',ic:'i-pot',ings:[['ricebr',180],['chickb',120],['onion',30],['oil',8],['soysauce',8]]},
+{id:'d76',n:'ยำเส้นหมูสับกุ้ง',c:'จานเดียว',ic:'i-bowl',ings:[['noodle',100],['pork',50],['shrimp',50],['tomato',30],['fishsauce',10],['sugar',5]]},
+{id:'d77',n:'ลาบหมู + ข้าวเหนียว',c:'จานเดียว',ic:'i-pot',ings:[['sticky',150],['pork',100],['fishsauce',8]]},
+{id:'d78',n:'น้ำตกหมู + ข้าวเหนียว',c:'จานเดียว',ic:'i-pot',ings:[['sticky',150],['pork',110],['fishsauce',8]]},
+{id:'d79',n:'ไก่ย่าง + ส้มตำ + ข้าวเหนียว',c:'จานเดียว',ic:'i-pot',ings:[['chickt',100],['sticky',120],['papaya',100],['peanut',10],['fishsauce',8],['sugar',5]]},
+{id:'d80',n:'คอหมูย่าง + ข้าวเหนียว',c:'จานเดียว',ic:'i-pot',ings:[['porkb',100],['sticky',150]]},
+{id:'d81',n:'แซนด์วิชไก่',c:'มื้อเช้า/ว่าง',ic:'i-bread',ings:[['bread',70],['chickb',70],['lettuce',30],['tomato',30],['gyogurt',20]]},
+{id:'d82',n:'แซนด์วิชไข่',c:'มื้อเช้า/ว่าง',ic:'i-bread',ings:[['breadw',70],['egg',110],['gyogurt',20]]},
+{id:'d83',n:'เบอร์เกอร์ไก่คลีน',c:'คลีน/ฟิต',ic:'i-bread',ings:[['bread',80],['chickb',100],['lettuce',30],['tomato',30],['gyogurt',15]]},
+{id:'d84',n:'โทสต์เนยถั่วกล้วย',c:'มื้อเช้า/ว่าง',ic:'i-bread',ings:[['bread',70],['pbutter',20],['banana',60]]},
+{id:'d85',n:'ข้าวโอ๊ตต้มไก่',c:'คลีน/ฟิต',ic:'i-bowl',ings:[['oat',50],['chickb',60],['egg',55]]},
+{id:'d86',n:'พาสต้าทูน่า',c:'จานเดียว',ic:'i-fish',ings:[['pasta',180],['tuna',80],['tomato',60],['onion',20],['oil',10]]},
+{id:'d87',n:'พาสต้าครีมไก่',c:'จานเดียว',ic:'i-bowl',ings:[['pasta',180],['chickb',80],['milk',80],['cheese',20],['oil',8]]},
+{id:'d88',n:'มักกะโรนีผัดไก่',c:'จานเดียว',ic:'i-bowl',ings:[['pasta',170],['chickb',70],['egg',55],['tomato',40],['onion',20],['oil',10],['soysauce',6]]},
+{id:'d89',n:'ยำทูน่าไข่ต้ม',c:'คลีน/ฟิต',ic:'i-fish',ings:[['tuna',80],['egg',55],['onion',20],['tomato',40],['fishsauce',8]]},
+{id:'d90',n:'ลาบเห็ด + ข้าวเหนียว (เจ)',c:'คลีน/ฟิต',ic:'i-leaf',ings:[['mushroom',150],['sticky',120],['fishsauce',6]]},
+{id:'d91',n:'ซุปไก่มันฝรั่ง',c:'คลีน/ฟิต',ic:'i-pot',ings:[['chickb',70],['potato',120],['carrot',40],['onion',20]]},
+{id:'d92',n:'ซุปฟักทองนมสด',c:'คลีน/ฟิต',ic:'i-carrot',ings:[['pumpkin',180],['milk',100],['butter',5]]},
+{id:'d93',n:'ซุปมะเขือเทศ',c:'คลีน/ฟิต',ic:'i-apple',ings:[['tomato',200],['onion',30],['milk',50],['oil',5]]},
+{id:'d94',n:'สมูทตี้มะม่วงโยเกิร์ต',c:'เครื่องดื่ม',ic:'i-milk',ings:[['mango',120],['yogurt',100],['honey',8]]},
+{id:'d95',n:'สมูทตี้เบอร์รีโยเกิร์ต',c:'เครื่องดื่ม',ic:'i-milk',ings:[['berry',100],['yogurt',100],['banana',50],['honey',5]]},
+{id:'d96',n:'น้ำปั่นแตงโม',c:'เครื่องดื่ม',ic:'i-apple',ings:[['watermelon',250],['honey',5]]},
+{id:'d97',n:'กล้วยปั่นนมถั่วเหลือง',c:'เครื่องดื่ม',ic:'i-milk',ings:[['banana',100],['soymilk',200]]},
+{id:'d98',n:'อะโวคาโดปั่นนม',c:'เครื่องดื่ม',ic:'i-milk',ings:[['avocado',70],['milklow',200],['honey',8]]},
+{id:'d99',n:'โกโก้เวย์ปั่น',c:'เครื่องดื่ม',ic:'i-milk',ings:[['whey',30],['milklow',250]]},
+{id:'d100',n:'โยเกิร์ตผลไม้รวม',c:'มื้อเช้า/ว่าง',ic:'i-milk',ings:[['yogurt',100],['banana',50],['apple',50],['berry',30]]}
 ];
 
 /* ================= สถานะ & ตัวช่วย ================= */
@@ -560,9 +636,12 @@ function recipeDetail(id){const r=getRecipe(id);if(!r)return;
  h+=`<button class="btn pri" style="width:100%;margin-top:12px" onclick="closeModal();TODAY_DATE=dstr();logFromRecipe('${r.id}')">🍽️ กินมื้อนี้</button>
   ${r.id[0]==='u'?`<div class="row" style="margin-top:8px"><button class="btn sm" onclick="recipeForm('${r.id}')">✏️ แก้ไข</button><button class="btn sm" style="color:var(--red);border-color:var(--red)" onclick="delRecipe('${r.id}')">ลบเมนู</button></div>`:''}`;
  openModal(h)}
-function logFromRecipe(rid){const h=new Date().getHours();
- const mk=h<10?'br':h<14?'lu':h<17?'sn':'di';
- logForm(mk);setTimeout(()=>{$('#lg-rec').value=rid;logPickRecipe()},50)}
+function logFromRecipe(rid){const e=LANG==='en';
+ const h=new Date().getHours();const sug=h<10?'br':h<14?'lu':h<17?'sn':'di';
+ openModal2(`<h2>🍽️ ${e?'Log to which meal?':'บันทึกลงมื้อไหน?'}</h2>
+ <div class="row" style="margin-top:6px">${Object.entries(MEALS).map(([mk,mn])=>`<button class="btn ${mk===sug?'pri':''}" style="flex:1;min-width:44%;margin:3px;padding:13px 8px" onclick="closeModal2();logFromRecipe2('${rid}','${mk}')">${mn}${mk===sug?(e?' ⭐':' ⭐'):''}</button>`).join('')}</div>
+ <p class="muted" style="font-size:11.5px;text-align:center;margin-top:8px">⭐ = ${e?'suggested for this time of day':'มื้อที่แนะนำตามเวลาตอนนี้'}</p>`)}
+function logFromRecipe2(rid,mk){logForm(mk);setTimeout(()=>{$('#lg-rec').value=rid;logPickRecipe()},50)}
 function delRecipe(id){if(!confirm(trStr('ลบเมนูนี้?')))return;S.recipes=S.recipes.filter(r=>r.id!==id);save();closeModal();renderFood()}
 function recipeForm(editId){const ed=editId?getRecipe(editId):null;
  window._rIngs=ed?ed.ings.map(x=>[...x]):[['',0]];
@@ -1310,7 +1389,7 @@ const EN={
 /* — หน่วย (ไว้ท้ายๆ ให้คีย์ยาวกว่าจับก่อน) — */
 'กิโลแคลอรี':'kcal',' กก.':' kg','กก.':'kg','มก.':'mg',' ซม.':' cm','ซม.':'cm',' กรัม':' g','กรัม':'g',' ก.':' g',' ด.':' mo','เดือน':'month'
 };
-Object.assign(EN,{'📤 แชร์ตารางให้ลูกเทรน':'📤 Share plan to client','📥 รับตารางจากโค้ช':'📥 Get plan from coach','📤 แชร์ตารางฝึก':'📤 Share workout plan','ส่งลิงก์นี้ให้ลูกเทรน เปิดแล้วแอปจะถามว่าต้องการใช้ตารางนี้เลย':'Send this link to your client — opening it will offer to apply the plan','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด "รับตารางจากโค้ช" ในแอป':'Copy this code to your client — they paste it under "Get plan from coach"','📋 คัดลอก':'📋 Copy','คัดลอกแล้ว 📋':'Copied 📋','กดค้างที่ข้อความเพื่อคัดลอก':'Long-press the text to copy','📲 แชร์...':'📲 Share...','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา':'Paste the link or code from your trainer','วางที่นี่...':'Paste here...','ตรวจสอบตาราง':'Preview plan','โค้ดไม่ถูกต้อง ลองคัดลอกใหม่ทั้งหมด':'Invalid code — copy the whole thing and try again','📥 ตารางฝึก':'📥 Workout plan ','จาก ':'from ','รวม ':'Total ',' ท่า · ถ้ากดใช้ ตารางนี้จะแทนที่ตารางเดิมของคุณ':' moves · applying will replace your current plan','✅ ใช้ตารางนี้':'✅ Apply this plan','ใช้ตารางใหม่แล้ว 📅':'New plan applied 📅','ยังไม่มีท่าในตาราง เพิ่มก่อนนะ':'Your plan is empty — add moves first','ว่าง':'empty','กลับวันนี้ ↩':'Back to today ↩','🐍 เกมงูคาร์ดิโอ':'🐍 Cardio snake','เกม':'Game','📚 คลังเมนู':'📚 Menu library','📅 ตารางอาหาร':'📅 Meal plan','📤 แชร์ตารางอาหาร':'📤 Share meal plan','📥 รับตาราง':'📥 Get plan','จัดเมนูล่วงหน้าทั้งสัปดาห์ · แตะช่องเพื่อเลือกเมนูจากคลัง · หน้า \"วันนี้\" จะโชว์เมนูของวันนั้นพร้อมปุ่มบันทึกเร็ว':'Plan meals for the week · tap a slot to pick from the library · the Today page shows that day with quick-log buttons','เลือกเมนู ':'Pick: ','🗑️ ล้างช่องนี้':'🗑️ Clear slot','ตารางอาหารวัน':'Meals for ','กินแล้ว ✓':'Ate ✓','ตารางยังว่าง เพิ่มก่อนนะ':'Plan is empty — add items first','ตารางอาหาร':'Meal plan','ตารางฝึก':'Workout plan',' รายการ · ถ้ากดใช้ ตารางนี้จะแทนที่ตาราง':' items · applying will replace your current ','เดิมของคุณ':'','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา (ใช้ได้ทั้งตารางฝึกและตารางอาหาร)':'Paste the link or code from your trainer (works for both plan types)','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด \"รับตาราง\" ในแอป':'Copy this code to your client — they paste it under Get plan','📤 แชร์ตาราง':'📤 Share '});
+Object.assign(EN,{'📤 แชร์ตารางให้ลูกเทรน':'📤 Share plan to client','📥 รับตารางจากโค้ช':'📥 Get plan from coach','📤 แชร์ตารางฝึก':'📤 Share workout plan','ส่งลิงก์นี้ให้ลูกเทรน เปิดแล้วแอปจะถามว่าต้องการใช้ตารางนี้เลย':'Send this link to your client — opening it will offer to apply the plan','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด "รับตารางจากโค้ช" ในแอป':'Copy this code to your client — they paste it under "Get plan from coach"','📋 คัดลอก':'📋 Copy','คัดลอกแล้ว 📋':'Copied 📋','กดค้างที่ข้อความเพื่อคัดลอก':'Long-press the text to copy','📲 แชร์...':'📲 Share...','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา':'Paste the link or code from your trainer','วางที่นี่...':'Paste here...','ตรวจสอบตาราง':'Preview plan','โค้ดไม่ถูกต้อง ลองคัดลอกใหม่ทั้งหมด':'Invalid code — copy the whole thing and try again','📥 ตารางฝึก':'📥 Workout plan ','จาก ':'from ','รวม ':'Total ',' ท่า · ถ้ากดใช้ ตารางนี้จะแทนที่ตารางเดิมของคุณ':' moves · applying will replace your current plan','✅ ใช้ตารางนี้':'✅ Apply this plan','ใช้ตารางใหม่แล้ว 📅':'New plan applied 📅','ยังไม่มีท่าในตาราง เพิ่มก่อนนะ':'Your plan is empty — add moves first','ว่าง':'empty','กลับวันนี้ ↩':'Back to today ↩','ข้าวกะเพราหมูสับ':'Basil minced pork rice','ข้าวกะเพรากุ้ง':'Basil shrimp rice','ข้าวหมูกระเทียม':'Garlic pork rice','ข้าวไก่กระเทียม':'Garlic chicken rice','ข้าวผัดไก่':'Chicken fried rice','ข้าวผัดหมู':'Pork fried rice','ข้าวผัดทูน่า':'Tuna fried rice','ข้าวหน้าเนื้อ (กิวด้ง)':'Beef rice bowl (gyudon)','ข้าวคะน้าหมูกรอบ':'Crispy pork & kale rice','ข้าวผัดพริกแกงไก่':'Chili-paste chicken rice','ข้าวไข่ข้นกุ้ง':'Creamy egg shrimp rice','ข้าวหน้าไก่เทอริยากิ':'Teriyaki chicken bowl','ผัดซีอิ๊วหมู':'Pork pad see ew','ผัดซีอิ๊วไก่':'Chicken pad see ew','ราดหน้าหมู':'Pork noodles in gravy','ก๋วยเตี๋ยวต้มยำหมูสับ':'Tom yum pork noodles','บะหมี่หมูแดง':'Red pork egg noodles','ก๋วยเตี๋ยวไก่ฉีก':'Shredded chicken noodles','สุกี้น้ำรวม':'Thai suki soup','สุกี้แห้งทะเล':'Dry seafood suki','ผัดมาม่าใส่ไข่':'Stir-fried instant noodles + egg','ข้าวต้มปลา':'Fish rice soup','ข้าวต้มไก่ฉีก':'Chicken rice soup','โจ๊กหมูใส่ไข่':'Pork congee with egg','แกงเขียวหวานเนื้อ + ข้าว':'Green curry beef + rice','พะแนงไก่ + ข้าว':'Panang chicken + rice','ต้มยำกุ้งน้ำข้น + ข้าว':'Creamy tom yum shrimp + rice','ต้มยำไก่น้ำใส + ข้าว':'Clear tom yum chicken + rice','แกงจืดเต้าหู้สาหร่าย + ข้าว':'Tofu seaweed soup + rice','แกงส้มกุ้ง + ข้าว':'Sour curry shrimp + rice','ผัดผักบุ้งหมูกรอบ + ข้าว':'Crispy pork morning glory + rice','ผัดบรอกโคลีหมู + ข้าว':'Pork broccoli stir-fry + rice','ไก่ผัดเม็ดมะม่วง + ข้าว':'Cashew chicken + rice','หมูผัดขิง + ข้าว':'Ginger pork + rice','เต้าหู้ทรงเครื่อง + ข้าว':'Loaded tofu + rice','ปลาทอดน้ำปลา + ข้าว':'Fried fish + rice','ปลานึ่งมะนาว + ข้าว':'Steamed lime fish + rice','กุ้งอบเส้น':'Baked shrimp noodles','ข้าวหน้าแซลมอนซาชิมิ':'Salmon sashimi rice bowl','ไข่เจียวหมูสับ + ข้าว':'Pork omelet + rice','ไข่พะโล้ + ข้าว':'Five-spice egg stew + rice','กะเพราเต้าหู้เห็ด + ข้าว (เจ)':'Basil tofu & mushroom + rice','ผัดฟักทองใส่ไข่ + ข้าว':'Pumpkin egg stir-fry + rice','สลัดทูน่า':'Tuna salad','สลัดไข่ต้ม':'Boiled egg salad','สเต๊กแซลมอน + ผัก':'Salmon steak + veggies','สเต๊กหมู + สลัด':'Pork steak + salad','สเต๊กเนื้อ + มันบด':'Beef steak + mash','อกไก่ย่าง + มันหวาน':'Grilled chicken + sweet potato','อกไก่พริกไทยดำ + ข้าวกล้อง':'Black pepper chicken + brown rice','ยำเส้นหมูสับกุ้ง':'Spicy pork & shrimp noodle salad','ลาบหมู + ข้าวเหนียว':'Pork larb + sticky rice','น้ำตกหมู + ข้าวเหนียว':'Pork nam tok + sticky rice','ไก่ย่าง + ส้มตำ + ข้าวเหนียว':'Grilled chicken, som tam & sticky rice','คอหมูย่าง + ข้าวเหนียว':'Grilled pork belly + sticky rice','แซนด์วิชไก่':'Chicken sandwich','แซนด์วิชไข่':'Egg sandwich','เบอร์เกอร์ไก่คลีน':'Clean chicken burger','โทสต์เนยถั่วกล้วย':'PB banana toast','ข้าวโอ๊ตต้มไก่':'Savory chicken oats','พาสต้าทูน่า':'Tuna pasta','พาสต้าครีมไก่':'Creamy chicken pasta','มักกะโรนีผัดไก่':'Chicken macaroni stir-fry','ยำทูน่าไข่ต้ม':'Spicy tuna & egg salad','ลาบเห็ด + ข้าวเหนียว (เจ)':'Mushroom larb + sticky rice','ซุปไก่มันฝรั่ง':'Chicken potato soup','ซุปฟักทองนมสด':'Creamy pumpkin soup','ซุปมะเขือเทศ':'Tomato soup','สมูทตี้มะม่วงโยเกิร์ต':'Mango yogurt smoothie','น้ำปั่นแตงโม':'Watermelon cooler','กล้วยปั่นนมถั่วเหลือง':'Banana soy shake','อะโวคาโดปั่นนม':'Avocado milk shake','โกโก้เวย์ปั่น':'Whey cocoa shake','โยเกิร์ตผลไม้รวม':'Mixed fruit yogurt bowl','🐍 เกมงูคาร์ดิโอ':'🐍 Cardio snake','เกม':'Game','📚 คลังเมนู':'📚 Menu library','📅 ตารางอาหาร':'📅 Meal plan','📤 แชร์ตารางอาหาร':'📤 Share meal plan','📥 รับตาราง':'📥 Get plan','จัดเมนูล่วงหน้าทั้งสัปดาห์ · แตะช่องเพื่อเลือกเมนูจากคลัง · หน้า \"วันนี้\" จะโชว์เมนูของวันนั้นพร้อมปุ่มบันทึกเร็ว':'Plan meals for the week · tap a slot to pick from the library · the Today page shows that day with quick-log buttons','เลือกเมนู ':'Pick: ','🗑️ ล้างช่องนี้':'🗑️ Clear slot','ตารางอาหารวัน':'Meals for ','กินแล้ว ✓':'Ate ✓','ตารางยังว่าง เพิ่มก่อนนะ':'Plan is empty — add items first','ตารางอาหาร':'Meal plan','ตารางฝึก':'Workout plan',' รายการ · ถ้ากดใช้ ตารางนี้จะแทนที่ตาราง':' items · applying will replace your current ','เดิมของคุณ':'','วางลิงก์หรือโค้ดที่เทรนเนอร์ส่งมา (ใช้ได้ทั้งตารางฝึกและตารางอาหาร)':'Paste the link or code from your trainer (works for both plan types)','คัดลอกโค้ดนี้ส่งให้ลูกเทรน แล้วให้ไปกด \"รับตาราง\" ในแอป':'Copy this code to your client — they paste it under Get plan','📤 แชร์ตาราง':'📤 Share '});
 /* — วัตถุดิบ & เมนูในแอป — */
 Object.assign(EN,{
 'อกไก่ (สุก)':'Chicken breast (cooked)','สะโพกไก่':'Chicken thigh','ไข่ไก่ (ทั้งฟอง)':'Whole egg','ไข่ขาว':'Egg white','หมูสันใน/หมูไม่ติดมัน':'Lean pork','หมูสามชั้น':'Pork belly','เนื้อวัวไม่ติดมัน':'Lean beef','ทูน่ากระป๋อง (ในน้ำ)':'Canned tuna in water','แซลมอน':'Salmon','ปลานิล/ปลากะพง':'Tilapia / sea bass','กุ้ง':'Shrimp','ปลาหมึก':'Squid','เต้าหู้':'Tofu','เวย์โปรตีน (ผง)':'Whey protein powder','นมจืด':'Milk','นมพร่องมันเนย':'Low-fat milk','นมถั่วเหลือง (หวานน้อย)':'Soy milk (low sugar)','กรีกโยเกิร์ต':'Greek yogurt','โยเกิร์ตรสธรรมชาติ':'Plain yogurt','ชีส':'Cheese',
