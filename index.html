@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<meta name="theme-color" content="#2FB5A3">
+<meta name="theme-color" content="#0e1422">
 <link rel="manifest" href="./manifest.json">
 <link rel="apple-touch-icon" href="./apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="IUFIT">
@@ -12,48 +12,48 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <title>IUFIT 💪</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Mali:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 :root{
-  --bg:#FFF8EE; --ink:#5b4636; --ink2:#9a8270;
-  --coral:#2FB5A3; --coral2:#d9f2ee;
-  --mint:#7cc6a4; --mint2:#e0f3ea;
-  --sun:#FFC75F; --sun2:#fff1d6;
-  --berry:#7d8ce0; --berry2:#e6e9fb;
-  --red:#e35d5d; --card:#fffdf8;
+  --bg:#0e1422; --ink:#e8edf5; --ink2:#8b97ab;
+  --coral:#4f8cff; --coral2:#1c2a47;
+  --mint:#2dd4bf; --mint2:#11302f;
+  --sun:#f5a623; --sun2:#33270f;
+  --berry:#818cf8; --berry2:#232a4a;
+  --red:#f06262; --card:#161f30;
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{margin:0;background:var(--bg);color:var(--ink);font-family:'Mali','Segoe UI',sans-serif;font-size:15px;line-height:1.45}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Kanit','Segoe UI',sans-serif;font-size:15px;line-height:1.45}
 .app{max-width:520px;margin:0 auto;padding:0 12px 92px}
-header{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 2px 6px;display:flex;align-items:center;gap:10px;border-bottom:2px dashed #e8d9c5}
+header{position:sticky;top:0;z-index:20;background:var(--bg);padding:10px 2px 6px;display:flex;align-items:center;gap:10px;border-bottom:2px solid #223047}
 header .logo{width:44px;height:44px;flex:none}
 header h1{font-size:19px;margin:0;flex:1;line-height:1.2}
 header h1 small{display:block;font-size:11px;color:var(--ink2);font-weight:400}
-.iconbtn{background:var(--card);border:2px solid var(--ink);border-radius:14px 16px 13px 17px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink)}
+.iconbtn{background:var(--card);border:1.5px solid #2c3a52;border-radius:12px;width:40px;height:40px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--ink)}
 .iconbtn svg{width:21px;height:21px}
-.chip{display:inline-flex;align-items:center;gap:5px;background:var(--sun2);border:1.6px solid var(--ink);border-radius:14px 18px 15px 17px;padding:3px 11px;font-size:13px;cursor:pointer}
+.chip{display:inline-flex;align-items:center;gap:5px;background:#1a2336;border:1px solid #2c3a52;border-radius:999px;padding:3px 11px;font-size:13px;cursor:pointer}
 .chip.sel{background:var(--coral);color:#fff}
-.chip.warn{background:#fde3e3;border-color:var(--red);color:var(--red)}
-.card{background:var(--card);border:2px solid var(--ink);border-radius:18px 22px 17px 23px;padding:13px 14px;margin:11px 0;box-shadow:3px 3px 0 #e9dcc8}
+.chip.warn{background:#3a1b22;border-color:var(--red);color:var(--red)}
+.card{background:var(--card);border:1.5px solid #2c3a52;border-radius:14px;padding:13px 14px;margin:11px 0;box-shadow:0 4px 14px rgba(0,0,0,.35)}
 .card.flat{box-shadow:none}
 .card h3{margin:0 0 8px;font-size:16px;display:flex;align-items:center;gap:7px}
 .card h3 svg{width:20px;height:20px;flex:none}
-.btn{font-family:inherit;font-size:14px;font-weight:600;background:var(--card);color:var(--ink);border:2px solid var(--ink);border-radius:13px 17px 14px 18px;padding:8px 15px;cursor:pointer;box-shadow:2px 2px 0 #d9c9b2}
+.btn{font-family:inherit;font-size:14px;font-weight:600;background:var(--card);color:var(--ink);border:1.5px solid #2c3a52;border-radius:12px;padding:8px 15px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,.3)}
 .btn:active{transform:translate(2px,2px);box-shadow:none}
 .btn.pri{background:var(--coral);color:#fff}
 .btn.mint{background:var(--mint);color:#fff}
-.btn.sun{background:var(--sun)}
+.btn.sun{background:var(--sun);color:#1c1405}
 .btn.sm{font-size:12.5px;padding:5px 11px}
 .btn.ghost{box-shadow:none;border-style:dashed;background:transparent}
 .btn:disabled{opacity:.45;pointer-events:none}
 .row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .row.between{justify-content:space-between}
 .muted{color:var(--ink2);font-size:12.5px}
-input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink);background:#fff;border:2px solid var(--ink);border-radius:11px 14px 12px 15px;padding:8px 10px;width:100%;outline:none}
+input,select,textarea{font-family:inherit;font-size:14px;color:var(--ink);background:#101827;border:1.5px solid #2c3a52;border-radius:10px;padding:8px 10px;width:100%;outline:none}
 textarea{resize:vertical;min-height:60px}
 label.fl{display:block;font-size:12.5px;font-weight:600;margin:9px 0 4px;color:var(--ink2)}
 /* bottom nav */
-nav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--card);border-top:2px solid var(--ink);display:flex;max-width:520px;margin:0 auto;border-radius:22px 22px 0 0;box-shadow:0 -3px 0 #e9dcc8}
+nav{position:fixed;bottom:0;left:0;right:0;z-index:30;background:var(--card);border-top:2px solid var(--ink);display:flex;max-width:520px;margin:0 auto;border-radius:18px 18px 0 0;box-shadow:0 -4px 16px rgba(0,0,0,.45)}
 nav button{flex:1;background:none;border:none;font-family:inherit;font-size:10.5px;color:var(--ink2);padding:8px 2px 9px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px}
 nav button svg{width:23px;height:23px}
 nav button.on{color:var(--coral);font-weight:700}
@@ -61,11 +61,11 @@ nav button.on svg{stroke-width:2.4}
 /* meal log */
 .mealhead{display:flex;align-items:center;gap:8px;margin:14px 2px 4px}
 .mealhead .t{font-weight:700;font-size:15px}
-.logitem{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1.5px dashed #ecdfca}
+.logitem{display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-bottom:1.5px solid #223047}
 .logitem:last-child{border-bottom:none}
-.logitem .ic{width:38px;height:38px;flex:none;background:var(--sun2);border:1.8px solid var(--ink);border-radius:12px 14px 11px 15px;display:flex;align-items:center;justify-content:center}
+.logitem .ic{width:38px;height:38px;flex:none;background:#1a2336;border:1px solid #2c3a52;border-radius:10px;display:flex;align-items:center;justify-content:center}
 .logitem .ic svg{width:22px;height:22px}
-.bar{height:13px;background:#f1e7d6;border:1.6px solid var(--ink);border-radius:8px;overflow:hidden;position:relative}
+.bar{height:13px;background:#0d1320;border:1px solid #2c3a52;border-radius:8px;overflow:hidden;position:relative}
 .bar i{display:block;height:100%;background:var(--mint);border-radius:0 6px 6px 0;transition:width .4s}
 .bar.over i{background:var(--sun)}
 .nutrow{display:flex;align-items:center;gap:8px;margin:7px 0;font-size:12.5px}
@@ -74,33 +74,33 @@ nav button.on svg{stroke-width:2.4}
 .nutrow .vv{width:96px;flex:none;text-align:right;color:var(--ink2);font-size:11.5px}
 /* recipe cards */
 .rcard{display:flex;gap:11px;align-items:center;cursor:pointer}
-.rcard .ric{width:52px;height:52px;flex:none;background:var(--mint2);border:2px solid var(--ink);border-radius:16px 18px 15px 19px;display:flex;align-items:center;justify-content:center}
+.rcard .ric{width:52px;height:52px;flex:none;background:var(--mint2);border:1.5px solid #2c3a52;border-radius:12px;display:flex;align-items:center;justify-content:center}
 .rcard .ric svg{width:32px;height:32px}
 .rcard .nm{font-weight:700;font-size:14.5px}
-.tag{display:inline-block;font-size:10.5px;background:var(--berry2);border:1.4px solid var(--ink);border-radius:8px 10px 9px 11px;padding:1px 7px;margin:2px 3px 0 0}
+.tag{display:inline-block;font-size:10.5px;background:var(--berry2);border:1px solid #324158;border-radius:6px;padding:1px 7px;margin:2px 3px 0 0}
 .tag.age{background:var(--sun2)}
-.tag.al{background:#fde3e3;color:var(--red);border-color:var(--red)}
+.tag.al{background:#3a1b22;color:var(--red);border-color:var(--red)}
 /* modal */
-.mwrap{position:fixed;inset:0;background:rgba(70,50,35,.45);z-index:50;display:none;align-items:flex-end;justify-content:center}
+.mwrap{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:50;display:none;align-items:flex-end;justify-content:center}
 .mwrap.show{display:flex}
-.modal{background:var(--bg);width:100%;max-width:520px;max-height:88vh;overflow-y:auto;border-radius:26px 26px 0 0;border:2.5px solid var(--ink);border-bottom:none;padding:16px 16px 28px;animation:up .22s ease;position:relative}
+.modal{background:var(--bg);width:100%;max-width:520px;max-height:88vh;overflow-y:auto;border-radius:26px 26px 0 0;border:1.5px solid #2c3a52;border-bottom:none;padding:16px 16px 28px;animation:up .22s ease;position:relative}
 @keyframes up{from{transform:translateY(40px);opacity:.4}to{transform:none;opacity:1}}
 .modal h2{font-size:18px;margin:2px 36px 10px 2px}
-.mclose{position:absolute;top:12px;right:14px;width:34px;height:34px;border-radius:50%;border:2px solid var(--ink);background:#fff;font-size:16px;cursor:pointer;font-family:inherit;z-index:2}
+.mclose{position:absolute;top:12px;right:14px;width:34px;height:34px;border-radius:50%;border:1.5px solid #2c3a52;background:#101827;font-size:16px;color:var(--ink);cursor:pointer;font-family:inherit;z-index:2}
 /* tables */
 table.nut{width:100%;border-collapse:collapse;font-size:12.5px}
-table.nut td{padding:3px 4px;border-bottom:1px dashed #e8d9c5}
+table.nut td{padding:3px 4px;border-bottom:1px solid #223047}
 table.nut td:last-child{text-align:right;font-weight:600}
 .steps{padding-left:0;list-style:none;counter-reset:s}
 .steps li{counter-increment:s;display:flex;gap:9px;margin:8px 0;font-size:13.5px}
-.steps li::before{content:counter(s);flex:none;width:22px;height:22px;background:var(--coral);color:#fff;border:1.6px solid var(--ink);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
+.steps li::before{content:counter(s);flex:none;width:22px;height:22px;background:var(--coral);color:#fff;border:1px solid #2c3a52;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700}
 .inglist{font-size:13.5px}
-.inglist .it{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px dashed #e8d9c5}
+.inglist .it{display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid #223047}
 /* plan */
 .pday{margin:10px 0}
 .pday .dt{font-weight:700;font-size:13.5px;margin-bottom:4px}
 .pslot{display:flex;gap:6px;flex-wrap:wrap}
-.pslot .ps{flex:1;min-width:45%;background:#fff;border:1.7px dashed var(--ink2);border-radius:12px 14px 11px 15px;padding:6px 8px;font-size:12px;cursor:pointer;min-height:44px}
+.pslot .ps{flex:1;min-width:45%;background:#101827;border:1.7px dashed var(--ink2);border-radius:10px;padding:6px 8px;font-size:12px;cursor:pointer;min-height:44px}
 .pslot .ps.has{border-style:solid;border-color:var(--ink);background:var(--mint2)}
 .pslot .ps b{display:block;font-size:11px;color:var(--ink2);font-weight:600}
 /* stats */
@@ -108,27 +108,27 @@ table.nut td:last-child{text-align:right;font-weight:600}
 .mchart i{flex:1;background:var(--coral);border-radius:4px 4px 0 0;min-height:2px;opacity:.85}
 .mchart i.lo{background:var(--sun)}
 .kpis{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.kpi{background:var(--sun2);border:1.8px solid var(--ink);border-radius:14px 17px 13px 18px;padding:8px 10px;text-align:center}
+.kpi{background:#1a2336;border:1px solid #2c3a52;border-radius:12px;padding:8px 10px;text-align:center}
 .kpi b{font-size:19px;display:block}
 .kpi span{font-size:11px;color:var(--ink2)}
 /* trial */
-.trow{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1.5px dashed #ecdfca}
+.trow{display:flex;align-items:center;gap:9px;padding:8px 0;border-bottom:1.5px solid #223047}
 .trow:last-child{border-bottom:none}
-.dot{width:12px;height:12px;border-radius:50%;border:1.6px solid var(--ink);flex:none}
+.dot{width:12px;height:12px;border-radius:50%;border:1px solid #2c3a52;flex:none}
 .dot.try{background:var(--sun)} .dot.pass{background:var(--mint)} .dot.fail{background:var(--red)}
 .empty{text-align:center;color:var(--ink2);padding:22px 8px;font-size:13.5px}
 .empty svg{width:54px;height:54px;opacity:.5;display:block;margin:0 auto 8px}
-.seg{display:flex;gap:0;border:2px solid var(--ink);border-radius:14px;overflow:hidden;background:#fff}
+.seg{display:flex;gap:0;border:1.5px solid #2c3a52;border-radius:14px;overflow:hidden;background:#101827}
 .seg button{flex:1;border:none;background:none;font-family:inherit;font-size:12.5px;padding:7px 4px;cursor:pointer;color:var(--ink2)}
 .seg button.on{background:var(--coral);color:#fff;font-weight:700}
-.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:var(--ink);color:#fff;padding:9px 18px;border-radius:16px;font-size:13.5px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none;max-width:88%;text-align:center}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:#22304b;color:#fff;padding:9px 18px;border-radius:16px;font-size:13.5px;z-index:99;opacity:0;transition:opacity .25s;pointer-events:none;max-width:88%;text-align:center}
 .toast.show{opacity:1}
 .ingrow{display:flex;gap:6px;margin:5px 0;align-items:center}
 .ingrow select{flex:1}
 .ingrow input{width:72px;flex:none}
-.ingrow .x{flex:none;width:30px;height:30px;border-radius:50%;border:1.8px solid var(--red);background:#fff;color:var(--red);cursor:pointer;font-family:inherit}
-.warnbox{background:#fde3e3;border:2px solid var(--red);border-radius:13px 16px 12px 17px;padding:8px 12px;color:var(--red);font-size:13px;margin:8px 0}
-.okbox{background:var(--mint2);border:2px solid var(--mint);border-radius:13px 16px 12px 17px;padding:8px 12px;font-size:13px;margin:8px 0}
+.ingrow .x{flex:none;width:30px;height:30px;border-radius:50%;border:1.8px solid var(--red);background:#101827;color:var(--red);cursor:pointer;font-family:inherit}
+.warnbox{background:#3a1b22;border:2px solid var(--red);border-radius:10px;padding:8px 12px;color:var(--red);font-size:13px;margin:8px 0}
+.okbox{background:var(--mint2);border:2px solid var(--mint);border-radius:10px;padding:8px 12px;font-size:13px;margin:8px 0}
 h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 </style>
 </head>
@@ -164,7 +164,7 @@ h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 <div class="app">
 <header>
   <svg class="logo" viewBox="0 0 32 32" style="color:var(--coral)"><use href="#i-fit"/></svg>
-  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.0</small></h1>
+  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.1</small></h1>
   <button class="iconbtn" onclick="openHelp()" title="Help" style="font-size:16px;font-weight:700">?</button>
   <button class="iconbtn" onclick="toggleLang()" id="langbtn" title="Language" style="font-size:11.5px;font-weight:700">EN</button>
   <button class="iconbtn" onclick="openSettings()" title="Settings"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
@@ -315,8 +315,8 @@ function bmi(w,h){return w/Math.pow(h/100,2)}
 function bmiCat(b){if(b<18.5)return['น้ำหนักน้อยกว่าเกณฑ์','var(--sun2)','var(--ink)'];
  if(b<23)return['สมส่วน','var(--mint2)','var(--ink)'];
  if(b<25)return['น้ำหนักเกิน','var(--sun2)','var(--ink)'];
- if(b<30)return['อ้วน (ระดับ 1)','#fde3e3','var(--red)'];
- return['อ้วนมาก (ระดับ 2)','#fde3e3','var(--red)']}
+ if(b<30)return['อ้วน (ระดับ 1)','#3a1b22','var(--red)'];
+ return['อ้วนมาก (ระดับ 2)','#3a1b22','var(--red)']}
 function toast(m){const t=$('#toast');t.textContent=typeof trStr==='function'?trStr(m):m;t.classList.add('show');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('show'),2200)}
 function fmt(n,d=0){return Number(n).toLocaleString('th-TH',{maximumFractionDigits:d,minimumFractionDigits:0})}
 function svg(id,st){return `<svg viewBox="0 0 32 32" ${st?`style="${st}"`:''}><use href="#${id}"/></svg>`}
@@ -600,11 +600,11 @@ function bodyChart(u){const recs=bodyRecs(u);if(recs.length<2)return'';
  let hi=Math.max(...ws)+2;lo=Math.floor(lo);hi=Math.ceil(hi);if(hi-lo<4){lo-=2;hi+=2}
  const X=t=>pl+(t1===t0?0.5:(t-t0)/(t1-t0))*(W-pl-pr),Y=v=>pt+(1-(v-lo)/(hi-lo))*(H-pt-pb);
  let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;display:block">`;
- for(let v=lo;v<=hi;v+=Math.max(1,Math.round((hi-lo)/5)))s+=`<line x1="${pl}" y1="${Y(v)}" x2="${W-pr}" y2="${Y(v)}" stroke="#efe3d0"/><text x="${pl-4}" y="${Y(v)+3}" font-size="8" fill="#9a8270" text-anchor="end">${v}</text>`;
- guides.forEach(([w,lb])=>{if(w>lo&&w<hi)s+=`<line x1="${pl}" y1="${Y(w)}" x2="${W-pr}" y2="${Y(w)}" stroke="#d8c7ab" stroke-dasharray="4 3"/><text x="${W-pr}" y="${Y(w)-2}" font-size="7.5" fill="#b39f85" text-anchor="end">${lb}</text>`});
+ for(let v=lo;v<=hi;v+=Math.max(1,Math.round((hi-lo)/5)))s+=`<line x1="${pl}" y1="${Y(v)}" x2="${W-pr}" y2="${Y(v)}" stroke="#223047"/><text x="${pl-4}" y="${Y(v)+3}" font-size="8" fill="#8b97ab" text-anchor="end">${v}</text>`;
+ guides.forEach(([w,lb])=>{if(w>lo&&w<hi)s+=`<line x1="${pl}" y1="${Y(w)}" x2="${W-pr}" y2="${Y(w)}" stroke="#3a4a63" stroke-dasharray="4 3"/><text x="${W-pr}" y="${Y(w)-2}" font-size="7.5" fill="#5a6a85" text-anchor="end">${lb}</text>`});
  s+=`<polyline points="${recs.map(r=>X(new Date(r.date+'T00:00').getTime()).toFixed(1)+','+Y(r.w).toFixed(1)).join(' ')}" fill="none" stroke="var(--coral)" stroke-width="2"/>`;
  recs.forEach(r=>s+=`<circle cx="${X(new Date(r.date+'T00:00').getTime()).toFixed(1)}" cy="${Y(r.w).toFixed(1)}" r="3.2" fill="var(--coral)" stroke="#fff" stroke-width="1.3"/>`);
- s+=`<text x="${pl}" y="${H-6}" font-size="8" fill="#9a8270">${thDate(recs[0].date)}</text><text x="${W-pr}" y="${H-6}" font-size="8" fill="#9a8270" text-anchor="end">${thDate(recs[recs.length-1].date)}</text>`;
+ s+=`<text x="${pl}" y="${H-6}" font-size="8" fill="#8b97ab">${thDate(recs[0].date)}</text><text x="${W-pr}" y="${H-6}" font-size="8" fill="#8b97ab" text-anchor="end">${thDate(recs[recs.length-1].date)}</text>`;
  return s+'</svg>'}
 function renderBody(){const u=user(),recs=bodyRecs(u),t=target();
  const w=curW(u),b=bmi(w,u.h),[cat,bg,cl]=bmiCat(b);
@@ -679,7 +679,7 @@ function renderStats(){const u=user(),t=target();
   h+=`<i class="${k&&k<t.kcal*0.7?'lo':''}" style="height:${Math.max(2,k/mx*100)}%" onclick="TODAY_DATE='${ds}';go('today')"></i>`}
  h+=`</div><div class="row between muted" style="font-size:10px"><span>1</span><span>${dim} ${THM[mo-1]}</span></div></div>`;
  if(tops.length){h+=`<div class="card"><h3>${svg('i-star','width:19px;color:var(--sun)')} เมนูยอดฮิต</h3>`;
-  tops.forEach(([n,c],i)=>{h+=`<div class="row between" style="padding:4px 0;border-bottom:1px dashed #ecdfca"><span>${['🥇','🥈','🥉','4.','5.'][i]} ${esc(n)}</span><b>${c} ครั้ง</b></div>`});
+  tops.forEach(([n,c],i)=>{h+=`<div class="row between" style="padding:4px 0;border-bottom:1px solid #223047"><span>${['🥇','🥈','🥉','4.','5.'][i]} ${esc(n)}</span><b>${c} ครั้ง</b></div>`});
   h+='</div>'}
  if(!logs.length)h+=`<div class="empty">${svg('i-chart')}เดือนนี้ยังไม่มีบันทึก</div>`;
  $('#view').innerHTML=h}
@@ -886,9 +886,9 @@ function showPlanPreview(){const d=window._pp;if(!d)return;const isM=d.t==='m';
  let cnt=0,rows='';
  WDAYS.forEach((w,i)=>{
   if(isM){const day=d.p[i]||{};const ks=Object.keys(MEALS).filter(k=>day[k]);cnt+=ks.length;
-   if(ks.length)rows+=`<div style="font-size:12.5px;margin:3px 0;border-bottom:1px dashed #ecdfca;padding-bottom:3px"><b>${w}:</b> ${ks.map(k=>MEALS[k]+' '+esc(day[k].n)).join(' · ')}</div>`}
+   if(ks.length)rows+=`<div style="font-size:12.5px;margin:3px 0;border-bottom:1px solid #223047;padding-bottom:3px"><b>${w}:</b> ${ks.map(k=>MEALS[k]+' '+esc(day[k].n)).join(' · ')}</div>`}
   else{const a=d.p[i]||[];cnt+=a.length;
-   if(a.length)rows+=`<div style="font-size:12.5px;margin:3px 0;border-bottom:1px dashed #ecdfca;padding-bottom:3px"><b>${w}:</b> ${a.map(x=>esc(x.n)+' ('+esc(x.s||'')+')').join(' · ')}</div>`}});
+   if(a.length)rows+=`<div style="font-size:12.5px;margin:3px 0;border-bottom:1px solid #223047;padding-bottom:3px"><b>${w}:</b> ${a.map(x=>esc(x.n)+' ('+esc(x.s||'')+')').join(' · ')}</div>`}});
  openModal(`<h2>📥 ตาราง${isM?'อาหาร':'ฝึก'}${d.from?'จาก '+esc(d.from):''}</h2>
   <div class="card flat" style="margin:8px 0">${rows||'<span class="muted">ว่าง</span>'}</div>
   <p class="muted" style="font-size:12px">รวม ${cnt} รายการ · ถ้ากดใช้ ตารางนี้จะแทนที่ตาราง${isM?'อาหาร':'ฝึก'}เดิมของคุณ</p>
@@ -903,7 +903,7 @@ function openSnake(){go('game')}
 function renderGame(){const e=LANG==='en';
  $('#view').innerHTML=`<div class="card" style="margin-top:12px"><h3>🐍 ${e?'Snake':'เกมงู'}${S.snakeHi?' · 🏆 '+S.snakeHi:''}</h3>
  <div class="row between" style="margin:2px 0 6px"><span class="muted" style="font-size:12px">${e?'Pass the time during cardio or rest sets':'เล่นเพลินๆ ระหว่างคาร์ดิโอหรือพักเซ็ต'}</span><b id="sn-score" style="font-size:16px">0</b></div>
- <canvas id="snake-cv" width="320" height="320" style="width:100%;max-width:360px;display:block;margin:0 auto;background:#eaf6f0;border:2.5px solid var(--ink);border-radius:14px 17px 13px 18px;touch-action:none"></canvas>
+ <canvas id="snake-cv" width="320" height="320" style="width:100%;max-width:360px;display:block;margin:0 auto;background:#0d1626;border:1.5px solid #2c3a52;border-radius:12px;touch-action:none"></canvas>
  <div class="row" style="justify-content:center;margin-top:9px;gap:8px;align-items:center">
   <button class="btn" style="width:56px;font-size:17px" onclick="snDir(-1,0)">◀</button>
   <div style="display:flex;flex-direction:column;gap:8px">
@@ -945,12 +945,12 @@ function snTick(){const cv=document.getElementById('snake-cv');
  snDraw()}
 function snDraw(){const cv=document.getElementById('snake-cv');if(!cv||!cv.getContext)return;
  const c=cv.getContext('2d'),z=SN.z;
- c.fillStyle='#eaf6f0';c.fillRect(0,0,320,320);
- c.fillStyle='#dcefe6';
+ c.fillStyle='#0d1626';c.fillRect(0,0,320,320);
+ c.fillStyle='#13203a';
  for(let i=0;i<SN.g;i++)for(let j=0;j<SN.g;j++)if((i+j)%2===0)c.fillRect(i*z,j*z,z,z);
  c.fillStyle='#ff7a59';c.beginPath();c.arc(SN.food[0]*z+z/2,SN.food[1]*z+z/2,z/2-3,0,7);c.fill();
- c.fillStyle='#7bc09a';c.fillRect(SN.food[0]*z+z/2-1,SN.food[1]*z+2,2,4);
- SN.snake.forEach((s,i)=>{c.fillStyle=i===0?'#1f8d7e':'#2FB5A3';
+ c.fillStyle='#2dd4bf';c.fillRect(SN.food[0]*z+z/2-1,SN.food[1]*z+2,2,4);
+ SN.snake.forEach((s,i)=>{c.fillStyle=i===0?'#2f6fe0':'#4f8cff';
   c.fillRect(s[0]*z+1.5,s[1]*z+1.5,z-3,z-3)});
  const hd=SN.snake[0];c.fillStyle='#fff';
  c.fillRect(hd[0]*z+5,hd[1]*z+5,3,3);c.fillRect(hd[0]*z+12,hd[1]*z+5,3,3)}
@@ -959,7 +959,7 @@ function snOver(){SN.dead=true;clearInterval(window._snT);
  const e=LANG==='en';
  const cv=document.getElementById('snake-cv');
  if(cv&&cv.getContext){const c=cv.getContext('2d');
-  c.fillStyle='rgba(70,50,35,.55)';c.fillRect(0,0,320,320);
+  c.fillStyle='rgba(0,0,0,.65)';c.fillRect(0,0,320,320);
   c.fillStyle='#fff';c.textAlign='center';c.font='bold 24px sans-serif';
   c.fillText(e?'Game over!':'จบเกม!',160,140);
   c.font='15px sans-serif';
@@ -1008,7 +1008,7 @@ const HELP=[
 function openHelp(){const e=LANG==='en';
  let h=`<h2>${e?'❓ How to use IUFIT':'❓ วิธีใช้งานแอป IUFIT'}</h2>
  <p class="muted" style="font-size:12px">${e?'Tap a topic to expand':'แตะหัวข้อเพื่อดูรายละเอียด'}</p>`;
- HELP.forEach(([tt,te,bt,be])=>{h+=`<details style="margin:8px 0;background:var(--card);border:1.8px solid var(--ink);border-radius:13px 16px 12px 17px;padding:9px 12px">
+ HELP.forEach(([tt,te,bt,be])=>{h+=`<details style="margin:8px 0;background:var(--card);border:1px solid #2c3a52;border-radius:10px;padding:9px 12px">
   <summary style="font-weight:700;cursor:pointer;font-size:13.5px">${e?te:tt}</summary>
   <div style="font-size:12.8px;margin-top:7px;white-space:pre-line;line-height:1.55">${e?be:bt}</div></details>`});
  openModal(h)}
