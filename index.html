@@ -368,14 +368,14 @@ function renderChildBar(){const el=$('#childbar');
  el.innerHTML=S.users.map(u=>`<span class="chip ${u.id===S.active?'sel':''}" onclick="setActive('${u.id}')">💪 ${esc(u.name)}</span>`).join('')
  +`<span class="chip" onclick="userForm()">＋ เพิ่ม</span>`}
 function setActive(id){S.active=id;save();renderAll()}
-const TABS=[['today','วันนี้','i-bowl'],['food','อาหาร','i-book'],['body','ร่างกาย','i-grow'],['stats','สรุป','i-chart']];
+const TABS=[['today','วันนี้','i-bowl'],['food','อาหาร','i-apple'],['links','สูตร','i-book'],['body','ร่างกาย','i-grow'],['stats','สรุป','i-chart']];
 let TAB='today';
 function renderNav(){$('#nav').innerHTML=TABS.map(([id,n,ic])=>`<button class="${TAB===id?'on':''}" onclick="go('${id}')">${svg(ic)}${n}</button>`).join('')}
 function go(t){TAB=t;renderAll();window.scrollTo(0,0)}
 function renderAll(){renderChildBar();renderNav();
  if(!S.users.length){renderWelcome();return}
  if(!user())S.active=S.users[0].id;
- ({today:renderToday,food:renderFood,body:renderBody,stats:renderStats})[TAB]()}
+ ({today:renderToday,food:renderFood,links:renderLinks,body:renderBody,stats:renderStats})[TAB]()}
 function renderWelcome(){$('#view').innerHTML=`
  <div class="card" style="text-align:center;padding:28px 16px">
   <svg viewBox="0 0 32 32" style="width:72px;height:72px;color:var(--coral)"><use href="#i-fit"/></svg>
@@ -494,14 +494,10 @@ function logDetail(id){const l=S.logs.find(x=>x.id===id);if(!l)return;TODAY_DATE
 /* ================= หน้า: อาหาร (คลังเมนู) ================= */
 let MENU_Q='',MENU_CAT='';
 function renderFood(){
- const made={};S.logs.filter(l=>l.user===S.active&&l.rid).forEach(l=>made[l.rid]=(made[l.rid]||0)+1);
- let list=allRecipes();
- if(MENU_CAT)list=list.filter(r=>r.c===MENU_CAT);
- if(MENU_Q)list=list.filter(r=>r.n.includes(MENU_Q)||r.ings.some(([id])=>ING[id]?.n.includes(MENU_Q)));
  const cats=[...new Set(allRecipes().map(r=>r.c))];
  let h=`<div class="row" style="margin-top:12px">
   <div style="flex:1;position:relative">
-   <input placeholder="ค้นหาเมนู / วัตถุดิบ..." value="${esc(MENU_Q)}" oninput="MENU_Q=this.value;renderFood()" style="padding-left:34px">
+   <input placeholder="ค้นหาเมนู / วัตถุดิบ..." value="${esc(MENU_Q)}" oninput="MENU_Q=this.value;drawFoodList()" style="padding-left:34px">
    <svg viewBox="0 0 32 32" style="width:17px;height:17px;position:absolute;left:11px;top:11px;color:var(--ink2)"><use href="#i-search"/></svg>
   </div></div>
  <div class="row" style="margin-top:8px">
@@ -509,8 +505,16 @@ function renderFood(){
   ${cats.map(c=>`<span class="chip ${MENU_CAT===c?'sel':''}" onclick="MENU_CAT='${c}';renderFood()">${c}</span>`).join('')}</div>
  <div class="row" style="margin-top:9px">
   <button class="btn sun sm" onclick="recipeForm()">＋ เพิ่มเมนูของฉัน</button>
-  <button class="btn sm" onclick="ingManager()">🧺 วัตถุดิบ${S.ings.length?' ('+S.ings.length+')':''}</button></div>`;
- if(!list.length)h+=`<div class="empty">${svg('i-search')}ไม่พบเมนูที่ค้นหา</div>`;
+  <button class="btn sm" onclick="ingManager()">🧺 วัตถุดิบ${S.ings.length?' ('+S.ings.length+')':''}</button></div>
+ <div id="foodlist"></div>`;
+ $('#view').innerHTML=h;drawFoodList()}
+function drawFoodList(){const el=$('#foodlist');if(!el)return;
+ const made={};S.logs.filter(l=>l.user===S.active&&l.rid).forEach(l=>made[l.rid]=(made[l.rid]||0)+1);
+ let list=allRecipes();
+ if(MENU_CAT)list=list.filter(r=>r.c===MENU_CAT);
+ if(MENU_Q)list=list.filter(r=>r.n.includes(MENU_Q)||r.ings.some(([id])=>ING[id]?.n.includes(MENU_Q)));
+ let h='';
+ if(!list.length)h=`<div class="empty">${svg('i-search')}ไม่พบเมนูที่ค้นหา</div>`;
  list.forEach(r=>{const n=nutOf(r.ings);
   h+=`<div class="card rcard" onclick="recipeDetail('${r.id}')">
    <div class="ric"><svg viewBox="0 0 32 32"><use href="#${r.ic||'i-bowl'}"/></svg></div>
@@ -518,7 +522,7 @@ function renderFood(){
     <div><span class="tag age">${r.c}</span>${made[r.id]?`<span class="tag" style="background:var(--mint2)">กิน ${made[r.id]} ครั้ง</span>`:''}</div>
     <div class="muted" style="margin-top:2px">${fmt(n[0])} กิโลแคลอรี · P ${fmt(n[1])} · F ${fmt(n[2])} · C ${fmt(n[3])} ก.</div>
    </div></div>`});
- $('#view').innerHTML=h}
+ el.innerHTML=h}
 function recipeDetail(id){const r=getRecipe(id);if(!r)return;
  const n=nutOf(r.ings),t=target();
  let h=`<h2>${esc(r.n)}</h2><div><span class="tag age">${r.c}</span></div>
@@ -658,6 +662,44 @@ function renderStats(){const u=user(),t=target();
   h+='</div>'}
  if(!logs.length)h+=`<div class="empty">${svg('i-chart')}เดือนนี้ยังไม่มีบันทึก</div>`;
  $('#view').innerHTML=h}
+
+/* ================= หน้า: สูตรอาหารเฮลตี้ 100 เมนู ================= */
+const LINKS=[
+['ไก่ / อกไก่',['อกไก่ย่างซอสงาดำ','สเต๊กอกไก่ซอสมะนาว','อกไก่ผัดขิง','ลาบอกไก่','ยำอกไก่ฉีกสมุนไพร','อกไก่หมักโยเกิร์ตอบ','ไก่ผัดเม็ดมะม่วงน้ำมันน้อย','อกไก่ม้วนชีสอบ','ก๋วยเตี๋ยวไก่ตุ๋นน้ำใส','ข้าวกล้องอบไก่','สลัดโรลอกไก่','อกไก่ผัดพริกหยวก']],
+['ปลา / ซีฟู้ด',['แซลมอนย่างซอสมิโสะ','แซลมอนอบกระเทียม','ปลากะพงนึ่งมะนาว','ปลานิลเผาเกลือ','ปลาทูต้มส้ม','ลาบปลานิล','ยำทูน่าสูตรคลีน','สลัดทูน่าอะโวคาโด','กุ้งอบวุ้นเส้น','แซลมอนดองซีอิ๊ว','ต้มยำปลาน้ำใส','ปลากะพงนึ่งซีอิ๊ว']],
+['ไข่',['ไข่ตุ๋นทรงเครื่อง','ไข่ขาวเจียวเตาอบ','ออมเล็ตผักโขม','ไข่กระทะอะโวคาโด','ยำไข่ต้ม','ไข่ตุ๋นเต้าหู้','สลัดไข่ต้มกรีกโยเกิร์ต','ไข่ม้วนญี่ปุ่นทามาโกะ']],
+['เต้าหู้ / มังสวิรัติ',['เต้าหู้ทรงเครื่องนึ่ง','สเต๊กเต้าหู้','ลาบเต้าหู้','ผัดกะเพราเต้าหู้เห็ด','แกงจืดเต้าหู้สาหร่าย','เต้าหู้ผัดซอสเกาหลี','ยำวุ้นเส้นเต้าหู้','เต้าหู้อบงาดำ','ผัดเปรี้ยวหวานเต้าหู้','มาโปเต้าหู้สูตรคลีน']],
+['สลัด / ผัก',['สลัดอกไก่อะโวคาโด','สลัดควินัว','สลัดแซลมอนย่าง','ยำผักกูดกุ้งสด','สลัดผลไม้โยเกิร์ต','ซีซาร์สลัดสูตรเบา','ยำเส้นแก้วกุ้งสด','ผัดบรอกโคลีกุ้ง','ผัดผักรวมน้ำมันงา','น้ำพริกอ่องผักสด','น้ำพริกปลาทูผักลวก','ยำส้มโอกุ้งสด']],
+['ข้าว / เส้น',['ข้าวกล้องผัดอกไก่','ข้าวยำสมุนไพร','ข้าวคลุกกะปิสูตรคลีน','ข้าวอบธัญพืชไก่','ผัดไทยสูตรคลีน','ก๋วยเตี๋ยวน้ำใสอกไก่','เส้นบุกผัดขี้เมา','สปาเกตตีโฮลวีตซอสมะเขือเทศ','เส้นบุกยำแซ่บ','คิมบับข้าวกล้อง','ข้าวไรซ์เบอร์รีผัดกุ้ง','โซบะเย็นซอสงา']],
+['ซุป / แกง',['แกงจืดวุ้นเส้นหมูสับ','แกงเลียงกุ้งสด','ต้มยำกุ้งน้ำใส','แกงส้มผักรวม','ซุปฟักทอง','ซุปมิโสะเต้าหู้','ซุปไก่ใส่ขิง','แกงป่าไก่','ต้มจืดมะระยัดไส้','ซุปมะเขือเทศโฮมเมด']],
+['มื้อเช้า',['โอเวอร์ไนท์โอ๊ต','กราโนล่าโยเกิร์ตโบลว์','แพนเค้กกล้วยข้าวโอ๊ต','ขนมปังโฮลวีตอะโวคาโดไข่ดาว','สมูทตี้โบวล์','ข้าวต้มธัญพืช','แซนด์วิชไข่ขาวทูน่า','เจียพุดดิ้ง']],
+['ของว่าง / ของหวาน',['เอเนอร์จีบอลถั่วอินทผลัม','โยเกิร์ตบาร์กแช่แข็ง','กล้วยอบไม่ใส่น้ำตาล','ถั่วอบรวมสมุนไพร','มันหวานอบเตา','วุ้นผลไม้ไม่ใส่น้ำตาล','กล้วยจุ่มดาร์กช็อกแช่แข็ง','ป๊อปคอร์นโฮมเมด']],
+['เครื่องดื่ม / สมูทตี้',['สมูทตี้เขียวผักโขมกล้วย','สมูทตี้เบอร์รีโยเกิร์ต','น้ำปั่นแตงโมมิ้นต์','สมูทตี้มะม่วงเสาวรส','นมถั่วเหลืองปั่นกล้วย','สมูทตี้อะโวคาโดนมอัลมอนด์','โกโก้ร้อนไม่ใส่น้ำตาล','มัทฉะลาเต้หวานน้อย']]
+];
+let LINK_Q='',LINK_CAT='';
+function renderLinks(){
+ let h=`<div class="card" style="background:var(--sun2);margin-top:12px"><p style="font-size:12.5px;margin:0">💡 รวม <b>100 ไอเดียเมนูเฮลตี้</b> — แตะ 🔍 ค้นสูตรใน Google หรือ ▶ ดูวิธีทำใน YouTube ได้เลย</p></div>
+ <div class="row" style="margin-top:8px"><div style="flex:1;position:relative">
+  <input placeholder="ค้นหาเมนู..." value="${esc(LINK_Q)}" oninput="LINK_Q=this.value;drawLinkList()" style="padding-left:34px">
+  <svg viewBox="0 0 32 32" style="width:17px;height:17px;position:absolute;left:11px;top:11px;color:var(--ink2)"><use href="#i-search"/></svg></div></div>
+ <div class="row" style="margin-top:8px">
+  <span class="chip ${!LINK_CAT?'sel':''}" onclick="LINK_CAT='';renderLinks()">ทั้งหมด</span>
+  ${LINKS.map(x=>`<span class="chip ${LINK_CAT===x[0]?'sel':''}" onclick="LINK_CAT='${x[0]}';renderLinks()">${x[0]}</span>`).join('')}</div>
+ <div id="linklist"></div>`;
+ $('#view').innerHTML=h;drawLinkList()}
+function drawLinkList(){const el=$('#linklist');if(!el)return;let h='',n=0;
+ LINKS.forEach(([cat,items])=>{
+  if(LINK_CAT&&cat!==LINK_CAT)return;
+  const its=items.filter(x=>!LINK_Q||x.includes(LINK_Q));
+  if(!its.length)return;
+  h+=`<h4 class="sec">${cat} (${its.length})</h4><div class="card" style="margin:4px 0">`;
+  its.forEach(x=>{n++;const q=encodeURIComponent('สูตร '+x+' เฮลตี้');
+   h+=`<div class="trow"><div style="flex:1;font-size:13.5px">${x}</div>
+    <a class="btn sm" style="text-decoration:none" href="https://www.google.com/search?q=${q}" target="_blank" rel="noopener">🔍</a>
+    <a class="btn sm mint" style="text-decoration:none" href="https://www.youtube.com/results?search_query=${q}" target="_blank" rel="noopener">▶</a></div>`});
+  h+='</div>'});
+ if(!n)h=`<div class="empty">${svg('i-search')}ไม่พบเมนูที่ค้นหา</div>`;
+ el.innerHTML=h}
 
 /* ================= ตั้งค่า / โปรไฟล์ ================= */
 function openSettings(){let h=`<h2>⚙️ ตั้งค่า</h2><h4 class="sec">โปรไฟล์</h4>`;
