@@ -164,7 +164,7 @@ h4.sec{margin:16px 2px 6px;font-size:14px;color:var(--ink2)}
 <div class="app">
 <header>
   <svg class="logo" viewBox="0 0 32 32" style="color:var(--coral)"><use href="#i-fit"/></svg>
-  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.6</small></h1>
+  <h1>IUFIT<small>บันทึกโภชนาการ & ติดตามร่างกาย สำหรับสายเฮลตี้ · v2.7</small></h1>
   <button class="iconbtn" onclick="openHelp()" title="Help" style="font-size:16px;font-weight:700">?</button>
   <button class="iconbtn" onclick="toggleLang()" id="langbtn" title="Language" style="font-size:11.5px;font-weight:700">EN</button>
   <button class="iconbtn" onclick="openSettings()" title="Settings"><svg viewBox="0 0 32 32"><use href="#i-gear"/></svg></button>
@@ -1180,6 +1180,9 @@ function delUser(id){if(!confirm(trStr('ลบโปรไฟล์นี้ ร
 /* ===== ระบบรหัสปลดล็อก (ขายแอป) ===== */
 const LIC_SECRET='XK92FH37QPL6D4ZM-IUFIT-2026';
 const LIC_CONTACT='LINE: mcz1497';
+const LIC_BAN=[];   // ← แบนรายชื่อ: ใส่ชื่อที่ต้องการระงับ เช่น ['สมชาย ใจดี','john'] แล้วอัปโหลด index.html + sw.js (ขยับเลขเวอร์ชัน) ขึ้น GitHub
+function licNorm(n){return (n||'').trim().toLowerCase().replace(/\s+/g,'')}
+function licBanned(n){return LIC_BAN.some(b=>licNorm(b)===licNorm(n))}
 function licCode(name){let s=(name||'').trim().toLowerCase().replace(/\s+/g,'')+'|IUFIT|'+LIC_SECRET;
  let h1=0x811c9dc5,h2=0x12345678;
  for(const ch of s){const c=ch.codePointAt(0);h1=((h1^c)*0x01000193)>>>0;h2=(((h2<<5)-h2+c))>>>0}
@@ -1187,7 +1190,7 @@ function licCode(name){let s=(name||'').trim().toLowerCase().replace(/\s+/g,'')+
  let x=(BigInt(h1)<<32n)|BigInt(h2);
  for(let i=0;i<8;i++){out+=A[Number(x%31n)];x/=31n}
  return out.slice(0,4)+'-'+out.slice(4)}
-function licOK(){return !!(S.lic&&S.lic.n&&S.lic.c===licCode(S.lic.n))}
+function licOK(){return !!(S.lic&&S.lic.n&&!licBanned(S.lic.n)&&S.lic.c===licCode(S.lic.n))}
 function renderLock(){const e=LANG==='en';
  $('#childbar').innerHTML='';$('#nav').innerHTML='';
  $('#view').innerHTML=`<div class="card" style="margin-top:34px;text-align:center;padding:28px 18px;max-width:380px;margin-left:auto;margin-right:auto">
@@ -1200,6 +1203,7 @@ function renderLock(){const e=LANG==='en';
   <p class="muted" style="font-size:12px;margin-top:16px">${e?'No code yet? Get one at':'ยังไม่มีรหัส? สั่งซื้อได้ที่'}<br><b>${LIC_CONTACT}</b></p></div>`}
 function licTry(){const n=$('#lic-n').value.trim(),c=$('#lic-c').value.trim().toUpperCase();
  if(!n||!c){toast(LANG==='en'?'Enter name and code':'กรอกชื่อและรหัสก่อนนะ');return}
+ if(licBanned(n)){toast(LANG==='en'?'This code has been suspended — contact the seller':'รหัสนี้ถูกระงับการใช้งาน กรุณาติดต่อผู้ขาย');return}
  if(licCode(n)===c){S.lic={n,c};save();toast((LANG==='en'?'Welcome ':'ปลดล็อกสำเร็จ ยินดีต้อนรับคุณ ')+n+' 🎉');renderAll()}
  else toast(LANG==='en'?'Invalid code — check name and code':'รหัสไม่ถูกต้อง ตรวจชื่อ/รหัสอีกครั้ง (ชื่อต้องตรงกับที่แจ้งตอนซื้อ)')}
 
