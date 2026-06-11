@@ -1884,7 +1884,7 @@ function delUser(id){if(!confirm(trStr('ลบโปรไฟล์นี้ ร
  if(S.active===id)S.active=S.users[0]?.id||null;
  save();closeModal();renderAll()}
 /* ===== ระบบรหัสปลดล็อก (ขายแอป) ===== */
-const LIC_ENABLED=false;   // ← เปิด/ปิดระบบรหัสปลดล็อก (true = ต้องใส่รหัส)
+const LIC_ENABLED=true;   // ← เปิด/ปิดระบบรหัสปลดล็อก (true = ต้องใส่รหัส)
 const LIC_SECRET='XK92FH37QPL6D4ZM-IUFIT-2026';
 const LIC_CONTACT='LINE: mcz1497';
 const LIC_BAN=[];   // ← แบนรายชื่อ: ใส่ชื่อที่ต้องการระงับ เช่น ['สมชาย ใจดี','john'] แล้วอัปโหลด index.html + sw.js (ขยับเลขเวอร์ชัน) ขึ้น GitHub
