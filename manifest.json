@@ -1,13 +1,13 @@
 {
   "name": "IUFIT",
   "short_name": "IUFIT",
-  "description": "IUFIT fitness, nutrition, cardio and coach dashboard app",
+  "description": "IUFIT แอปฟิตเนสสำหรับบันทึกอาหาร ออกกำลังกาย สร้างกลุ่มเทรน และติดตามผลลัพธ์",
   "lang": "th",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
-  "background_color": "#002766",
+  "background_color": "#F5F7FB",
   "theme_color": "#003C8F",
   "icons": [
     {
