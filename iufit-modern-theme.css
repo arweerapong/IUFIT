@@ -437,3 +437,8 @@ input:focus,select:focus,textarea:focus{
 .bar i{background:linear-gradient(90deg,var(--mint),var(--coral)) !important}
 /* ซ่อนแถบเครื่องมือด้านบนเฉพาะหน้าเปิดใช้งาน/ล็อกอิน (มีช่องกรอกรหัส #mem-code) */
 body:has(#mem-code) header{display:none !important}
+
+/* IUFIT v4 · Coach action tiles */
+.coach-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:66px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#fff,#eef6ff);font-family:var(--font-ui);font-size:12.5px;font-weight:750;color:var(--ink);cursor:pointer;box-shadow:0 8px 20px rgba(13,54,110,.07);transition:transform .15s ease, box-shadow .15s ease;text-align:center;padding:6px 4px}
+.coach-tile span{font-size:23px;line-height:1}
+.coach-tile:active{transform:translateY(1px) scale(.99);box-shadow:none}
