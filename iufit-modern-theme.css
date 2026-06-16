@@ -442,3 +442,769 @@ body:has(#mem-code) header{display:none !important}
 .coach-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:66px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#fff,#eef6ff);font-family:var(--font-ui);font-size:12.5px;font-weight:750;color:var(--ink);cursor:pointer;box-shadow:0 8px 20px rgba(13,54,110,.07);transition:transform .15s ease, box-shadow .15s ease;text-align:center;padding:6px 4px}
 .coach-tile span{font-size:23px;line-height:1}
 .coach-tile:active{transform:translateY(1px) scale(.99);box-shadow:none}
+
+/* =========================================================
+   IUFIT Modern UI v5 · Premium Fitness-Tech Refresh
+   Date: 2026-06-17
+   Goal:
+   - Modern mobile-app look
+   - Less visual clutter
+   - Cleaner cards, nav, controls, and dashboard feel
+   - Better scroll performance than sticky/glass header
+   - Keep existing HTML/JS logic untouched
+   ========================================================= */
+
+/* ---------- Brand tokens ---------- */
+:root{
+  color-scheme: light;
+  --iufit-blue:#0A84FF;
+  --iufit-blue-2:#0066D6;
+  --iufit-deep:#003C8F;
+  --iufit-navy:#071D49;
+  --iufit-cyan:#19C2FF;
+  --iufit-green:#13C6A3;
+  --iufit-orange:#F59E0B;
+  --iufit-red:#EF4444;
+
+  --bg:#F6F8FC;
+  --bg2:#EEF5FF;
+  --card:#FFFFFF;
+  --surface:#FFFFFF;
+  --ink:#0F172A;
+  --ink2:#64748B;
+  --line:#E2E8F0;
+
+  --coral:var(--iufit-blue);
+  --coral2:#EAF4FF;
+  --mint:var(--iufit-green);
+  --mint2:#E8FFF9;
+  --sun:var(--iufit-orange);
+  --sun2:#FFF7E6;
+  --berry:#4569FF;
+  --berry2:#EEF2FF;
+  --red:var(--iufit-red);
+  --navy:var(--iufit-navy);
+  --deep:var(--iufit-deep);
+
+  --brand-gradient:linear-gradient(135deg,#0A84FF 0%,#0066D6 46%,#003C8F 100%);
+  --brand-gradient-soft:linear-gradient(135deg,rgba(10,132,255,.14),rgba(25,194,255,.08));
+  --brand-gradient-dark:linear-gradient(145deg,#071D49 0%,#003C8F 58%,#0A84FF 100%);
+
+  --shadow-xs:0 2px 8px rgba(15,23,42,.05);
+  --shadow-sm:0 10px 28px rgba(15,23,42,.07);
+  --shadow-md:0 18px 44px rgba(15,23,42,.11);
+  --shadow-nav:0 18px 48px rgba(7,29,73,.18);
+
+  --radius-sm:14px;
+  --radius:22px;
+  --radius-lg:30px;
+  --radius-pill:999px;
+
+  --font-ui:'Inter','Kanit','Sarabun','Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
+  --font-display:'Montserrat','Kanit','Sarabun','Segoe UI',system-ui,sans-serif;
+}
+
+/* ---------- Base ---------- */
+html{
+  background:#F6F8FC;
+  scroll-behavior:smooth;
+}
+body{
+  margin:0 !important;
+  min-height:100vh;
+  color:var(--ink);
+  font-family:var(--font-ui);
+  font-size:15px;
+  line-height:1.55;
+  background:
+    radial-gradient(circle at 20% -8%,rgba(10,132,255,.20) 0,transparent 34%),
+    radial-gradient(circle at 94% 10%,rgba(25,194,255,.16) 0,transparent 28%),
+    linear-gradient(180deg,#FFFFFF 0%,#F2F7FF 36%,#F6F8FC 100%) !important;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:optimizeLegibility;
+}
+body::before{
+  display:none !important;
+}
+*{
+  scrollbar-width:thin;
+  scrollbar-color:#BED3F2 transparent;
+}
+
+/* ---------- App container ---------- */
+.app{
+  max-width:520px;
+  margin:0 auto;
+  padding:12px 14px calc(104px + env(safe-area-inset-bottom)) !important;
+}
+
+/* ---------- Header: premium, non-sticky for smoother scroll ---------- */
+header{
+  position:relative !important;
+  top:auto !important;
+  z-index:10 !important;
+  margin:2px 0 14px !important;
+  padding:14px 14px !important;
+  min-height:72px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border:none !important;
+  border-radius:28px !important;
+  background:
+    radial-gradient(circle at 12% 0%,rgba(255,255,255,.30),transparent 32%),
+    linear-gradient(135deg,#071D49 0%,#003C8F 52%,#0A84FF 100%) !important;
+  box-shadow:0 20px 48px rgba(0,60,143,.26) !important;
+  overflow:hidden;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+header::before{
+  content:"";
+  position:absolute;
+  inset:auto -10% -52% 22%;
+  width:260px;
+  height:130px;
+  border-radius:999px;
+  background:rgba(255,255,255,.18);
+  filter:blur(16px);
+  opacity:1 !important;
+  pointer-events:none;
+}
+header::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background-image:linear-gradient(120deg,rgba(255,255,255,.18),transparent 34%,rgba(255,255,255,.08));
+  pointer-events:none;
+}
+header .logo{
+  position:relative;
+  z-index:1;
+  width:50px !important;
+  height:50px !important;
+  border-radius:18px !important;
+  object-fit:cover;
+  background:#fff;
+  box-shadow:0 12px 28px rgba(0,0,0,.24), inset 0 1px 0 rgba(255,255,255,.36) !important;
+}
+header h1{
+  position:relative;
+  z-index:1;
+  margin:0 !important;
+  flex:1;
+  color:#fff !important;
+  font-family:var(--font-display);
+  font-size:21px !important;
+  font-weight:850 !important;
+  line-height:1.06 !important;
+  letter-spacing:-.025em;
+}
+header h1 small{
+  display:block;
+  max-width:310px;
+  margin-top:5px;
+  color:rgba(255,255,255,.78) !important;
+  font-family:var(--font-ui);
+  font-size:11.5px !important;
+  font-weight:500;
+  line-height:1.35;
+}
+.iconbtn{
+  position:relative;
+  z-index:1;
+  width:40px !important;
+  height:40px !important;
+  flex:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff !important;
+  background:rgba(255,255,255,.14) !important;
+  border:1px solid rgba(255,255,255,.22) !important;
+  border-radius:15px !important;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.18), 0 8px 22px rgba(0,0,0,.14) !important;
+}
+
+/* Hide header on login/member-code screen */
+body:has(#mem-code) header{
+  display:none !important;
+}
+
+/* ---------- Child/member chips ---------- */
+#childbar{
+  padding:0 2px 4px !important;
+  gap:8px !important;
+}
+.chip{
+  min-height:34px;
+  padding:6px 12px !important;
+  border-radius:var(--radius-pill) !important;
+  border:1px solid rgba(148,163,184,.28) !important;
+  background:rgba(255,255,255,.86) !important;
+  color:var(--ink);
+  font-size:13px;
+  font-weight:700;
+  box-shadow:var(--shadow-xs);
+  backdrop-filter:none !important;
+}
+.chip.sel{
+  background:var(--brand-gradient) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+  box-shadow:0 12px 24px rgba(10,132,255,.24) !important;
+}
+.chip.warn{
+  background:#FFF1F2 !important;
+  color:#E11D48 !important;
+  border-color:#FECDD3 !important;
+}
+
+/* ---------- Cards ---------- */
+.card{
+  position:relative;
+  margin:12px 0 !important;
+  padding:16px !important;
+  border:1px solid rgba(226,232,240,.88) !important;
+  border-radius:24px !important;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.98),rgba(255,255,255,.93)) !important;
+  box-shadow:var(--shadow-sm) !important;
+  overflow:hidden;
+}
+.card::before{
+  content:"";
+  position:absolute;
+  inset:0 0 auto 0;
+  height:4px;
+  background:linear-gradient(90deg,#0A84FF,#19C2FF,transparent) !important;
+  opacity:.86;
+}
+.card::after{
+  content:"";
+  position:absolute;
+  top:-52px;
+  right:-52px;
+  width:118px;
+  height:118px;
+  border-radius:50%;
+  background:rgba(10,132,255,.045);
+  pointer-events:none;
+}
+.card.flat{
+  box-shadow:none !important;
+  background:rgba(255,255,255,.82) !important;
+}
+.card h3{
+  margin:0 0 11px !important;
+  color:#0B2454 !important;
+  font-family:var(--font-display);
+  font-size:16.5px !important;
+  font-weight:850 !important;
+  letter-spacing:-.015em;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.card h3 svg{
+  width:21px !important;
+  height:21px !important;
+  color:var(--iufit-blue) !important;
+}
+
+/* Make first important card feel like a dashboard hero */
+main#view > .card:first-child{
+  padding:18px !important;
+  border-color:rgba(10,132,255,.14) !important;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(10,132,255,.12),transparent 34%),
+    linear-gradient(180deg,#FFFFFF,#F8FBFF) !important;
+  box-shadow:0 18px 42px rgba(10,58,125,.11) !important;
+}
+
+/* ---------- Typography helpers ---------- */
+.muted{
+  color:var(--ink2) !important;
+  font-size:12.5px !important;
+}
+h4.sec{
+  margin:18px 2px 8px !important;
+  color:#0B3A80 !important;
+  font-size:12.5px !important;
+  font-weight:850 !important;
+  letter-spacing:.055em;
+  text-transform:uppercase;
+}
+
+/* ---------- Buttons ---------- */
+.btn{
+  min-height:40px;
+  padding:9px 15px !important;
+  border:1px solid rgba(226,232,240,.95) !important;
+  border-radius:16px !important;
+  background:#fff !important;
+  color:var(--ink) !important;
+  font-family:var(--font-ui);
+  font-size:14px;
+  font-weight:780;
+  box-shadow:0 9px 20px rgba(15,23,42,.07) !important;
+  transition:transform .14s ease, box-shadow .14s ease, background .14s ease, border-color .14s ease;
+}
+.btn:hover{
+  border-color:rgba(10,132,255,.26) !important;
+}
+.btn:active,.iconbtn:active{
+  transform:translateY(1px) scale(.99) !important;
+  box-shadow:none !important;
+}
+.btn.pri,.btn.mint{
+  background:var(--brand-gradient) !important;
+  color:#fff !important;
+  border-color:transparent !important;
+  box-shadow:0 14px 28px rgba(10,132,255,.24) !important;
+}
+.btn.mint{
+  background:linear-gradient(135deg,#13C6A3,#0A84FF) !important;
+}
+.btn.sun{
+  background:linear-gradient(135deg,#F59E0B,#FFD166) !important;
+  color:#1E293B !important;
+  border-color:transparent !important;
+  box-shadow:0 12px 22px rgba(245,158,11,.20) !important;
+}
+.btn.ghost{
+  background:rgba(255,255,255,.55) !important;
+  border-style:solid !important;
+  border-color:rgba(148,163,184,.32) !important;
+  box-shadow:none !important;
+}
+.btn.sm{
+  min-height:32px;
+  padding:6px 11px !important;
+  border-radius:13px !important;
+  font-size:12.5px !important;
+}
+
+/* ---------- Forms ---------- */
+input,select,textarea{
+  min-height:40px;
+  border:1px solid #D8E2F1 !important;
+  border-radius:15px !important;
+  background:#fff !important;
+  color:var(--ink) !important;
+  padding:9px 11px !important;
+  font-family:var(--font-ui);
+  box-shadow:inset 0 1px 0 rgba(15,23,42,.02);
+}
+input:focus,select:focus,textarea:focus{
+  border-color:#0A84FF !important;
+  box-shadow:0 0 0 4px rgba(10,132,255,.12) !important;
+}
+label.fl{
+  color:#52657D !important;
+  font-size:12.5px;
+  font-weight:750 !important;
+}
+
+/* ---------- Bottom navigation: floating mobile app style ---------- */
+nav{
+  position:fixed !important;
+  left:50% !important;
+  right:auto !important;
+  bottom:10px !important;
+  transform:translateX(-50%) !important;
+  z-index:30;
+  width:calc(100% - 20px) !important;
+  max-width:500px !important;
+  min-height:66px;
+  padding:8px 8px calc(8px + env(safe-area-inset-bottom)) !important;
+  display:flex;
+  gap:4px;
+  border:1px solid rgba(226,232,240,.88) !important;
+  border-top:1px solid rgba(226,232,240,.88) !important;
+  border-radius:26px !important;
+  background:rgba(255,255,255,.94) !important;
+  box-shadow:var(--shadow-nav) !important;
+  overflow:hidden;
+  backdrop-filter:none !important;
+  -webkit-backdrop-filter:none !important;
+}
+nav::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(255,255,255,.80),rgba(248,251,255,.64));
+  pointer-events:none;
+}
+nav button{
+  position:relative;
+  z-index:1;
+  flex:1;
+  min-width:0;
+  min-height:50px;
+  padding:6px 2px !important;
+  border:0 !important;
+  border-radius:18px !important;
+  background:transparent !important;
+  color:#73839B !important;
+  font-family:var(--font-ui);
+  font-size:10.5px !important;
+  font-weight:750;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  gap:2px;
+  cursor:pointer;
+}
+nav button svg{
+  width:23px !important;
+  height:23px !important;
+}
+nav button.on{
+  color:#fff !important;
+  background:var(--brand-gradient) !important;
+  box-shadow:0 10px 24px rgba(10,132,255,.24);
+}
+nav button.on svg{
+  stroke-width:2.45 !important;
+}
+
+/* ---------- KPI / dashboard blocks ---------- */
+.kpis{
+  display:grid !important;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px !important;
+}
+.kpi{
+  position:relative;
+  overflow:hidden;
+  padding:12px 10px !important;
+  border:1px solid rgba(226,232,240,.84) !important;
+  border-radius:20px !important;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(10,132,255,.10),transparent 38%),
+    linear-gradient(180deg,#fff,#F7FAFF) !important;
+  box-shadow:0 8px 20px rgba(15,23,42,.055) !important;
+  text-align:left !important;
+}
+.kpi b{
+  display:block;
+  color:#0B2454;
+  font-family:var(--font-display);
+  font-size:21px !important;
+  font-weight:850;
+  line-height:1.05;
+}
+.kpi span{
+  display:block;
+  margin-top:4px;
+  color:#64748B !important;
+  font-size:11.5px !important;
+  font-weight:650;
+}
+
+/* ---------- Progress bars ---------- */
+.bar{
+  height:12px !important;
+  border:0 !important;
+  border-radius:999px !important;
+  background:#E8EEF7 !important;
+  overflow:hidden;
+}
+.bar i{
+  border-radius:999px !important;
+  background:linear-gradient(90deg,#13C6A3,#0A84FF) !important;
+}
+.bar.over i{
+  background:linear-gradient(90deg,#F59E0B,#EF4444) !important;
+}
+.nutrow{
+  gap:9px !important;
+  margin:8px 0 !important;
+}
+.nutrow .nm{
+  color:#334155;
+  font-weight:780 !important;
+}
+.nutrow .vv{
+  color:#64748B !important;
+}
+
+/* ---------- Lists / logs ---------- */
+.logitem{
+  margin:0;
+  padding:11px 0 !important;
+  border-bottom:1px solid #E8EEF7 !important;
+}
+.logitem .ic{
+  width:42px !important;
+  height:42px !important;
+  border:1px solid rgba(226,232,240,.88) !important;
+  border-radius:16px !important;
+  background:linear-gradient(180deg,#F8FBFF,#EEF6FF) !important;
+  color:#0A84FF;
+}
+.logitem .ic svg{
+  width:23px !important;
+  height:23px !important;
+}
+.mealhead{
+  margin:16px 2px 6px !important;
+}
+.mealhead .t{
+  color:#0B2454;
+  font-family:var(--font-display);
+  font-weight:850 !important;
+}
+
+/* ---------- Recipe / item cards ---------- */
+.rcard{
+  gap:12px !important;
+}
+.rcard .ric{
+  width:54px !important;
+  height:54px !important;
+  border-radius:18px !important;
+  border:1px solid rgba(226,232,240,.90) !important;
+  background:linear-gradient(180deg,#ECFEFF,#EFF6FF) !important;
+  color:#0A84FF;
+  box-shadow:0 8px 16px rgba(10,132,255,.08);
+}
+.rcard .nm{
+  color:#0F172A;
+  font-size:14.8px !important;
+  font-weight:850 !important;
+}
+.tag{
+  border:0 !important;
+  border-radius:999px !important;
+  padding:3px 8px !important;
+  background:#EEF4FF !important;
+  color:#3155B7;
+  font-size:10.5px !important;
+  font-weight:750;
+}
+.tag.age{
+  background:#FFF7E6 !important;
+  color:#B45309;
+}
+.tag.al{
+  background:#FFF1F2 !important;
+  color:#E11D48 !important;
+}
+
+/* ---------- Segmented control ---------- */
+.seg{
+  border:1px solid #DDE7F4 !important;
+  border-radius:18px !important;
+  background:#F1F5F9 !important;
+  padding:4px;
+  overflow:hidden;
+}
+.seg button{
+  min-height:34px;
+  border:0 !important;
+  border-radius:14px !important;
+  color:#64748B !important;
+  font-weight:780 !important;
+}
+.seg button.on{
+  background:#fff !important;
+  color:#0A84FF !important;
+  box-shadow:0 7px 16px rgba(15,23,42,.07) !important;
+}
+
+/* ---------- Modal / bottom sheet ---------- */
+.mwrap{
+  background:rgba(15,23,42,.48) !important;
+  backdrop-filter:none !important;
+}
+.modal{
+  width:100%;
+  max-width:520px;
+  max-height:88vh;
+  overflow-y:auto;
+  border:1px solid rgba(226,232,240,.92) !important;
+  border-bottom:none !important;
+  border-radius:30px 30px 0 0 !important;
+  background:#F8FAFC !important;
+  padding:18px 16px 28px !important;
+  box-shadow:0 -22px 54px rgba(15,23,42,.22);
+}
+.modal::before{
+  content:"";
+  display:block;
+  width:48px;
+  height:5px;
+  margin:0 auto 10px;
+  border-radius:999px;
+  background:#CBD5E1;
+}
+.modal h2{
+  color:#0B2454;
+  font-family:var(--font-display);
+  font-size:19px !important;
+  font-weight:850 !important;
+  letter-spacing:-.02em;
+}
+.mclose{
+  top:14px !important;
+  right:14px !important;
+  width:36px !important;
+  height:36px !important;
+  border:1px solid #E2E8F0 !important;
+  border-radius:50% !important;
+  background:#fff !important;
+  color:#334155 !important;
+  box-shadow:0 8px 18px rgba(15,23,42,.08);
+}
+
+/* ---------- Plan / schedule ---------- */
+.pday .dt{
+  color:#0B2454;
+  font-family:var(--font-display);
+  font-weight:850 !important;
+}
+.pslot .ps{
+  min-height:48px;
+  border:1px dashed #B7C6DA !important;
+  border-radius:18px !important;
+  background:#fff !important;
+  box-shadow:0 5px 14px rgba(15,23,42,.04);
+}
+.pslot .ps.has{
+  border-style:solid !important;
+  border-color:rgba(10,132,255,.32) !important;
+  background:linear-gradient(180deg,#F8FBFF,#EEF6FF) !important;
+}
+.pslot .ps b{
+  color:#64748B !important;
+}
+
+/* ---------- Chart ---------- */
+.mchart{
+  height:94px !important;
+  gap:4px !important;
+  padding:6px 2px 0;
+  border-bottom:1px solid #CBD5E1 !important;
+}
+.mchart i{
+  border-radius:8px 8px 0 0 !important;
+  background:linear-gradient(180deg,#0A84FF,#0066D6) !important;
+  opacity:1 !important;
+}
+.mchart i.lo{
+  background:linear-gradient(180deg,#F59E0B,#F97316) !important;
+}
+
+/* ---------- Status boxes ---------- */
+.warnbox,.okbox{
+  border-radius:18px !important;
+  padding:11px 13px !important;
+  font-size:13px !important;
+}
+.warnbox{
+  border:1px solid #FECDD3 !important;
+  background:#FFF1F2 !important;
+  color:#BE123C !important;
+}
+.okbox{
+  border:1px solid #A7F3D0 !important;
+  background:#ECFDF5 !important;
+  color:#047857 !important;
+}
+.empty{
+  color:#64748B !important;
+  padding:24px 8px !important;
+}
+.empty svg{
+  color:#0A84FF !important;
+}
+
+/* ---------- Coach tiles / feature tiles ---------- */
+.coach-tile{
+  min-height:74px !important;
+  border:1px solid rgba(226,232,240,.92) !important;
+  border-radius:22px !important;
+  background:
+    radial-gradient(circle at 100% 0%,rgba(10,132,255,.13),transparent 38%),
+    linear-gradient(180deg,#fff,#F5F9FF) !important;
+  box-shadow:0 10px 24px rgba(15,23,42,.07) !important;
+  color:#0F172A !important;
+  font-weight:820 !important;
+}
+.coach-tile span{
+  font-size:26px !important;
+}
+
+/* ---------- Toast ---------- */
+.toast{
+  bottom:96px !important;
+  border-radius:18px !important;
+  background:#0F172A !important;
+  color:#fff;
+  box-shadow:0 12px 28px rgba(15,23,42,.22);
+}
+
+/* ---------- Performance safeguards ---------- */
+header,nav,.card,.modal,.chip{
+  will-change:auto !important;
+}
+@supports (backdrop-filter:blur(1px)){
+  /* Intentionally keep blur off for smoother PWA scrolling on Android. */
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width:380px){
+  .app{
+    padding-left:11px !important;
+    padding-right:11px !important;
+  }
+  header{
+    padding:12px !important;
+    border-radius:24px !important;
+  }
+  header .logo{
+    width:46px !important;
+    height:46px !important;
+  }
+  header h1{
+    font-size:19px !important;
+  }
+  header h1 small{
+    font-size:10.7px !important;
+  }
+  .iconbtn{
+    width:36px !important;
+    height:36px !important;
+  }
+  .card{
+    padding:14px !important;
+    border-radius:22px !important;
+  }
+  nav{
+    width:calc(100% - 16px) !important;
+    bottom:8px !important;
+    border-radius:24px !important;
+  }
+  nav button{
+    font-size:9.5px !important;
+  }
+}
+@media (min-width:700px){
+  .app{
+    max-width:540px;
+    padding-top:18px !important;
+  }
+  nav{
+    max-width:510px !important;
+  }
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation:none !important;
+    transition:none !important;
+    scroll-behavior:auto !important;
+  }
+}
