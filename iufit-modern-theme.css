@@ -409,3 +409,31 @@ body::before{
     transition-duration:.01ms !important;
   }
 }
+
+/* ===== IUFIT v3 · Theme-color binding + lock-screen header =====
+   ผูกสีแบรนด์ทั้งหมดเข้ากับ var(--coral) (ที่ตัวสลับธีมในแอปตั้งค่า)
+   ใช้ color-mix เพื่อไล่เฉดเข้ม/อ่อนจากสีธีมเดียว → เปลี่ยนธีมแล้วเปลี่ยนทั้งแอป */
+:root{
+  --brand-gradient:linear-gradient(135deg,var(--coral) 0%,color-mix(in srgb,var(--coral) 76%,#001326) 100%);
+  --brand-gradient-dark:linear-gradient(145deg,color-mix(in srgb,var(--coral) 28%,#000d22),var(--coral));
+}
+header{
+  background:linear-gradient(135deg,color-mix(in srgb,var(--coral) 50%,#000b1f),color-mix(in srgb,var(--coral) 72%,#001a40) 54%,var(--coral)) !important;
+}
+body{
+  background:
+    radial-gradient(circle at 10% -10%,color-mix(in srgb,var(--coral) 22%,transparent) 0,transparent 34%),
+    radial-gradient(circle at 95% 6%,color-mix(in srgb,var(--coral) 15%,transparent) 0,transparent 30%),
+    linear-gradient(180deg,#f7fbff 0%,#eff5ff 43%,#f8fafc 100%) !important;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--coral) !important;
+  box-shadow:0 0 0 4px color-mix(in srgb,var(--coral) 14%,transparent) !important;
+}
+.card::before{background:linear-gradient(90deg,var(--coral),transparent) !important}
+.pslot .ps.has{border-color:var(--coral) !important;background:color-mix(in srgb,var(--coral) 9%,#fff) !important}
+.empty svg{color:var(--coral) !important}
+.btn.mint{background:linear-gradient(135deg,var(--mint),var(--coral)) !important}
+.bar i{background:linear-gradient(90deg,var(--mint),var(--coral)) !important}
+/* ซ่อนแถบเครื่องมือด้านบนเฉพาะหน้าเปิดใช้งาน/ล็อกอิน (มีช่องกรอกรหัส #mem-code) */
+body:has(#mem-code) header{display:none !important}
