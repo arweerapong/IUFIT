@@ -425,3 +425,23 @@ body:has(#mem-code) header{display:none !important}
 .coach-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:66px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#fff,#eef6ff);font-family:var(--font-ui);font-size:12.5px;font-weight:750;color:var(--ink);cursor:pointer;box-shadow:0 8px 20px rgba(13,54,110,.07);transition:transform .15s ease, box-shadow .15s ease;text-align:center;padding:6px 4px}
 .coach-tile span{font-size:23px;line-height:1}
 .coach-tile:active{transform:translateY(1px) scale(.99);box-shadow:none}
+
+/* ===== IUFIT B2B Coach Positioning v1 ===== */
+.role-hero,.coach-hero{
+  border:none;
+  color:#fff;
+  background:linear-gradient(135deg,#0A84FF 0%,#003C8F 58%,#002766 100%);
+  box-shadow:0 20px 52px rgba(0,39,102,.24);
+}
+.role-hero h2,.coach-hero h2{margin:6px 0 5px;font-family:var(--font-display);font-size:22px;line-height:1.15;color:#fff}
+.role-hero p,.coach-hero p{margin:0;color:rgba(255,255,255,.9);font-size:13px;line-height:1.55}
+.eyebrow{font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;font-weight:850;color:rgba(255,255,255,.75)}
+.role-grid{display:grid;grid-template-columns:1fr;gap:10px;margin-top:14px}
+.role-card{display:flex;flex-direction:column;gap:4px;text-align:left;border:1px solid rgba(255,255,255,.22);border-radius:18px;background:rgba(255,255,255,.96);color:var(--ink);padding:14px 13px;font-family:var(--font-ui);cursor:pointer;box-shadow:0 12px 28px rgba(0,39,102,.14)}
+.role-card b{font-size:15px;color:var(--navy)}
+.role-card span{font-size:12.5px;color:var(--ink2);line-height:1.45}
+.role-card.coach{background:linear-gradient(180deg,#fff,#eef5ff);border-color:#c9dcff}
+.coach-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:10px 0}
+.coach-actions .btn{min-height:52px;justify-content:center;text-align:center}
+body:has(#view .coach-hero) header{background:linear-gradient(135deg,#001f4d,#003c8f 55%,#7c6bd6)!important}
+@media (min-width:430px){.role-grid{grid-template-columns:1fr 1fr}.role-grid .role-card:last-child{grid-column:1/-1}}
