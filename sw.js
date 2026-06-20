@@ -1,7 +1,7 @@
 /* เวลาอัปเดตแอป ให้เปลี่ยนเลขเวอร์ชัน v157 -> v158 ...
    HTML = network-first (ออนไลน์ได้ตัวล่าสุดเสมอ, ออฟไลน์ใช้ cache สำรอง)
    asset = cache-first (เร็ว) */
-const CACHE='iufit-v176-modern-ui';
+const CACHE='iufit-v177-modern-ui';
 const FILES=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./iufit-modern-theme.css'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))); self.clients.claim()});
