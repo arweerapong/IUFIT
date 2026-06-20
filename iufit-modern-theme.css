@@ -69,7 +69,7 @@ header{
   position:sticky;
   top:8px;
   z-index:20;
-  margin:0 0 12px;
+  margin:max(env(safe-area-inset-top),6px) 0 12px;
   padding:12px 12px;
   display:flex;
   align-items:center;
