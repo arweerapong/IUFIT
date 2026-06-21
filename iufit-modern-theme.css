@@ -592,3 +592,17 @@ header{display:none!important}
 .qrow{padding:9px 2px;border-bottom:1px solid #e3ecf8;font-size:13.5px}
 .qrow:last-child{border-bottom:none}
 .qrow .qok{color:#0a7a4f;font-weight:600}
+
+/* IUFIT · Today top-right: avatar + notifications */
+.topright{display:flex;align-items:center;gap:9px}
+.bell{position:relative;width:40px;height:40px;border-radius:50%;border:1px solid var(--border);background:#fff;font-size:18px;cursor:pointer;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center}
+.bell:active{transform:scale(.95)}
+.bdot{position:absolute;top:-3px;right:-3px;min-width:18px;height:18px;border-radius:9px;background:var(--red);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;border:2px solid #f6f8fc;font-family:var(--font-ui)}
+.topav{width:40px;height:40px;border-radius:50%;background:var(--brand-gradient);color:#fff;font-family:var(--font-display);font-weight:800;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;flex:none;box-shadow:var(--shadow-sm)}
+.topav img{width:100%;height:100%;object-fit:cover}
+.notiflist{display:flex;flex-direction:column;gap:8px}
+.notifrow{display:flex;align-items:center;gap:11px;width:100%;background:var(--surface-soft);border:1px solid var(--border);border-radius:14px;padding:13px 14px;cursor:pointer;font-family:var(--font-ui);text-align:left}
+.notifrow:active{filter:brightness(.98)}
+.notifrow .ni{font-size:20px;flex:none}
+.notifrow .nt{flex:1;font-size:13.5px;color:var(--ink);font-weight:600;line-height:1.35}
+.notifrow .nchev{color:#9aa6bf;font-size:16px;flex:none}
