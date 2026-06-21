@@ -505,3 +505,13 @@ header{display:none!important}
 .planempty{font-size:11.5px;color:var(--ink2);text-align:center;padding:10px 4px;line-height:1.6}
 .pbtn2{display:block;width:100%;font-size:11.5px;font-weight:700;color:var(--coral);background:var(--surface-soft);border:none;border-radius:10px;padding:8px;cursor:pointer}
 @media(max-width:380px){.planrow{flex-direction:column}}
+
+/* IUFIT · logged-today list inside log form */
+.loglist{background:var(--surface-soft);border:1px solid var(--border);border-radius:14px;padding:6px 10px;margin-bottom:11px}
+.logll{font-size:11px;font-weight:800;color:var(--navy);padding:6px 2px 4px}
+.logli{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #e3ecf8}
+.logli:last-child{border-bottom:none}
+.logli .lx{flex:1;min-width:0;cursor:pointer}
+.logli .lx b{font-size:13px;color:var(--ink);display:block;line-height:1.2}
+.logli .lx span{font-size:10.5px;color:var(--ink2)}
+.logli .logx{flex:none;width:30px;height:30px;border-radius:8px;border:1px solid #f3c2c2;background:#fff;color:var(--red);cursor:pointer;font-size:13px}
