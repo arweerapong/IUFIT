@@ -452,3 +452,26 @@ body:has(#mem-code) header{display:none !important}
 .coach-tile{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;min-height:66px;border:1px solid var(--line);border-radius:16px;background:linear-gradient(180deg,#fff,#eef6ff);font-family:var(--font-ui);font-size:12.5px;font-weight:750;color:var(--ink);cursor:pointer;box-shadow:0 8px 20px rgba(13,54,110,.07);transition:transform .15s ease, box-shadow .15s ease;text-align:center;padding:6px 4px}
 .coach-tile span{font-size:23px;line-height:1}
 .coach-tile:active{transform:translateY(1px) scale(.99);box-shadow:none}
+
+/* IUFIT · Food list rows (premium, lighter) */
+.card.rcard{padding:12px 13px;margin:8px 0;box-shadow:var(--shadow-sm);border-radius:16px}
+.card.rcard:active{transform:scale(.995)}
+.card.rcard .nm{font-size:14px}
+
+/* IUFIT · Results trend cards */
+.trendgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:14px 0}
+.trendc{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:13px;box-shadow:var(--shadow-sm)}
+.trendc .th{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.trendc .ti{width:34px;height:34px;border-radius:10px;background:var(--surface-soft);display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+.trendc .th b{font-size:12.5px;color:var(--ink);display:block;line-height:1.15}
+.trendc .th .en{font-size:10px;color:var(--ink2)}
+.trendc .tv{font-family:var(--font-display);font-size:23px;font-weight:800;color:var(--navy);line-height:1}
+.trendc .tv small{font-size:12px;color:var(--ink2);font-weight:600}
+.trendc .td{font-size:11px;font-weight:700;margin-top:5px}
+
+/* IUFIT · Coach stat tiles */
+.cstat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.cstatc{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:12px 5px;text-align:center;box-shadow:var(--shadow-sm)}
+.cstatc b{font-family:var(--font-display);font-size:20px;font-weight:800;color:var(--navy);display:block;line-height:1}
+.cstatc span{font-size:10px;color:var(--ink2);font-weight:650;display:block;margin-top:4px}
+@media (max-width:380px){.cstatc b{font-size:18px}.cstatc span{font-size:9px}}
