@@ -528,3 +528,24 @@ header{display:none!important}
 .chstat span{font-size:9.5px;color:rgba(255,255,255,.85);font-weight:600;display:block;margin-top:4px}
 .cshort{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
 @media(max-width:380px){.cherostat{gap:6px}.chstat b{font-size:18px}.chstat span{font-size:9px}.cshort{grid-template-columns:repeat(2,1fr)}}
+
+/* IUFIT · Today top (logo + profile) */
+.todaytop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:2px 0 12px}
+.iulogo{font-family:var(--font-display);font-size:24px;font-weight:850;color:var(--navy);letter-spacing:-.03em}
+.iulogo span{color:var(--coral)}
+.profsel{display:flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--border);border-radius:99px;padding:7px 14px;font-family:var(--font-ui);font-size:13px;font-weight:700;color:var(--ink);cursor:pointer;box-shadow:var(--shadow-sm)}
+/* IUFIT · Today bottom gamification bar */
+.gambar{display:flex;align-items:center;background:linear-gradient(135deg,#0b1f5f,#0a2d7a);border-radius:18px;padding:14px 8px;margin:16px 0 4px;color:#fff;box-shadow:0 12px 30px rgba(0,20,70,.25)}
+.gambar .gi{flex:1;text-align:center}
+.gambar .gtree{cursor:pointer}
+.gambar .gnum{font-family:var(--font-display);font-size:18px;font-weight:800;line-height:1}
+.gambar .gl{font-size:10px;color:rgba(255,255,255,.7);margin-top:4px;font-weight:600}
+.gambar .gdiv{width:1px;height:34px;background:rgba(255,255,255,.15)}
+/* IUFIT · today logs modal */
+.tlsec{background:var(--surface-soft);border:1px solid var(--border);border-radius:14px;padding:4px 10px;margin:2px 0 4px}
+.tlrow{display:flex;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid #e3ecf8}
+.tlrow:last-child{border-bottom:none}
+.tlrow .tlx{flex:1;min-width:0;cursor:pointer}
+.tlrow .tlx b{font-size:13.5px;color:var(--ink);display:block;line-height:1.2}
+.tlrow .tlx span{font-size:11px;color:var(--ink2)}
+.tlempty{font-size:12px;color:var(--ink2);text-align:center;padding:8px 4px}
