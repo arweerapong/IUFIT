@@ -1,8 +1,8 @@
 /* เวลาอัปเดตแอป ให้เปลี่ยนเลขเวอร์ชัน v157 -> v158 ...
    HTML = network-first (ออนไลน์ได้ตัวล่าสุดเสมอ, ออฟไลน์ใช้ cache สำรอง)
    asset = cache-first (เร็ว) */
-const CACHE='iufit-v190-modern-ui';
-const FILES=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./iufit-modern-theme.css','./food-db.js'];
+const CACHE='iufit-v192-modern-ui';
+const FILES=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./iufit-modern-theme.css','./food-db.js','./resultcard.html'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))); self.clients.claim()});
 self.addEventListener('fetch',e=>{
@@ -21,5 +21,4 @@ self.addEventListener('fetch',e=>{
  }
  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(n=>{
   if(n&&n.ok&&sameOrigin){const cl=n.clone();caches.open(CACHE).then(c=>c.put(e.request,cl))}
-  return n}).catch(()=>caches.match('./index.html'))));
-});
+  return n}).catch(()=>caches.match('./i
