@@ -515,3 +515,16 @@ header{display:none!important}
 .logli .lx b{font-size:13px;color:var(--ink);display:block;line-height:1.2}
 .logli .lx span{font-size:10.5px;color:var(--ink2)}
 .logli .logx{flex:none;width:30px;height:30px;border-radius:8px;border:1px solid #f3c2c2;background:#fff;color:var(--red);cursor:pointer;font-size:13px}
+
+/* IUFIT · Coach hero + shortcuts (mockup) */
+.chero{background:var(--brand-gradient);border-radius:var(--radius-card);padding:18px 16px;color:#fff;box-shadow:0 16px 40px rgba(0,39,102,.22);position:relative;overflow:hidden;margin:14px 0}
+.chero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 88% 8%,rgba(255,255,255,.18),transparent 45%);pointer-events:none}
+.cherohead{display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative;z-index:1}
+.chero .chh{font-family:var(--font-display);font-size:19px;font-weight:850;line-height:1.15}
+.chero .chs{font-size:12.5px;color:rgba(255,255,255,.85);margin-top:3px}
+.cherostat{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:14px;position:relative;z-index:1}
+.chstat{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:11px 5px;text-align:center}
+.chstat b{font-family:var(--font-display);font-size:20px;font-weight:800;color:#fff;display:block;line-height:1}
+.chstat span{font-size:9.5px;color:rgba(255,255,255,.85);font-weight:600;display:block;margin-top:4px}
+.cshort{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+@media(max-width:380px){.cherostat{gap:6px}.chstat b{font-size:18px}.chstat span{font-size:9px}.cshort{grid-template-columns:repeat(2,1fr)}}
