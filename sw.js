@@ -1,9 +1,10 @@
 /* เวลาอัปเดตแอป ให้เปลี่ยนเลขเวอร์ชัน v157 -> v158 ...
    HTML = network-first (ออนไลน์ได้ตัวล่าสุดเสมอ, ออฟไลน์ใช้ cache สำรอง)
    asset = cache-first (เร็ว) */
-const CACHE='iufit-v196-modern-ui';
+const CACHE='iufit-v197-modern-ui';
 const FILES=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./iufit-modern-theme.css','./food-db.js','./resultcard.html'];
-self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(FILES)));self.skipWaiting()});
+/* resilient install: a single missing/404 file must NOT block the whole update */
+self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>Promise.allSettled(FILES.map(function(f){return c.add(f)}))));self.skipWaiting()});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(ks=>Promise.all(ks.filter(k=>k!==CACHE).map(k=>caches.delete(k))))); self.clients.claim()});
 self.addEventListener('fetch',e=>{
  if(e.request.method!=='GET')return;
@@ -21,4 +22,5 @@ self.addEventListener('fetch',e=>{
  }
  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(n=>{
   if(n&&n.ok&&sameOrigin){const cl=n.clone();caches.open(CACHE).then(c=>c.put(e.request,cl))}
-  return n}).catch(()=>caches.match('./i
+  return n}).catch(()=>caches.match('./index.html'))));
+});
