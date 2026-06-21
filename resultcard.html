@@ -143,7 +143,22 @@ input[type=file]{display:none}
 .pbadge .pct{color:var(--blue);font-weight:800}
 .hashtag{text-align:center;font-size:18px;font-weight:700;color:var(--blue);letter-spacing:.03em;margin-top:2px}
 .qline{text-align:center;font-size:23px;font-weight:700;color:var(--navy);background:#f3f8ff;border-radius:18px;padding:18px 24px;line-height:1.4;font-style:italic}
-body.embed .app{max-width:560px;padding-top:8px}
+body.embed .app{display:none}
+body.embed{background:#eef2f8}
+.wiz{position:fixed;inset:0;display:flex;flex-direction:column;background:#eef2f8;font-family:'Kanit',sans-serif;z-index:50}
+.wizhead{flex:none;padding:12px 16px 9px;background:#fff;border-bottom:1px solid #e6ebf3}
+.wiztitle{font-size:15px;font-weight:800;color:#0b1f5f;text-align:center}
+.wizdots{display:flex;gap:6px;justify-content:center;margin-top:9px}
+.wizdots i{width:8px;height:8px;border-radius:50%;background:#cfdaea;transition:.2s}
+.wizdots i.on{background:#165dff;width:22px;border-radius:4px}
+.wizbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 15px;min-height:0}
+.wstep .panel{margin:0 0 12px}
+.wstep .steplbl{font-size:12.5px;font-weight:800;color:#5e6f8a;margin:0 2px 10px}
+.wizfoot{flex:none;display:flex;gap:10px;padding:11px 15px calc(11px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e6ebf3}
+.wbtn{height:48px;border-radius:14px;border:none;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
+.wbtn.back{flex:0 0 38%;background:#fff;color:#165dff;border:1.5px solid #cdddf5}
+.wbtn.next{flex:1;background:linear-gradient(135deg,#0b2f86,#165dff);color:#fff}
+.wiz .previewWrap{position:static}.wiz .stage{min-height:auto}.wiz .btns{margin-top:12px}.wiz .hint{margin-top:8px}
 </style></head>
 <body>
 <div class="app">
@@ -466,26 +481,53 @@ function applyEmbed(d){
   initSource();
   if(d.select && HIST[d.select]){ $('trainee').value=d.select; }
   setDates();
-  // ----- slim UI: hide clutter, keep only quote editable -----
+  // ----- wizard UI: fits screen, step-by-step (moves existing nodes, keeps listeners/ids) -----
   if(!document.body.classList.contains('embed')){
     document.body.classList.add('embed');
-    var consent=null;
+    var consent=null,tplP=null,srcP=null;
     document.querySelectorAll('.panel').forEach(function(p){
       var hh=p.querySelector('h3'); if(!hh)return; var t=hh.textContent;
       if(t.indexOf('ข้อมูลโค้ช')>=0||t.indexOf('ผู้ทำผลลัพธ์')>=0||t.indexOf('สถิติ')>=0) p.style.display='none';
-      if(d.mode==='client'&&t.indexOf('แหล่งข้อมูล')>=0) p.style.display='none';
       if(t.indexOf('ความยินยอม')>=0) consent=p;
+      if(t.indexOf('เทมเพลต')>=0) tplP=p;
+      if(t.indexOf('แหล่งข้อมูล')>=0) srcP=p;
     });
     var r=document.getElementById('ratioSeg'); if(r&&r.parentElement)r.parentElement.style.display='none';
     var ba=document.getElementById('baSeg'); if(ba){var br=ba.closest('.row'); if(br)br.style.display='none';}
     var rows=document.querySelectorAll('#imgPanel .row'); if(rows[1])rows[1].style.display='none';
     var nt=document.querySelector('#imgPanel .note'); if(nt)nt.style.display='none';
-    var qp=document.createElement('div'); qp.className='panel';
-    qp.innerHTML='<h3>คำโปรย (ออปชัน)</h3><input type="text" id="quoteE" placeholder="เช่น แข็งแรงขึ้น มั่นใจขึ้น ทำตามแผนได้จริง"><div class="note" style="margin-top:9px">น้ำหนัก · ไขมัน · รอบเอว · กล้ามเนื้อ · ออกกำลังกาย ดึงจากประวัติในแอปอัตโนมัติ</div>';
-    if(consent&&consent.parentElement)consent.parentElement.insertBefore(qp,consent);
-    var qe=document.getElementById('quoteE'); if(qe){qe.value=RC.quote||'';qe.addEventListener('input',function(ev){RC.quote=ev.target.value;render();});}
     var h1=document.querySelector('h1'); if(h1)h1.style.display='none';
     var ld=document.querySelector('.lead'); if(ld)ld.style.display='none';
+    var qp=document.createElement('div'); qp.className='panel';
+    qp.innerHTML='<h3>คำโปรย (ออปชัน)</h3><input type="text" id="quoteE" placeholder="เช่น แข็งแรงขึ้น มั่นใจขึ้น ทำตามแผนได้จริง"><div class="note" style="margin-top:9px">น้ำหนัก · ไขมัน · รอบเอว · กล้ามเนื้อ · ออกกำลังกาย ดึงจากประวัติในแอปอัตโนมัติ</div>';
+    var titles=['เลือกแบบการ์ด','ใส่รูปก่อน / หลัง','คำโปรย (ออปชัน)','พรีวิว & บันทึก'];
+    var wiz=document.createElement('div'); wiz.className='wiz';
+    wiz.innerHTML='<div class="wizhead"><div class="wiztitle">📤 สร้างการ์ดผลลัพธ์</div><div class="wizdots" id="wizdots"><i></i><i></i><i></i><i></i></div></div><div class="wizbody" id="wizbody"></div><div class="wizfoot"><button class="wbtn back" id="wback">‹ ก่อนหน้า</button><button class="wbtn next" id="wnext">ถัดไป ›</button></div>';
+    document.body.appendChild(wiz);
+    var wbody=wiz.querySelector('#wizbody');
+    var steps=[];
+    for(var si=0;si<4;si++){var st=document.createElement('div');st.className='wstep';st.style.display='none';st.innerHTML='<div class="steplbl">'+titles[si]+'</div>';wbody.appendChild(st);steps.push(st);}
+    if(tplP) steps[0].appendChild(tplP);
+    if(srcP){ if(d.mode!=='client') steps[0].appendChild(srcP); else srcP.style.display='none'; }
+    var ip=document.getElementById('imgPanel'); if(ip) steps[1].appendChild(ip);
+    steps[2].appendChild(qp);
+    var qe=document.getElementById('quoteE'); if(qe){qe.value=RC.quote||'';qe.addEventListener('input',function(ev){RC.quote=ev.target.value;render();});}
+    if(consent) steps[3].appendChild(consent);
+    var pv=document.querySelector('.previewWrap'); if(pv) steps[3].appendChild(pv);
+    var STEP=0;
+    function wizGo(n){
+      STEP=n<0?0:(n>3?3:n);
+      for(var i=0;i<4;i++) steps[i].style.display=(i===STEP?'block':'none');
+      var dots=wiz.querySelectorAll('#wizdots i'); for(var j=0;j<dots.length;j++) dots[j].className=(j===STEP?'on':'');
+      var wb=wiz.querySelector('#wback'),wn=wiz.querySelector('#wnext');
+      wb.style.visibility=(STEP===0?'hidden':'visible');
+      wn.style.display=(STEP===3?'none':''); wb.style.flex=(STEP===3?'1':'');
+      if(STEP===3){ try{render();}catch(e){} }
+      wbody.scrollTop=0;
+    }
+    wiz.querySelector('#wback').addEventListener('click',function(){wizGo(STEP-1);});
+    wiz.querySelector('#wnext').addEventListener('click',function(){wizGo(STEP+1);});
+    wizGo(0);
   }
   try{ pull(); }catch(e){}
 }
