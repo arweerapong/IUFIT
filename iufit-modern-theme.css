@@ -606,3 +606,14 @@ header{display:none!important}
 .notifrow .ni{font-size:20px;flex:none}
 .notifrow .nt{flex:1;font-size:13.5px;color:var(--ink);font-weight:600;line-height:1.35}
 .notifrow .nchev{color:#9aa6bf;font-size:16px;flex:none}
+
+/* IUFIT · trainee avatar + coach inbox/clients lists */
+.trav{width:24px;height:24px;border-radius:50%;object-fit:cover;vertical-align:-7px;margin-right:6px}
+.clirow{display:flex;align-items:center;gap:10px;padding:11px 2px;border-bottom:1px solid #eef2f8;cursor:pointer}
+.clirow:last-child{border-bottom:none}
+.clirow .clx{flex:1;min-width:0}
+.clirow .clx b{font-size:13.5px;color:var(--ink);display:block;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.clirow .clx span{font-size:11px;color:var(--ink2)}
+.clbadge{font-size:10px;font-weight:700;border-radius:7px;padding:3px 9px;background:#eef2ff;color:#3a4ed6;flex:none;white-space:nowrap}
+.clbadge.wait{background:#fff1f1;color:#dc2626}
+.clbadge.ok{background:#e9f7f0;color:#0a7a4f}
