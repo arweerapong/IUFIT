@@ -78,7 +78,7 @@ body::before{
 .app{
   max-width:520px;
   margin:0 auto;
-  padding:10px 14px calc(106px + env(safe-area-inset-bottom));
+  padding:calc(env(safe-area-inset-top, 0px) + 12px) 14px calc(106px + env(safe-area-inset-bottom));
 }
 header{
   position:sticky;
