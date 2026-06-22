@@ -345,7 +345,7 @@ function pull(){
   const inR=t.rows.filter(r=>(!bd||new Date(r.d)>=new Date(bd)-86400000*3)&&(!ad||new Date(r.d)<=new Date(ad)+86400000*3));
   const use=inR.length>=2?inR:t.rows;
   RC.trendW=use.map(r=>r.w);RC.trendBF=use.map(r=>r.bf);RC.trendWaist=use.map(r=>r.waist);
-  syncForm();render();
+  if(typeof t!=='undefined'&&t&&t.photo)RC.imgU=t.photo;syncForm();render();
 }
 function syncForm(){['userName','period','monthLabel','wBefore','wAfter','bfBefore','bfAfter','waistChange','workoutCount','streakDays','proteinAvg','caloriesAvg','percentile','planDays'].forEach(id=>{const el=$(id);if(el&&RC[id]!=null)el.value=RC[id];});}
 
@@ -472,7 +472,7 @@ document.fonts.ready.then(render);setTimeout(render,300);
 /* ---- EMBED MODE: receive real app data from parent ---- */
 function applyEmbed(d){
   EMBED=true; if(d.hist) HIST=d.hist;
-  if(d.coach){ if(d.coach.name!=null){RC.coachName=d.coach.name; if($('coachName'))$('coachName').value=d.coach.name;}
+  if(d.coach){ if(d.coach.name!=null){RC.coachName=d.coach.name;if(d.coach.photo)RC.imgC=d.coach.photo; if($('coachName'))$('coachName').value=d.coach.name;}
     if(d.coach.handle!=null){RC.coachHandle=d.coach.handle; if($('coachHandle'))$('coachHandle').value=d.coach.handle;} }
   if(d.mode==='client'){ /* general user: default to Monthly template, no coach */
     var pt=document.querySelector('#tplTabs .tab[data-v="progress"]'); if(pt) pt.click();
