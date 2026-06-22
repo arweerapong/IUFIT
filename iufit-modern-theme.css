@@ -617,3 +617,25 @@ header{display:none!important}
 .clbadge{font-size:10px;font-weight:700;border-radius:7px;padding:3px 9px;background:#eef2ff;color:#3a4ed6;flex:none;white-space:nowrap}
 .clbadge.wait{background:#fff1f1;color:#dc2626}
 .clbadge.ok{background:#e9f7f0;color:#0a7a4f}
+
+/* IUFIT · onboarding wizard */
+.owbar{display:flex;gap:7px;justify-content:center;margin:4px 0 16px}
+.owdot{width:34px;height:5px;border-radius:3px;background:#e3ecf7;transition:.25s}
+.owdot.on{background:var(--brand-gradient,#0a84ff)}
+.ow-step{display:none}
+.ow-step.on{display:block;animation:up .25s ease}
+.owgoals{display:flex;flex-direction:column;gap:10px;margin-top:6px}
+.owgoal{display:flex;align-items:center;gap:12px;padding:15px 14px;border:1.5px solid var(--border);border-radius:16px;cursor:pointer;background:#fff;transition:.16s}
+.owgoal .owg-ic{font-size:24px;flex:none;line-height:1}
+.owgoal b{font-size:14.5px;color:var(--ink);font-weight:700}
+.owgoal.sel{border-color:var(--coral);background:var(--coral2);box-shadow:0 8px 22px rgba(10,132,255,.16)}
+
+/* IUFIT · body composition (waist/fat/muscle in one card) */
+.bcomp{display:flex;align-items:stretch;text-align:center;margin-top:4px}
+.bcc{flex:1;min-width:0;padding:6px 3px}
+.bcc.empty{opacity:.45}
+.bcdiv{width:1px;background:var(--border);flex:none;margin:6px 0}
+.bcl{font-size:11px;color:var(--ink2);font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bcv{font-family:var(--font-display);font-size:21px;font-weight:800;color:var(--navy);line-height:1;margin:6px 0 4px}
+.bcv small{font-size:11px;font-weight:600;color:var(--ink2)}
+.bcd{font-size:11px;font-weight:700;line-height:1.2}
