@@ -11,7 +11,7 @@ body{margin:0;background:#e7ecf3;color:var(--ink)}
 h1{font-size:20px;font-weight:800;margin:6px 2px 2px}
 .lead{font-size:12.5px;color:var(--mut);margin:0 2px 16px}
 .layout{display:grid;grid-template-columns:1fr 430px;gap:22px}
-@media(max-width:900px){.layout{grid-template-columns:1fr}}
+@media(max-width:900px){.layout{grid-template-columns:1fr}.layout>div:last-child{order:-1;margin-bottom:14px}}
 .panel{background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 6px 18px rgba(20,30,60,.05);margin-bottom:13px}
 .panel h3{font-size:12.5px;font-weight:800;margin:0 0 11px;color:var(--navy);text-transform:uppercase;letter-spacing:.03em}
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
@@ -474,7 +474,8 @@ function applyEmbed(d){
   EMBED=true; if(d.hist) HIST=d.hist;
   if(d.coach){ if(d.coach.name!=null){RC.coachName=d.coach.name;if(d.coach.photo)RC.imgC=d.coach.photo; if($('coachName'))$('coachName').value=d.coach.name;}
     if(d.coach.handle!=null){RC.coachHandle=d.coach.handle; if($('coachHandle'))$('coachHandle').value=d.coach.handle;} }
-  if(d.mode==='client'){ /* general user: default to Monthly template, no coach */
+  if(d.mode==='client'){ /* general user / trainee: hide coach template entirely */
+    var _ct=document.querySelector('#tplTabs .tab[data-v="coach"]'); if(_ct) _ct.style.display='none';
     var pt=document.querySelector('#tplTabs .tab[data-v="progress"]'); if(pt) pt.click();
     if($('coachName')){$('coachName').value='';RC.coachName='';} }
   // rebuild dropdown from real data
