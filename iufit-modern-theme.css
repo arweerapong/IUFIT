@@ -565,7 +565,7 @@ header{display:none!important}
 .msc span{font-size:10.5px;color:var(--ink2);font-weight:600;display:block;margin-top:5px}
 
 /* IUFIT · hide top profile bar (moved next to logo on Today) */
-#childbar{display:none!important}
+#childbar:empty{display:none}
 .profwrap{display:flex;align-items:center;gap:6px}
 .profadd{width:38px;height:38px;flex:none;border-radius:50%;border:1px solid var(--border);background:#fff;color:var(--coral);font-size:22px;font-weight:700;line-height:1;cursor:pointer;box-shadow:var(--shadow-sm);display:flex;align-items:center;justify-content:center}
 .profadd:active{transform:scale(.95)}
