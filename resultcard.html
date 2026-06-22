@@ -17,6 +17,10 @@ h1{font-size:20px;font-weight:800;margin:6px 2px 2px}
 .tabs{display:flex;gap:6px;flex-wrap:wrap}
 .tab{flex:1;min-width:90px;text-align:center;font-size:12.5px;font-weight:700;padding:10px 8px;border-radius:11px;background:var(--lg);color:var(--mut);cursor:pointer;border:1.5px solid transparent}
 .tab.on{background:#e8f0ff;color:var(--blue);border-color:var(--blue)}
+#tplTabs .tab{display:flex;flex-direction:column;align-items:center;gap:8px;padding:11px 8px}
+.tpv{width:50px;height:auto;border-radius:6px;box-shadow:0 2px 7px rgba(20,30,60,.14)}
+.tab.on .tpv{box-shadow:0 3px 10px rgba(47,123,255,.32)}
+.tpl-lb{line-height:1.3}
 .seg{display:flex;background:var(--lg);border-radius:11px;padding:4px;gap:4px}
 .seg b{flex:1;text-align:center;font-size:12px;font-weight:700;padding:8px;border-radius:8px;color:var(--mut);cursor:pointer}
 .seg b.on{background:#fff;color:var(--navy);box-shadow:0 3px 8px rgba(0,20,60,.08)}
@@ -147,7 +151,7 @@ body.embed .app{display:none}
 body.embed{background:#eef2f8}
 .wiz{position:fixed;inset:0;display:flex;flex-direction:column;background:#eef2f8;font-family:'Kanit',sans-serif;z-index:50}
 .wizhead{flex:none;padding:12px 16px 9px;background:#fff;border-bottom:1px solid #e6ebf3}
-.wiztitle{font-size:15px;font-weight:800;color:#0b1f5f;text-align:center}
+.wiztitle{font-size:15px;font-weight:800;color:#002766;text-align:center}
 .wizdots{display:flex;gap:6px;justify-content:center;margin-top:9px}
 .wizdots i{width:8px;height:8px;border-radius:50%;background:#cfdaea;transition:.2s}
 .wizdots i.on{background:#165dff;width:22px;border-radius:4px}
@@ -169,9 +173,9 @@ body.embed{background:#eef2f8}
       <div class="panel">
         <h3>เทมเพลต</h3>
         <div class="tabs" id="tplTabs">
-          <span class="tab on" data-v="result">Result Card<br><small style="font-weight:500;opacity:.7">ก่อน/หลัง</small></span>
-          <span class="tab" data-v="coach">Coach Story<br><small style="font-weight:500;opacity:.7">แบรนด์โค้ช</small></span>
-          <span class="tab" data-v="progress">Monthly<br><small style="font-weight:500;opacity:.7">สรุปเดือน</small></span>
+          <span class="tab on" data-v="result"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#dbe6f7"/><rect x="6" y="6" width="48" height="8" rx="2" fill="#0a84ff"/><rect x="6" y="19" width="22" height="33" rx="3" fill="#fff"/><rect x="32" y="19" width="22" height="33" rx="3" fill="#fff"/><rect x="6" y="57" width="48" height="5" rx="2" fill="#aebfdc"/><rect x="6" y="65" width="32" height="5" rx="2" fill="#aebfdc"/></svg><span class="tpl-lb">Result Card<br><small style="font-weight:500;opacity:.7">ก่อน/หลัง</small></span></span>
+          <span class="tab" data-v="coach"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#002766"/><circle cx="30" cy="21" r="10" fill="#fff"/><rect x="15" y="35" width="30" height="5" rx="2" fill="#ffd24a"/><rect x="11" y="45" width="38" height="24" rx="3" fill="rgba(255,255,255,.16)"/></svg><span class="tpl-lb">Coach Story<br><small style="font-weight:500;opacity:.7">แบรนด์โค้ช</small></span></span>
+          <span class="tab" data-v="progress"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#eef3fb"/><rect x="6" y="6" width="48" height="8" rx="2" fill="#0a84ff"/><rect x="7" y="19" width="21" height="19" rx="3" fill="#fff"/><rect x="32" y="19" width="21" height="19" rx="3" fill="#fff"/><rect x="7" y="42" width="21" height="19" rx="3" fill="#fff"/><rect x="32" y="42" width="21" height="19" rx="3" fill="#fff"/></svg><span class="tpl-lb">Monthly<br><small style="font-weight:500;opacity:.7">สรุปเดือน</small></span></span>
         </div>
         <div style="margin-top:11px"><label>ขนาด export (responsive ตามนี้)</label>
           <div class="seg" id="ratioSeg"><b data-v="4:5">4:5</b><b class="on" data-v="9:16">9:16</b><b data-v="1:1">1:1</b></div>
