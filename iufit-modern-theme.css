@@ -396,7 +396,7 @@ table.nut{width:100%;border-collapse:collapse;font-size:12.5px}table.nut td{padd
 @media (max-width:380px){.app{padding-left:10px;padding-right:10px}header h1{font-size:18px}header h1 small{font-size:10.5px}.iconbtn{width:36px;height:36px}nav{left:8px;right:8px}nav button{font-size:9.5px}.kpis{gap:8px}}
 @media (min-width:700px){
   body{background:radial-gradient(circle at 20% 0%,rgba(10,132,255,.22),transparent 28%),linear-gradient(135deg,#f8fbff,#eef5ff)}
-  .app{max-width:540px;padding-top:18px}
+  .app{max-width:540px;padding-top:calc(env(safe-area-inset-top, 0px) + 16px)}
   nav{max-width:520px}
 }
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
