@@ -593,7 +593,9 @@ header{display:none!important}
 .trname{font-family:var(--font-display);font-size:17px;font-weight:800;color:var(--navy)}
 
 /* IUFIT · profile photo upload */
-.file2{display:flex;align-items:center;gap:10px;border:1.5px dashed #c3d2ea;border-radius:12px;padding:9px 11px;font-size:12.5px;color:var(--ink2);cursor:pointer;background:#f7faff;margin-top:2px}
+.file2{position:relative;display:flex;align-items:center;gap:10px;border:1.5px dashed #c3d2ea;border-radius:12px;padding:9px 11px;font-size:12.5px;color:var(--ink2);cursor:pointer;background:#f7faff;margin-top:2px}
+.ufrm{position:absolute;top:-9px;right:-9px;width:24px;height:24px;border-radius:50%;border:2px solid #fff;background:var(--danger);color:#fff;cursor:pointer;align-items:center;justify-content:center;font-size:11px;line-height:1;padding:0;z-index:2;box-shadow:0 3px 9px rgba(239,68,68,.32)}
+.ufrm svg{width:13px;height:13px}
 .file2 span b,.file2 b{color:var(--coral)}
 .ufpv{width:46px;height:46px;border-radius:50%;object-fit:cover;flex:none;background:#e7edf6}
 
