@@ -639,3 +639,21 @@ header{display:none!important}
 .bcv{font-family:var(--font-display);font-size:21px;font-weight:800;color:var(--navy);line-height:1;margin:6px 0 4px}
 .bcv small{font-size:11px;font-weight:600;color:var(--ink2)}
 .bcd{font-size:11px;font-weight:700;line-height:1.2}
+
+/* ===== IUFIT Icon Token System (brief §3,§9) — additive, used by future icon work ===== */
+:root{
+  --icon-xs:14px; --icon-sm:18px; --icon-md:22px; --icon-lg:28px; --icon-xl:36px;
+  --icon-stroke:2; --icon-stroke-active:2.4;
+  --icon-color-default:#6B7890; --icon-color-primary:#0A84FF; --icon-color-deep:#003C8F;
+  --icon-color-muted:#8A96AA; --icon-color-success:#12B7A8; --icon-color-warning:#F5A623; --icon-color-danger:#EF4444;
+  --icon-bg-blue:#E8F3FF; --icon-bg-green:#E8FBF7; --icon-bg-orange:#FFF5DD; --icon-bg-red:#FFF1F1;
+}
+.iufit-icon{display:inline-flex;align-items:center;justify-content:center;color:var(--icon-color-default)}
+.iufit-icon svg{width:1.1em;height:1.1em}
+.iufit-icon-nav svg{width:var(--icon-md);height:var(--icon-md)}
+.iufit-icon-status svg{width:var(--icon-xs);height:var(--icon-xs)}
+.icon-soft{width:44px;height:44px;border-radius:14px;background:var(--icon-bg-blue);color:var(--icon-color-primary);display:flex;align-items:center;justify-content:center;flex:none}
+.icon-soft.success{background:var(--icon-bg-green);color:var(--icon-color-success)}
+.icon-soft.warning{background:var(--icon-bg-orange);color:var(--icon-color-warning)}
+.icon-soft.danger{background:var(--icon-bg-red);color:var(--icon-color-danger)}
+.action-icon{width:52px;height:52px;border-radius:18px;background:linear-gradient(180deg,#FFFFFF,#EEF6FF);border:1px solid #DDE7F5;color:var(--icon-color-primary);display:flex;align-items:center;justify-content:center;flex:none}
