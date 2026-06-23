@@ -40,7 +40,16 @@
   --text-main:var(--ink);
   --text-muted:var(--ink2);
   --border:var(--line);
-  --radius-card:22px;
+  --radius-card:28px;
+  --radius-md:20px;
+  --radius-xl:34px;
+  --bg-soft:#eef6ff;
+  --text-strong:#002766;
+  --text-soft:#8a96aa;
+  --success:#12b7a8;--success-soft:#e8fbf7;
+  --warning:#f5a623;--warning-soft:#fff5dd;
+  --danger:#ef4444;--danger-soft:#fff1f1;
+  --purple:#7c4dff;--purple-soft:#f0eaff;
   --radius-button:16px;
   --shadow-soft:0 12px 32px rgba(15,31,61,.08);
   --shadow-card:0 18px 48px rgba(15,31,61,.10);
@@ -189,7 +198,7 @@ main#view{position:relative;}
   background:var(--surface);
   border:1px solid var(--border);
   border-radius:var(--radius-card);
-  padding:18px 17px;
+  padding:20px 18px;
   margin:14px 0;
   box-shadow:var(--shadow-card);
   overflow:hidden;
@@ -200,7 +209,7 @@ main#view{position:relative;}
   inset:0 0 auto 0;
   height:3px;
   background:linear-gradient(90deg,#0a84ff,rgba(10,132,255,0));
-  opacity:.45;
+  opacity:0;
 }
 .card.flat{box-shadow:none;background:#fbfdff;border-color:#e9f0fa}
 .card.flat::before{display:none}
@@ -253,6 +262,8 @@ h4.sec{
 .btn.ghost{box-shadow:none;border-style:solid;background:rgba(255,255,255,.56)}
 .btn.sm{min-height:34px;font-size:12.5px;padding:6px 13px;border-radius:12px}
 .btn:disabled{opacity:.45;pointer-events:none}
+/* brief: primary CTA taller + slightly rounder (small buttons keep their size) */
+.btn.pri:not(.sm){min-height:52px;border-radius:18px}
 input,select,textarea{
   width:100%;
   color:var(--ink);
@@ -306,11 +317,11 @@ nav button{
   justify-content:center;
   gap:3px;
   font-family:var(--font-ui);
-  font-size:10.5px;
+  font-size:11px;
   font-weight:650;
   transition:.18s ease;
 }
-nav button svg{width:22px;height:22px;transition:.18s ease}
+nav button svg{width:23px;height:23px;transition:.18s ease}
 nav button.on{
   color:#fff;
   font-weight:800;
