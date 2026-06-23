@@ -657,3 +657,7 @@ header{display:none!important}
 .icon-soft.warning{background:var(--icon-bg-orange);color:var(--icon-color-warning)}
 .icon-soft.danger{background:var(--icon-bg-red);color:var(--icon-color-danger)}
 .action-icon{width:52px;height:52px;border-radius:18px;background:linear-gradient(180deg,#FFFFFF,#EEF6FF);border:1px solid #DDE7F5;color:var(--icon-color-primary);display:flex;align-items:center;justify-content:center;flex:none}
+
+/* meal-plan multi-menu chips */
+.mpchip{display:inline-flex;align-items:center;gap:5px;background:#eef6ff;border:1px solid #d4e6ff;color:#0a55b8;border-radius:999px;padding:5px 6px 5px 11px;font-size:12.5px;font-weight:650}
+.mpchip button{border:none;background:#fff;color:#dc2626;width:20px;height:20px;border-radius:50%;cursor:pointer;font-size:11px;line-height:1;display:flex;align-items:center;justify-content:center;flex:none;box-shadow:0 2px 5px rgba(13,54,110,.1)}
