@@ -246,7 +246,8 @@ input[type=file]{display:none}
 
 
 #card.stats.sq .title{font-size:56px}
-#card.stats.sq .cc{gap:16px}
+#card.stats.sq .cc{gap:16px;justify-content:center}
+#card.stats.t916 .cc{justify-content:space-between}
 body.embed .app{display:none}
 body.embed{background:#eef2f8}
 .wiz{position:fixed;inset:0;display:flex;flex-direction:column;background:#eef2f8;font-family:'Kanit',sans-serif;z-index:50}
@@ -557,12 +558,12 @@ function tplStats(){
   if(dense){
     var hero='<div class="heroc"><div class="hcol"><div class="hlbl"><div class="hi">'+I.scale+'</div>'+T('น้ำหนักปัจจุบัน','Current weight')+'</div><div class="hbig">'+fmt(curW)+'<small> '+KG+'</small></div>'+(goalW!=null?'<div class="hchip">'+I.target+' '+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+KG+'</div>':'')+'</div><div class="hsep"></div><div class="hcol"><div class="hlbl"><div class="hi">'+I.chart+'</div>'+T('ลดลงในเดือนนี้','Lost this month')+'</div><div class="hbig blue">'+(lost!=null?sign(lost):'–')+'<small> '+KG+'</small></div></div>'+(goalW!=null?'<div class="hsep"></div><div style="display:flex;align-items:center;gap:18px;flex:none">'+ringSVG(pct)+'<div style="font-size:20px;color:var(--mut);font-weight:600;line-height:1.5">'+T('ความคืบหน้า<br>สู่เป้าหมาย','Progress<br>to goal')+'<br><span style="color:var(--navy);font-weight:800">'+T('อีก ','')+fmt(rem)+' '+KG+(en?' to go':' ถึงเป้าหมาย')+'</span></div></div>':'')+'</div>';
     var grid='<div class="sgrid">'+(bf!=null?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),fmt(RC.bfAfter),'%',sdDn((RC.bfAfter-RC.bfBefore<0?'':'+')+fmt(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.workoutCount!=null?sCard(I.dumbbell,T('ออกกำลังกาย','Workouts'),RC.workoutCount,T('ครั้ง','x'),''):'')+(totalK!=null?sCard(I.flame,T('แคลอรี่ทั้งหมด','Total calories'),fmt(totalK),T('แคลอรี','kcal'),sSub(T('เฉลี่ย/วัน ','Avg/day ')+fmt(RC.caloriesAvg))):'')+(RC.streakDays!=null?sCard(I.cal,T('ต่อเนื่อง','Streak'),RC.streakDays,T('วัน','days'),sSub(T('ไม่ขาดเลย!','No misses!'))):'')+(RC.planCompletion!=null?sCard(I.clip,T('วินัยรายเดือน','Discipline'),RC.planCompletion,'%',sSub(T('สม่ำเสมอเยี่ยม!','Super consistent!'))):'')+'</div>';
-    return head+hero+grid+achieve+'<div style="flex:1;min-height:10px"></div>'+foot+'</div>';
+    return head+hero+grid+achieve+foot+'</div>';
   }
   var hero='<div class="heroc"'+(goalW!=null?'':' style="justify-content:center"')+'><div class="hcol"'+(goalW!=null?'':' style="flex:none;text-align:center;max-width:560px"')+'><div class="hlbl"'+(goalW!=null?'':' style="justify-content:center"')+'><div class="hi">'+I.scale+'</div>'+T('น้ำหนักปัจจุบัน','Current weight')+'</div><div class="hbig">'+fmt(curW)+'<small> '+KG+'</small></div>'+(lost!=null?'<div class="hchip down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg> '+sign(lost)+' '+KG+' '+T('ลดจากเดือนที่แล้ว','vs last month')+'</div>':'')+'</div>'+(goalW!=null?'<div class="hsep"></div><div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:none">'+ringSVG(pct)+'<div style="font-size:20px;color:var(--mut);font-weight:700;text-align:center">'+T('ความคืบหน้าสู่เป้าหมาย','Progress to goal')+'<br><span style="font-size:17px;font-weight:600">'+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+KG+'</span></div></div>':'')+'</div>';
   var grid='<div style="text-align:center;font-size:24px;font-weight:800;color:var(--blue);margin:2px 0 -6px">'+T('เดือนนี้','This month')+'</div><div class="sgrid">'+(bf!=null?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),fmt(RC.bfAfter),'%',sdDn(sign(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.muscleChange!=null?sCard(I.muscle,T('กล้ามเนื้อ','Muscle'),sign(RC.muscleChange),'%',sSub(T('เปลี่ยนแปลง','change'))):'')+(RC.waistAfter!=null||RC.waistChange!=null?sCard(I.waist,T('รอบเอว','Waist'),(RC.waistAfter!=null?fmt(RC.waistAfter):sign(RC.waistChange)),CM,(RC.waistChange?sdDn(sign(RC.waistChange)+' '+CM):'')):'')+(RC.proteinAvg!=null?sCard(I.shake,T('โปรตีนเฉลี่ย/วัน','Protein/day'),RC.proteinAvg,'g',sSub(T('เป้าหมาย 120 g','Goal 120 g'))):'')+'</div>';
   var quote='<div class="quote"><div class="qm">“</div><div class="qt">'+(RC.quote||T('ทุกก้าวเล็ก ๆ ในวันนี้ คือความสำเร็จที่ยิ่งใหญ่ในวันข้างหน้า','Every small step today is a big win tomorrow'))+'</div><div class="qm r">”</div></div>';
-  return head+hero+grid+achieve+trend+'<div style="flex:1;min-height:14px"></div>'+quote+foot+'</div>';
+  return head+hero+grid+achieve+trend+quote+foot+'</div>';
 }
 
 function tplResult(){
