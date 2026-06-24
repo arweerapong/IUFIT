@@ -1,0 +1,139 @@
+/*! IUFIT — IU Mate local assistant · styles (standalone, does not touch app theme) */
+:root{
+  --iu-bg:#F6F9FF;--iu-bg-soft:#EEF6FF;--iu-card:#FFFFFF;--iu-text:#10233F;--iu-muted:#6B7890;
+  --iu-blue:#0A84FF;--iu-deep:#003C8F;--iu-navy:#002766;--iu-cyan:#20D5FF;--iu-green:#12B7A8;
+  --iu-warning:#F5A623;--iu-border:#DDE7F5;--iu-shadow:0 16px 42px rgba(13,54,110,.14);--iu-radius:24px;
+}
+/* ---------- Floating button ---------- */
+.iu-mate-fab{
+  position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:1200;
+  display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:9px 15px 9px 11px;border:0;
+  border-radius:999px;color:#fff;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;
+  background:linear-gradient(135deg,#0A84FF,#003C8F);box-shadow:0 14px 34px rgba(10,132,255,.36);
+  transform:translateY(0);transition:transform .18s ease,opacity .18s ease;letter-spacing:.2px;
+}
+.iu-mate-fab:active{transform:scale(.96)}
+.iu-mate-fab[hidden]{display:none!important}
+.iu-mate-fab .iu-ic{width:24px;height:24px;display:grid;place-items:center}
+.iu-mate-fab .iu-ic svg{width:24px;height:24px}
+.iu-mate-fab .iu-spark{position:absolute;top:-3px;right:-3px;width:13px;height:13px;color:var(--iu-cyan)}
+
+/* ---------- Backdrop + sheet ---------- */
+.iu-mate-backdrop{position:fixed;inset:0;z-index:1300;background:rgba(6,18,40,.42);backdrop-filter:blur(2px);
+  opacity:0;animation:iu-fade .2s ease forwards}
+@keyframes iu-fade{to{opacity:1}}
+.iu-mate-sheet{
+  position:fixed;inset:auto 0 0 0;z-index:1310;max-width:520px;margin:0 auto;width:100%;
+  height:min(88vh,820px);background:linear-gradient(180deg,#FFFFFF,#F6F9FF);
+  border-radius:30px 30px 0 0;box-shadow:0 -24px 80px rgba(0,39,102,.30);
+  display:flex;flex-direction:column;overflow:hidden;font-family:inherit;color:var(--iu-text);
+  transform:translateY(100%);animation:iu-up .26s cubic-bezier(.22,1,.36,1) forwards}
+.iu-mate-sheet.full{height:100dvh;border-radius:0}
+@keyframes iu-up{to{transform:translateY(0)}}
+.iu-mate-grab{width:40px;height:4px;border-radius:999px;background:#cfdcf0;margin:8px auto 0}
+
+/* ---------- Header ---------- */
+.iu-mate-header{padding:10px 14px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--iu-border)}
+.iu-mate-close{width:34px;height:34px;border:0;border-radius:50%;background:#eef3fb;color:#48597a;font-size:18px;cursor:pointer;flex:none}
+.iu-mate-avatar{width:42px;height:42px;border-radius:15px;flex:none;background:linear-gradient(135deg,#0A84FF,#003C8F);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(10,132,255,.28)}
+.iu-mate-avatar svg{width:24px;height:24px}
+.iu-mate-title{flex:1;min-width:0;line-height:1.15}
+.iu-mate-title strong{display:block;font-size:16px;color:var(--iu-navy);font-weight:850}
+.iu-mate-title small{display:block;font-size:11px;color:var(--iu-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.iu-mate-local-badge{padding:4px 9px;border-radius:999px;background:#E8FBF7;color:#047857;font-size:11px;font-weight:850;flex:none;display:inline-flex;align-items:center;gap:4px}
+.iu-mate-local-badge::before{content:"";width:6px;height:6px;border-radius:50%;background:#12B7A8}
+.iu-mate-expand{width:34px;height:34px;border:0;border-radius:50%;background:#eef3fb;color:#48597a;font-size:15px;cursor:pointer;flex:none}
+
+/* ---------- Chips ---------- */
+.iu-mate-chip-row{display:flex;gap:8px;overflow-x:auto;padding:11px 14px 4px;scrollbar-width:none}
+.iu-mate-chip-row::-webkit-scrollbar{display:none}
+.iu-mate-chip{white-space:nowrap;border:1px solid var(--iu-border);border-radius:999px;background:#fff;color:var(--iu-deep);font-weight:750;font-size:12.5px;padding:8px 13px;cursor:pointer;font-family:inherit;flex:none;box-shadow:0 4px 12px rgba(13,54,110,.05)}
+.iu-mate-chip:active{background:var(--iu-bg-soft)}
+.iu-mate-chip .e{margin-right:3px}
+
+/* ---------- Messages ---------- */
+.iu-mate-messages{flex:1;overflow-y:auto;padding:12px 14px 6px;-webkit-overflow-scrolling:touch}
+.iu-mate-bubble{max-width:88%;margin:8px 0;padding:11px 14px;border-radius:20px;font-size:14px;line-height:1.55;word-break:break-word;white-space:pre-wrap}
+.iu-mate-bubble.user{margin-left:auto;color:#fff;background:linear-gradient(135deg,#0A84FF,#003C8F);border-bottom-right-radius:7px}
+.iu-mate-bubble.bot{margin-right:auto;color:var(--iu-text);background:#fff;border:1px solid var(--iu-border);border-bottom-left-radius:7px;box-shadow:0 8px 22px rgba(13,54,110,.07)}
+.iu-mate-row-bot{display:flex;gap:8px;align-items:flex-end;margin:8px 0}
+.iu-mate-row-bot .mini{width:28px;height:28px;border-radius:9px;flex:none;background:linear-gradient(135deg,#0A84FF,#003C8F);color:#fff;display:grid;place-items:center}
+.iu-mate-row-bot .mini svg{width:16px;height:16px}
+.iu-mate-row-bot .iu-mate-bubble{margin:0}
+.iu-mate-typing{display:inline-flex;gap:4px;padding:4px 2px}
+.iu-mate-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3d4;animation:iu-blink 1.2s infinite}
+.iu-mate-typing i:nth-child(2){animation-delay:.2s}.iu-mate-typing i:nth-child(3){animation-delay:.4s}
+@keyframes iu-blink{0%,60%,100%{opacity:.3}30%{opacity:1}}
+
+/* ---------- Bot answer card ---------- */
+.iu-mate-card{background:#fff;border:1px solid var(--iu-border);border-radius:18px;padding:13px 14px;margin:9px 0;box-shadow:0 8px 22px rgba(13,54,110,.07)}
+.iu-mate-card .ttl{font-weight:850;color:var(--iu-navy);font-size:14.5px;margin-bottom:3px;display:flex;align-items:center;gap:7px}
+.iu-mate-card .msg{font-size:13.5px;line-height:1.6;color:var(--iu-text);white-space:pre-wrap}
+.iu-mate-card .disc{margin-top:9px;font-size:11px;color:var(--iu-muted);line-height:1.5;border-top:1px dashed var(--iu-border);padding-top:8px}
+.iu-mate-subcard{border:1px solid var(--iu-border);border-radius:14px;padding:10px 12px;margin-top:8px;background:linear-gradient(180deg,#fff,#F8FBFF)}
+.iu-mate-subcard .st{font-weight:800;color:var(--iu-navy);font-size:13.5px}
+.iu-mate-subcard .sm{font-size:12px;color:var(--iu-muted);margin-top:2px}
+
+/* ---------- Action chips under answers ---------- */
+.iu-mate-actions{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}
+.iu-mate-act{border:1px solid var(--iu-blue);border-radius:999px;background:#fff;color:var(--iu-deep);font-weight:800;font-size:12px;padding:7px 12px;cursor:pointer;font-family:inherit}
+.iu-mate-act.primary{background:linear-gradient(135deg,#0A84FF,#003C8F);color:#fff;border-color:transparent}
+.iu-mate-act:active{transform:scale(.97)}
+
+/* ---------- Composer ---------- */
+.iu-mate-composer{padding:10px 14px calc(12px + env(safe-area-inset-bottom));display:flex;gap:8px;align-items:center;border-top:1px solid var(--iu-border);background:rgba(255,255,255,.96)}
+.iu-mate-composer input{flex:1;border:1px solid var(--iu-border);border-radius:999px;padding:12px 15px;font-size:14px;font-family:inherit;background:#fff;color:var(--iu-text);outline:none}
+.iu-mate-composer input:focus{border-color:var(--iu-blue)}
+.iu-mate-send{width:44px;height:44px;border:0;border-radius:50%;color:#fff;background:linear-gradient(135deg,#0A84FF,#003C8F);cursor:pointer;flex:none;display:grid;place-items:center}
+.iu-mate-send svg{width:20px;height:20px}
+.iu-mate-privacy-note{font-size:10.5px;color:var(--iu-muted);text-align:center;padding:0 14px 6px;line-height:1.4}
+
+/* ---------- Confirm dialog ---------- */
+.iu-mate-confirm-wrap{position:fixed;inset:0;z-index:1400;display:grid;place-items:center;background:rgba(6,18,40,.5);padding:24px;opacity:0;animation:iu-fade .16s ease forwards}
+.iu-mate-confirm{background:#fff;border-radius:24px;max-width:360px;width:100%;padding:20px;box-shadow:var(--iu-shadow);text-align:center}
+.iu-mate-confirm .ci{width:54px;height:54px;border-radius:18px;margin:0 auto 12px;background:var(--iu-bg-soft);display:grid;place-items:center;color:var(--iu-blue)}
+.iu-mate-confirm .ci svg{width:28px;height:28px}
+.iu-mate-confirm h4{margin:0 0 6px;font-size:17px;color:var(--iu-navy);font-weight:850}
+.iu-mate-confirm p{margin:0 0 16px;font-size:13px;color:var(--iu-muted);line-height:1.55}
+.iu-mate-confirm .row{display:flex;gap:9px}
+.iu-mate-confirm button{flex:1;padding:12px;border:0;border-radius:13px;font-weight:850;font-size:14px;cursor:pointer;font-family:inherit}
+.iu-mate-confirm .no{background:#eef2f7;color:#637195}
+.iu-mate-confirm .yes{background:linear-gradient(135deg,#0A84FF,#003C8F);color:#fff}
+
+/* ---------- Recipe cards ---------- */
+.iu-mate-recipe-card{border:1px solid var(--iu-border);border-radius:20px;background:linear-gradient(180deg,#FFFFFF,#F8FBFF);box-shadow:0 8px 22px rgba(13,54,110,.08);padding:13px;margin:9px 0}
+.iu-mate-recipe-title{font-weight:850;color:var(--iu-navy);font-size:14.5px}
+.iu-mate-recipe-meta{color:var(--iu-blue);font-weight:800;margin-top:4px;font-size:12.5px}
+.iu-mate-recipe-ings{font-size:11.5px;color:var(--iu-muted);margin-top:5px;line-height:1.5}
+.iu-mate-recipe-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.iu-mate-recipe-tag{font-size:10.5px;font-weight:750;padding:4px 9px;border-radius:999px;color:var(--iu-deep);background:#EEF6FF;border:1px solid var(--iu-border)}
+
+/* ---------- Ingredient picker / recipe preview (use modal2 area styles) ---------- */
+.iu-mate-ip{padding:2px}
+.iu-mate-ip h3{margin:0 0 3px;font-size:17px;color:var(--iu-navy)}
+.iu-mate-ip .sub{font-size:12px;color:var(--iu-muted);margin-bottom:10px;line-height:1.5}
+.iu-mate-ip input.search{width:100%;border:1px solid var(--iu-border);border-radius:13px;padding:11px 13px;font-size:14px;font-family:inherit;margin-bottom:9px;box-sizing:border-box}
+.iu-mate-grp-chips{display:flex;gap:7px;overflow-x:auto;padding-bottom:8px;scrollbar-width:none}
+.iu-mate-grp-chips::-webkit-scrollbar{display:none}
+.iu-mate-grp-chip{white-space:nowrap;border:1px solid var(--iu-border);border-radius:999px;background:#fff;color:var(--iu-deep);font-weight:750;font-size:12px;padding:6px 12px;cursor:pointer;flex:none}
+.iu-mate-grp-chip.on{background:var(--iu-bg-soft);border-color:var(--iu-blue);color:var(--iu-deep)}
+.iu-mate-selected{display:flex;flex-wrap:wrap;gap:7px;margin:6px 0 10px;min-height:4px}
+.iu-mate-selected-pill{border-radius:999px;background:linear-gradient(135deg,#0A84FF,#003C8F);color:#fff;padding:6px 11px;font-size:12px;font-weight:800;cursor:pointer;display:inline-flex;align-items:center;gap:5px}
+.iu-mate-ing-list{max-height:38vh;overflow-y:auto;margin:2px 0 12px}
+.iu-mate-ing-item{display:flex;align-items:center;gap:10px;padding:10px 4px;border-bottom:1px solid #eef2f8;cursor:pointer}
+.iu-mate-ing-item .cb{width:22px;height:22px;border-radius:7px;border:2px solid var(--iu-border);flex:none;display:grid;place-items:center;color:#fff}
+.iu-mate-ing-item.on .cb{background:var(--iu-blue);border-color:var(--iu-blue)}
+.iu-mate-ing-item .nm{flex:1;font-size:13.5px;color:var(--iu-text)}
+.iu-mate-ing-item .kc{font-size:11px;color:var(--iu-muted)}
+.iu-mate-ip .go{width:100%;padding:13px;border:0;border-radius:14px;background:linear-gradient(135deg,#0A84FF,#003C8F);color:#fff;font-weight:850;font-size:15px;cursor:pointer;font-family:inherit}
+.iu-mate-ip .go[disabled]{opacity:.5}
+
+.iu-mate-nutrition-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}
+.iu-mate-nutrition-item{background:#F8FBFF;border:1px solid var(--iu-border);border-radius:14px;padding:9px 6px;text-align:center}
+.iu-mate-nutrition-item b{display:block;color:var(--iu-navy);font-size:17px}
+.iu-mate-nutrition-item span{color:var(--iu-muted);font-size:10.5px}
+.iu-mate-amt-row{display:flex;align-items:center;gap:8px;padding:9px 2px;border-bottom:1px solid #eef2f8}
+.iu-mate-amt-row .nm{flex:1;font-size:13.5px;color:var(--iu-text)}
+.iu-mate-amt-row .amt{font-size:13px;color:var(--iu-navy);font-weight:800;min-width:64px;text-align:right}
+.iu-mate-amt-row button{width:30px;height:30px;border:1px solid var(--iu-border);border-radius:9px;background:#fff;color:var(--iu-deep);font-weight:800;cursor:pointer;flex:none}
+.iu-mate-fit{font-size:12px;color:var(--iu-muted);margin:8px 0 2px}
