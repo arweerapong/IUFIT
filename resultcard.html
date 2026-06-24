@@ -243,6 +243,39 @@ input[type=file]{display:none}
 .trendc svg{width:100%;height:auto;display:block}
 .heroc,.sgrid,.achieve,.trendc,#card .quote{width:100%;box-sizing:border-box}
 .cc>*{flex-shrink:0}
+
+/* compact stats 1:1 so content fits 1080 (no bottom crop) */
+#card.stats.sq .cc{gap:13px;padding:44px}
+#card.stats.sq .title{font-size:52px}
+#card.stats.sq .subln span{font-size:19px}
+#card.stats.sq .tag{font-size:15px;letter-spacing:.18em}
+#card.stats.sq .heroc{padding:18px 24px;gap:16px}
+#card.stats.sq .hlbl{font-size:18px}
+#card.stats.sq .hbig{font-size:50px;margin-top:6px}
+#card.stats.sq .hchip{font-size:16px;padding:6px 13px;margin-top:9px}
+#card.stats.sq .ring{width:158px;height:158px}
+#card.stats.sq .ring svg{width:158px;height:158px}
+#card.stats.sq .ring .pc{font-size:38px}
+#card.stats.sq .ring .pc small{font-size:20px}
+#card.stats.sq .scard{padding:13px 11px}
+#card.stats.sq .scard .si{width:42px;height:42px;margin-bottom:7px}
+#card.stats.sq .scard .si svg{width:23px;height:23px}
+#card.stats.sq .scard .sl{font-size:16px}
+#card.stats.sq .scard .sv{font-size:27px}
+#card.stats.sq .scard .sd{font-size:14px;margin-top:6px;padding:4px 10px}
+#card.stats.sq .scard .sub{font-size:14px;margin-top:6px}
+#card.stats.sq .trendc{padding:14px 18px}
+#card.stats.sq .trendc .th b{font-size:19px}
+#card.stats.sq .achieve{padding:15px 18px;gap:13px}
+#card.stats.sq .achieve .at{width:52px;height:52px}
+#card.stats.sq .achieve .at svg{width:28px;height:28px}
+#card.stats.sq .achieve b{font-size:20px}
+#card.stats.sq .achieve span{font-size:15px}
+#card.stats.sq .foot{padding:15px 20px}
+#card.stats.sq .foot .ft b{font-size:21px}
+#card.stats.sq .foot .ft span{font-size:14px}
+#card.stats.sq .foot .cta{font-size:18px;padding:11px 20px}
+#card.stats.sq .foot .ic{width:56px;height:56px}
 body.embed .app{display:none}
 body.embed{background:#eef2f8}
 .wiz{position:fixed;inset:0;display:flex;flex-direction:column;background:#eef2f8;font-family:'Kanit',sans-serif;z-index:50}
@@ -420,7 +453,7 @@ const RC={tpl:'result',ratio:'9:16',ba:'lr',
  userName:'ลูกเทรน A',goal:'ลดไขมัน เพิ่มความฟิต',period:'8 สัปดาห์',monthLabel:'พฤษภาคม 2567',quote:'แข็งแรงขึ้น มั่นใจขึ้น และทำตามแผนได้จริง',
  imgB:null,imgA:null,imgC:null,imgU:null,dateBefore:'',dateAfter:'',
  wBefore:82,wAfter:79.8,bfBefore:25,bfAfter:22.8,muscleChange:0.8,waistChange:-4,workoutCount:18,streakDays:21,proteinAvg:125,planDays:24,planTotal:30,caloriesAvg:1850,percentile:82,planCompletion:100,
- summary:'',_goalCode:'',goalWeight:null,trendW:[82,81.2,80.4,79.8],trendBF:[25,24.2,23.4,22.8],trendWaist:[88,86,85,84],consent:false};
+ summary:'',_goalCode:'',goalWeight:null,waistAfter:null,trendW:[82,81.2,80.4,79.8],trendBF:[25,24.2,23.4,22.8],trendWaist:[88,86,85,84],consent:false};
 const $=id=>document.getElementById(id);
 var L='th';function T(th,en){return L==='en'?en:th;}function perEN(p){if(!p)return '–';var n=(''+p).replace(/[^0-9.]/g,'');return L==='en'?(n+' weeks'):p;}
 const RH={'4:5':1350,'9:16':1920,'1:1':1080};
@@ -459,7 +492,7 @@ function pull(){
   const b=nearest(t.rows,bd),a=nearest(t.rows,ad);
   RC.userName=t.name;RC.goalWeight=(t.gw!=null?t.gw:null);
   RC.wBefore=b.w;RC.wAfter=a.w;RC.bfBefore=b.bf;RC.bfAfter=a.bf;
-  RC.waistChange=Math.round((a.waist-b.waist)*10)/10;RC.muscleChange=(b.mus!=null&&a.mus!=null&&b.mus>0)?Math.round((a.mus-b.mus)/b.mus*1000)/10:null;
+  RC.waistChange=Math.round((a.waist-b.waist)*10)/10;RC.waistAfter=(a.waist!=null?a.waist:null);RC.muscleChange=(b.mus!=null&&a.mus!=null&&b.mus>0)?Math.round((a.mus-b.mus)/b.mus*1000)/10:null;
   const wk=bd&&ad?Math.max(1,Math.round((new Date(ad)-new Date(bd))/(86400000*7))):8;
   RC.period=wk+' สัปดาห์';RC.monthLabel=thMonth(ad);RC.dateBefore=thDate(bd);RC.dateAfter=thDate(ad);
   RC.workoutCount=t.workouts;RC.streakDays=t.streak;RC.proteinAvg=t.protein;RC.caloriesAvg=t.cal;RC.percentile=t.pct;RC.planDays=Math.min(t.streak,30);
@@ -552,11 +585,11 @@ function tplStats(){
   var foot='<div class="foot"><div class="ic"><img class="appicon" src="'+APPICON+'"></div><div class="ft"><b>'+T('บันทึกผลลัพธ์กับ IUFIT','Save your results with IUFIT')+'</b><span>'+T('ติดตามผลลัพธ์ วางแผนเฉพาะคุณ เห็นผลจริง','Track results · plan for you · real progress')+'</span></div><div class="cta">'+T('แชร์','Share')+' '+ARROW+'</div></div>';
   if(dense){
     var hero='<div class="heroc"><div class="hcol"><div class="hlbl"><div class="hi">'+I.scale+'</div>'+T('น้ำหนักปัจจุบัน','Current weight')+'</div><div class="hbig">'+fmt(curW)+'<small> '+KG+'</small></div>'+(goalW!=null?'<div class="hchip">'+I.target+' '+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+KG+'</div>':'')+'</div><div class="hsep"></div><div class="hcol"><div class="hlbl"><div class="hi">'+I.chart+'</div>'+T('ลดลงในเดือนนี้','Lost this month')+'</div><div class="hbig blue">'+(lost!=null?sign(lost):'–')+'<small> '+KG+'</small></div></div>'+(goalW!=null?'<div class="hsep"></div><div style="display:flex;align-items:center;gap:18px;flex:none">'+ringSVG(pct)+'<div style="font-size:20px;color:var(--mut);font-weight:600;line-height:1.5">'+T('ความคืบหน้า<br>สู่เป้าหมาย','Progress<br>to goal')+'<br><span style="color:var(--navy);font-weight:800">'+T('อีก ','')+fmt(rem)+' '+KG+(en?' to go':' ถึงเป้าหมาย')+'</span></div></div>':'')+'</div>';
-    var grid='<div class="sgrid">'+(bf!=null?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),bf.replace('+','')+'',' %',sdDn((RC.bfAfter-RC.bfBefore<0?'':'+')+fmt(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.workoutCount!=null?sCard(I.dumbbell,T('ออกกำลังกาย','Workouts'),RC.workoutCount,T('ครั้ง','x'),''):'')+(totalK!=null?sCard(I.flame,T('แคลอรี่ทั้งหมด','Total calories'),fmt(totalK),T('แคลอรี','kcal'),sSub(T('เฉลี่ย/วัน ','Avg/day ')+fmt(RC.caloriesAvg))):'')+(RC.streakDays!=null?sCard(I.cal,T('ต่อเนื่อง','Streak'),RC.streakDays,T('วัน','days'),sSub(T('ไม่ขาดเลย!','No misses!'))):'')+(RC.planCompletion!=null?sCard(I.clip,T('วินัยรายเดือน','Discipline'),RC.planCompletion,'%',sSub(T('สม่ำเสมอเยี่ยม!','Super consistent!'))):'')+'</div>';
+    var grid='<div class="sgrid">'+(bf!=null?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),fmt(RC.bfAfter),'%',sdDn((RC.bfAfter-RC.bfBefore<0?'':'+')+fmt(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.workoutCount!=null?sCard(I.dumbbell,T('ออกกำลังกาย','Workouts'),RC.workoutCount,T('ครั้ง','x'),''):'')+(totalK!=null?sCard(I.flame,T('แคลอรี่ทั้งหมด','Total calories'),fmt(totalK),T('แคลอรี','kcal'),sSub(T('เฉลี่ย/วัน ','Avg/day ')+fmt(RC.caloriesAvg))):'')+(RC.streakDays!=null?sCard(I.cal,T('ต่อเนื่อง','Streak'),RC.streakDays,T('วัน','days'),sSub(T('ไม่ขาดเลย!','No misses!'))):'')+(RC.planCompletion!=null?sCard(I.clip,T('วินัยรายเดือน','Discipline'),RC.planCompletion,'%',sSub(T('สม่ำเสมอเยี่ยม!','Super consistent!'))):'')+'</div>';
     return head+hero+grid+'<div style="display:flex;gap:16px"><div style="flex:1.5">'+trend+'</div><div style="flex:1;display:flex;align-items:center">'+achieve+'</div></div>'+foot+'</div>';
   }
   var hero='<div class="heroc"'+(goalW!=null?'':' style="justify-content:center"')+'><div class="hcol"'+(goalW!=null?'':' style="flex:none;text-align:center;max-width:560px"')+'><div class="hlbl"'+(goalW!=null?'':' style="justify-content:center"')+'><div class="hi">'+I.scale+'</div>'+T('น้ำหนักปัจจุบัน','Current weight')+'</div><div class="hbig">'+fmt(curW)+'<small> '+KG+'</small></div>'+(lost!=null?'<div class="hchip down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg> '+sign(lost)+' '+KG+' '+T('ลดจากเดือนที่แล้ว','vs last month')+'</div>':'')+'</div>'+(goalW!=null?'<div class="hsep"></div><div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:none">'+ringSVG(pct)+'<div style="font-size:20px;color:var(--mut);font-weight:700;text-align:center">'+T('ความคืบหน้าสู่เป้าหมาย','Progress to goal')+'<br><span style="font-size:17px;font-weight:600">'+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+KG+'</span></div></div>':'')+'</div>';
-  var grid='<div style="text-align:center;font-size:24px;font-weight:800;color:var(--blue);margin:2px 0 -6px">'+T('เดือนนี้','This month')+'</div><div class="sgrid">'+(bf!=null?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),fmt(RC.bfAfter),'%',sdDn(sign(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.muscleChange!=null?sCard(I.muscle,T('กล้ามเนื้อ','Muscle'),sign(RC.muscleChange),'%',sdUp(sign(RC.muscleChange)+'%')):'')+(RC.waistChange!=null?sCard(I.waist,T('รอบเอว','Waist'),sign(RC.waistChange),CM,sdDn(sign(RC.waistChange)+' '+CM)):'')+(RC.proteinAvg!=null?sCard(I.shake,T('โปรตีนเฉลี่ย/วัน','Protein/day'),RC.proteinAvg,'g',sSub(T('เป้าหมาย 120 g','Goal 120 g'))):'')+'</div>';
+  var grid='<div style="text-align:center;font-size:24px;font-weight:800;color:var(--blue);margin:2px 0 -6px">'+T('เดือนนี้','This month')+'</div><div class="sgrid">'+(bf!=null?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),fmt(RC.bfAfter),'%',sdDn(sign(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.muscleChange!=null?sCard(I.muscle,T('กล้ามเนื้อ','Muscle'),sign(RC.muscleChange),'%',sSub(T('เปลี่ยนแปลง','change'))):'')+(RC.waistAfter!=null||RC.waistChange!=null?sCard(I.waist,T('รอบเอว','Waist'),(RC.waistAfter!=null?fmt(RC.waistAfter):sign(RC.waistChange)),CM,(RC.waistChange?sdDn(sign(RC.waistChange)+' '+CM):'')):'')+(RC.proteinAvg!=null?sCard(I.shake,T('โปรตีนเฉลี่ย/วัน','Protein/day'),RC.proteinAvg,'g',sSub(T('เป้าหมาย 120 g','Goal 120 g'))):'')+'</div>';
   var quote='<div class="quote"><div class="qm">“</div><div class="qt">'+(RC.quote||T('ทุกก้าวเล็ก ๆ ในวันนี้ คือความสำเร็จที่ยิ่งใหญ่ในวันข้างหน้า','Every small step today is a big win tomorrow'))+'</div><div class="qm r">”</div></div>';
   return head+hero+grid+achieve+trend+quote+foot+'</div>';
 }
