@@ -202,6 +202,45 @@ input[type=file]{display:none}
 .cstat .dn svg{width:26px;height:26px;color:#fff}
 .cstat .dn.up{background:linear-gradient(150deg,#12B7A8,#0a8f84)}
 #card .vbadge{width:30px;height:30px;flex:none;vertical-align:middle}
+/* ===== Stats Dashboard template (no photo) ===== */
+.heroc{display:flex;gap:22px;align-items:center;background:var(--glass);border:1px solid var(--line);border-radius:26px;padding:26px 30px;box-shadow:0 16px 42px rgba(13,54,110,.10)}
+.heroc .hcol{flex:1;min-width:0}
+.hlbl{display:flex;align-items:center;gap:11px;font-size:20px;color:var(--mut);font-weight:600}
+.hlbl .hi{width:50px;height:50px;border-radius:14px;background:#eef4ff;display:flex;align-items:center;justify-content:center;flex:none}
+.hlbl .hi svg{width:27px;height:27px;color:var(--blue)}
+.hbig{font-size:66px;font-weight:800;color:var(--navy);line-height:1;margin-top:10px}
+.hbig small{font-size:27px;color:var(--mut);font-weight:700}
+.hbig.blue{color:var(--blue)}
+.hchip{display:inline-flex;align-items:center;gap:7px;font-size:18px;font-weight:700;color:var(--mut);background:#f1f6ff;border:1px solid #e0eafc;border-radius:999px;padding:8px 16px;margin-top:12px}
+.hchip.down{color:var(--blue)}
+.hchip svg{width:18px;height:18px}
+.hsep{width:1px;align-self:stretch;background:#e3e9f3;margin:6px 0}
+.ring{position:relative;width:210px;height:210px;flex:none}
+.ring svg{width:210px;height:210px}
+.ring .pc{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:50px;font-weight:800;color:var(--navy)}
+.ring .pc small{font-size:26px}
+.sgrid{display:flex;gap:16px}
+.scard{flex:1;background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:18px 16px;box-shadow:0 12px 30px rgba(13,54,110,.07);text-align:center}
+.scard .si{width:52px;height:52px;border-radius:14px;background:#eef4ff;display:flex;align-items:center;justify-content:center;margin:0 auto 11px}
+.scard .si svg{width:28px;height:28px;color:var(--blue)}
+.scard .sl{font-size:18px;color:var(--mut);font-weight:600}
+.scard .sv{font-size:36px;font-weight:800;color:var(--navy);line-height:1.05;margin-top:4px}
+.scard .sv small{font-size:18px;color:var(--mut);font-weight:700}
+.scard .sd{display:inline-flex;align-items:center;gap:5px;font-size:16px;font-weight:700;margin-top:9px;padding:5px 13px;border-radius:999px}
+.scard .sd.dn{color:var(--blue);background:#eef4ff}
+.scard .sd.up{color:var(--green);background:#e7faf6}
+.scard .sd svg{width:15px;height:15px}
+.scard .sub{font-size:16px;color:var(--mut);margin-top:9px}
+.achieve{display:flex;align-items:center;gap:20px;background:linear-gradient(120deg,#eaf2ff,#dff0ff 90%);border:1px solid #cfe0ff;border-radius:22px;padding:22px 26px}
+.achieve .at{width:66px;height:66px;border-radius:50%;background:linear-gradient(150deg,#2f7bff,#0b2f86);display:flex;align-items:center;justify-content:center;flex:none}
+.achieve .at svg{width:34px;height:34px;color:#ffd34d}
+.achieve b{font-size:25px;color:var(--navy);display:block;line-height:1.15}
+.achieve span{font-size:19px;color:var(--deep);font-weight:600}
+.trendc{background:var(--glass);border:1px solid var(--line);border-radius:22px;padding:22px 26px;box-shadow:0 12px 30px rgba(13,54,110,.07)}
+.trendc .th{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.trendc .th b{font-size:23px;color:var(--navy);font-weight:800}
+.trendc .th span{font-size:16px;color:var(--mut)}
+.trendc svg{width:100%;height:auto;display:block}
 body.embed .app{display:none}
 body.embed{background:#eef2f8}
 .wiz{position:fixed;inset:0;display:flex;flex-direction:column;background:#eef2f8;font-family:'Kanit',sans-serif;z-index:50}
@@ -248,6 +287,7 @@ body.embed{background:#eef2f8}
         <div class="tabs" id="tplTabs">
           <span class="tab on" data-v="result"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#dbe6f7"/><rect x="6" y="6" width="48" height="8" rx="2" fill="#0a84ff"/><rect x="6" y="19" width="22" height="33" rx="3" fill="#fff"/><rect x="32" y="19" width="22" height="33" rx="3" fill="#fff"/><rect x="6" y="57" width="48" height="5" rx="2" fill="#aebfdc"/><rect x="6" y="65" width="32" height="5" rx="2" fill="#aebfdc"/></svg><span class="tpl-lb">Result Card<br><small style="font-weight:500;opacity:.7">ก่อน/หลัง</small></span></span>
           <span class="tab" data-v="coach"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#002766"/><circle cx="30" cy="21" r="10" fill="#fff"/><rect x="15" y="35" width="30" height="5" rx="2" fill="#ffd24a"/><rect x="11" y="45" width="38" height="24" rx="3" fill="rgba(255,255,255,.16)"/></svg><span class="tpl-lb">Coach Story<br><small style="font-weight:500;opacity:.7">แบรนด์โค้ช</small></span></span>
+          <span class="tab" data-v="stats"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#eef3fb"/><rect x="6" y="6" width="48" height="8" rx="2" fill="#0a84ff"/><circle cx="20" cy="34" r="11" fill="none" stroke="#0a84ff" stroke-width="3"/><rect x="7" y="52" width="20" height="7" rx="2" fill="#cfe0ff"/><rect x="33" y="50" width="20" height="11" rx="2" fill="#cfe0ff"/><rect x="33" y="34" width="20" height="9" rx="2" fill="#dbe6f7"/></svg><span class="tpl-lb">Stats<br><small style="font-weight:500;opacity:.7">ไม่มีรูป</small></span></span>
           
         </div>
         <div style="margin-top:11px"><label>ขนาด export (responsive ตามนี้)</label>
@@ -294,7 +334,7 @@ body.embed{background:#eef2f8}
           <div><label>เป้าหมาย</label><input type="text" id="goal" value="ลดไขมัน เพิ่มความฟิต"></div>
         </div>
         <div class="row">
-          <div><label>ระยะเวลา (auto จากวันที่)</label><input type="text" id="period" value="8 สัปดาห์"></div>
+          <div><label>ระยะเวลา (auto จากวันที่)</label><input type="text" id="period" value="8 สัปดาห์"></div><div><label>น้ำหนักเป้าหมาย (กก.)</label><input type="number" id="goalWeight" placeholder="68"></div>
           <div><label>เดือน (Monthly)</label><input type="text" id="monthLabel" value="พฤษภาคม 2567"></div>
         </div>
         <label>quote / คำโปรย</label><input type="text" id="quote" value="แข็งแรงขึ้น มั่นใจขึ้น และทำตามแผนได้จริง">
@@ -378,11 +418,11 @@ const RC={tpl:'result',ratio:'9:16',ba:'lr',
  userName:'ลูกเทรน A',goal:'ลดไขมัน เพิ่มความฟิต',period:'8 สัปดาห์',monthLabel:'พฤษภาคม 2567',quote:'แข็งแรงขึ้น มั่นใจขึ้น และทำตามแผนได้จริง',
  imgB:null,imgA:null,imgC:null,imgU:null,dateBefore:'',dateAfter:'',
  wBefore:82,wAfter:79.8,bfBefore:25,bfAfter:22.8,muscleChange:0.8,waistChange:-4,workoutCount:18,streakDays:21,proteinAvg:125,planDays:24,planTotal:30,caloriesAvg:1850,percentile:82,planCompletion:100,
- summary:'',_goalCode:'',trendW:[82,81.2,80.4,79.8],trendBF:[25,24.2,23.4,22.8],trendWaist:[88,86,85,84],consent:false};
+ summary:'',_goalCode:'',goalWeight:null,trendW:[82,81.2,80.4,79.8],trendBF:[25,24.2,23.4,22.8],trendWaist:[88,86,85,84],consent:false};
 const $=id=>document.getElementById(id);
 var L='th';function T(th,en){return L==='en'?en:th;}function perEN(p){if(!p)return '–';var n=(''+p).replace(/[^0-9.]/g,'');return L==='en'?(n+' weeks'):p;}
 const RH={'4:5':1350,'9:16':1920,'1:1':1080};
-const NAT={result:'1:1',coach:'9:16',progress:'1:1'};
+const NAT={result:'1:1',coach:'9:16',stats:'9:16',progress:'1:1'};
 const RCFG={'1:1':{pad:'34px',gap:'16px',bamin:'320px'},'4:5':{pad:'42px',gap:'20px',bamin:'450px'},'9:16':{pad:'48px',gap:'26px',bamin:'560px'}};
 const DENSE=()=>RC.ratio==='1:1';
 function wchange(){return (RC.wBefore!=null&&RC.wAfter!=null)?RC.wAfter-RC.wBefore:null;}
@@ -390,7 +430,7 @@ function wchange(){return (RC.wBefore!=null&&RC.wAfter!=null)?RC.wAfter-RC.wBefo
 function bindFile(inp,thumb,lbl,key){$(inp).addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const u=URL.createObjectURL(f);const im=new Image();im.onload=()=>{RC[key]=im.src;render();};im.src=u;$(thumb).src=u;$(thumb).style.display='block';$(lbl).innerHTML='<b>เปลี่ยน</b>';});}
 bindFile('fB','thB','lbB','imgB');bindFile('fA','thA','lbA','imgA');bindFile('fC','thC','lbC','imgC');bindFile('fU','thU','lbU','imgU');
 ['coachName','coachHandle','userName','goal','period','monthLabel','quote','summary'].forEach(id=>$(id).addEventListener('input',e=>{RC[id]=e.target.value;render();}));
-['wBefore','wAfter','bfBefore','bfAfter','muscleChange','waistChange','workoutCount','streakDays','proteinAvg','planDays','caloriesAvg','percentile','planCompletion'].forEach(id=>$(id).addEventListener('input',e=>{RC[id]=e.target.value===''?null:parseFloat(e.target.value);render();}));
+['wBefore','wAfter','bfBefore','bfAfter','muscleChange','waistChange','workoutCount','streakDays','proteinAvg','planDays','caloriesAvg','percentile','planCompletion','goalWeight'].forEach(id=>$(id).addEventListener('input',e=>{RC[id]=e.target.value===''?null:parseFloat(e.target.value);render();}));
 $('specialties').addEventListener('input',e=>{RC.specialties=e.target.value.split(',').map(s=>s.trim()).filter(Boolean);render();});
 $('verified').addEventListener('change',e=>{RC.verified=e.target.checked;render();});
 $('consent').addEventListener('change',e=>{RC.consent=e.target.checked;$('dl').disabled=!e.target.checked;$('sh').disabled=!e.target.checked;});
@@ -415,7 +455,7 @@ function nearest(rows,ds){if(!ds)return rows[rows.length-1];const x=new Date(ds)
 function pull(){
   const t=HIST[$('trainee').value];if(!t)return;const bd=$('dBefore').value,ad=$('dAfter').value;
   const b=nearest(t.rows,bd),a=nearest(t.rows,ad);
-  RC.userName=t.name;
+  RC.userName=t.name;RC.goalWeight=(t.gw!=null?t.gw:null);
   RC.wBefore=b.w;RC.wAfter=a.w;RC.bfBefore=b.bf;RC.bfAfter=a.bf;
   RC.waistChange=Math.round((a.waist-b.waist)*10)/10;RC.muscleChange=(b.mus!=null&&a.mus!=null&&b.mus>0)?Math.round((a.mus-b.mus)/b.mus*1000)/10:null;
   const wk=bd&&ad?Math.max(1,Math.round((new Date(ad)-new Date(bd))/(86400000*7))):8;
@@ -481,6 +521,43 @@ function coachSummary(){if(RC.summary)return RC.summary;var wc=wchange();var en=
 function ftReal(label){return '<div class="foot"><div class="ic"><img class="appicon" src="'+APPICON+'"></div><div class="ft"><b>'+label+'</b><span>'+T('แอปที่เข้าใจคุณ วางแผนเฉพาะคุณ เห็นผลจริง','An app that gets you · plans for you · real results')+'</span></div><div class="cta">'+T('บันทึกเลย','Save now')+' '+ARROW+'</div></div>';}
 function featRow(items){return '<div class="feats">'+items.map(function(x,i){return (i?'<i></i>':'')+'<div class="f">'+x[0]+x[1]+'</div>';}).join('')+'</div>';}
 var _fIcons={chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19V5M4 19h16M8 16l3-4 3 2 4-6"/></svg>',clip:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></svg>',chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a8 8 0 0 1-11.5 7.2L4 21l1.8-5.5A8 8 0 1 1 21 12z"/></svg>',shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 10 4.6-1.5 8-5 8-10V5z"/></svg>',check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>'};
+
+
+/* ---- Stats Dashboard helpers + template (v6.47) ---- */
+function sCard(icon,label,val,unit,extra){return '<div class="scard"><div class="si">'+icon+'</div><div class="sl">'+label+'</div><div class="sv">'+val+(unit?'<small> '+unit+'</small>':'')+'</div>'+(extra||'')+'</div>';}
+function sdDn(t){return '<div class="sd dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>'+t+'</div>';}
+function sdUp(t){return '<div class="sd up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>'+t+'</div>';}
+function sSub(t){return '<div class="sub">'+t+'</div>';}
+function ringSVG(pct){var C=2*Math.PI*88;var off=C*(1-pct);return '<div class="ring"><svg viewBox="0 0 210 210"><defs><linearGradient id="rg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f7bff"/><stop offset="1" stop-color="#25C7FF"/></linearGradient></defs><circle cx="105" cy="105" r="88" fill="none" stroke="#e3ecfa" stroke-width="22"/><circle cx="105" cy="105" r="88" fill="none" stroke="url(#rg2)" stroke-width="22" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 105 105)"/></svg><div class="pc">'+Math.round(pct*100)+'<small>%</small></div></div>';}
+function _monthLabels(n){var thM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];var enM=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];var arr=L==='en'?enM:thM;var now=new Date().getMonth();var out=[];for(var i=n-1;i>=0;i--){out.push(arr[((now-i)%12+12)%12]);}return out;}
+function trendSVG(arr,goalW,unit){if(!arr||arr.length<2)arr=[RC.wBefore||0,RC.wAfter||0];var ex=goalW!=null?arr.concat([goalW]):arr;var vmin=Math.min.apply(null,ex)-1,vmax=Math.max.apply(null,ex)+1;if(vmax<=vmin)vmax=vmin+1;var n=arr.length,x0=80,x1=900,top=30,bot=210;function X(i){return x0+(x1-x0)*i/(n-1);}function Y(v){return top+(vmax-v)/(vmax-vmin)*(bot-top);}var pts=arr.map(function(v,i){return X(i).toFixed(0)+','+Y(v).toFixed(1);}).join(' ');var dots=arr.map(function(v,i){return '<circle cx="'+X(i).toFixed(0)+'" cy="'+Y(v).toFixed(1)+'" r="7" fill="#0A84FF" stroke="#fff" stroke-width="3"/>';}).join('');var labs=arr.map(function(v,i){return '<text x="'+X(i).toFixed(0)+'" y="'+(Y(v)-16).toFixed(1)+'" text-anchor="middle" font-size="20" font-weight="800" fill="#10233F" font-family="Kanit">'+fmt(v)+'</text>';}).join('');var mo=_monthLabels(n);var xlab=mo.map(function(m,i){return '<text x="'+X(i).toFixed(0)+'" y="248" text-anchor="middle" font-size="19" fill="#7B8AA5" font-family="Kanit">'+m+'</text>';}).join('');var gl='';if(goalW!=null){var gy=Y(goalW);gl='<line x1="60" y1="'+gy.toFixed(1)+'" x2="920" y2="'+gy.toFixed(1)+'" stroke="#9cc0f5" stroke-width="2" stroke-dasharray="7 6"/><text x="915" y="'+(gy-8).toFixed(1)+'" text-anchor="end" font-size="17" fill="#7B8AA5" font-family="Kanit">'+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+unit+'</text>';}return '<svg viewBox="0 0 980 270">'+gl+'<polyline points="'+pts+'" fill="none" stroke="#0A84FF" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>'+dots+labs+xlab+'</svg>';}
+function tplStats(){
+  var dense=DENSE(),en=(L==='en');var KG=T('กก.','kg'),CM=T('ซม.','cm');
+  var tw=RC.trendW&&RC.trendW.length?RC.trendW:null;
+  var startW=tw?tw[0]:(RC.wBefore!=null?RC.wBefore:RC.wAfter);
+  var curW=(RC.wAfter!=null)?RC.wAfter:(tw?tw[tw.length-1]:0);
+  var goalW=RC.goalWeight;
+  var lost=(curW!=null&&startW!=null)?Math.round((curW-startW)*10)/10:null;
+  var pct=0;if(goalW!=null&&startW!=null&&startW!==goalW)pct=Math.max(0,Math.min(1,(startW-curW)/(startW-goalW)));
+  var rem=(goalW!=null)?Math.max(0,Math.round((curW-goalW)*10)/10):null;
+  var bf=(RC.bfBefore!=null&&RC.bfAfter!=null)?sign(RC.bfAfter-RC.bfBefore):null;
+  var daysN=RC.period?(parseInt((''+RC.period).replace(/[^0-9]/g,''))||4)*7:(RC.streakDays||30);
+  var totalK=(RC.caloriesAvg!=null)?Math.round(RC.caloriesAvg*daysN):null;
+  var head='<div class="tech"></div><div class="cc" style="gap:20px">'+LOGOWM+'<div class="tag">TRAIN SMARTER • LIVE BETTER</div><div class="title">'+T('ผลลัพธ์<span class="b">ของฉัน</span>','My <span class="b">Results</span>')+'</div><div class="subln"><span class="ln"></span><span>'+T('ความพยายามในวันนี้ สร้างฉันในเวอร์ชันที่ดีกว่า',"Today's effort builds a better me")+'</span><span class="ln r"></span></div>';
+  var lostTxt=(lost!=null&&lost<0)?(T('คุณลดน้ำหนักได้ ','You lost ')+fmt(Math.abs(lost))+' '+KG+(en?' this month':' ในเดือนนี้')):(T('เดินหน้าต่อเนื่อง','Keep up the momentum'));
+  var achieve='<div class="achieve"><div class="at"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg></div><div><b>'+T('ยอดเยี่ยม! ','Great! ')+lostTxt+'</b><span>'+T('คุณกำลังเข้าใกล้เป้าหมายมากขึ้นทุกวัน!','Getting closer to your goal every day!')+'</span></div></div>';
+  var trend='<div class="trendc"><div class="th"><b>'+T('แนวโน้มน้ำหนัก (6 เดือน)','Weight trend (6 months)')+'</b><span>'+T('หน่วย: กก.','unit: kg')+'</span></div>'+trendSVG(tw,goalW,KG)+'</div>';
+  var foot='<div class="foot"><div class="ic"><img class="appicon" src="'+APPICON+'"></div><div class="ft"><b>'+T('บันทึกผลลัพธ์กับ IUFIT','Save your results with IUFIT')+'</b><span>'+T('ติดตามผลลัพธ์ วางแผนเฉพาะคุณ เห็นผลจริง','Track results · plan for you · real progress')+'</span></div><div class="cta">'+T('แชร์','Share')+' '+ARROW+'</div></div>';
+  if(dense){
+    var hero='<div class="heroc"><div class="hcol"><div class="hlbl"><div class="hi">'+I.scale+'</div>'+T('น้ำหนักปัจจุบัน','Current weight')+'</div><div class="hbig">'+fmt(curW)+'<small> '+KG+'</small></div>'+(goalW!=null?'<div class="hchip">'+I.target+' '+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+KG+'</div>':'')+'</div><div class="hsep"></div><div class="hcol"><div class="hlbl"><div class="hi">'+I.chart+'</div>'+T('ลดลงในเดือนนี้','Lost this month')+'</div><div class="hbig blue">'+(lost!=null?sign(lost):'–')+'<small> '+KG+'</small></div></div>'+(goalW!=null?'<div class="hsep"></div><div style="display:flex;align-items:center;gap:18px;flex:none">'+ringSVG(pct)+'<div style="font-size:20px;color:var(--mut);font-weight:600;line-height:1.5">'+T('ความคืบหน้า<br>สู่เป้าหมาย','Progress<br>to goal')+'<br><span style="color:var(--navy);font-weight:800">'+T('อีก ','')+fmt(rem)+' '+KG+(en?' to go':' ถึงเป้าหมาย')+'</span></div></div>':'')+'</div>';
+    var grid='<div class="sgrid">'+(bf!=null?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),bf.replace('+','')+'',' %',sdDn((RC.bfAfter-RC.bfBefore<0?'':'+')+fmt(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.workoutCount!=null?sCard(I.dumbbell,T('ออกกำลังกาย','Workouts'),RC.workoutCount,T('ครั้ง','x'),''):'')+(totalK!=null?sCard(I.flame,T('แคลอรี่ทั้งหมด','Total calories'),fmt(totalK),T('แคลอรี','kcal'),sSub(T('เฉลี่ย/วัน ','Avg/day ')+fmt(RC.caloriesAvg))):'')+(RC.streakDays!=null?sCard(I.cal,T('ต่อเนื่อง','Streak'),RC.streakDays,T('วัน','days'),sSub(T('ไม่ขาดเลย!','No misses!'))):'')+(RC.planCompletion!=null?sCard(I.clip,T('วินัยรายเดือน','Discipline'),RC.planCompletion,'%',sSub(T('สม่ำเสมอเยี่ยม!','Super consistent!'))):'')+'</div>';
+    return head+hero+grid+'<div style="display:flex;gap:16px"><div style="flex:1.5">'+trend+'</div><div style="flex:1;display:flex;align-items:center">'+achieve+'</div></div>'+foot+'</div>';
+  }
+  var hero='<div class="heroc"><div class="hcol"><div class="hlbl"><div class="hi">'+I.scale+'</div>'+T('น้ำหนักปัจจุบัน','Current weight')+'</div><div class="hbig">'+fmt(curW)+'<small> '+KG+'</small></div>'+(lost!=null?'<div class="hchip down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg> '+sign(lost)+' '+KG+' '+T('ลดจากเดือนที่แล้ว','vs last month')+'</div>':'')+'</div>'+(goalW!=null?'<div class="hsep"></div><div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:none">'+ringSVG(pct)+'<div style="font-size:20px;color:var(--mut);font-weight:700;text-align:center">'+T('ความคืบหน้าสู่เป้าหมาย','Progress to goal')+'<br><span style="font-size:17px;font-weight:600">'+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+KG+'</span></div></div>':'')+'</div>';
+  var grid='<div style="text-align:center;font-size:24px;font-weight:800;color:var(--blue);margin:2px 0 -6px">'+T('เดือนนี้','This month')+'</div><div class="sgrid">'+(bf!=null?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),fmt(RC.bfAfter),'%',sdDn(sign(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.muscleChange!=null?sCard(I.muscle,T('กล้ามเนื้อ','Muscle'),sign(RC.muscleChange),'%',sdUp(sign(RC.muscleChange)+'%')):'')+(RC.waistChange!=null?sCard(I.waist,T('รอบเอว','Waist'),sign(RC.waistChange),CM,sdDn(sign(RC.waistChange)+' '+CM)):'')+(RC.proteinAvg!=null?sCard(I.shake,T('โปรตีนเฉลี่ย/วัน','Protein/day'),RC.proteinAvg,'g',sSub(T('เป้าหมาย 120 g','Goal 120 g'))):'')+'</div>';
+  var quote='<div class="quote"><div class="qm">“</div><div class="qt">'+(RC.quote||T('ทุกก้าวเล็ก ๆ ในวันนี้ คือความสำเร็จที่ยิ่งใหญ่ในวันข้างหน้า','Every small step today is a big win tomorrow'))+'</div><div class="qm r">”</div></div>';
+  return head+hero+grid+achieve+trend+quote+foot+'</div>';
+}
 
 function tplResult(){
   var dense=DENSE(),wc=wchange();var nO=function(v){return (''+v).replace(/[^0-9.]/g,'')||'–';};
@@ -577,7 +654,7 @@ function render(){
   card.className=RC.tpl+' '+(RC.ratio==='1:1'?'sq':'t916');
   var H=RH[RC.ratio];
   card.style.height=H+'px';card.style.minHeight='';
-  card.innerHTML=RC.tpl==='result'?tplResult():tplCoach();
+  card.innerHTML=RC.tpl==='result'?tplResult():RC.tpl==='stats'?tplStats():tplCoach();
   var stageW=Math.min(398,$('scaler').parentElement.clientWidth-36);
   var sc=stageW/1080;
   $('scaler').style.transform='scale('+sc+')';
