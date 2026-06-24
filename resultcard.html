@@ -163,6 +163,24 @@ body.embed{background:#eef2f8}
 .wbtn.back{flex:0 0 38%;background:#fff;color:#165dff;border:1.5px solid #cdddf5}
 .wbtn.next{flex:1;background:linear-gradient(135deg,#0b2f86,#165dff);color:#fff}
 .wiz .previewWrap{position:static}.wiz .stage{min-height:auto}.wiz .btns{margin-top:12px}.wiz .hint{margin-top:8px}
+
+/* ===== v6.32 result/coach redesign ===== */
+.tagline{text-align:center;font-size:17px;font-weight:700;letter-spacing:.22em;color:var(--mut);margin-top:1px}
+.bigtitle{text-align:center;font-size:64px;font-weight:800;color:var(--navy);line-height:1.02;letter-spacing:-.02em;margin-top:2px}
+.bigtitle .b{color:var(--blue)}
+.bigsub{text-align:center;font-size:22px;color:var(--mut);font-weight:600;margin-top:2px}
+.crole{display:inline-block;font-size:17px;font-weight:800;color:var(--blue);background:#e8f0ff;border:1.5px solid #cfe0ff;border-radius:999px;padding:4px 15px;margin-bottom:6px}
+.info3{display:flex;gap:14px}
+.info3 .it{flex:1;background:#f6f9ff;border:1.5px solid #e4ecfb;border-radius:18px;padding:16px;display:flex;gap:13px;align-items:flex-start}
+.info3 .it .ii{width:52px;height:52px;border-radius:14px;background:linear-gradient(150deg,#2a6bff,#25C7FF);display:flex;align-items:center;justify-content:center;flex:none}
+.info3 .it .ii svg{width:27px;height:27px;color:#fff}
+.info3 .it .il{font-size:17px;color:var(--mut);font-weight:600}
+.info3 .it .iv{font-size:22px;font-weight:800;color:var(--ink);line-height:1.18;margin-top:2px}
+.cquote{background:#f3f8ff;border-radius:22px;padding:24px 30px;position:relative}
+.cquote .qm{font-size:64px;font-weight:800;color:#bcd4ff;line-height:.5;font-family:Georgia,serif;display:block}
+.cquote .qt{font-size:25px;font-weight:600;color:var(--navy);line-height:1.4;margin-top:4px}
+.cquote .stars{color:#ffb020;font-size:25px;letter-spacing:3px;margin-top:12px}
+.cquote .cby{font-size:18px;color:var(--mut);font-weight:700;margin-left:8px;letter-spacing:0}
 </style></head>
 <body>
 <div class="app">
@@ -175,10 +193,10 @@ body.embed{background:#eef2f8}
         <div class="tabs" id="tplTabs">
           <span class="tab on" data-v="result"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#dbe6f7"/><rect x="6" y="6" width="48" height="8" rx="2" fill="#0a84ff"/><rect x="6" y="19" width="22" height="33" rx="3" fill="#fff"/><rect x="32" y="19" width="22" height="33" rx="3" fill="#fff"/><rect x="6" y="57" width="48" height="5" rx="2" fill="#aebfdc"/><rect x="6" y="65" width="32" height="5" rx="2" fill="#aebfdc"/></svg><span class="tpl-lb">Result Card<br><small style="font-weight:500;opacity:.7">ก่อน/หลัง</small></span></span>
           <span class="tab" data-v="coach"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#002766"/><circle cx="30" cy="21" r="10" fill="#fff"/><rect x="15" y="35" width="30" height="5" rx="2" fill="#ffd24a"/><rect x="11" y="45" width="38" height="24" rx="3" fill="rgba(255,255,255,.16)"/></svg><span class="tpl-lb">Coach Story<br><small style="font-weight:500;opacity:.7">แบรนด์โค้ช</small></span></span>
-          <span class="tab" data-v="progress"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#eef3fb"/><rect x="6" y="6" width="48" height="8" rx="2" fill="#0a84ff"/><rect x="7" y="19" width="21" height="19" rx="3" fill="#fff"/><rect x="32" y="19" width="21" height="19" rx="3" fill="#fff"/><rect x="7" y="42" width="21" height="19" rx="3" fill="#fff"/><rect x="32" y="42" width="21" height="19" rx="3" fill="#fff"/></svg><span class="tpl-lb">Monthly<br><small style="font-weight:500;opacity:.7">สรุปเดือน</small></span></span>
+          
         </div>
         <div style="margin-top:11px"><label>ขนาด export (responsive ตามนี้)</label>
-          <div class="seg" id="ratioSeg"><b data-v="4:5">4:5</b><b class="on" data-v="9:16">9:16</b><b data-v="1:1">1:1</b></div>
+          <div class="seg" id="ratioSeg"><b class="on" data-v="9:16">9:16</b><b data-v="1:1">1:1</b></div>
         </div>
       </div>
 
@@ -363,7 +381,7 @@ function baBlock(durClass){
   const b='<div class="half"><div class="batag">BEFORE</div><div class="bath">ก่อน</div>'+imgEl(RC.imgB,'เพิ่มรูปก่อน')+'</div>';
   const a='<div class="half after"><div class="batag a">AFTER</div><div class="bath">หลัง</div>'+imgEl(RC.imgA,'เพิ่มรูปหลัง')+'</div>';
   const dir=RC.ba==='tb'?'flex-direction:column':'';
-  const dur=RC.period?'<div class="durpill '+durClass+'">'+I.cal+RC.period+'</div>':'';
+  const dur=(RC.period&&durClass!=='none')?'<div class="durpill '+durClass+'">'+I.cal+RC.period+'</div>':'';
   return '<div class="ba" style="'+dir+'">'+b+'<div class="chev">'+I.chev+'</div>'+a+dur+'</div>';
 }
 function logoRow(label,solid){return '<div class="brow"><div class="logo"><div class="tile"><img src="'+LOGO+'"></div><div class="wm">IUFIT</div></div><div class="label '+(solid?'solid':'')+'">'+label+'</div></div>';}
@@ -389,39 +407,47 @@ function multiChart(series,w,h){
 
 /* ===== RESULT CARD ===== */
 function tplResult(){
-  const coach=RC.coachName?'<div class="prof" style="gap:14px">'+avatar(RC.imgC,'C',92)+'<div style="flex:1"><div class="nm" style="font-size:30px">'+RC.coachName+(RC.verified?VBADGE:'')+'</div><div class="handle">'+(RC.coachHandle||'')+'</div></div><div style="width:2px;height:80px;background:#e6ebf3"></div><div style="flex:1">'+avatar(RC.imgU,(RC.userName||'A')[0],64)+'<div class="nm" style="font-size:26px;margin-top:8px">'+(RC.userName||'')+'</div><div class="goal" style="font-size:19px">'+(RC.goal||'')+'</div></div></div>'
-   :'<div class="prof">'+avatar(RC.imgU,(RC.userName||'A')[0],92)+'<div><div class="nm">'+(RC.userName||'')+'</div><div class="goal">'+(RC.goal||'')+'</div></div></div>';
-  const wc=wchange();
+  const dense=DENSE();const wc=wchange();const nO=v=>(''+v).replace(/[^0-9.]/g,'')||'–';
   const t=[];
-  if(wc!=null)t.push(statTile(I.scale,'น้ำหนัก',sign(wc),'กก.'));
-  if(RC.bfBefore!=null&&RC.bfAfter!=null)t.push(statTile(I.percent,'%ไขมัน',sign(RC.bfAfter-RC.bfBefore)+'%',''));
-  if(RC.muscleChange!=null)t.push(statTile(I.muscle,'กล้ามเนื้อ',sign(RC.muscleChange)+'%',''));
-  if(RC.waistChange!=null)t.push(statTile(I.waist,'รอบเอว',sign(RC.waistChange),'ซม.'));
-  if(RC.workoutCount!=null)t.push(statTile(I.dumbbell,'ออกกำลังกาย',RC.workoutCount,'ครั้ง'));
-  const t2=[];
-  if(RC.proteinAvg!=null)t2.push(statTile(I.shake,'โปรตีนเฉลี่ย',RC.proteinAvg,'g/วัน'));
-  if(RC.streakDays!=null)t2.push(statTile(I.flame,'สตรีค',RC.streakDays,'วัน'));
-  if(RC.planCompletion!=null)t2.push(statTile(I.clip,'ทำตามแผน',RC.planCompletion+'%',''));
-  return '<div class="tech"></div><div class="cc"><div class="sheet">'+logoRow('RESULT CARD')+coach+baBlock('corner')+
-    '<div class="stats">'+t.slice(0,5).join('')+'</div>'+((!DENSE()&&t2.length)?'<div class="stats">'+t2.join('')+'</div>':'')+(RC.quote?'<div class="qline">“'+RC.quote+'”</div>':'')+
-    '<div class="cta"><div class="ico"><img src="'+LOGO+'"></div><div class="ct"><b>บันทึกและติดตามผลด้วย IUFIT</b><span>ทุกความเปลี่ยนแปลง เริ่มต้นที่การลงมือทำ</span></div><div class="sbtn">'+I.share+'แชร์</div></div>'+
+  if(dense&&RC.period)t.push(statTile(I.cal,'ระยะเวลา',nO(RC.period),'สัปดาห์'));
+  if(wc!=null)t.push(statTile(I.scale,'น้ำหนักที่เปลี่ยน',sign(wc),'กก.'));
+  if(RC.bfBefore!=null&&RC.bfAfter!=null)t.push(statTile(I.percent,'ไขมันที่ลดลง',sign(RC.bfAfter-RC.bfBefore),'%'));
+  if(RC.waistChange!=null)t.push(statTile(I.waist,'รอบเอวที่ลดลง',sign(RC.waistChange),'ซม.'));
+  return '<div class="tech"></div><div class="cc"><div class="sheet">'+
+    '<div class="logo" style="justify-content:center"><div class="tile"><img src="'+LOGO+'"></div><div class="wm">IUFIT</div></div>'+
+    '<div class="tagline">TRAIN SMARTER · LIVE BETTER</div>'+
+    '<div class="bigtitle">ผลลัพธ์<span class="b">ของฉัน</span></div>'+
+    '<div class="bigsub">ความพยายามในวันนี้ สร้างฉันในเวอร์ชันที่ดีกว่า</div>'+
+    baBlock(dense?'none':'center')+
+    '<div class="stats">'+t.join('')+'</div>'+
+    (RC.quote?'<div class="qline">“'+RC.quote+'”</div>':'')+
+    '<div class="cta"><div class="ico"><img src="'+LOGO+'"></div><div class="ct"><b>บันทึกผลลัพธ์กับ IUFIT</b><span>แอปที่เข้าใจคุณ วางแผนเฉพาะคุณ เห็นผลจริง</span></div><div class="sbtn">บันทึกเลย '+I.chev+'</div></div>'+
     '<div class="disc">ผลลัพธ์ขึ้นอยู่กับแต่ละบุคคล</div></div></div>';
 }
 /* ===== COACH STORY ===== */
 function tplCoach(){
-  const chips=(RC.specialties||[]).slice(0,3).map((s,i)=>'<div class="chip">'+([I.flame,I.dumbbell,I.leaf][i]||I.target)+s+'</div>').join('');
-  const wc=wchange();const t=[];
+  const spec=(RC.specialties&&RC.specialties.length)?RC.specialties.join(' • '):'ลดไขมัน • สร้างกล้ามเนื้อ • ปรับรูปร่าง';
+  const wc=wchange();
+  const t=[];
   if(wc!=null)t.push(statTile(I.scale,'น้ำหนัก',sign(wc),'กก.'));
+  if(RC.bfBefore!=null&&RC.bfAfter!=null)t.push(statTile(I.percent,'ไขมันในร่างกาย',sign(RC.bfAfter-RC.bfBefore),'%'));
   if(RC.waistChange!=null)t.push(statTile(I.waist,'รอบเอว',sign(RC.waistChange),'ซม.'));
-  if(RC.workoutCount!=null)t.push(statTile(I.dumbbell,'ออกกำลังกาย',RC.workoutCount,'ครั้ง'));
-  if(RC.muscleChange!=null)t.push(statTile(I.muscle,'กล้ามเนื้อ',sign(RC.muscleChange)+'%',''));
-  const vals=[['โปรแกรมเทรน','เหมาะกับเป้าหมายของลูกค้า',I.dumbbell],['วางแผนโภชนาการ','กินถูกต้อง อร่อย ทำตามได้จริง',I.leaf],['ติดตามความก้าวหน้า','เห็นผลลัพธ์ชัดเจน ปรับแผนได้',I.chart]];
-  return '<div class="tech"></div><div class="cc"><div class="sheet">'+logoRow('COACH STORY')+
-    '<div class="prof">'+avatar(RC.imgC,(RC.coachName||'C')[0],132)+'<div style="flex:1"><div class="nm">'+(RC.coachName||'Coach')+(RC.verified?VBADGE:'')+'</div><div class="handle">'+(RC.coachHandle||'')+'</div><div class="chips">'+chips+'</div></div></div>'+
-    baBlock('center')+'<div class="stats">'+t.join('')+'</div>'+
-    (RC.quote?'<div class="quote"><div class="qm">“</div><div class="qt">'+RC.quote+'</div><img class="wmk" src="'+LOGO+'"></div>':'')+
-    (RC.ratio==='9:16'?'<div class="valhead">ติดตามโดย IUFIT</div><div class="vals">'+vals.map(v=>'<div class="val"><div class="vi">'+v[2]+'</div><b>'+v[0]+'</b><span>'+v[1]+'</span></div>').join('')+'</div>':'')+
-    '<div class="cta"><div class="ico"><img src="'+LOGO+'"></div><div class="ct"><b>เริ่มเทรนกับโค้ชนี้บน IUFIT</b><span>แชร์ผลลัพธ์ · สร้างความน่าเชื่อถือ · สร้างแบรนด์โค้ช</span></div></div></div></div>';
+  const info='<div class="info3">'+
+    '<div class="it"><div class="ii">'+I.target+'</div><div><div class="il">เป้าหมาย</div><div class="iv">'+(RC.goal||'ลดไขมัน สร้างกล้ามเนื้อ')+'</div></div></div>'+
+    '<div class="it"><div class="ii">'+I.cal+'</div><div><div class="il">ระยะเวลา</div><div class="iv">'+(RC.period||'– สัปดาห์')+'</div></div></div>'+
+    '<div class="it"><div class="ii">'+I.trophy+'</div><div><div class="il">สรุปผลลัพธ์</div><div class="iv">'+(RC.summary||'ลดไขมัน เห็นกล้ามชัดขึ้น')+'</div></div></div>'+
+    '</div>';
+  const quote=RC.quote?'<div class="cquote"><span class="qm">“</span><div class="qt">'+RC.quote+'</div><div class="stars">★★★★★<span class="cby">— '+(RC.userName||'ลูกค้า')+'</span></div></div>':'';
+  return '<div class="tech"></div><div class="cc"><div class="sheet">'+
+    '<div class="logo" style="justify-content:center"><div class="tile"><img src="'+LOGO+'"></div><div class="wm">IUFIT</div></div>'+
+    '<div class="tagline">COACH TRANSFORMATION STORY</div>'+
+    '<div class="prof"><div style="flex:none">'+avatar(RC.imgC,(RC.coachName||'C')[0],120)+'</div><div style="flex:1"><div class="crole">เทรนเนอร์</div><div class="nm">'+(RC.coachName||'ชื่อโค้ชของคุณ')+(RC.verified?VBADGE:'')+'</div><div class="handle">Personal Trainer · IUFIT COACH</div><div class="goal" style="font-size:20px;margin-top:4px">'+spec+'</div></div></div>'+
+    baBlock('none')+
+    info+
+    '<div class="stats">'+t.join('')+'</div>'+
+    quote+
+    '<div class="cta"><div class="ico"><img src="'+LOGO+'"></div><div class="ct"><b>เทรนกับโค้ชผ่าน IUFIT</b><span>วางแผน · ติดตามผล · เห็นผลจริง</span></div><div class="sbtn">สร้างผลลัพธ์ '+I.chev+'</div></div>'+
+    '<div class="disc">IUFIT · แอปเทรนออนไลน์ของไทย</div></div></div>';
 }
 /* ===== MONTHLY TRANSFORMATION (progress) ===== */
 function mtPhotos(){
@@ -484,7 +510,7 @@ function applyEmbed(d){
     if(d.coach.handle!=null){RC.coachHandle=d.coach.handle; if($('coachHandle'))$('coachHandle').value=d.coach.handle;} }
   if(d.mode==='client'){ /* general user / trainee: hide coach template entirely */
     var _ct=document.querySelector('#tplTabs .tab[data-v="coach"]'); if(_ct) _ct.style.display='none';
-    var pt=document.querySelector('#tplTabs .tab[data-v="progress"]'); if(pt) pt.click();
+    var pt=document.querySelector('#tplTabs .tab[data-v="result"]'); if(pt) pt.click();
     if($('coachName')){$('coachName').value='';RC.coachName='';} }
   // rebuild dropdown from real data
   initSource();
