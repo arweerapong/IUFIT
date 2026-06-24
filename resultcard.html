@@ -663,10 +663,10 @@ function render(){
   card.innerHTML=RC.tpl==='result'?tplResult():RC.tpl==='stats'?tplStats():tplCoach();
   var stageW=Math.min(398,$('scaler').parentElement.clientWidth-36);
   var sc=stageW/1080;
-  $('scaler').style.transformOrigin='top left';
+  $('scaler').style.transformOrigin='top center';
+  $('scaler').style.width='';
   $('scaler').style.transform='scale('+sc+')';
   var realH=isStats?card.offsetHeight:H;
-  $('scaler').style.width=(1080*sc)+'px';
   $('scaler').style.height=(realH*sc)+'px';
 }
 window.addEventListener('resize',render);
