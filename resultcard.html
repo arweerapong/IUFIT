@@ -558,7 +558,7 @@ function tplStats(){
   var grid='<div class="sgrid">'+(bf?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),fmt(RC.bfAfter),'%',sdDn((RC.bfAfter-RC.bfBefore<0?'':'+')+fmt(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.muscleChange!=null?sCard(I.muscle,T('กล้ามเนื้อ','Muscle'),sign(RC.muscleChange),'%',sSub(T('เปลี่ยนแปลง','change'))):'')+(RC.waistAfter!=null||RC.waistChange!=null?sCard(I.waist,T('รอบเอว','Waist'),(RC.waistAfter!=null?fmt(RC.waistAfter):sign(RC.waistChange)),CM,(RC.waistChange?sdDn(sign(RC.waistChange)+' '+CM):'')):'')+(RC.workoutCount!=null?sCard(I.dumbbell,T('ออกกำลังกาย','Workouts'),RC.workoutCount,T('ครั้ง','x'),''):'')+(totalK!=null?sCard(I.flame,T('แคลอรี่ทั้งหมด','Total calories'),fmt(totalK),T('แคลอรี','kcal'),sSub(T('เฉลี่ย/วัน ','Avg/day ')+fmt(RC.caloriesAvg))):'')+(RC.streakDays!=null?sCard(I.cal,T('ต่อเนื่อง','Streak'),RC.streakDays,T('วัน','days'),sSub(T('ไม่ขาดเลย!','No misses!'))):'')+(RC.planCompletion!=null?sCard(I.clip,T('วินัยรายเดือน','Discipline'),RC.planCompletion,'%',sSub(T('สม่ำเสมอเยี่ยม!','Super consistent!'))):'')+'</div>';
   var lostTxt=(lost!=null&&lost<0)?(T('คุณลดน้ำหนักได้ ','You lost ')+fmt(Math.abs(lost))+' '+KG+(en?' this month':' ในเดือนนี้')):(T('เดินหน้าต่อเนื่อง','Keep up the momentum'));
   var achieve='<div class="achieve"><div class="at"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg></div><div><b>'+T('ยอดเยี่ยม! ','Great! ')+lostTxt+'</b><span>'+T('คุณกำลังเข้าใกล้เป้าหมายมากขึ้นทุกวัน!','Getting closer to your goal every day!')+'</span></div></div>';
-  var trend=(tw&&tw.length>=2)?'<div class="trendc"><div class="th"><b>'+T('แนวโน้มน้ำหนัก (6 เดือน)','Weight trend (6 months)')+'</b><span>'+T('หน่วย: กก.','unit: kg')+'</span></div>'+trendSVG(tw,goalW,KG)+'</div>':'';
+  var trend=(!DENSE()&&tw&&tw.length>=2)?'<div class="trendc"><div class="th"><b>'+T('แนวโน้มน้ำหนัก (6 เดือน)','Weight trend (6 months)')+'</b><span>'+T('หน่วย: กก.','unit: kg')+'</span></div>'+trendSVG(tw,goalW,KG)+'</div>':'';
   var quote='<div class="quote"><div class="qm">“</div><div class="qt">'+(RC.quote||T('ทุกก้าวเล็ก ๆ ในวันนี้ คือความสำเร็จที่ยิ่งใหญ่ในวันข้างหน้า','Every small step today is a big win tomorrow'))+'</div><div class="qm r">”</div></div>';
   var foot='<div class="foot"><div class="ic"><img class="appicon" src="'+APPICON+'"></div><div class="ft"><b>'+T('บันทึกผลลัพธ์กับ IUFIT','Save your results with IUFIT')+'</b><span>'+T('ติดตามผลลัพธ์ วางแผนเฉพาะคุณ เห็นผลจริง','Track results · plan for you · real progress')+'</span></div><div class="cta">'+T('แชร์','Share')+' '+ARROW+'</div></div>';
   return head+hero+grid+achieve+trend+quote+foot+'</div>';
@@ -656,15 +656,17 @@ function tplProgress(){
 function render(){
   var card=$('card');
   var isStats=(RC.tpl==='stats');
-  card.className=RC.tpl+' '+(isStats?'sq':(RC.ratio==='1:1'?'sq':'t916'));
+  card.className=RC.tpl+' '+(RC.ratio==='1:1'?'sq':'t916');
   var H=RH[RC.ratio];
   if(isStats){card.style.height='auto';card.style.minHeight='';}
   else{card.style.height=H+'px';card.style.minHeight='';}
   card.innerHTML=RC.tpl==='result'?tplResult():RC.tpl==='stats'?tplStats():tplCoach();
   var stageW=Math.min(398,$('scaler').parentElement.clientWidth-36);
   var sc=stageW/1080;
+  $('scaler').style.transformOrigin='top left';
   $('scaler').style.transform='scale('+sc+')';
   var realH=isStats?card.offsetHeight:H;
+  $('scaler').style.width=(1080*sc)+'px';
   $('scaler').style.height=(realH*sc)+'px';
 }
 window.addEventListener('resize',render);
@@ -727,7 +729,7 @@ function applyEmbed(d){
       var vis=_visSteps(); if(vis.indexOf(STEP)<0)STEP=2;
       for(var i=0;i<4;i++) steps[i].style.display=(i===STEP?'block':'none');
       var dots=wiz.querySelectorAll('#wizdots i'); for(var j=0;j<dots.length;j++){dots[j].style.display=(vis.indexOf(j)<0?'none':'');dots[j].className=(j===STEP?'on':'');}
-      if(_rwrap)_rwrap.style.display=_statsT()?'none':'';
+      if(_rwrap)_rwrap.style.display='';
       var wb=wiz.querySelector('#wback'),wn=wiz.querySelector('#wnext');
       wb.style.visibility=(STEP===vis[0]?'hidden':'visible');
       wn.style.display=(STEP===3?'none':''); wb.style.flex=(STEP===3?'1':'');
