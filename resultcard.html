@@ -250,7 +250,7 @@ input[type=file]{display:none}
 
 #card.stats .title{font-size:60px}
 #card.stats .applogo{font-size:56px}
-#card.stats .cc{gap:22px;height:auto}
+#card.stats .cc{gap:20px;justify-content:center}
 body.embed .app{display:none}
 body.embed{background:#eef2f8}
 .wiz{position:fixed;inset:0;display:flex;flex-direction:column;background:#eef2f8;font-family:'Kanit',sans-serif;z-index:50}
@@ -658,15 +658,14 @@ function render(){
   var isStats=(RC.tpl==='stats');
   card.className=RC.tpl+' '+(RC.ratio==='1:1'?'sq':'t916');
   var H=RH[RC.ratio];
-  if(isStats){card.style.height='auto';card.style.minHeight='';}
-  else{card.style.height=H+'px';card.style.minHeight='';}
+  card.style.height=H+'px';card.style.minHeight='';
   card.innerHTML=RC.tpl==='result'?tplResult():RC.tpl==='stats'?tplStats():tplCoach();
   var stageW=Math.min(398,$('scaler').parentElement.clientWidth-36);
   var sc=stageW/1080;
   $('scaler').style.transformOrigin='top center';
   $('scaler').style.width='';
   $('scaler').style.transform='scale('+sc+')';
-  var realH=isStats?card.offsetHeight:H;
+  var realH=H;
   $('scaler').style.height=(realH*sc)+'px';
 }
 window.addEventListener('resize',render);
@@ -755,12 +754,12 @@ async function capture(){
   var host=document.createElement('div');
   host.style.cssText='position:fixed;left:-100000px;top:0;width:1080px;margin:0;padding:0;background:transparent;z-index:-1;pointer-events:none';
   var clone=src.cloneNode(true);
-  clone.style.transform='none';clone.style.width='1080px';clone.style.height=isStats?'auto':(H+'px');clone.style.minHeight='';
+  clone.style.transform='none';clone.style.width='1080px';clone.style.height=H+'px';clone.style.minHeight='';
   host.appendChild(clone);document.body.appendChild(host);
   var imgs=Array.prototype.slice.call(clone.querySelectorAll('img'));
   await Promise.all(imgs.map(function(im){return (im.complete&&im.naturalWidth)?Promise.resolve():new Promise(function(r){im.onload=im.onerror=r;});}));
   void clone.offsetHeight;
-  var capH=isStats?Math.round(clone.offsetHeight):H;
+  var capH=H;
   var canvas;
   try{ canvas=await html2canvas(clone,{scale:2,width:1080,height:capH,windowWidth:1080,windowHeight:capH,backgroundColor:null,useCORS:true,logging:false}); }
   finally{ host.remove(); }
