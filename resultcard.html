@@ -497,7 +497,6 @@ function applyEmbed(d){
       if(t.indexOf('เทมเพลต')>=0) tplP=p;
       if(t.indexOf('แหล่งข้อมูล')>=0) srcP=p;
     });
-    var r=document.getElementById('ratioSeg'); if(r&&r.parentElement)r.parentElement.style.display='none';
     var ba=document.getElementById('baSeg'); if(ba){var br=ba.closest('.row'); if(br)br.style.display='none';}
     var rows=document.querySelectorAll('#imgPanel .row'); if(rows[1])rows[1].style.display='none';
     var nt=document.querySelector('#imgPanel .note'); if(nt)nt.style.display='none';
