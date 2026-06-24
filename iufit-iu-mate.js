@@ -834,7 +834,7 @@ var IUMate = {
     }
     runAction(action, payload);
   },
-  _pq:function(v){ ST.pickerQuery=v; renderPicker(); },
+  _pq:function(v){ ST.pickerQuery=v; if(ST._pqT)clearTimeout(ST._pqT); ST._pqT=setTimeout(function(){ renderPicker(); var el=document.querySelector('#iuMateIp .search'); if(el){ try{ el.focus(); var n=(''+el.value).length; el.setSelectionRange(n,n); }catch(e){} } }, 260); },
   _pg:function(g){ ST.pickerGrp=g; renderPicker(); },
   _ptoggle:function(id){ pickerToggle(id); },
   _pgo:function(){ pickerGo(); },
@@ -842,7 +842,7 @@ var IUMate = {
   _previewAdd:function(rid){ modalClose(); confirmAddRecipe(rid); },
   _sex:function(x){ readCalcInputs(); ST.calc.sex=x; openCalcForm(ST.calc); },
   _goal:function(x){ readCalcInputs(); ST.calc.goal=x; openCalcForm(ST.calc); },
-  _calc:function(){ readCalcInputs(); var p=ST.calc||{}; if(p.w==null||p.h==null||p.age==null||p.sex==null){ appToast(L('กรอกเพศ อายุ ส่วนสูง น้ำหนักให้ครบก่อนครับ','Please fill sex, age, height and weight')); return; } modalClose(); if(!ST.isOpen) IUMate.open('global'); pushReply(calcReply(p)); },
+  _calc:function(){ readCalcInputs(); var p=ST.calc||{}; if(p.w==null||p.h==null||p.age==null||p.sex==null){ appToast(L('กรอกเพศ อายุ ส่วนสูง น้ำหนักให้ครบก่อนครับ','Please fill sex, age, height and weight')); return; } if(!(p.age>=10&&p.age<=100)||!(p.h>=120&&p.h<=220)||!(p.w>=30&&p.w<=250)){ appToast(L('ตรวจค่าอีกครั้ง: อายุ 10–100 ปี · สูง 120–220 ซม. · หนัก 30–250 กก.','Check values: age 10–100 · height 120–220 cm · weight 30–250 kg')); return; } modalClose(); if(!ST.isOpen) IUMate.open('global'); pushReply(calcReply(p)); },
   acceptConsent:function(){ var coachData=true; var cb=document.getElementById('iuMateCoachConsent'); if(cb) coachData=!!cb.checked; saveConsent(coachData); ST.messages=[]; ST.messages.push({role:'botText',text:greeting()}); renderSheet(); renderFab(); },
   declineConsent:function(){ closeNow(); },
   showPrivacy:function(){ showConfirm({ title:L('ความเป็นส่วนตัว','Privacy'), body:L('IU Mate ทำงานในเครื่อง บทสนทนาไม่ถูกบันทึกหรือส่งออกนอกเครื่อง และอ่านข้อมูลในแอปเพื่อช่วยสรุปเท่านั้น','IU Mate runs on-device. Conversations are not saved or sent anywhere, and it only reads your in-app data to help summarize.'), yes:L('เพิกถอนความยินยอม','Withdraw consent'), onYes:function(){ revokeConsent(); appToast(L('เพิกถอนความยินยอมแล้ว','Consent withdrawn')); closeNow(); } }); },
