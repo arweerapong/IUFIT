@@ -205,6 +205,9 @@ input[type=file]{display:none}
 /* ===== Stats Dashboard template (no photo) ===== */
 .heroc{display:flex;gap:22px;align-items:center;background:var(--glass);border:1px solid var(--line);border-radius:26px;padding:26px 30px;box-shadow:0 16px 42px rgba(13,54,110,.10)}
 .heroc .hcol{flex:1;min-width:0}
+.heroc .hring{display:flex;align-items:center;gap:18px;flex:none}
+.heroc .hrtx{font-size:20px;color:var(--mut);font-weight:600;line-height:1.5}
+.heroc .hrtx span{color:var(--navy);font-weight:800}
 .hlbl{display:flex;align-items:center;gap:11px;font-size:20px;color:var(--mut);font-weight:600}
 .hlbl .hi{width:50px;height:50px;border-radius:14px;background:#eef4ff;display:flex;align-items:center;justify-content:center;flex:none}
 .hlbl .hi svg{width:27px;height:27px;color:var(--blue)}
@@ -219,8 +222,8 @@ input[type=file]{display:none}
 .ring svg{width:210px;height:210px}
 .ring .pc{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:50px;font-weight:800;color:var(--navy)}
 .ring .pc small{font-size:26px}
-.sgrid{display:flex;gap:16px}
-.scard{flex:1;background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:18px 16px;box-shadow:0 12px 30px rgba(13,54,110,.07);text-align:center}
+.sgrid{display:flex;gap:16px;flex-wrap:wrap}
+.scard{flex:1 1 240px;background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:18px 16px;box-shadow:0 12px 30px rgba(13,54,110,.07);text-align:center}
 .scard .si{width:52px;height:52px;border-radius:14px;background:#eef4ff;display:flex;align-items:center;justify-content:center;margin:0 auto 11px}
 .scard .si svg{width:28px;height:28px;color:var(--blue)}
 .scard .sl{font-size:18px;color:var(--mut);font-weight:600}
@@ -245,9 +248,9 @@ input[type=file]{display:none}
 .cc>*{flex-shrink:0}
 
 
-#card.stats.sq .title{font-size:56px}
-#card.stats.sq .cc{gap:16px;justify-content:center}
-#card.stats.t916 .cc{justify-content:space-between}
+#card.stats .title{font-size:60px}
+#card.stats .applogo{font-size:56px}
+#card.stats .cc{gap:22px;height:auto}
 body.embed .app{display:none}
 body.embed{background:#eef2f8}
 .wiz{position:fixed;inset:0;display:flex;flex-direction:column;background:#eef2f8;font-family:'Kanit',sans-serif;z-index:50}
@@ -443,7 +446,7 @@ $('verified').addEventListener('change',e=>{RC.verified=e.target.checked;render(
 $('consent').addEventListener('change',e=>{RC.consent=e.target.checked;$('dl').disabled=!e.target.checked;$('sh').disabled=!e.target.checked;});
 function segBind(id,key){$(id).querySelectorAll('b').forEach(b=>b.addEventListener('click',()=>{$(id).querySelectorAll('b').forEach(x=>x.classList.remove('on'));b.classList.add('on');RC[key]=b.dataset.v;render();}));}
 segBind('ratioSeg','ratio');segBind('baSeg','ba');
-$('tplTabs').querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{$('tplTabs').querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');RC.tpl=t.dataset.v;RC.ratio=NAT[RC.tpl];$('ratioSeg').querySelectorAll('b').forEach(b=>b.classList.toggle('on',b.dataset.v===RC.ratio));render();}));
+$('tplTabs').querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{$('tplTabs').querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));t.classList.add('on');RC.tpl=t.dataset.v;RC.ratio=NAT[RC.tpl];$('ratioSeg').querySelectorAll('b').forEach(b=>b.classList.toggle('on',b.dataset.v===RC.ratio));render();if(window._wizRefresh)try{window._wizRefresh();}catch(e){}}));
 
 /* ---- mock history (simulates app S) ---- */
 const MOCK_HISTORY={
@@ -539,7 +542,7 @@ function ringSVG(pct){var C=2*Math.PI*88;var off=C*(1-pct);return '<div class="r
 function _monthLabels(n){var thM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];var enM=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];var arr=L==='en'?enM:thM;var now=new Date().getMonth();var out=[];for(var i=n-1;i>=0;i--){out.push(arr[((now-i)%12+12)%12]);}return out;}
 function trendSVG(arr,goalW,unit){if(!arr||arr.length<2)arr=[RC.wBefore||0,RC.wAfter||0];var ex=goalW!=null?arr.concat([goalW]):arr;var vmin=Math.min.apply(null,ex)-1,vmax=Math.max.apply(null,ex)+1;if(vmax<=vmin)vmax=vmin+1;var n=arr.length,x0=80,x1=900,top=30,bot=210;function X(i){return x0+(x1-x0)*i/(n-1);}function Y(v){return top+(vmax-v)/(vmax-vmin)*(bot-top);}var pts=arr.map(function(v,i){return X(i).toFixed(0)+','+Y(v).toFixed(1);}).join(' ');var dots=arr.map(function(v,i){return '<circle cx="'+X(i).toFixed(0)+'" cy="'+Y(v).toFixed(1)+'" r="7" fill="#0A84FF" stroke="#fff" stroke-width="3"/>';}).join('');var labs=arr.map(function(v,i){return '<text x="'+X(i).toFixed(0)+'" y="'+(Y(v)-16).toFixed(1)+'" text-anchor="middle" font-size="20" font-weight="800" fill="#10233F" font-family="Kanit">'+fmt(v)+'</text>';}).join('');var mo=_monthLabels(n);var xlab=mo.map(function(m,i){return '<text x="'+X(i).toFixed(0)+'" y="248" text-anchor="middle" font-size="19" fill="#7B8AA5" font-family="Kanit">'+m+'</text>';}).join('');var gl='';if(goalW!=null){var gy=Y(goalW);gl='<line x1="60" y1="'+gy.toFixed(1)+'" x2="920" y2="'+gy.toFixed(1)+'" stroke="#9cc0f5" stroke-width="2" stroke-dasharray="7 6"/><text x="915" y="'+(gy-8).toFixed(1)+'" text-anchor="end" font-size="17" fill="#7B8AA5" font-family="Kanit">'+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+unit+'</text>';}return '<svg viewBox="0 0 980 270">'+gl+'<polyline points="'+pts+'" fill="none" stroke="#0A84FF" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>'+dots+labs+xlab+'</svg>';}
 function tplStats(){
-  var dense=DENSE(),en=(L==='en');var KG=T('กก.','kg'),CM=T('ซม.','cm');
+  var en=(L==='en');var KG=T('กก.','kg'),CM=T('ซม.','cm');
   var tw=RC.trendW&&RC.trendW.length?RC.trendW:null;
   var startW=tw?tw[0]:(RC.wBefore!=null?RC.wBefore:RC.wAfter);
   var curW=(RC.wAfter!=null)?RC.wAfter:(tw?tw[tw.length-1]:0);
@@ -547,25 +550,19 @@ function tplStats(){
   var lost=(curW!=null&&startW!=null)?Math.round((curW-startW)*10)/10:null;
   var pct=0;if(goalW!=null&&startW!=null&&startW!==goalW)pct=Math.max(0,Math.min(1,(startW-curW)/(startW-goalW)));
   var rem=(goalW!=null)?Math.max(0,Math.round((curW-goalW)*10)/10):null;
-  var bf=(RC.bfBefore!=null&&RC.bfAfter!=null)?sign(RC.bfAfter-RC.bfBefore):null;
+  var bf=(RC.bfBefore!=null&&RC.bfAfter!=null);
   var daysN=RC.period?(parseInt((''+RC.period).replace(/[^0-9]/g,''))||4)*7:(RC.streakDays||30);
   var totalK=(RC.caloriesAvg!=null)?Math.round(RC.caloriesAvg*daysN):null;
-  var head='<div class="tech"></div><div class="cc" style="gap:20px">'+LOGOWM+'<div class="tag">TRAIN SMARTER • LIVE BETTER</div><div class="title">'+T('ผลลัพธ์<span class="b">ของฉัน</span>','My <span class="b">Results</span>')+'</div><div class="subln"><span class="ln"></span><span>'+T('ความพยายามในวันนี้ สร้างฉันในเวอร์ชันที่ดีกว่า',"Today's effort builds a better me")+'</span><span class="ln r"></span></div>';
+  var head='<div class="tech"></div><div class="cc">'+LOGOWM+'<div class="tag">TRAIN SMARTER • LIVE BETTER</div><div class="title">'+T('ผลลัพธ์<span class="b">ของฉัน</span>','My <span class="b">Results</span>')+'</div><div class="subln"><span class="ln"></span><span>'+T('ความพยายามในวันนี้ สร้างฉันในเวอร์ชันที่ดีกว่า',"Today's effort builds a better me")+'</span><span class="ln r"></span></div>';
+  var hero='<div class="heroc"><div class="hcol"><div class="hlbl"><div class="hi">'+I.scale+'</div>'+T('น้ำหนักปัจจุบัน','Current weight')+'</div><div class="hbig">'+fmt(curW)+'<small> '+KG+'</small></div>'+(goalW!=null?'<div class="hchip">'+I.target+' '+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+KG+'</div>':'')+'</div><div class="hsep"></div><div class="hcol"><div class="hlbl"><div class="hi">'+I.chart+'</div>'+T('ลดลงในเดือนนี้','Lost this month')+'</div><div class="hbig blue">'+(lost!=null?sign(lost):'–')+'<small> '+KG+'</small></div></div>'+(goalW!=null?'<div class="hsep"></div><div class="hring">'+ringSVG(pct)+'<div class="hrtx">'+T('ความคืบหน้า<br>สู่เป้าหมาย','Progress<br>to goal')+(rem!=null?'<br><span>'+T('อีก ','')+fmt(rem)+' '+KG+(en?' to go':' ถึงเป้าหมาย')+'</span>':'')+'</div></div>':'')+'</div>';
+  var grid='<div class="sgrid">'+(bf?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),fmt(RC.bfAfter),'%',sdDn((RC.bfAfter-RC.bfBefore<0?'':'+')+fmt(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.muscleChange!=null?sCard(I.muscle,T('กล้ามเนื้อ','Muscle'),sign(RC.muscleChange),'%',sSub(T('เปลี่ยนแปลง','change'))):'')+(RC.waistAfter!=null||RC.waistChange!=null?sCard(I.waist,T('รอบเอว','Waist'),(RC.waistAfter!=null?fmt(RC.waistAfter):sign(RC.waistChange)),CM,(RC.waistChange?sdDn(sign(RC.waistChange)+' '+CM):'')):'')+(RC.workoutCount!=null?sCard(I.dumbbell,T('ออกกำลังกาย','Workouts'),RC.workoutCount,T('ครั้ง','x'),''):'')+(totalK!=null?sCard(I.flame,T('แคลอรี่ทั้งหมด','Total calories'),fmt(totalK),T('แคลอรี','kcal'),sSub(T('เฉลี่ย/วัน ','Avg/day ')+fmt(RC.caloriesAvg))):'')+(RC.streakDays!=null?sCard(I.cal,T('ต่อเนื่อง','Streak'),RC.streakDays,T('วัน','days'),sSub(T('ไม่ขาดเลย!','No misses!'))):'')+(RC.planCompletion!=null?sCard(I.clip,T('วินัยรายเดือน','Discipline'),RC.planCompletion,'%',sSub(T('สม่ำเสมอเยี่ยม!','Super consistent!'))):'')+'</div>';
   var lostTxt=(lost!=null&&lost<0)?(T('คุณลดน้ำหนักได้ ','You lost ')+fmt(Math.abs(lost))+' '+KG+(en?' this month':' ในเดือนนี้')):(T('เดินหน้าต่อเนื่อง','Keep up the momentum'));
   var achieve='<div class="achieve"><div class="at"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg></div><div><b>'+T('ยอดเยี่ยม! ','Great! ')+lostTxt+'</b><span>'+T('คุณกำลังเข้าใกล้เป้าหมายมากขึ้นทุกวัน!','Getting closer to your goal every day!')+'</span></div></div>';
-  var trend='<div class="trendc"><div class="th"><b>'+T('แนวโน้มน้ำหนัก (6 เดือน)','Weight trend (6 months)')+'</b><span>'+T('หน่วย: กก.','unit: kg')+'</span></div>'+trendSVG(tw,goalW,KG)+'</div>';
-  var foot='<div class="foot"><div class="ic"><img class="appicon" src="'+APPICON+'"></div><div class="ft"><b>'+T('บันทึกผลลัพธ์กับ IUFIT','Save your results with IUFIT')+'</b><span>'+T('ติดตามผลลัพธ์ วางแผนเฉพาะคุณ เห็นผลจริง','Track results · plan for you · real progress')+'</span></div><div class="cta">'+T('แชร์','Share')+' '+ARROW+'</div></div>';
-  if(dense){
-    var hero='<div class="heroc"><div class="hcol"><div class="hlbl"><div class="hi">'+I.scale+'</div>'+T('น้ำหนักปัจจุบัน','Current weight')+'</div><div class="hbig">'+fmt(curW)+'<small> '+KG+'</small></div>'+(goalW!=null?'<div class="hchip">'+I.target+' '+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+KG+'</div>':'')+'</div><div class="hsep"></div><div class="hcol"><div class="hlbl"><div class="hi">'+I.chart+'</div>'+T('ลดลงในเดือนนี้','Lost this month')+'</div><div class="hbig blue">'+(lost!=null?sign(lost):'–')+'<small> '+KG+'</small></div></div>'+(goalW!=null?'<div class="hsep"></div><div style="display:flex;align-items:center;gap:18px;flex:none">'+ringSVG(pct)+'<div style="font-size:20px;color:var(--mut);font-weight:600;line-height:1.5">'+T('ความคืบหน้า<br>สู่เป้าหมาย','Progress<br>to goal')+'<br><span style="color:var(--navy);font-weight:800">'+T('อีก ','')+fmt(rem)+' '+KG+(en?' to go':' ถึงเป้าหมาย')+'</span></div></div>':'')+'</div>';
-    var grid='<div class="sgrid">'+(bf!=null?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),fmt(RC.bfAfter),'%',sdDn((RC.bfAfter-RC.bfBefore<0?'':'+')+fmt(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.workoutCount!=null?sCard(I.dumbbell,T('ออกกำลังกาย','Workouts'),RC.workoutCount,T('ครั้ง','x'),''):'')+(totalK!=null?sCard(I.flame,T('แคลอรี่ทั้งหมด','Total calories'),fmt(totalK),T('แคลอรี','kcal'),sSub(T('เฉลี่ย/วัน ','Avg/day ')+fmt(RC.caloriesAvg))):'')+(RC.streakDays!=null?sCard(I.cal,T('ต่อเนื่อง','Streak'),RC.streakDays,T('วัน','days'),sSub(T('ไม่ขาดเลย!','No misses!'))):'')+(RC.planCompletion!=null?sCard(I.clip,T('วินัยรายเดือน','Discipline'),RC.planCompletion,'%',sSub(T('สม่ำเสมอเยี่ยม!','Super consistent!'))):'')+'</div>';
-    return head+hero+grid+achieve+foot+'</div>';
-  }
-  var hero='<div class="heroc"'+(goalW!=null?'':' style="justify-content:center"')+'><div class="hcol"'+(goalW!=null?'':' style="flex:none;text-align:center;max-width:560px"')+'><div class="hlbl"'+(goalW!=null?'':' style="justify-content:center"')+'><div class="hi">'+I.scale+'</div>'+T('น้ำหนักปัจจุบัน','Current weight')+'</div><div class="hbig">'+fmt(curW)+'<small> '+KG+'</small></div>'+(lost!=null?'<div class="hchip down"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg> '+sign(lost)+' '+KG+' '+T('ลดจากเดือนที่แล้ว','vs last month')+'</div>':'')+'</div>'+(goalW!=null?'<div class="hsep"></div><div style="display:flex;flex-direction:column;align-items:center;gap:8px;flex:none">'+ringSVG(pct)+'<div style="font-size:20px;color:var(--mut);font-weight:700;text-align:center">'+T('ความคืบหน้าสู่เป้าหมาย','Progress to goal')+'<br><span style="font-size:17px;font-weight:600">'+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+KG+'</span></div></div>':'')+'</div>';
-  var grid='<div style="text-align:center;font-size:24px;font-weight:800;color:var(--blue);margin:2px 0 -6px">'+T('เดือนนี้','This month')+'</div><div class="sgrid">'+(bf!=null?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),fmt(RC.bfAfter),'%',sdDn(sign(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.muscleChange!=null?sCard(I.muscle,T('กล้ามเนื้อ','Muscle'),sign(RC.muscleChange),'%',sSub(T('เปลี่ยนแปลง','change'))):'')+(RC.waistAfter!=null||RC.waistChange!=null?sCard(I.waist,T('รอบเอว','Waist'),(RC.waistAfter!=null?fmt(RC.waistAfter):sign(RC.waistChange)),CM,(RC.waistChange?sdDn(sign(RC.waistChange)+' '+CM):'')):'')+(RC.proteinAvg!=null?sCard(I.shake,T('โปรตีนเฉลี่ย/วัน','Protein/day'),RC.proteinAvg,'g',sSub(T('เป้าหมาย 120 g','Goal 120 g'))):'')+'</div>';
+  var trend=(tw&&tw.length>=2)?'<div class="trendc"><div class="th"><b>'+T('แนวโน้มน้ำหนัก (6 เดือน)','Weight trend (6 months)')+'</b><span>'+T('หน่วย: กก.','unit: kg')+'</span></div>'+trendSVG(tw,goalW,KG)+'</div>':'';
   var quote='<div class="quote"><div class="qm">“</div><div class="qt">'+(RC.quote||T('ทุกก้าวเล็ก ๆ ในวันนี้ คือความสำเร็จที่ยิ่งใหญ่ในวันข้างหน้า','Every small step today is a big win tomorrow'))+'</div><div class="qm r">”</div></div>';
+  var foot='<div class="foot"><div class="ic"><img class="appicon" src="'+APPICON+'"></div><div class="ft"><b>'+T('บันทึกผลลัพธ์กับ IUFIT','Save your results with IUFIT')+'</b><span>'+T('ติดตามผลลัพธ์ วางแผนเฉพาะคุณ เห็นผลจริง','Track results · plan for you · real progress')+'</span></div><div class="cta">'+T('แชร์','Share')+' '+ARROW+'</div></div>';
   return head+hero+grid+achieve+trend+quote+foot+'</div>';
 }
-
 function tplResult(){
   var dense=DENSE(),wc=wchange();var nO=function(v){return (''+v).replace(/[^0-9.]/g,'')||'–';};
   var WK=T('สัปดาห์','weeks'),KG=T('กก.','kg'),CM=T('ซม.','cm');
@@ -658,14 +655,17 @@ function tplProgress(){
 
 function render(){
   var card=$('card');
-  card.className=RC.tpl+' '+(RC.ratio==='1:1'?'sq':'t916');
+  var isStats=(RC.tpl==='stats');
+  card.className=RC.tpl+' '+(isStats?'sq':(RC.ratio==='1:1'?'sq':'t916'));
   var H=RH[RC.ratio];
-  card.style.height=H+'px';card.style.minHeight='';
+  if(isStats){card.style.height='auto';card.style.minHeight='';}
+  else{card.style.height=H+'px';card.style.minHeight='';}
   card.innerHTML=RC.tpl==='result'?tplResult():RC.tpl==='stats'?tplStats():tplCoach();
   var stageW=Math.min(398,$('scaler').parentElement.clientWidth-36);
   var sc=stageW/1080;
   $('scaler').style.transform='scale('+sc+')';
-  $('scaler').style.height=(H*sc)+'px';
+  var realH=isStats?card.offsetHeight:H;
+  $('scaler').style.height=(realH*sc)+'px';
 }
 window.addEventListener('resize',render);
 initSource();
@@ -720,18 +720,23 @@ function applyEmbed(d){
     if(_rwrap){_rwrap.style.margin='0 0 12px';var _rlab=_rwrap.querySelector('label'); if(_rlab){_rlab.textContent='ขนาดการ์ด / สัดส่วน — กดเปลี่ยนแล้วพรีวิวอัปเดตทันที';_rlab.style.fontWeight='800';} steps[3].appendChild(_rwrap);}
     var pv=document.querySelector('.previewWrap'); if(pv) steps[3].appendChild(pv);
     var STEP=0;
+    function _statsT(){return RC.tpl==='stats';}
+    function _visSteps(){return _statsT()?[0,2,3]:[0,1,2,3];}
     function wizGo(n){
       STEP=n<0?0:(n>3?3:n);
+      var vis=_visSteps(); if(vis.indexOf(STEP)<0)STEP=2;
       for(var i=0;i<4;i++) steps[i].style.display=(i===STEP?'block':'none');
-      var dots=wiz.querySelectorAll('#wizdots i'); for(var j=0;j<dots.length;j++) dots[j].className=(j===STEP?'on':'');
+      var dots=wiz.querySelectorAll('#wizdots i'); for(var j=0;j<dots.length;j++){dots[j].style.display=(vis.indexOf(j)<0?'none':'');dots[j].className=(j===STEP?'on':'');}
+      if(_rwrap)_rwrap.style.display=_statsT()?'none':'';
       var wb=wiz.querySelector('#wback'),wn=wiz.querySelector('#wnext');
-      wb.style.visibility=(STEP===0?'hidden':'visible');
+      wb.style.visibility=(STEP===vis[0]?'hidden':'visible');
       wn.style.display=(STEP===3?'none':''); wb.style.flex=(STEP===3?'1':'');
       if(STEP===3){ try{render();}catch(e){} }
       wbody.scrollTop=0;
     }
-    wiz.querySelector('#wback').addEventListener('click',function(){wizGo(STEP-1);});
-    wiz.querySelector('#wnext').addEventListener('click',function(){wizGo(STEP+1);});
+    window._wizRefresh=function(){wizGo(STEP);};
+    wiz.querySelector('#wback').addEventListener('click',function(){var v=_visSteps(),i=v.indexOf(STEP);wizGo(i>0?v[i-1]:v[0]);});
+    wiz.querySelector('#wnext').addEventListener('click',function(){var v=_visSteps(),i=v.indexOf(STEP);wizGo(i>=0&&i<v.length-1?v[i+1]:v[v.length-1]);});
     wizGo(0);
   }
   try{ pull(); }catch(e){}
@@ -744,17 +749,18 @@ try{ if(window.parent!==window) window.parent.postMessage({type:'iufit-rc-ready'
 
 async function capture(){
   await document.fonts.ready;
-  var src=$('card');var H=RH[RC.ratio];
+  var src=$('card');var isStats=(RC.tpl==='stats');var H=RH[RC.ratio];
   var host=document.createElement('div');
   host.style.cssText='position:fixed;left:-100000px;top:0;width:1080px;margin:0;padding:0;background:transparent;z-index:-1;pointer-events:none';
   var clone=src.cloneNode(true);
-  clone.style.transform='none';clone.style.width='1080px';clone.style.height=H+'px';clone.style.minHeight='';
+  clone.style.transform='none';clone.style.width='1080px';clone.style.height=isStats?'auto':(H+'px');clone.style.minHeight='';
   host.appendChild(clone);document.body.appendChild(host);
   var imgs=Array.prototype.slice.call(clone.querySelectorAll('img'));
   await Promise.all(imgs.map(function(im){return (im.complete&&im.naturalWidth)?Promise.resolve():new Promise(function(r){im.onload=im.onerror=r;});}));
   void clone.offsetHeight;
+  var capH=isStats?Math.round(clone.offsetHeight):H;
   var canvas;
-  try{ canvas=await html2canvas(clone,{scale:2,width:1080,height:H,windowWidth:1080,windowHeight:H,backgroundColor:null,useCORS:true,logging:false}); }
+  try{ canvas=await html2canvas(clone,{scale:2,width:1080,height:capH,windowWidth:1080,windowHeight:capH,backgroundColor:null,useCORS:true,logging:false}); }
   finally{ host.remove(); }
   return canvas;
 }
