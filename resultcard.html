@@ -61,7 +61,7 @@ input[type=file]{display:none}
 
 /* logo */
 .logoR{display:flex;align-items:center;justify-content:center;gap:14px}
-.applogo{font-family:'Montserrat','Kanit',sans-serif;font-weight:800;font-style:italic;letter-spacing:.5px;font-size:60px;line-height:1;color:#0a1f4d}
+.applogo{font-family:'Montserrat','Kanit',sans-serif;font-weight:800;font-style:italic;letter-spacing:.5px;font-size:60px;line-height:1;color:#0a1f4d;display:inline-flex;align-items:baseline}
 .applogo span{color:#0A84FF}
 #card.sq .applogo{font-size:54px}
 .tag{text-align:center;font-size:18px;font-weight:700;letter-spacing:.26em;color:var(--mut);margin-top:-16px}
@@ -164,6 +164,7 @@ input[type=file]{display:none}
 .cstat .sv small{font-size:20px;color:var(--mut);font-weight:700}
 .cstat .dn{width:48px;height:48px;border-radius:50%;background:linear-gradient(150deg,#0A84FF,#0A84FF);display:flex;align-items:center;justify-content:center;margin:12px auto 0}
 .cstat .dn svg{width:26px;height:26px;color:#fff}
+.cstat .dn.up{background:linear-gradient(150deg,#12B7A8,#0a8f84)}
 .stars{color:#ffb020;font-size:30px;letter-spacing:4px}
 .cby{font-size:20px;color:var(--mut);font-weight:700;margin-left:10px}
 
@@ -198,6 +199,7 @@ input[type=file]{display:none}
 #card .av img{width:100%;height:100%;object-fit:cover}
 .cstat .dn{width:48px;height:48px;border-radius:50%;background:linear-gradient(150deg,#0A84FF,#003C8F);display:flex;align-items:center;justify-content:center;margin:12px auto 0}
 .cstat .dn svg{width:26px;height:26px;color:#fff}
+.cstat .dn.up{background:linear-gradient(150deg,#12B7A8,#0a8f84)}
 #card .vbadge{width:30px;height:30px;flex:none;vertical-align:middle}
 body.embed .app{display:none}
 body.embed{background:#eef2f8}
@@ -469,7 +471,7 @@ const WMARK='';
 function camPH(big,sub){return '<div class="ph"><svg class="cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7l1.6-2.4h4.8L16 7"/><circle cx="12" cy="13.5" r="3.4"/></svg><div class="big">'+big+'</div>'+(sub?'<div class="sm">'+sub+'</div>':'')+'</div>';}
 function baHalf(src,after,big,sub,ribbon){return '<div class="half'+(after?' after':'')+'">'+(src?'<img src="'+src+'">':camPH(big,sub))+'<div class="ribbon '+(after?'af':'bf')+'">'+ribbon+'</div></div>';}
 function statR(icon,label,val,unit,chg){return '<div class="stat"><div class="ci">'+icon+'</div><div class="sl">'+label+'</div><div class="sv">'+val+(unit?'<small> '+unit+'</small>':'')+'</div>'+(chg?'<div class="chg">'+chg+'</div>':'')+'</div>';}
-function cstatCard(label,en,val,unit,down){return '<div class="cstat"><div class="sl">'+label+'</div><div class="se">'+en+'</div><div class="sv">'+val+'<small>'+unit+'</small></div>'+(down?'<div class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>':'')+'</div>';}
+function cstatCard(label,en,val,unit,arrow){var dn='';if(arrow==='down')dn='<div class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>';else if(arrow==='up')dn='<div class="dn up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></div>';return '<div class="cstat"><div class="sl">'+label+'</div><div class="se">'+en+'</div><div class="sv">'+val+'<small>'+unit+'</small></div>'+dn+'</div>';}
 function icardEl(icon,label,en,val){return '<div class="icard"><div class="ii">'+icon+'</div><div><div class="il">'+label+'</div><div class="ie">'+en+'</div><div class="iv">'+val+'</div></div></div>';}
 function avatarC(size){return '<div class="av" style="width:'+size+'px;height:'+size+'px">'+(RC.imgC?'<img src="'+RC.imgC+'">':'<svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="8" r="4.2"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg>')+'</div>';}
 function coachGoal(){if(RC.goal)return RC.goal;var g=RC._goalCode;return g==='lose'?'ลดไขมัน':g==='gain'?'สร้างกล้ามเนื้อ':g==='keep'?'ควบคุมรูปร่าง':'ลดไขมัน สร้างกล้ามเนื้อ';}
@@ -486,10 +488,12 @@ function tplResult(){
     if(wc!=null)st+=statR(I.scale,'น้ำหนักที่เปลี่ยน',sign(wc),'กก.');
     if(RC.bfBefore!=null&&RC.bfAfter!=null)st+=statR(I.percent,'ไขมันที่ลดลง',sign(RC.bfAfter-RC.bfBefore),'%');
     if(RC.waistChange!=null)st+=statR(I.waist,'รอบเอวที่ลดลง',sign(RC.waistChange),'ซม.');
+    if(RC.muscleChange!=null)st+=statR(I.muscle,'กล้ามเนื้อที่เพิ่ม',sign(RC.muscleChange),'%');
   }else{
     if(wc!=null)st+=statR(I.scale,'น้ำหนัก',sign(wc),'กก.','▼ CHANGE');
     if(RC.bfBefore!=null&&RC.bfAfter!=null)st+=statR(I.percent,'ไขมันในร่างกาย',sign(RC.bfAfter-RC.bfBefore),'%','▼ CHANGE');
     if(RC.waistChange!=null)st+=statR(I.waist,'รอบเอว',sign(RC.waistChange),'ซม.','▼ CHANGE');
+    if(RC.muscleChange!=null)st+=statR(I.muscle,'กล้ามเนื้อ',sign(RC.muscleChange),'%','▲ CHANGE');
     st+='<div class="stat"><div class="ci">'+I.trophy+'</div><div class="sl">ความสำเร็จของฉัน</div><div class="sv" style="font-size:30px;margin-top:14px">★</div></div>';
   }
   var h='<div class="tech"></div>'+WMARK+'<div class="cc">'+LOGOWM;
@@ -510,7 +514,7 @@ function tplCoach(){
   var dense=DENSE(),wc=wchange();
   var spec=(RC.specialties&&RC.specialties.length)?RC.specialties.join(' • '):'ลดไขมัน • สร้างกล้ามเนื้อ • ปรับรูปร่าง';
   var goal=coachGoal(),summary=coachSummary();
-  function cstats(down){var c='';if(wc!=null)c+=cstatCard('น้ำหนัก','WEIGHT',sign(wc),'กก.',down);if(RC.bfBefore!=null&&RC.bfAfter!=null)c+=cstatCard('ไขมันในร่างกาย','BODY FAT',sign(RC.bfAfter-RC.bfBefore),'%',down);if(RC.waistChange!=null)c+=cstatCard('รอบเอว','WAIST',sign(RC.waistChange),'ซม.',down);return c;}
+  function cstats(down){var ar=down?'down':'';var c='';if(wc!=null)c+=cstatCard('น้ำหนัก','WEIGHT',sign(wc),'กก.',ar);if(RC.bfBefore!=null&&RC.bfAfter!=null)c+=cstatCard('ไขมันในร่างกาย','BODY FAT',sign(RC.bfAfter-RC.bfBefore),'%',ar);if(RC.waistChange!=null)c+=cstatCard('รอบเอว','WAIST',sign(RC.waistChange),'ซม.',ar);if(RC.muscleChange!=null)c+=cstatCard('กล้ามเนื้อ','MUSCLE',sign(RC.muscleChange),'%',down?'up':'');return c;}
   var name=(RC.coachName||'ชื่อโค้ชของคุณ')+(RC.verified?VBADGE:'');
   if(dense){
     var h='<div class="tech"></div>'+WMARK+'<div class="cc" style="gap:24px">';
