@@ -460,10 +460,12 @@ function render(){
   const card=$('card');
   card.className=RC.tpl==='coach'?'frame':'';
   const H=RH[RC.ratio],cfg=RCFG[RC.ratio];
-  card.style.height='auto';card.style.minHeight=H+'px';
+  card.style.height='auto';card.style.minHeight='0';
   card.style.setProperty('--pad',cfg.pad);card.style.setProperty('--gap',cfg.gap);card.style.setProperty('--bamin',cfg.bamin);
   card.innerHTML=RC.tpl==='result'?tplResult():RC.tpl==='coach'?tplCoach():tplProgress();
-  var _cc=card.querySelector('.cc'); if(_cc){_cc.style.height='auto';_cc.style.minHeight=H+'px';}
+  var _cc=card.querySelector('.cc'); if(_cc){_cc.style.height='auto';_cc.style.minHeight='0';}
+  card.querySelectorAll('.ba').forEach(function(b){b.style.flex='0 0 auto';});
+  card.querySelectorAll('.ba .half').forEach(function(h){h.style.minHeight=cfg.bamin;});
   const stageW=Math.min(398,$('scaler').parentElement.clientWidth-36);
   const sc=stageW/1080;
   var _realH=card.offsetHeight||H;
@@ -545,7 +547,26 @@ window.addEventListener('message',function(e){
 // tell parent we're ready to receive data
 try{ if(window.parent!==window) window.parent.postMessage({type:'iufit-rc-ready'},'*'); }catch(e){}
 
-async function capture(){await document.fonts.ready;return await html2canvas($('card'),{scale:1,width:1080,height:Math.round($('card').offsetHeight)||RH[RC.ratio],backgroundColor:null,useCORS:true,logging:false});}
+async function capture(){
+  await document.fonts.ready;
+  var src=$('card');
+  // โคลนการ์ดไปเรนเดอร์นอกจอที่ขนาดเต็ม 1080 ไม่มี transform ของ .scaler มากวน (กันภาพบีบ/ซ้อน)
+  var host=document.createElement('div');
+  host.style.cssText='position:fixed;left:-100000px;top:0;width:1080px;margin:0;padding:0;background:transparent;z-index:-1;pointer-events:none';
+  var clone=src.cloneNode(true);
+  clone.style.transform='none';clone.style.height='auto';clone.style.minHeight='0';clone.style.width='1080px';
+  var cc=clone.querySelector('.cc'); if(cc){cc.style.height='auto';cc.style.minHeight='0';}
+  host.appendChild(clone); document.body.appendChild(host);
+  // รอรูปในโคลนโหลดครบก่อนถ่าย
+  var imgs=Array.prototype.slice.call(clone.querySelectorAll('img'));
+  await Promise.all(imgs.map(function(im){return (im.complete&&im.naturalWidth)?Promise.resolve():new Promise(function(r){im.onload=im.onerror=r;});}));
+  void clone.offsetHeight;
+  var h=Math.round(clone.offsetHeight)||RH[RC.ratio];
+  var canvas;
+  try{ canvas=await html2canvas(clone,{scale:2,width:1080,height:h,windowWidth:1080,windowHeight:h,backgroundColor:null,useCORS:true,logging:false}); }
+  finally{ host.remove(); }
+  return canvas;
+}
 $('dl').addEventListener('click',async()=>{$('dl').textContent='⏳ กำลังสร้าง...';try{const c=await capture();const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='iufit-result-card-'+RC.tpl+'-'+new Date().toISOString().slice(0,10)+'.png';a.click();}catch(e){alert('สร้างรูปไม่สำเร็จ: '+e.message);}$('dl').textContent='⬇️ บันทึกรูป';});
 $('sh').addEventListener('click',async()=>{$('sh').textContent='⏳ ...';try{const c=await capture();c.toBlob(async b=>{const file=new File([b],'iufit-'+RC.tpl+'.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'IUFIT',text:'ผลลัพธ์จาก IUFIT 💪'});}catch(e){}}else{alert('เครื่องนี้ไม่รองรับแชร์ไฟล์ตรง — ใช้ปุ่มบันทึกรูปแทนได้');}},'image/png');}catch(e){alert('แชร์ไม่สำเร็จ: '+e.message);}$('sh').textContent='↗️ แชร์';});
 </script>
