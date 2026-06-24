@@ -12,6 +12,104 @@ function L(th,en){ return EN()?en:th; }
 function uid(){ return 'iu'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 function esc(s){ s=(s==null?'':''+s); return s.replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function norm(s){ return (s==null?'':(''+s)).toLowerCase().replace(/\s+/g,''); }
+var SYN={'กระเพรา':'กะเพรา','กระเพา':'กะเพรา','กะเพา':'กะเพรา','กระเพราะ':'กะเพรา','กวยเตี๋ยว':'ก๋วยเตี๋ยว','ก๊วยเตี๋ยว':'ก๋วยเตี๋ยว','ก่วยเตี๋ยว':'ก๋วยเตี๋ยว','ไก้':'ไก่','อกไก':'อกไก่','ข้าวสวย':'ข้าว','คาดิโอ':'คาร์ดิโอ','คาร์ดิโอ้':'คาร์ดิโอ','แคลอรี่':'แคล','แคลอรี':'แคล','กี่แคล':'กี่แคล','ฟีดแบค':'feedback','ฟีดแบ็ค':'feedback','ฟีดแบ็ก':'feedback','ฟีดแบก':'feedback','ลูกเทน':'ลูกเทรน','ลูกเทรนด์':'ลูกเทรน','โปรตีนสูง':'โปรตีนสูง','ทานข้าว':'กิน','กับข้าว':'อาหาร','ออกกําลัง':'ออกกำลัง','นํ้าหนัก':'น้ำหนัก'};
+var SYN_KEYS=Object.keys(SYN).sort(function(a,b){return b.length-a.length;});
+function synNorm(s){ var t=norm(s); for(var i=0;i<SYN_KEYS.length;i++){ var k=SYN_KEYS[i]; if(t.indexOf(k)>=0) t=t.split(k).join(SYN[k]); } return t; }
+
+/* ============================ calculation engine (estimates for planning) ============================ */
+var ACT_OPTS=[[1.2,L('นั่งทำงาน แทบไม่ออกกำลัง','Sedentary')],[1.375,L('ออกกำลังเบา 1-3 วัน/สัปดาห์','Light 1-3 d/wk')],[1.55,L('ปานกลาง 3-5 วัน/สัปดาห์','Moderate 3-5 d/wk')],[1.725,L('หนัก 6-7 วัน/สัปดาห์','Hard 6-7 d/wk')],[1.9,L('นักกีฬา/งานหนักมาก','Athlete/very hard')]];
+var CALC={
+  bmr:function(sex,w,h,age){ return sex==='f' ? 10*w+6.25*h-5*age-161 : 10*w+6.25*h-5*age+5; },
+  bmi:function(w,h){ var m=h/100; return Math.round(w/(m*m)*10)/10; },
+  bmiCat:function(b){ if(b<18.5)return L('น้ำหนักน้อย','Underweight'); if(b<23)return L('ปกติ','Normal'); if(b<25)return L('ท้วม','Overweight'); if(b<30)return L('อ้วนระดับ 1','Obese I'); return L('อ้วนระดับ 2','Obese II'); },
+  lbm:function(w,bf){ return Math.round(w*(1-bf/100)*10)/10; },
+  plan:function(p){
+    var act=p.act||1.375, goal=p.goal||'keep';
+    var bmr=CALC.bmr(p.sex,p.w,p.h,p.age), tdee=bmr*act;
+    var loK,hiK;
+    if(goal==='lose'){ loK=tdee*0.80; hiK=tdee*0.90; }
+    else if(goal==='gain'){ loK=tdee*1.05; hiK=tdee*1.10; }
+    else { loK=tdee*0.97; hiK=tdee*1.03; }
+    var midK=(loK+hiK)/2;
+    var pLo,pHi; if(goal==='keep'){ pLo=p.w*1.4; pHi=p.w*1.8; } else { pLo=p.w*1.6; pHi=p.w*2.2; }
+    var pMid=(pLo+pHi)/2, fat=p.w*0.9, fatK=fat*9, carb=Math.max(0,(midK-pMid*4-fatK)/4);
+    return { bmr:Math.round(bmr), tdee:Math.round(tdee), kcalLo:Math.round(loK), kcalHi:Math.round(hiK), kcalMid:Math.round(midK),
+      pLo:Math.round(pLo), pHi:Math.round(pHi), pMid:Math.round(pMid), fat:Math.round(fat), carb:Math.round(carb),
+      bmi:p.h?CALC.bmi(p.w,p.h):null };
+  }
+};
+function ageOf(u){ try{ if(fn('ageY')) { var a=window.ageY(u); if(a) return a; } }catch(e){} return (u&&u.age)||30; }
+function parseProfileFromText(msg){
+  var lo=(''+msg).toLowerCase().replace(/,/g,''); var o={};
+  var mw=lo.match(/(\d{2,3}(?:\.\d)?)\s*(kg|กก|กิโล|โล)/); if(mw) o.w=parseFloat(mw[1]);
+  if(o.w==null){ var mw2=lo.match(/(?:หนัก|น้ำหนัก|weight)\s*(\d{2,3}(?:\.\d)?)/); if(mw2) o.w=parseFloat(mw2[1]); }
+  var mh=lo.match(/(\d{2,3})\s*(cm|ซม|เซน)/); if(mh) o.h=parseFloat(mh[1]);
+  if(o.h==null){ var mh2=lo.match(/(?:สูง|ส่วนสูง|height)\s*(\d{2,3})/); if(mh2) o.h=parseFloat(mh2[1]); }
+  var ma=lo.match(/(\d{1,2})\s*(ปี|yo|ขวบ)/); if(ma) o.age=parseFloat(ma[1]);
+  if(o.age==null){ var ma2=lo.match(/(?:อายุ|age)\s*(\d{1,2})/); if(ma2) o.age=parseFloat(ma2[1]); }
+  if(/หญิง|ผู้หญิง|female|woman|ผญ/.test(lo)) o.sex='f';
+  else if(/ชาย|ผู้ชาย|\bmale\b|\bman\b|ผช/.test(lo)) o.sex='m';
+  if(/ลดไขมัน|ลดน้ำหนัก|ลดความอ้วน|\bcut\b|fat loss|\blose\b/.test(lo)) o.goal='lose';
+  else if(/เพิ่มกล้าม|เพิ่มน้ำหนัก|บัลค์|\bbulk\b|\bgain\b|build muscle/.test(lo)) o.goal='gain';
+  else if(/รักษา|maintain|\bkeep\b/.test(lo)) o.goal='keep';
+  if(/ปานกลาง|moderate/.test(lo)) o.act=1.55; else if(/หนักมาก|นักกีฬา|athlete|very (hard|active)/.test(lo)) o.act=1.9; else if(/หนัก|hard|6-7/.test(lo)) o.act=1.725; else if(/เบา|light|1-3/.test(lo)) o.act=1.375; else if(/นั่งทำงาน|แทบไม่|sedentary|ไม่ออกกำลัง/.test(lo)) o.act=1.2;
+  var bf=lo.match(/(?:ไขมัน|body fat|bf)\s*(\d{1,2}(?:\.\d)?)\s*%?/); if(bf) o.bf=parseFloat(bf[1]);
+  return o;
+}
+function calcReply(p){
+  var r=CALC.plan(p), en=EN();
+  var goalT={lose:L('ลดไขมัน','fat loss'),gain:L('เพิ่มกล้าม','muscle gain'),keep:L('รักษาน้ำหนัก','maintenance')}[p.goal||'keep'];
+  var head=L((p.sex==='f'?'หญิง':'ชาย')+' · '+fmtN(p.w)+' กก. · '+p.h+' ซม. · '+p.age+' ปี · เป้า '+goalT,(p.sex==='f'?'Female':'Male')+' · '+fmtN(p.w)+' kg · '+p.h+' cm · '+p.age+' y · '+goalT);
+  var lines=[head,
+    'BMR ≈ '+fmtN(r.bmr)+' kcal/'+L('วัน','day'),
+    'TDEE ≈ '+fmtN(r.tdee)+' kcal/'+L('วัน','day'),
+    L('แคลเป้าหมาย','Target') +' ≈ '+fmtN(r.kcalLo)+'–'+fmtN(r.kcalHi)+' kcal/'+L('วัน','day'),
+    L('โปรตีน','Protein')+' ≈ '+fmtN(r.pLo)+'–'+fmtN(r.pHi)+' g · '+L('ไขมัน','Fat')+' ≈ '+fmtN(r.fat)+' g · '+L('คาร์บ','Carb')+' ≈ '+fmtN(r.carb)+' g'];
+  if(r.bmi!=null) lines.push('BMI ≈ '+r.bmi+' ('+CALC.bmiCat(r.bmi)+') — '+L('เป็นตัวชี้วัดคร่าว ๆ ไม่เหมาะกับคนกล้ามเยอะ','rough indicator, not ideal for very muscular people'));
+  if(p.bf!=null) lines.push(L('มวลกล้าม (LBM)','Lean mass (LBM)')+' ≈ '+CALC.lbm(p.w,p.bf)+' กก.');
+  return { title:L('ค่าประมาณแคลอรี & มาโคร','Calorie & macro estimate'),
+    message:lines.join('\n'),
+    disclaimer:L('เป็นค่าประมาณเพื่อช่วยวางแผน ไม่ใช่คำตัดสินตายตัว — ปรับตามการตอบสนองจริงทุก 2-3 สัปดาห์ และไม่ใช่คำแนะนำทางการแพทย์','Estimates to help planning, not fixed rules — adjust to the real 2-3 week response. Not medical advice.'),
+    actions:[{label:L('แก้ตัวเลข','Edit values'),action:'open_calc'},{label:L('ดูสรุปวันนี้','Today'),action:'today_summary'}] };
+}
+function buildCalcPlan(message){
+  var p=parseProfileFromText(message);
+  if(role()!=='coach'){ var u=curUser()||{};
+    if(p.sex==null&&u.sex) p.sex=u.sex;
+    if(p.h==null&&u.h) p.h=u.h;
+    if(p.w==null){ try{ p.w=fn('curW')?window.curW(u):u.w0; }catch(e){} }
+    if(p.age==null) p.age=ageOf(u);
+    if(p.act==null&&u.act) p.act=u.act;
+    if(p.goal==null&&u.goal) p.goal=u.goal;
+  }
+  if(p.w==null||p.h==null||p.age==null||p.sex==null){ ST.calc=p; openCalcForm(p);
+    return { title:L('คำนวณแคลอรี & มาโคร','Calorie & macro estimate'), message:L('ขอข้อมูลอีกนิดเพื่อประมาณให้แม่นขึ้นครับ กรอกในฟอร์มสั้น ๆ ได้เลย','I need a bit more info — fill the quick form to get your estimate.'), actions:[{label:L('เปิดเครื่องคำนวณ','Open calculator'),action:'open_calc'}] }; }
+  return calcReply(p);
+}
+function openCalcForm(p){
+  p=p||ST.calc||{}; ST.calc=p; var sexM=(p.sex!=='f');
+  function inp(id,ph,val){ return '<input class="search" id="'+id+'" inputmode="numeric" placeholder="'+esc(ph)+'" value="'+(val!=null?val:'')+'" style="margin-bottom:8px">'; }
+  var acts=ACT_OPTS.map(function(a){ var sel=(p.act?Math.abs(p.act-a[0])<0.01:a[0]===1.375); return '<option value="'+a[0]+'"'+(sel?' selected':'')+'>'+esc(a[1])+'</option>'; }).join('');
+  var goal=p.goal||'lose';
+  var h='<div class="iu-mate-ip"><h3>'+esc(L('เครื่องคำนวณแคลอรี','Calorie calculator'))+'</h3>'+
+    '<div class="sub">'+esc(L('กรอกข้อมูลเพื่อประมาณแคลและมาโคร (ค่าประมาณเพื่อวางแผน)','Enter details to estimate calories & macros (planning estimate)'))+'</div>'+
+    '<div class="iu-mate-grp-chips">'+
+      '<button class="iu-mate-grp-chip'+(sexM?' on':'')+'" id="iuSexM" onclick="IUMate._sex(\'m\')">'+esc(L('ชาย','Male'))+'</button>'+
+      '<button class="iu-mate-grp-chip'+(!sexM?' on':'')+'" id="iuSexF" onclick="IUMate._sex(\'f\')">'+esc(L('หญิง','Female'))+'</button>'+
+    '</div>'+
+    inp('iuCalcAge',L('อายุ (ปี)','Age (years)'),p.age)+
+    inp('iuCalcH',L('ส่วนสูง (ซม.)','Height (cm)'),p.h)+
+    inp('iuCalcW',L('น้ำหนัก (กก.)','Weight (kg)'),p.w)+
+    '<select class="search" id="iuCalcAct" style="margin-bottom:8px">'+acts+'</select>'+
+    '<div class="iu-mate-grp-chips">'+
+      '<button class="iu-mate-grp-chip'+(goal==='lose'?' on':'')+'" id="iuGoalLose" onclick="IUMate._goal(\'lose\')">'+esc(L('ลดไขมัน','Fat loss'))+'</button>'+
+      '<button class="iu-mate-grp-chip'+(goal==='keep'?' on':'')+'" id="iuGoalKeep" onclick="IUMate._goal(\'keep\')">'+esc(L('รักษา','Maintain'))+'</button>'+
+      '<button class="iu-mate-grp-chip'+(goal==='gain'?' on':'')+'" id="iuGoalGain" onclick="IUMate._goal(\'gain\')">'+esc(L('เพิ่มกล้าม','Muscle'))+'</button>'+
+    '</div>'+
+    '<button class="go" style="margin-top:10px" onclick="IUMate._calc()">'+esc(L('คำนวณ','Calculate'))+'</button></div>';
+  modalOpen(h);
+}
+
 function fn(name){ return typeof window[name]==='function'; }
 function call(name){ try{ if(fn(name)) return window[name].apply(null,Array.prototype.slice.call(arguments,1)); }catch(e){} return undefined; }
 function S(){ return (window.S&&typeof window.S==='object')?window.S:{}; }
@@ -99,7 +197,7 @@ function ingMatchForms(ing){
   return forms;
 }
 function findIngredientsInText(text){
-  var t=norm(text); var found=[]; var seenName={};
+  var t=synNorm(text); var found=[]; var seenName={};
   // longest names first to prefer specific matches; dedup by display name
   var list=ingredientList().slice().sort(function(a,b){ return b.name.length-a.name.length; });
   list.forEach(function(ing){
@@ -242,22 +340,26 @@ var INTENT_KW = {
   food_search:['หาอาหาร','ค้นหาเมนู','มีเมนู','search food','find menu'],
   result_summary:['ผลลัพธ์','น้ำหนัก','ลดไป','ความคืบหน้า','กราฟ','รอบเอว','result','progress','weight','waist','my result'],
   workout_recommend:['ออกกำลัง','ท่าฝึก','เล่นอะไร','เวท','คาร์ดิโอ','ดัมเบล','workout','exercise','train','cardio','weight training'],
+  calc_plan:['คำนวณแคล','คำนวณโปรตีน','ตั้งแคล','ควรกินกี่แคล','แคลเท่าไร','โปรตีนเท่าไหร่','โปรตีนกี่กรัม','กี่กรัม','มาโคร','macro','tdee','bmr','bmi','calorie target','คำนวณมาโคร','ควรตั้งแคล'],
   coach_followup:['ติดตามลูกเทรน','ลูกเทรนที่ต้องติดตาม','ใครยังไม่ส่ง','ใครหาย','คนที่ต้องติดตาม','follow up','who to follow','inactive client','who hasn'],
   coach_homework_summary:['สรุปการบ้าน','ตรวจการบ้าน','การบ้านค้าง','ส่งการบ้าน','homework','to review','pending homework'],
+  coach_feedback:['เขียน feedback','feedback','ฟีดแบ็ก','คอมเมนต์ลูกเทรน','ชมลูกเทรน','เขียนคำชม','write feedback','give feedback'],
   coach_group_summary:['สรุปกลุ่ม','กิจกรรมกลุ่ม','ภารกิจกลุ่ม','กลุ่มไหน','group summary','group activity','mission'],
   app_help:['ใช้งาน','ทำยังไง','สอน','วิธี','เข้ากลุ่ม','บันทึกอาหาร','how to','how do i','tutorial','guide'],
   setup_help:['ตั้งค่า iu mate','เปิดใช้งาน','โหลดชุดความรู้','setup','settings iu mate'],
   share_result_text:['ข้อความแชร์','แคปชั่น','result card','แชร์ผลลัพธ์','caption','share text','share result']
 };
 function detectIntent(message){
-  var text=norm(message); var mode=role(); var tab=window.TAB||'';
+  var text=synNorm(message); var mode=role(); var tab=window.TAB||'';
   var best='unknown', bestScore=0;
   Object.keys(INTENT_KW).forEach(function(intent){
-    var sc=0; INTENT_KW[intent].forEach(function(k){ if(text.indexOf(norm(k))>=0) sc+=2; });
-    if((tab==='food') && intent.indexOf('food')>=0) sc+=1;
-    if((tab==='food') && intent==='ingredient_recipe_generate') sc+=1;
-    if((tab==='body'||tab==='stats') && intent==='result_summary') sc+=1;
-    if(mode==='coach' && intent.indexOf('coach')===0) sc+=2;
+    var sc=0; INTENT_KW[intent].forEach(function(k){ if(text.indexOf(synNorm(k))>=0) sc+=2; });
+    if(sc>0){
+      if((tab==='food') && intent.indexOf('food')>=0) sc+=1;
+      if((tab==='food') && intent==='ingredient_recipe_generate') sc+=1;
+      if((tab==='body'||tab==='stats') && intent==='result_summary') sc+=1;
+      if(mode==='coach' && intent.indexOf('coach')===0) sc+=2;
+    }
     if(sc>bestScore){ bestScore=sc; best=intent; }
   });
   return bestScore>0?best:'unknown';
@@ -285,43 +387,65 @@ var KNOWLEDGE = [
     title:L('โปรตีนควรกินเท่าไหร่','How much protein'),
     answer:L('ทั่วไปราว 1.4–2.0 กรัมต่อน้ำหนักตัว 1 กก./วัน เพิ่มกล้ามใช้ค่าสูง ลดไขมันก็ควรกินโปรตีนให้พอเพื่อรักษากล้าม','Roughly 1.4–2.0 g per kg bodyweight/day. Higher when building muscle; keep it adequate during fat loss to preserve muscle.'),
     actions:[{label:L('สร้างเมนูโปรตีนสูง','High-protein menu'),action:'food_recommend'}] },
-  { id:'coach_followup_tip', cat:'coach', kw:['ติดตาม','ลูกเทรน','ไม่ส่งการบ้าน','follow up','client'],
+  { id:'coach_followup_tip', cat:'coach', kw:['วิธีติดตาม','ติดตามยังไง','ไม่ส่งการบ้าน','follow up'],
     title:L('การติดตามลูกเทรน','Following up with clients'),
     answer:L('ติดตามแบบให้กำลังใจ สั้น ชัด และใช้คำถามปลายปิด เช่น "วันนี้สะดวกบันทึกมื้อเย็นไหมครับ"','Keep follow-ups short, encouraging and specific, e.g. "Can you log dinner today?"'),
     actions:[{label:L('สร้างข้อความติดตาม','Draft follow-up'),action:'create_followup_message'}] },
   { id:'create_result_card', cat:'app_help', kw:['result card','การ์ดผลลัพธ์','แชร์ผล','share result'],
     title:L('สร้างการ์ดผลลัพธ์','Create a result card'),
     answer:L('ไปหน้าผลลัพธ์ แล้วกดสร้างการ์ดผลลัพธ์ เลือกแบบการ์ด ใส่รูป/ข้อมูล แล้วบันทึกหรือแชร์','Go to Results and create a result card — pick a template, add photo/data, then save or share.'),
-    actions:[{label:L('เปิดผลลัพธ์','Open Results'),action:'go_result'}] }
+    actions:[{label:L('เปิดผลลัพธ์','Open Results'),action:'go_result'}] },
+  { id:'how_to_make_recipe', cat:'app_help', kw:['สร้างเมนูเอง','เพิ่มเมนู','custom recipe','create menu'], title:L('สร้างเมนูเอง','Create your own menu'), answer:L('หน้าอาหาร > เพิ่มเมนู ใส่ชื่อและวัตถุดิบจากคลัง ระบบคำนวณแคลให้ หรือให้ IU Mate สร้างจากวัตถุดิบที่มีก็ได้','On Food > add menu, enter a name and pick ingredients — calories are auto-calculated. Or let IU Mate build one from your ingredients.'), actions:[{label:L('สร้างจากของที่มี','From ingredients'),action:'open_ingredient_picker'}] },
+  { id:'how_to_food_library', cat:'app_help', kw:['คลังเมนู','ค้นเมนู','food library','search menu'], title:L('ใช้คลังเมนู','Using the food library'), answer:L('หน้าอาหาร แตะช่องค้นหาแล้วพิมพ์ชื่อเมนู คลังมี 4,500+ เมนูพร้อมค่าโภชนาการ เลือกแล้วกดบันทึกลงมื้อ','On Food, tap search and type a menu name — 4,500+ menus with nutrition. Pick one and save it to a meal.'), actions:[{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] },
+  { id:'how_to_see_plan', cat:'app_help', kw:['ดูแผน','แผนจากโค้ช','my plan','coach plan'], title:L('ดูแผนจากโค้ช','See your coach plan'), answer:L('เมื่อโค้ชส่งแผนจะมีแจ้งเตือน เปิดหน้าโค้ชเพื่อดูแผนอาหาร/ฝึก/เป้าหมาย และทำตามได้เลย','When your coach sends a plan you get a notification — open the Coach page to view meal/workout/goal plans and follow them.'), actions:[{label:L('เปิดหน้าโค้ช','Open Coach'),action:'go_coach'}] },
+  { id:'how_to_submit_hw', cat:'app_help', kw:['ส่งการบ้าน','submit homework','send homework'], title:L('ส่งการบ้านให้โค้ช','Send homework to coach'), answer:L('บันทึกอาหาร/การฝึก/สัดส่วนตามปกติ ระบบจะส่งให้โค้ชเห็นในแท็บการบ้านของโค้ชอัตโนมัติ','Just log your food/workout/measurements as usual — it shows up in your coach Homework tab automatically.') },
+  { id:'iu_mate_privacy', cat:'app_help', kw:['ความเป็นส่วนตัว','privacy','เก็บข้อมูล','ข้อมูลปลอดภัย'], title:L('ความเป็นส่วนตัวของ IU Mate','IU Mate privacy'), answer:L('IU Mate ทำงานในเครื่อง บทสนทนาไม่ถูกบันทึกหรือส่งออกนอกเครื่อง และอ่านข้อมูลในแอปเพื่อช่วยสรุปเท่านั้น เพิกถอนความยินยอมได้ที่ปุ่ม 🔒','IU Mate runs on-device — conversations are not saved or sent, and it only reads in-app data to summarize. Withdraw consent via the 🔒 button.'), actions:[{label:L('ดูความเป็นส่วนตัว','View privacy'),action:'show_privacy'}] },
+  { id:'calorie_control', cat:'nutrition', kw:['คุมแคล','พลังงาน','calorie','deficit'], title:L('หลักการคุมแคลอรี','Calorie control basics'), answer:L('ลดไขมัน = ใช้พลังงานมากกว่ากินเล็กน้อยอย่างสม่ำเสมอ เน้นโปรตีนพอ ผักเยอะ คุมของทอด/น้ำตาล ไม่ต้องอดจนทรมาน','Fat loss = a small consistent calorie deficit. Keep protein adequate, veg high, limit fried food/sugar — no need to starve.'), actions:[{label:L('ดูสรุปวันนี้','Today summary'),action:'today_summary'}] },
+  { id:'carb_timing', cat:'nutrition', kw:['คาร์บตอนไหน','กินคาร์บ','carb timing','คาร์บ'], title:L('คาร์บควรกินตอนไหน','When to eat carbs'), answer:L('กระจายคาร์บได้ทั้งวัน แต่ช่วงก่อน/หลังออกกำลังกายจะใช้พลังงานดี เลือกคาร์บเชิงซ้อน เช่น ข้าวกล้อง มันหวาน โอ๊ต','Spread carbs through the day, but around workouts they are used well. Prefer complex carbs like brown rice, sweet potato, oats.') },
+  { id:'healthy_fat', cat:'nutrition', kw:['ไขมันดี','healthy fat','ไขมัน'], title:L('ไขมันดีคืออะไร','What are healthy fats'), answer:L('ไขมันดีมาจากอะโวคาโด ถั่ว งา ปลา น้ำมันมะกอก ช่วยฮอร์โมนและความอิ่ม กินพอดี ไม่ต้องกลัวไขมัน แต่คุมปริมาณ','Healthy fats come from avocado, nuts, seeds, fish, olive oil — good for hormones and satiety. Do not fear fat, just watch portions.') },
+  { id:'water_importance', cat:'nutrition', kw:['ดื่มน้ำ','ทำไมต้องดื่มน้ำ','water','hydration'], title:L('ทำไมต้องดื่มน้ำ','Why drink water'), answer:L('น้ำช่วยเผาผลาญ ควบคุมความหิว และการฟื้นตัว ตั้งเป้า ~8 แก้ว/วัน จิบบ่อย ๆ ทั้งวัน','Water supports metabolism, appetite control and recovery. Aim for ~8 glasses/day, sipping throughout.'), actions:[{label:L('ดื่มน้ำ +1','Water +1'),action:'add_water',confirm:true,payload:{amount:1}}] },
+  { id:'consistency', cat:'nutrition', kw:['บันทึกต่อเนื่อง','ทำไมต้องบันทึก','consistency','สม่ำเสมอ'], title:L('ทำไมต้องบันทึกต่อเนื่อง','Why log consistently'), answer:L('การบันทึกสม่ำเสมอทำให้เห็นแนวโน้มจริง ปรับแผนได้แม่น และสร้างวินัย เริ่มจากทำให้ครบทุกวันก่อน ผลจะตามมาเอง','Consistent logging reveals real trends, sharpens your plan and builds discipline. Aim for a full week first — results follow.') },
+  { id:'beginner_start', cat:'workout', kw:['มือใหม่','เริ่มออกกำลัง','beginner','start workout'], title:L('มือใหม่ควรเริ่มยังไง','How beginners should start'), answer:L('เริ่ม 3 วัน/สัปดาห์ ผสมเวทพื้นฐานกับคาร์ดิโอเบา ๆ ท่าละ 2-3 เซ็ต เน้นฟอร์มถูกก่อนเพิ่มน้ำหนัก','Start 3 days/week mixing basic weights and light cardio, 2-3 sets per move. Master form before adding load.'), actions:[{label:L('เปิดท่าฝึก','Open Workout'),action:'go_workout'}] },
+  { id:'what_is_weight', cat:'workout', kw:['เวทคืออะไร','เวทเทรนนิ่ง','weight training','strength'], title:L('เวทเทรนนิ่งคืออะไร','What is weight training'), answer:L('การฝึกด้วยแรงต้าน (ดัมเบล บาร์เบล เครื่อง) เพื่อสร้างกล้ามและเผาผลาญ เหมาะทั้งลดไขมันและเพิ่มกล้าม','Resistance training (dumbbells, barbells, machines) to build muscle and boost metabolism — great for fat loss and muscle gain.') },
+  { id:'cardio_amount', cat:'workout', kw:['คาร์ดิโอแค่ไหน','คาร์ดิโอเท่าไหร่','how much cardio'], title:L('คาร์ดิโอควรทำแค่ไหน','How much cardio'), answer:L('ทั่วไป 150 นาที/สัปดาห์ของคาร์ดิโอปานกลาง หรือ 20-30 นาทีต่อครั้ง สลับกับเวท ไม่ต้องมากจนล้า','Around 150 min/week of moderate cardio, or 20-30 min per session alternating with weights — no need to overdo it.') },
+  { id:'recovery', cat:'workout', kw:['พักฟื้น','พักผ่อน','recovery','rest day'], title:L('การพักฟื้นสำคัญแค่ไหน','Why recovery matters'), answer:L('กล้ามโตตอนพัก ไม่ใช่ตอนฝึก นอนให้พอ 7-8 ชม. มีวันพัก และกินโปรตีนพอ เพื่อให้ฟื้นตัวและไปต่อได้','Muscle grows during rest, not training. Sleep 7-8h, take rest days, eat enough protein to recover and keep going.') },
+  { id:'new_client', cat:'coach', kw:['ลูกเทรนใหม่','เริ่มลูกเทรน','new client','onboard client'], title:L('ลูกเทรนใหม่ควรเริ่มยังไง','Starting a new client'), answer:L('เริ่มจากเก็บข้อมูลพื้นฐานและเป้าหมาย ตั้งแผนง่าย ๆ ที่ทำได้จริง แล้วชวนบันทึก 3-5 วันแรกให้ติดเป็นนิสัย','Start by gathering basics and goals, set a simple realistic plan, then nudge them to log for the first 3-5 days to build the habit.'), actions:[{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] },
+  { id:'weight_stall', cat:'coach', kw:['น้ำหนักไม่ลง','ตันน้ำหนัก','weight stall','plateau'], title:L('ลูกเทรนน้ำหนักไม่ลงดูอะไร','Client weight not dropping'), answer:L('เช็กความสม่ำเสมอของการบันทึก ปริมาณจริงที่กิน การนอน ความเครียด และน้ำ บางครั้งรอบเอวลดแม้น้ำหนักนิ่ง ใช้หลายตัวชี้วัด','Check logging consistency, true intake, sleep, stress and water. Sometimes waist drops even when weight stalls — use multiple metrics.') },
+  { id:'quiet_group', cat:'coach', kw:['กลุ่มเงียบ','กระตุ้นกลุ่ม','quiet group','group engagement'], title:L('กลุ่มเงียบควรทำอะไร','Re-engaging a quiet group'), answer:L('ตั้งภารกิจกลุ่มสั้น ๆ ที่ทำง่าย ชวนแชร์ผลรายสัปดาห์ หรือถามคำถามเปิดในแชทกลุ่ม สร้างจังหวะให้คนกลับมามีส่วนร่วม','Set a short easy group mission, invite weekly result sharing, or ask an open question in group chat to bring people back.'), actions:[{label:L('สร้างภารกิจกลุ่ม','New mission'),action:'go_missions'}] },
+  { id:'when_followup', cat:'coach', kw:['ติดตามเมื่อไร','ควรทักเมื่อไหร่','when to follow up'], title:L('ควรติดตามลูกเทรนเมื่อไร','When to follow up'), answer:L('ทักเมื่อขาดบันทึก 2-3 วัน หรือมีการบ้านค้าง ใช้ข้อความสั้น ให้กำลังใจ และถามแบบตอบง่าย อย่ารอจนหลุดแผนไปไกล','Reach out after 2-3 missed log days or pending homework. Keep it short, encouraging and easy to answer — do not wait until they have fully dropped off.'), actions:[{label:L('สร้างข้อความติดตาม','Draft follow-up'),action:'create_followup_message'}] }
 ];
 function searchKnowledge(message){
-  var t=norm(message);
-  return KNOWLEDGE.map(function(item){ var sc=0; item.kw.forEach(function(k){ if(t.indexOf(norm(k))>=0) sc+=2; }); if(t.indexOf(norm(item.title))>=0) sc+=3; return {item:item,score:sc}; })
+  var t=synNorm(message);
+  return KNOWLEDGE.map(function(item){ var sc=0; item.kw.forEach(function(k){ if(t.indexOf(synNorm(k))>=0) sc+=2; }); if(t.indexOf(synNorm(item.title))>=0) sc+=3; return {item:item,score:sc}; })
     .filter(function(x){return x.score>0;}).sort(function(a,b){return b.score-a.score;}).slice(0,3).map(function(x){return x.item;});
 }
 
 /* ============================ reply builders ============================ */
 var MED_KW=['วินิจฉัย','เป็นโรค','โรคประจำ','กินยา','หยุดยา','ฉีดยา','ยารักษา','ยาอะไร','กินยาอะไร','diagnos','disease','medicine','medication','prescription','เบาหวาน','ความดัน','มะเร็ง','ซึมเศร้า','depress'];
-function isMedical(message){ var t=norm(message); return MED_KW.some(function(k){return t.indexOf(norm(k))>=0;}); }
+function isMedical(message){ var t=synNorm(message); return MED_KW.some(function(k){return t.indexOf(synNorm(k))>=0;}); }
 function disclaimer(){ return L('คำแนะนำจาก IU Mate ใช้เพื่อช่วยวางแผนสุขภาพและการออกกำลังกายทั่วไป ไม่ใช่คำวินิจฉัยหรือคำแนะนำทางการแพทย์','IU Mate gives general fitness/nutrition guidance only — not medical diagnosis or advice.'); }
 
 function buildReply(intent, message){
   if(isMedical(message)) return { title:L('เรื่องนี้ควรปรึกษาผู้เชี่ยวชาญ','Please consult a professional'),
     message:L('เรื่องนี้ควรปรึกษาแพทย์หรือผู้เชี่ยวชาญโดยตรงนะครับ IU Mate ช่วยเรื่องการบันทึกอาหาร การฝึก และการติดตามผลทั่วไปได้','This is best discussed with a doctor or specialist. IU Mate can help with logging food, training and general tracking.') };
+  var ql=(''+message).toLowerCase();
+  if(/ยังไง|ยังงัย|อย่างไร|คืออะไร|แค่ไหน|เท่าไห|เท่าไร|ทำไม|ทำไง|ดูอะไร|how |what |why /.test(ql) && intent!=='ingredient_recipe_generate' && intent!=='today_summary' && intent!=='calc_plan'){ var _kh=searchKnowledge(message); if(_kh.length) return buildKnowledge(message); }
   switch(intent){
     case 'today_summary': return buildToday();
     case 'food_recommend': return buildFoodRecommend(message);
     case 'food_search': return buildFoodSearch(message);
     case 'result_summary': return buildResult();
     case 'workout_recommend': return buildWorkout();
+    case 'calc_plan': return buildCalcPlan(message);
     case 'ingredient_recipe_generate': return buildRecipeReply(message);
     case 'coach_followup': return buildCoachFollowup();
     case 'coach_homework_summary': return buildCoachHomework();
+    case 'coach_feedback': return buildCoachFeedback();
     case 'coach_group_summary': return buildCoachGroup();
     case 'app_help': return buildKnowledge(message);
     case 'setup_help': return buildKnowledge(message);
     case 'share_result_text': return buildShareText();
-    default: return buildFallback(message);
+    default: return buildKnowledge(message);
   }
 }
 function buildToday(){
@@ -403,6 +527,12 @@ function buildCoachHomework(){
     message:L('เปิดแท็บการบ้านเพื่อดูการบ้านที่รอตรวจ เปิดดูแล้วกดบันทึกลงโปรไฟล์ลูกเทรนเพื่อย้ายไป "ตรวจแล้ว"','Open the Homework tab to see items to review — view then save to the client profile to move them to "Reviewed".'),
     actions:[{label:L('เปิดการบ้าน','Open Homework'),action:'go_homework'},{label:L('เขียน feedback','Write feedback'),action:'create_feedback'}] };
 }
+function buildCoachFeedback(){
+  var c=coachCtx(); if(c.denied) return coachDeniedReply();
+  var name=(c.follow&&c.follow[0]&&c.follow[0].name)||L('ลูกเทรน','your client');
+  var tpl=L('ทำได้ดีมากครับ '+name+'! เห็นความตั้งใจชัดเจน จุดที่อยากให้โฟกัสต่อคือความสม่ำเสมอของมื้ออาหารและการพักผ่อน สัปดาห์หน้าลองทำให้ครบทุกวันนะครับ เป็นกำลังใจให้ 👏','Great work, '+name+'! Your effort really shows. Next, focus on meal consistency and recovery — aim for a full week. Keep it up 👏');
+  return { title:L('ข้อความ feedback','Feedback message'), message:tpl, disclaimer:L('ปรับชื่อ/รายละเอียดให้ตรงลูกเทรนก่อนส่งได้เลย','Edit the name/details to fit your client before sending'), actions:[{label:L('คัดลอกข้อความ','Copy text'),action:'copy_text',payload:{text:tpl}},{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] };
+}
 function buildCoachGroup(){
   var c=coachCtx(); if(c.denied) return coachDeniedReply();
   var msg=c.groups?L('คุณมี '+c.groups+' กลุ่ม: '+c.groupNames.join(', '),'You have '+c.groups+' groups: '+c.groupNames.join(', ')):L('ยังไม่มีกลุ่ม สร้างกลุ่มเพื่อส่งภารกิจและแชทรวมได้','No groups yet — create one to send missions and group chat.');
@@ -455,7 +585,7 @@ function quickChips(){
   ];
   return [
     [L('สรุปวันนี้','Today summary'),'📊'],[L('กินอะไรดี','What to eat'),'🍽️'],[L('สร้างเมนูจากของที่มี','Make from ingredients'),'🧺'],
-    [L('ดูความคืบหน้า','My progress'),'📈'],[L('วิธีใช้แอป','How to use'),'❓']
+    [L('คำนวณแคล/มาโคร','Calorie & macros'),'🧮'],[L('ดูความคืบหน้า','My progress'),'📈'],[L('วิธีใช้แอป','How to use'),'❓']
   ];
 }
 function greeting(){
@@ -562,9 +692,11 @@ var ACTIONS = {
   create_feedback:function(){ var tpl=L('ทำได้ดีมากครับ! เห็นความตั้งใจชัดเจน จุดที่อยากให้โฟกัสต่อคือความสม่ำเสมอของมื้ออาหารและการพักผ่อน สัปดาห์หน้าลองทำให้ครบทุกวันนะครับ เป็นกำลังใจให้ 👏','Great work! Your effort really shows. Next, focus on meal consistency and recovery — aim for a full week next time. Keep it up 👏'); pushReply({ title:L('ข้อความ feedback','Feedback message'), message:tpl, actions:[{label:L('คัดลอกข้อความ','Copy text'),action:'copy_text',payload:{text:tpl}}] }); },
   copy_text:function(p){ var txt=(p&&p.text)||''; try{ navigator.clipboard.writeText(txt); }catch(e){} appToast(L('คัดลอกแล้ว ✓','Copied ✓')); },
   open_ingredient_picker:function(){ openIngredientPicker(); },
+  open_calc:function(){ openCalcForm(ST.calc||{}); },
   preview_generated_recipe:function(p){ openRecipePreview(p&&p.recipeId); },
   add_generated_recipe_to_meal:function(p){ confirmAddRecipe(p&&p.recipeId); },
   save_generated_recipe:function(p){ confirmSaveRecipe(p&&p.recipeId); },
+  show_privacy:function(){ try{ IUMate.showPrivacy(); }catch(e){} },
   _chip:function(p){ if(p&&p.q) IUMate.chip(p.q); }
 };
 function runAction(name, payload){ var f=ACTIONS[name]; if(f){ f(payload); } else { /* unknown action: no-op */ } }
@@ -672,6 +804,7 @@ function handleMessage(text){
 
 /* ============================ public API ============================ */
 function closeNow(){ ST.isOpen=false; var r=root(); r.innerHTML=''; renderFab(); }
+function readCalcInputs(){ ST.calc=ST.calc||{}; var a=document.getElementById('iuCalcAge'),h=document.getElementById('iuCalcH'),w=document.getElementById('iuCalcW'),ac=document.getElementById('iuCalcAct'); if(a&&a.value!=='')ST.calc.age=parseFloat(a.value); if(h&&h.value!=='')ST.calc.h=parseFloat(h.value); if(w&&w.value!=='')ST.calc.w=parseFloat(w.value); if(ac&&ac.value)ST.calc.act=parseFloat(ac.value); }
 var IUMate = {
   open:function(mode){ if(!appReady()){ appToast(L('เข้าสู่ระบบก่อนใช้ IU Mate','Sign in to use IU Mate')); return; }
     ST.isOpen=true; ST.mode=mode||'global';
@@ -700,6 +833,9 @@ var IUMate = {
   _pgo:function(){ pickerGo(); },
   _amt:function(idx,dir){ previewAmt(idx,dir); },
   _previewAdd:function(rid){ modalClose(); confirmAddRecipe(rid); },
+  _sex:function(x){ readCalcInputs(); ST.calc.sex=x; openCalcForm(ST.calc); },
+  _goal:function(x){ readCalcInputs(); ST.calc.goal=x; openCalcForm(ST.calc); },
+  _calc:function(){ readCalcInputs(); var p=ST.calc||{}; if(p.w==null||p.h==null||p.age==null||p.sex==null){ appToast(L('กรอกเพศ อายุ ส่วนสูง น้ำหนักให้ครบก่อนครับ','Please fill sex, age, height and weight')); return; } modalClose(); if(!ST.isOpen) IUMate.open('global'); pushReply(calcReply(p)); },
   acceptConsent:function(){ var coachData=true; var cb=document.getElementById('iuMateCoachConsent'); if(cb) coachData=!!cb.checked; saveConsent(coachData); ST.messages=[]; ST.messages.push({role:'botText',text:greeting()}); renderSheet(); renderFab(); },
   declineConsent:function(){ closeNow(); },
   showPrivacy:function(){ showConfirm({ title:L('ความเป็นส่วนตัว','Privacy'), body:L('IU Mate ทำงานในเครื่อง บทสนทนาไม่ถูกบันทึกหรือส่งออกนอกเครื่อง และอ่านข้อมูลในแอปเพื่อช่วยสรุปเท่านั้น','IU Mate runs on-device. Conversations are not saved or sent anywhere, and it only reads your in-app data to help summarize.'), yes:L('เพิกถอนความยินยอม','Withdraw consent'), onYes:function(){ revokeConsent(); appToast(L('เพิกถอนความยินยอมแล้ว','Consent withdrawn')); closeNow(); } }); },
