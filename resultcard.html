@@ -460,13 +460,15 @@ function render(){
   const card=$('card');
   card.className=RC.tpl==='coach'?'frame':'';
   const H=RH[RC.ratio],cfg=RCFG[RC.ratio];
-  card.style.height=H+'px';
+  card.style.height='auto';card.style.minHeight=H+'px';
   card.style.setProperty('--pad',cfg.pad);card.style.setProperty('--gap',cfg.gap);card.style.setProperty('--bamin',cfg.bamin);
   card.innerHTML=RC.tpl==='result'?tplResult():RC.tpl==='coach'?tplCoach():tplProgress();
+  var _cc=card.querySelector('.cc'); if(_cc){_cc.style.height='auto';_cc.style.minHeight=H+'px';}
   const stageW=Math.min(398,$('scaler').parentElement.clientWidth-36);
   const sc=stageW/1080;
+  var _realH=card.offsetHeight||H;
   $('scaler').style.transform='scale('+sc+')';
-  $('scaler').style.height=(H*sc)+'px';
+  $('scaler').style.height=(_realH*sc)+'px';
 }
 window.addEventListener('resize',render);
 initSource();
@@ -517,6 +519,8 @@ function applyEmbed(d){
     steps[2].appendChild(qp);
     var qe=document.getElementById('quoteE'); if(qe){qe.value=RC.quote||'';qe.addEventListener('input',function(ev){RC.quote=ev.target.value;render();});}
     if(consent) steps[3].appendChild(consent);
+    var _rwrap=document.getElementById('ratioSeg'); _rwrap=_rwrap&&_rwrap.parentElement;
+    if(_rwrap){_rwrap.style.margin='0 0 12px';var _rlab=_rwrap.querySelector('label'); if(_rlab){_rlab.textContent='ขนาดการ์ด / สัดส่วน — กดเปลี่ยนแล้วพรีวิวอัปเดตทันที';_rlab.style.fontWeight='800';} steps[3].appendChild(_rwrap);}
     var pv=document.querySelector('.previewWrap'); if(pv) steps[3].appendChild(pv);
     var STEP=0;
     function wizGo(n){
@@ -541,7 +545,7 @@ window.addEventListener('message',function(e){
 // tell parent we're ready to receive data
 try{ if(window.parent!==window) window.parent.postMessage({type:'iufit-rc-ready'},'*'); }catch(e){}
 
-async function capture(){await document.fonts.ready;return await html2canvas($('card'),{scale:1,width:1080,height:RH[RC.ratio],backgroundColor:null,useCORS:true,logging:false});}
+async function capture(){await document.fonts.ready;return await html2canvas($('card'),{scale:1,width:1080,height:Math.round($('card').offsetHeight)||RH[RC.ratio],backgroundColor:null,useCORS:true,logging:false});}
 $('dl').addEventListener('click',async()=>{$('dl').textContent='⏳ กำลังสร้าง...';try{const c=await capture();const a=document.createElement('a');a.href=c.toDataURL('image/png');a.download='iufit-result-card-'+RC.tpl+'-'+new Date().toISOString().slice(0,10)+'.png';a.click();}catch(e){alert('สร้างรูปไม่สำเร็จ: '+e.message);}$('dl').textContent='⬇️ บันทึกรูป';});
 $('sh').addEventListener('click',async()=>{$('sh').textContent='⏳ ...';try{const c=await capture();c.toBlob(async b=>{const file=new File([b],'iufit-'+RC.tpl+'.png',{type:'image/png'});if(navigator.canShare&&navigator.canShare({files:[file]})){try{await navigator.share({files:[file],title:'IUFIT',text:'ผลลัพธ์จาก IUFIT 💪'});}catch(e){}}else{alert('เครื่องนี้ไม่รองรับแชร์ไฟล์ตรง — ใช้ปุ่มบันทึกรูปแทนได้');}},'image/png');}catch(e){alert('แชร์ไม่สำเร็จ: '+e.message);}$('sh').textContent='↗️ แชร์';});
 </script>
