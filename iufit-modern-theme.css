@@ -677,3 +677,18 @@ header{display:none!important}
 .mpg{min-width:30px;height:30px;border:1px solid var(--border);background:#fff;border-radius:9px;font-size:12.5px;font-weight:700;color:var(--ink2);cursor:pointer;font-family:var(--font-ui);padding:0 6px;line-height:1}
 .mpg.on{background:var(--brand-gradient);color:#fff;border-color:transparent}
 s:center;justify-content:center;flex:none;box-shadow:0 2px 5px rgba(13,54,110,.1)}
+
+/* ===== meal-plan single-day view (v6.31) ===== */
+.dselrow{display:flex;gap:7px;overflow-x:auto;scrollbar-width:none;margin:12px 0 2px;padding-bottom:2px}
+.dselrow::-webkit-scrollbar{display:none}
+.dsel{flex:1 0 auto;min-width:46px;position:relative;border:1.5px solid var(--border);background:#fff;color:var(--ink2);border-radius:14px;padding:9px 6px;font-family:var(--font-ui);font-weight:800;font-size:14px;cursor:pointer;transition:.15s}
+.dsel.on{background:var(--coral);border-color:var(--coral);color:#fff;box-shadow:0 6px 16px rgba(10,132,255,.28)}
+.dsdot{position:absolute;top:6px;right:8px;width:6px;height:6px;border-radius:50%;background:var(--sun,#f5a623)}
+.dsel.on .dsdot{background:#fff}
+.mealrow{display:flex;align-items:center;gap:12px;padding:13px;border:1px solid var(--border);border-radius:18px;background:#fff;margin-bottom:10px;cursor:pointer;transition:transform .12s ease}
+.mealrow:active{transform:scale(.99)}
+.mric{flex:none;width:46px;height:46px;border-radius:14px;background:linear-gradient(180deg,#eaf3ff,#dbe9ff);display:flex;align-items:center;justify-content:center;font-size:21px}
+.mric svg{width:22px;height:22px}
+.mealsel{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.mradd{flex:none;font-weight:800;font-size:13px;color:var(--coral);border:1.5px dashed #b9d4f7;border-radius:12px;padding:8px 12px;white-space:nowrap}
+.mradd.filled{color:var(--mint);border-style:solid;border-color:#bfe9e2;background:#effbf9}
