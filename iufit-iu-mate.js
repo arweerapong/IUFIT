@@ -5,6 +5,7 @@
 (function(){
 'use strict';
 if(window.IUMate) return;
+/* SECTIONS: 1) utils  2) synonym/normalize  3) calc engine (BMR/TDEE/macros/BMI)  4) ingredient model + recipe engine  5) context engine (local data)  6) INTENTS (detectIntent + INTENT_KW)  7) KNOWLEDGE base  8) reply builders  9) chips/greeting  10) rendering (FAB/sheet/cards)  11) confirm + ACTIONS  12) recipe/ingredient/calc UI  13) message flow  14) public API + consent  15) boot */
 
 /* ============================ tiny utils ============================ */
 function EN(){ return window.LANG==='en'; }
@@ -188,6 +189,9 @@ function ingredientList(){
   }
   _ingCache=out; return out;
 }
+/* schema guard: true only if IUFIT_ING exists and items expose numeric v=[kcal,prot,fat,carb,...] */
+function ingDbOk(){ try{ var ing=ING(); var ks=Object.keys(ing); if(!ks.length) return false; for(var i=0;i<ks.length;i++){ var it=ing[ks[i]]; if(it&&it.v){ return Array.isArray(it.v)&&it.v.length>=4&&typeof it.v[0]==='number'; } } return false; }catch(e){ return false; } }
+function cantCalcReply(){ return { title:L('ยังคำนวณเมนูไม่ได้','Cannot calculate menus yet'), message:L('ฐานข้อมูลวัตถุดิบยังไม่พร้อมหรือรูปแบบไม่ตรง IU Mate เลยยังคำนวณโภชนาการให้ไม่ได้ ลองรีเฟรชแอปอีกครั้งนะครับ','The ingredient database is not ready or its format does not match, so IU Mate cannot calculate nutrition. Please refresh the app.') }; }
 function ingMatchForms(ing){
   // build candidate match strings: full name, alias, base name (strip parens), slash-split parts
   var forms=[]; function add(s){ s=(s||'').trim(); if(s&&s.length>=2) forms.push(s); }
@@ -469,6 +473,7 @@ function buildToday(){
   ] };
 }
 function buildFoodRecommend(message){
+  if(!ingDbOk()) return cantCalcReply();
   // reuse the recipe engine with a sensible staple pantry from real ING
   var picks=popularIngredients();
   var byGroup=groupBy(picks);
@@ -558,6 +563,7 @@ function buildShareText(){
   ] };
 }
 function buildRecipeReply(message){
+  if(!ingDbOk()) return cantCalcReply();
   var ings=findIngredientsInText(message);
   if(!ings.length) return { title:L('สร้างเมนูจากวัตถุดิบ','Make a menu from ingredients'),
     message:L('ลองพิมพ์วัตถุดิบที่มี เช่น "มีอกไก่ ไข่ ข้าวกล้อง" หรือเลือกจากรายการด้านล่าง','Type the ingredients you have, e.g. "chicken breast, egg, brown rice", or pick from the list below.'),
@@ -708,7 +714,7 @@ function confirmAddRecipe(rid){
   var rc=ST.recipeCache[rid]; if(!rc){ appToast(L('ไม่พบเมนู','Recipe not found')); return; }
   var mk=mealKeyFromTime();
   showConfirm({ title:L('เพิ่มลง'+mealLabel(mk),'Add to '+mealLabel(mk)), body:rc.name+' · '+rc.nutrition.kcal+' kcal', yes:L('เพิ่ม','Add'), onYes:function(){
-    try{ var u=curUser(); var s=S(); s.logs=s.logs||[]; s.logs.push({ id:uid(), user:(u&&u.id)||window.S.active, date:todayDate(), meal:mk, name:rc.name, fx:[rc.nutrition.kcal, rc.nutrition.protein], eaten:1, ings:rc.ingredients.map(function(i){return [i.id,i.amount];}), src:'iu_mate' });
+    try{ var u=curUser(); var s=S(); s.logs=s.logs||[]; var _ings=rc.ingredients.map(function(i){return [i.id,i.amount];}).filter(function(p){return ING()[p[0]];}); if(!_ings.length){ appToast(L('เพิ่มเมนูไม่ได้ (วัตถุดิบไม่ตรงฐานข้อมูล)','Cannot add (ingredients not in DB)')); return; } /* store ings only: IUFIT logNut() computes full kcal/protein/carb/fat/fiber from ings via nutOf(); adding fx would zero-out carb/fat */ s.logs.push({ id:uid(), user:(u&&u.id)||window.S.active, date:todayDate(), meal:mk, name:rc.name, ings:_ings, eaten:1, src:'iu_mate' });
       if(fn('save')) window.save();
       if((window.TAB==='today'||window.TAB==='food') && (fn('renderToday')||fn('renderFood'))){ try{ if(window.TAB==='today'&&fn('renderToday'))window.renderToday(); else if(fn('renderFood'))window.renderFood(); }catch(e){} }
     }catch(e){}
@@ -733,6 +739,7 @@ function modalClose(){ var m=document.getElementById('iuMateSimpleModal'); if(m)
 function showSimpleModal(html){ var ex=document.getElementById('iuMateSimpleModal'); if(ex) ex.remove(); var w=document.createElement('div'); w.id='iuMateSimpleModal'; w.className='iu-mate-confirm-wrap'; w.innerHTML='<div class="iu-mate-confirm" style="max-width:440px;width:100%;max-height:90vh;overflow:auto;text-align:left;padding:18px">'+html+'</div>'; w.addEventListener('click',function(e){ if(e.target===w) w.remove(); }); document.body.appendChild(w); }
 function ingGroupsForPicker(){ return [['all',L('ทั้งหมด','All')],['protein',L('โปรตีน','Protein')],['carb',L('คาร์บ','Carb')],['vegetable',L('ผัก','Veg')],['fat',L('ไขมันดี','Fat')],['fruit',L('ผลไม้','Fruit')]]; }
 function openIngredientPicker(){
+  if(!ingDbOk()){ appToast(L('ฐานวัตถุดิบยังไม่พร้อม','Ingredient DB not ready')); return; }
   ST.pickerQuery=''; if(!ST.pickerSel) ST.pickerSel=[];
   modalOpen('<div class="iu-mate-ip" id="iuMateIp"></div>'); renderPicker();
 }
@@ -849,7 +856,7 @@ function boot(){
   renderFab();
   // keep FAB visibility + language synced by decorating renderAll (calls original, non-invasive)
   try{ if(fn('renderAll') && !window.renderAll.__iuMateWrapped){ var orig=window.renderAll; window.renderAll=function(){ var r=orig.apply(this,arguments); try{ IUMate._sync(); }catch(e){} return r; }; window.renderAll.__iuMateWrapped=true; } }catch(e){}
-  setInterval(function(){ try{ if(!ST.isOpen) renderFab(); }catch(e){} }, 2500);
+  // FAB visibility synced via the renderAll decorator above (covers login + tab change); no polling needed
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
 
