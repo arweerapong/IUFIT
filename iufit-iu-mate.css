@@ -33,7 +33,9 @@
   transform:translateY(100%);animation:iu-up .26s cubic-bezier(.22,1,.36,1) forwards}
 .iu-mate-sheet.full{height:100dvh;border-radius:0}
 @keyframes iu-up{to{transform:translateY(0)}}
-.iu-mate-grab{width:40px;height:4px;border-radius:999px;background:#cfdcf0;margin:8px auto 0}
+.iu-mate-grab{position:relative;width:48px;height:5px;border-radius:999px;background:linear-gradient(90deg,#0A84FF,#20D5FF);margin:9px auto 2px;border:0;padding:0;cursor:pointer;display:block}
+.iu-mate-grab::before{content:"";position:absolute;inset:-13px -60px}
+.iu-mate-grab:active{background:linear-gradient(90deg,#003C8F,#0A84FF)}
 
 /* ---------- Header ---------- */
 .iu-mate-header{padding:10px 14px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--iu-border)}

@@ -887,10 +887,11 @@ function renderMessages(){
 }
 function setupSheetDrag(){
   var sheet=document.querySelector('.iu-mate-sheet'); if(!sheet) return;
-  var startY=0,curY=0,dragging=false;
-  sheet.addEventListener('touchstart',function(e){var t=e.target; if(!t.closest('.iu-mate-grab')&&!t.closest('.iu-mate-header')){dragging=false;return;} startY=e.touches[0].clientY; curY=0; dragging=true; sheet.style.transition='none';},{passive:true});
-  sheet.addEventListener('touchmove',function(e){ if(!dragging) return; var dy=e.touches[0].clientY-startY; if(dy<0)dy=0; curY=dy; sheet.style.transform='translateY('+dy+'px)'; if(dy>4&&e.cancelable)e.preventDefault();},{passive:false});
-  function end(e){ if(!dragging) return; dragging=false; sheet.style.transition='transform .22s cubic-bezier(.22,1,.36,1)'; if(curY>110){ sheet.style.transform='translateY(100%)'; setTimeout(function(){ try{IUMate.close();}catch(_e){} },180); } else { sheet.style.transform='translateY(0)'; } if(curY>6&&e.cancelable)e.preventDefault(); }
+  var startY=0,curY=0,dragging=false,raf=0;
+  function applyDrag(){ raf=0; sheet.style.transform='translate3d(0,'+curY+'px,0)'; }
+  sheet.addEventListener('touchstart',function(e){var t=e.target; if(!t.closest('.iu-mate-grab')&&!t.closest('.iu-mate-header')){dragging=false;return;} startY=e.touches[0].clientY; curY=0; dragging=true; sheet.style.transition='none'; sheet.style.willChange='transform';},{passive:true});
+  sheet.addEventListener('touchmove',function(e){ if(!dragging) return; var dy=e.touches[0].clientY-startY; if(dy<0)dy=dy*0.35; curY=dy; if(!raf)raf=requestAnimationFrame(applyDrag); if(dy>4&&e.cancelable)e.preventDefault();},{passive:false});
+  function end(e){ if(!dragging) return; dragging=false; if(raf){cancelAnimationFrame(raf);raf=0;} sheet.style.transition='transform .28s cubic-bezier(.16,1,.3,1)'; sheet.style.willChange=''; if(curY>110){ sheet.style.transform='translate3d(0,100%,0)'; setTimeout(function(){ try{IUMate.close();}catch(_e){} },210); } else { sheet.style.transform='translate3d(0,0,0)'; } if(curY>6&&e.cancelable)e.preventDefault(); }
   sheet.addEventListener('touchend',end,{passive:false});
   sheet.addEventListener('touchcancel',end,{passive:false});
 }
