@@ -700,6 +700,22 @@ function greeting(){
 
 /* ============================ rendering ============================ */
 function root(){ var r=document.getElementById('iuMateRoot'); if(!r){ r=document.createElement('div'); r.id='iuMateRoot'; document.body.appendChild(r); } return r; }
+function injectEntryPoints(){
+  try{
+    if(!appReady()){ var e0=document.getElementById('iuMateEntry'); if(e0)e0.remove(); return; }
+    var tab=window.TAB||''; var view=document.getElementById('view'); if(!view) return;
+    var old=document.getElementById('iuMateEntry'); if(old) old.remove();
+    var cfg=null;
+    if(tab==='food') cfg={icon:'🧺',label:L('สร้างเมนูจากวัตถุดิบกับ IU Mate','Build a menu from ingredients with IU Mate'),q:L('สร้างเมนูจากของที่มี','make a menu from my ingredients')};
+    else if(tab==='coach') cfg={icon:'📊',label:L('สรุปลูกเทรนวันนี้ ด้วย IU Mate','Clients overview with IU Mate'),q:L('สรุปลูกเทรน','clients overview')};
+    else if(tab==='body') cfg={icon:'✨',label:L('อธิบายผลลัพธ์ของฉัน ด้วย IU Mate','Explain my results with IU Mate'),q:L('ดูความคืบหน้า','my progress')};
+    if(!cfg) return;
+    var b=document.createElement('button'); b.id='iuMateEntry'; b.className='iu-mate-entry'; b.type='button';
+    b.innerHTML='<span class="ico">'+cfg.icon+'</span><span class="lbl">'+esc(cfg.label)+'</span><span class="go">'+botIcon()+'</span>';
+    b.addEventListener('click',function(){ IUMate.open(tab); if(hasConsent()){ setTimeout(function(){ IUMate.chip(cfg.q); },260); } });
+    view.insertBefore(b, view.firstChild);
+  }catch(e){}
+}
 function renderFab(){
   var r=root(); var fab=document.getElementById('iuMateFab');
   if(!fab){ fab=document.createElement('button'); fab.id='iuMateFab'; fab.className='iu-mate-fab'; fab.type='button';
@@ -945,7 +961,7 @@ var IUMate = {
   acceptConsent:function(){ var coachData=true; var cb=document.getElementById('iuMateCoachConsent'); if(cb) coachData=!!cb.checked; saveConsent(coachData); ST.messages=[]; ST.messages.push({role:'botText',text:greeting()}); renderSheet(); renderFab(); },
   declineConsent:function(){ closeNow(); },
   showPrivacy:function(){ showConfirm({ title:L('ความเป็นส่วนตัว','Privacy'), body:L('IU Mate ทำงานในเครื่อง บทสนทนาไม่ถูกบันทึกหรือส่งออกนอกเครื่อง และอ่านข้อมูลในแอปเพื่อช่วยสรุปเท่านั้น','IU Mate runs on-device. Conversations are not saved or sent anywhere, and it only reads your in-app data to help summarize.'), yes:L('เพิกถอนความยินยอม','Withdraw consent'), onYes:function(){ revokeConsent(); appToast(L('เพิกถอนความยินยอมแล้ว','Consent withdrawn')); closeNow(); } }); },
-  _sync:function(){ try{ renderFab(); }catch(e){} },
+  _sync:function(){ try{ renderFab(); }catch(e){} try{ injectEntryPoints(); }catch(e){} },
   _state:ST
 };
 window.IUMate = IUMate;
