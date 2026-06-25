@@ -129,6 +129,11 @@ var SETTINGS_KEY='iufit_iu_mate_settings';
 function loadSettings(){ try{ return JSON.parse(localStorage.getItem(SETTINGS_KEY)||'null'); }catch(e){ return null; } }
 function saveSettings(s){ try{ localStorage.setItem(SETTINGS_KEY, JSON.stringify(s)); }catch(e){} }
 function settings(){ return loadSettings()||{enabled:true,answerStyle:'supportive_short',useCoachData:true,knowledgeInstalled:true}; }
+/* local feedback loop: usage stats kept on-device only (localStorage), never sent */
+var STATS_KEY='iufit_iu_mate_stats';
+function loadStats(){ try{ return JSON.parse(localStorage.getItem(STATS_KEY)||'{}')||{}; }catch(e){ return {}; } }
+function bumpStat(k){ try{ var st=loadStats(); st[k]=(st[k]||0)+1; localStorage.setItem(STATS_KEY, JSON.stringify(st)); }catch(e){} }
+function statCount(k){ try{ return loadStats()[k]||0; }catch(e){ return 0; } }
 var CONSENT_KEY='iufit_iu_mate_consent';
 function loadConsent(){ try{ return JSON.parse(localStorage.getItem(CONSENT_KEY)||'null'); }catch(e){ return null; } }
 function hasConsent(){ var c=loadConsent(); return !!(c&&c.accepted); }
@@ -345,8 +350,10 @@ var INTENT_KW = {
   result_summary:['ผลลัพธ์','น้ำหนัก','ลดไป','ความคืบหน้า','กราฟ','รอบเอว','result','progress','weight','waist','my result'],
   workout_recommend:['ออกกำลัง','ท่าฝึก','เล่นอะไร','เวท','คาร์ดิโอ','ดัมเบล','workout','exercise','train','cardio','weight training'],
   calc_plan:['คำนวณแคล','คำนวณโปรตีน','ตั้งแคล','ควรกินกี่แคล','แคลเท่าไร','โปรตีนเท่าไหร่','โปรตีนกี่กรัม','กี่กรัม','มาโคร','macro','tdee','bmr','bmi','calorie target','คำนวณมาโคร','ควรตั้งแคล'],
+  coach_progress:['สรุปลูกเทรน','วิเคราะห์ลูกเทรน','ความคืบหน้าลูกเทรน','สรุปลูกเทรนวันนี้','ใครน่าห่วง','ใครเสี่ยงหลุด','ภาพรวมลูกเทรน','progress client','client risk','who is at risk','clients overview'],
   coach_followup:['ติดตามลูกเทรน','ลูกเทรนที่ต้องติดตาม','ใครยังไม่ส่ง','ใครหาย','คนที่ต้องติดตาม','follow up','who to follow','inactive client','who hasn'],
   coach_homework_summary:['สรุปการบ้าน','ตรวจการบ้าน','การบ้านค้าง','ส่งการบ้าน','homework','to review','pending homework'],
+  coach_templates:['ข้อความสำเร็จรูป','เทมเพลตข้อความ','ขอข้อความ','ช่วยพิมพ์ข้อความ','พิมพ์ข้อความหาลูกเทรน','ข้อความหาลูกเทรน','message template','templates','draft message'],
   coach_feedback:['เขียน feedback','feedback','ฟีดแบ็ก','คอมเมนต์ลูกเทรน','ชมลูกเทรน','เขียนคำชม','write feedback','give feedback'],
   coach_group_summary:['สรุปกลุ่ม','กิจกรรมกลุ่ม','ภารกิจกลุ่ม','กลุ่มไหน','group summary','group activity','mission'],
   app_help:['ใช้งาน','ทำยังไง','สอน','วิธี','เข้ากลุ่ม','บันทึกอาหาร','how to','how do i','tutorial','guide'],
@@ -442,8 +449,10 @@ function buildReply(intent, message){
     case 'workout_recommend': return buildWorkout();
     case 'calc_plan': return buildCalcPlan(message);
     case 'ingredient_recipe_generate': return buildRecipeReply(message);
+    case 'coach_progress': return buildCoachProgress();
     case 'coach_followup': return buildCoachFollowup();
     case 'coach_homework_summary': return buildCoachHomework();
+    case 'coach_templates': return buildCoachTemplates();
     case 'coach_feedback': return buildCoachFeedback();
     case 'coach_group_summary': return buildCoachGroup();
     case 'app_help': return buildKnowledge(message);
@@ -513,17 +522,62 @@ function buildWorkout(){
     actions:[{label:L('เปิดท่าฝึก','Open Workout'),action:'go_workout'}] };
 }
 function coachDeniedReply(){ return { title:L('ต้องเปิดสิทธิ์ข้อมูลโค้ชก่อน','Enable coach data first'), message:L('IU Mate ยังไม่ได้รับอนุญาตให้ใช้ข้อมูลลูกเทรน/กลุ่มในเครื่อง เปิดสิทธิ์ได้ที่ปุ่ม 🔒 ด้านบน','IU Mate isn\'t allowed to use local client/group data yet. Enable it via the 🔒 button at the top.') }; }
+/* ---- coach progress + risk scoring (from local cnote: {d,k,p,wt}) ---- */
+function analyzeClient(c){
+  var cn=(S().cnote||{})[c.id]||[]; var today=todayDate();
+  function days(d){ return Math.round((Date.parse(today)-Date.parse(d))/86400000); }
+  var last=cn.length?cn[0].d:null; var daysAgo=last?days(last):null;
+  var win=cn.filter(function(e){ return days(e.d)<=14; });
+  var compliance=Math.round(Math.min(win.length,14)/14*100);
+  var wts=cn.filter(function(e){ return e.wt>0; });
+  var latestW=wts.length?wts[0].wt:null;
+  var wChange=wts.length>=2?Math.round((wts[0].wt-wts[wts.length-1].wt)*10)/10:null;
+  var recentW=wts.filter(function(e){ return days(e.d)<=21; }).map(function(e){ return e.wt; });
+  var stall=recentW.length>=3 && (Math.max.apply(null,recentW)-Math.min.apply(null,recentW))<=0.5;
+  var pTarget=latestW?latestW*1.6:null;
+  var pMiss=pTarget?win.filter(function(e){ return (e.p||0)<pTarget*0.8; }).length:0;
+  var score=0, reasons=[];
+  if(daysAgo==null){ score+=2; reasons.push(L('ยังไม่มีบันทึก','no records')); }
+  else if(daysAgo>=3){ score+=3; reasons.push(L('ไม่ส่งบันทึก '+daysAgo+' วัน','no log '+daysAgo+'d')); }
+  else if(daysAgo>=2){ score+=1; reasons.push(L('ค้าง '+daysAgo+' วัน','idle '+daysAgo+'d')); }
+  if(stall && compliance>=70){ score+=3; reasons.push(L('น้ำหนักนิ่งแต่ทำตามดี','stalled but compliant')); }
+  if(pTarget && pMiss>=4){ score+=2; reasons.push(L('โปรตีนไม่ถึง '+pMiss+' วัน','protein low '+pMiss+'d')); }
+  if(daysAgo!=null && daysAgo<=1 && compliance>=80 && !stall){ score-=2; reasons.push(L('ทำได้ดีสม่ำเสมอ','on track')); }
+  return { name:c.name||'-', daysAgo:daysAgo, compliance:compliance, latestW:latestW, wChange:wChange, stall:stall, pMiss:pMiss, score:score, reasons:reasons };
+}
+function buildCoachProgress(){
+  if(!consentCoach()) return coachDeniedReply();
+  var clients=(S().users||[]).filter(function(u){ return u.tr; });
+  if(!clients.length) return { title:L('ยังไม่มีลูกเทรน','No clients yet'), message:L('ยังไม่มีลูกเทรน แชร์ QR โค้ชให้สแกนเข้ามาก่อนนะครับ','No clients yet — share your Coach QR.'), actions:[{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] };
+  var rows=clients.map(analyzeClient).sort(function(a,b){ return b.score-a.score; });
+  var risky=rows.filter(function(r){ return r.score>=2; });
+  var msg=L('สรุป: ดูแลลูกเทรน '+clients.length+' คน','Summary: '+clients.length+' clients');
+  if(risky.length){ msg+='\n\n'+L('ควรดูก่อน:','Watch first:')+'\n'+risky.slice(0,5).map(function(r,i){ return (i+1)+'. '+r.name+' — '+(r.reasons[0]||'')+(r.score>0?' ('+L('เสี่ยง','risk')+' '+r.score+')':''); }).join('\n'); }
+  else msg+='\n\n'+L('ภาพรวมดี ไม่มีใครเสี่ยงหลุดจากข้อมูลในเครื่อง','All good — no high-risk clients from local data.');
+  var planIssue=rows.filter(function(r){ return r.stall && r.compliance>=70; });
+  var compIssue=rows.filter(function(r){ return r.compliance<70 && r.daysAgo!=null; });
+  var ins=[];
+  if(planIssue.length) ins.push(L(planIssue.length+' คนทำตามดีแต่ผลนิ่ง → พิจารณาปรับแคล/คาร์ดิโอ/โวลุ่ม',planIssue.length+' compliant but stalled → consider adjusting calories/cardio/volume'));
+  if(compIssue.length) ins.push(L(compIssue.length+' คน compliance ต่ำ → แก้ความสม่ำเสมอก่อนปรับแผน',compIssue.length+' low compliance → fix consistency before changing the plan'));
+  if(ins.length) msg+='\n\n'+L('ข้อสังเกต:','Insight:')+'\n'+ins.map(function(x){ return '• '+x; }).join('\n');
+  msg+='\n\n'+L('ทำต่อ: ติดตามคนเสี่ยงสูงก่อน แล้วชมคนที่ทำได้ดี','Next: follow up the highest-risk first, then praise those on track');
+  return { title:L('สรุปลูกเทรนวันนี้','Clients overview'), message:msg,
+    disclaimer:L('อิงข้อมูลในเครื่อง (การบ้านที่ตรวจแล้ว) อาจไม่รวมกิจกรรมล่าสุด — เป็นค่าประมาณเพื่อช่วยจัดลำดับ ไม่ใช่คำตัดสิน','Based on local saved data; may miss latest activity — estimates to help prioritize, not verdicts'),
+    actions:[{label:L('เขียนข้อความติดตาม','Draft follow-up'),action:'create_followup_message'},{label:L('เปิดหน้าลูกเทรน','Clients'),action:'go_clients'},{label:L('เขียน feedback','Feedback'),action:'create_feedback'}] };
+}
 function buildCoachFollowup(){
-  var c=coachCtx(); if(c.denied) return coachDeniedReply();
-  if(!c.clients) return { title:L('ยังไม่มีลูกเทรน','No clients yet'), message:L('ยังไม่มีลูกเทรน แชร์ QR โค้ชให้สแกนเข้ามาก่อนนะครับ','No clients yet — share your Coach QR for them to scan.'),
+  if(!consentCoach()) return coachDeniedReply();
+  var clients=(S().users||[]).filter(function(u){ return u.tr; });
+  if(!clients.length) return { title:L('ยังไม่มีลูกเทรน','No clients yet'), message:L('ยังไม่มีลูกเทรน แชร์ QR โค้ชให้สแกนเข้ามาก่อนนะครับ','No clients yet — share your Coach QR for them to scan.'),
     actions:[{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] };
-  var due=c.follow.filter(function(f){ return f.daysAgo==null || f.daysAgo>=2; });
+  var rows=clients.map(analyzeClient).filter(function(r){ return r.score>=2; }).sort(function(a,b){ return b.score-a.score; });
   var msg;
-  if(!due.length){ msg=L('เยี่ยม! ตอนนี้ยังไม่มีใครค้างติดตามจากข้อมูลในเครื่อง','Great — no one is overdue based on local data.'); }
-  else{ msg=L('ลูกเทรนที่ควรติดตามวันนี้ (จากข้อมูลในเครื่อง):','Clients to follow up today (from local data):')+'\n'+
-    due.slice(0,5).map(function(f,i){ var t=f.daysAgo==null?L('ยังไม่มีบันทึก','no records yet'):L('ค้าง '+f.daysAgo+' วัน','idle '+f.daysAgo+' days'); return (i+1)+'. '+f.name+' — '+t; }).join('\n'); }
-  return { title:L('ลูกเทรนที่ต้องติดตาม','Clients to follow up'), message:msg, disclaimer:L('อิงข้อมูลที่บันทึกในเครื่อง อาจไม่รวมกิจกรรมล่าสุดที่ยังไม่ซิงก์','Based on local data; may not include the very latest unsynced activity.'), actions:[
+  if(!rows.length){ msg=L('เยี่ยม! ตอนนี้ยังไม่มีใครเสี่ยงหลุดจากข้อมูลในเครื่อง','Great — no one is at risk based on local data.'); }
+  else{ msg=L('ลูกเทรนที่ควรติดตามก่อน (เรียงตามความเสี่ยง):','Clients to follow up first (by risk):')+'\n'+
+    rows.slice(0,5).map(function(r,i){ return (i+1)+'. '+r.name+' — '+r.reasons.slice(0,2).join(', '); }).join('\n'); }
+  return { title:L('ลูกเทรนที่ต้องติดตาม','Clients to follow up'), message:msg, disclaimer:L('อิงข้อมูลที่บันทึกในเครื่อง อาจไม่รวมกิจกรรมล่าสุดที่ยังไม่ซิงก์ — เป็นค่าประมาณเพื่อจัดลำดับ','Based on local data; may miss latest activity — estimates to prioritize.'), actions:[
     {label:L('เขียนข้อความติดตาม','Draft follow-up'),action:'create_followup_message'},
+    {label:L('สรุปภาพรวมลูกเทรน','Overview'),action:'_chip',payload:{q:L('สรุปลูกเทรน','clients overview')}},
     {label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}
   ] };
 }
@@ -531,6 +585,49 @@ function buildCoachHomework(){
   return { title:L('สรุปการบ้าน','Homework summary'),
     message:L('เปิดแท็บการบ้านเพื่อดูการบ้านที่รอตรวจ เปิดดูแล้วกดบันทึกลงโปรไฟล์ลูกเทรนเพื่อย้ายไป "ตรวจแล้ว"','Open the Homework tab to see items to review — view then save to the client profile to move them to "Reviewed".'),
     actions:[{label:L('เปิดการบ้าน','Open Homework'),action:'go_homework'},{label:L('เขียน feedback','Write feedback'),action:'create_feedback'}] };
+}
+/* ---- coach communication templates (11) — data-driven, {name}=client ---- */
+var MSG_TEMPLATES=[
+  {id:'welcome', label:L('ทักลูกเทรนใหม่','Welcome new client'),
+    th:'สวัสดีครับ {name} ยินดีต้อนรับเข้าโปรแกรม! เริ่มจากบันทึกอาหารและน้ำหนัก 3-5 วันแรกให้ครบนะครับ มีอะไรสงสัยถามโค้ชได้ตลอด เดี๋ยวเราค่อย ๆ ปรับให้เข้ากับไลฟ์สไตล์ของคุณ 💪',
+    en:'Hi {name}, welcome to the program! Start by logging your meals and weight for the first 3-5 days. Ask me anything anytime — we will fine-tune everything to fit your lifestyle 💪'},
+  {id:'follow_nohw', label:L('ติดตามคนไม่ส่งการบ้าน','Follow up (no homework)'),
+    th:'สวัสดีครับ {name} ช่วงนี้ติดอะไรตรงไหนไหมครับ? วันนี้สะดวกบันทึกมื้ออาหารหรือส่งการบ้านไหมครับ ส่งมาได้เลย เดี๋ยวโค้ชช่วยดูให้ 🙌',
+    en:'Hi {name}, anything getting in the way lately? Can you log a meal or send homework today? Just send it over and I will take a look 🙌'},
+  {id:'praise', label:L('ชมคนทำดี','Praise'),
+    th:'เยี่ยมมากครับ {name}! ทำได้สม่ำเสมอแบบนี้เห็นผลแน่นอน รักษาจังหวะนี้ไว้นะครับ ภูมิใจในตัวคุณ 👏',
+    en:'Awesome, {name}! Staying this consistent will absolutely show results. Keep the rhythm going — proud of you 👏'},
+  {id:'comfort', label:L('ปลอบคนหลุดแผน','Re-engage'),
+    th:'ไม่เป็นไรเลยครับ {name} ทุกคนมีช่วงที่ชีวิตวุ่นได้ ไม่ต้องโทษตัวเอง กลับมาเริ่มใหม่จากบันทึกอาหารแค่ 1 มื้อวันนี้ก่อนก็พอ เดี๋ยวเราไปต่อด้วยกัน 🤝',
+    en:'No worries at all, {name} — everyone has busy stretches, no need to blame yourself. Just restart with logging one meal today. We will pick it back up together 🤝'},
+  {id:'adjust', label:L('ปรับแผนไม่ให้รู้สึกผิด','Adjust plan (gentle)'),
+    th:'{name} ครับ จากที่ดูข้อมูล โค้ชขอปรับแผนนิดหน่อยให้เหมาะกับคุณมากขึ้น ไม่ใช่เพราะทำได้ไม่ดีนะครับ แต่เพื่อให้ก้าวต่อได้ลื่นขึ้น ลองทำตามแบบใหม่ 1 สัปดาห์แล้วบอกโค้ชว่าเป็นยังไงครับ',
+    en:'{name}, looking at your data I would like to tweak the plan a little to fit you better — not because you did anything wrong, but to keep progress smooth. Try the new version for a week and let me know how it feels.'},
+  {id:'request', label:L('ขอน้ำหนัก/รูป/รอบเอว','Request data'),
+    th:'รบกวน {name} ส่งน้ำหนักล่าสุด + รอบเอว (และรูปถ้าสะดวก) ให้โค้ชหน่อยนะครับ จะได้ดูแนวโน้มและปรับแผนให้แม่นขึ้น ขอบคุณครับ 🙏',
+    en:'Could you send me your latest weight + waist (and a photo if you are comfortable), {name}? It helps me track the trend and fine-tune your plan. Thank you 🙏'},
+  {id:'weekly', label:L('สรุปรายสัปดาห์','Weekly summary'),
+    th:'สรุปสัปดาห์นี้ของ {name} ครับ 👏 ความสม่ำเสมอโอเค สิ่งที่อยากให้โฟกัสสัปดาห์หน้าคือ [จุดที่ต้องปรับ] ทำต่อแบบนี้เราไปได้สวยแน่นอนครับ',
+    en:'Here is your week recap, {name} 👏 Consistency looks good. Next week, let us focus on [area to improve]. Keep this up and we are on a great track.'},
+  {id:'group_mission', label:L('แจ้งภารกิจกลุ่ม','Group mission'),
+    th:'ประกาศภารกิจกลุ่มสัปดาห์นี้ 🎯 บันทึกอาหารอย่างน้อย 2 มื้อ/วัน + ดื่มน้ำให้ถึงเป้า 3 วัน ใครทำครบมาแชร์ในกลุ่มได้เลย มาลุยด้วยกันนะครับทุกคน 💪',
+    en:'This week group mission 🎯 Log at least 2 meals/day + hit your water goal for 3 days. Share when you complete it. Let us go, team 💪'},
+  {id:'quiet_group', label:L('กระตุ้นกลุ่มเงียบ','Re-engage group'),
+    th:'ทักหน่อยครับชาวกลุ่ม 👋 ช่วงนี้เป็นยังไงกันบ้าง? ใครมีคำถามหรืออยากให้โค้ชช่วยปรับอะไรพิมพ์มาได้เลย มาแชร์ผลสัปดาห์นี้กันหน่อยครับ',
+    en:'Hey team 👋 How is everyone doing? Any questions or things you want me to adjust — drop them here. Let us share this week wins!'},
+  {id:'tired', label:L('ตอบคนบ่นเหนื่อย','Reply: tired'),
+    th:'เข้าใจเลยครับ {name} เหนื่อยได้เป็นเรื่องปกติ ลองพักให้พอ นอนให้ครบ แล้ววันนี้ทำแค่เบา ๆ ก็พอ ไม่ต้องฝืน ค่อย ๆ ไปครับ สุขภาพระยะยาวสำคัญกว่าความเร็ว 🌱',
+    en:'Totally understand, {name} — feeling tired is normal. Rest enough, sleep well, and keep today light. No need to push. Long-term health matters more than speed 🌱'},
+  {id:'weight_stall', label:L('ตอบคนน้ำหนักไม่ลง','Reply: weight stall'),
+    th:'{name} ครับ น้ำหนักนิ่งช่วงนี้เป็นเรื่องปกติของการลดไขมัน อย่าเพิ่งท้อนะครับ ขอดูบันทึกอาหาร 3-4 วันกับการนอน/น้ำ แล้วโค้ชจะช่วยปรับให้ บางทีรอบเอวลดแม้น้ำหนักยังไม่ขยับครับ',
+    en:'{name}, a weight stall is a normal part of fat loss — do not get discouraged. Send me 3-4 days of food logs plus sleep/water and I will help adjust. Sometimes the waist drops even when the scale does not.'}
+];
+function topClientName(){ try{ var cs=(S().users||[]).filter(function(u){return u.tr;}); if(!cs.length) return L('ลูกเทรน','your client'); var r=cs.map(analyzeClient).sort(function(a,b){return b.score-a.score;})[0]; return (r&&r.name)||cs[0].name||L('ลูกเทรน','your client'); }catch(e){ return L('ลูกเทรน','your client'); } }
+function buildCoachTemplates(){
+  if(!consentCoach()) return coachDeniedReply();
+  return { title:L('ข้อความสำเร็จรูปสำหรับโค้ช','Coach message templates'),
+    message:L('เลือกแบบข้อความ IU Mate จะร่างให้ (เติมชื่อลูกเทรนอัตโนมัติ) แล้วคัดลอกไปปรับต่อได้ครับ','Pick a message type — IU Mate drafts it (auto-fills the client name) for you to copy and tweak.'),
+    actions: MSG_TEMPLATES.map(function(t){ return {label:t.label, action:'msg_tpl', payload:{id:t.id}}; }) };
 }
 function buildCoachFeedback(){
   var c=coachCtx(); if(c.denied) return coachDeniedReply();
@@ -584,15 +681,16 @@ function buildFallback(message){
 }
 
 /* ============================ chips ============================ */
+function rankChips(list){ try{ return list.slice().sort(function(a,b){ return statCount('chip:'+b[0]) - statCount('chip:'+a[0]); }); }catch(e){ return list; } }
 function quickChips(){
-  if(role()==='coach') return [
+  var list=(role()==='coach')?[
     [L('สรุปลูกเทรน','Clients to follow'),'👥'],[L('สรุปการบ้าน','Homework'),'📥'],[L('เขียน feedback','Write feedback'),'✍️'],
-    [L('สรุปกลุ่ม','Groups'),'🏷️'],[L('คนที่ต้องติดตาม','Who to follow up'),'🔔']
-  ];
-  return [
+    [L('สรุปกลุ่ม','Groups'),'🏷️'],[L('คนที่ต้องติดตาม','Who to follow up'),'🔔'],[L('ข้อความสำเร็จรูป','Message templates'),'💬']
+  ]:[
     [L('สรุปวันนี้','Today summary'),'📊'],[L('กินอะไรดี','What to eat'),'🍽️'],[L('สร้างเมนูจากของที่มี','Make from ingredients'),'🧺'],
     [L('คำนวณแคล/มาโคร','Calorie & macros'),'🧮'],[L('ดูความคืบหน้า','My progress'),'📈'],[L('วิธีใช้แอป','How to use'),'❓']
   ];
+  return rankChips(list);
 }
 function greeting(){
   return role()==='coach'
@@ -696,6 +794,7 @@ var ACTIONS = {
   add_water:function(p){ showConfirm({ title:L('ดื่มน้ำ +'+(p&&p.amount||1),'Water +'+(p&&p.amount||1)), body:L('บันทึกน้ำดื่มเพิ่มในวันนี้','Add water to today\'s log'), yes:L('บันทึก','Save'), onYes:function(){ try{ if(fn('addWater')) window.addWater(p&&p.amount||1); }catch(e){} appToast(L('บันทึกน้ำแล้ว 💧','Water logged 💧')); pushBotText(L('บันทึกน้ำเพิ่มแล้วครับ 💧','Added water to today 💧')); } }); },
   create_followup_message:function(){ var c=coachCtx(); var name=(c.follow[0]&&c.follow[0].name)||L('ลูกเทรน','client'); var tpl=L('สวัสดีครับ '+name+' วันนี้สะดวกบันทึกมื้ออาหารหรือส่งการบ้านไหมครับ? มีอะไรให้โค้ชช่วยปรับแผนบอกได้เลยครับ 💪','Hi '+name+', can you log your meals or send homework today? Let me know if you\'d like to adjust the plan 💪'); pushReply({ title:L('ข้อความติดตาม','Follow-up message'), message:tpl, actions:[{label:L('คัดลอกข้อความ','Copy text'),action:'copy_text',payload:{text:tpl}},{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] }); },
   create_feedback:function(){ var tpl=L('ทำได้ดีมากครับ! เห็นความตั้งใจชัดเจน จุดที่อยากให้โฟกัสต่อคือความสม่ำเสมอของมื้ออาหารและการพักผ่อน สัปดาห์หน้าลองทำให้ครบทุกวันนะครับ เป็นกำลังใจให้ 👏','Great work! Your effort really shows. Next, focus on meal consistency and recovery — aim for a full week next time. Keep it up 👏'); pushReply({ title:L('ข้อความ feedback','Feedback message'), message:tpl, actions:[{label:L('คัดลอกข้อความ','Copy text'),action:'copy_text',payload:{text:tpl}}] }); },
+  msg_tpl:function(p){ var t=null; for(var i=0;i<MSG_TEMPLATES.length;i++){ if(MSG_TEMPLATES[i].id===(p&&p.id)){ t=MSG_TEMPLATES[i]; break; } } if(!t) return; try{ bumpStat('tpl:'+t.id); }catch(e){} var nm=topClientName(); var txt=(EN()?t.en:t.th).replace(/\{name\}/g,nm); pushReply({ title:t.label, message:txt, disclaimer:L('ปรับชื่อ/รายละเอียดให้ตรงลูกเทรนก่อนส่งได้เลย','Edit the name/details to fit your client before sending'), actions:[{label:L('คัดลอกข้อความ','Copy text'),action:'copy_text',payload:{text:txt}},{label:L('เลือกข้อความอื่น','More templates'),action:'_chip',payload:{q:L('ข้อความสำเร็จรูป','message templates')}}] }); },
   copy_text:function(p){ var txt=(p&&p.text)||''; try{ navigator.clipboard.writeText(txt); }catch(e){} appToast(L('คัดลอกแล้ว ✓','Copied ✓')); },
   open_ingredient_picker:function(){ openIngredientPicker(); },
   open_calc:function(){ openCalcForm(ST.calc||{}); },
@@ -803,7 +902,7 @@ function handleMessage(text){
   text=(text||'').trim(); if(!text) return;
   pushUser(text); pushTyping();
   setTimeout(function(){ popTyping();
-    var intent=detectIntent(text);
+    var intent=detectIntent(text); try{ bumpStat('intent:'+intent); }catch(e){}
     var reply; try{ reply=buildReply(intent,text); }catch(e){ reply=buildFallback(text); }
     pushReply(reply);
   }, 320+Math.random()*220);
@@ -822,7 +921,7 @@ var IUMate = {
   },
   close:function(){ closeNow(); },
   toggleFull:function(){ ST.full=!ST.full; renderSheet(); },
-  chip:function(q){ handleMessage(q); },
+  chip:function(q){ try{ bumpStat('chip:'+q); }catch(e){} handleMessage(q); },
   send:function(text){ handleMessage(text); },
   sendFromForm:function(ev){ if(ev&&ev.preventDefault) ev.preventDefault(); var inp=document.getElementById('iuMateInput'); if(inp){ var v=inp.value; inp.value=''; handleMessage(v); } return false; },
   act:function(action, idx, ai){
