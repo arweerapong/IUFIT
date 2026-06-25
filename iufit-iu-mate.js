@@ -380,6 +380,7 @@ var INTENT_KW = {
   workout_recommend:['ออกกำลัง','ท่าฝึก','เล่นอะไร','เวท','คาร์ดิโอ','ดัมเบล','workout','exercise','train','cardio','weight training'],
   make_plan:['จัดแผนให้','ช่วยวางแผน','วางแผนลด','วางแผนเพิ่มกล้าม','ทำแผนลด','จัดโปรแกรม','จัดแผนอาหาร','วางแผนให้ฉัน','make a plan','help me plan','plan for me','build a plan'],
   calc_plan:['คำนวณแคล','คำนวณโปรตีน','ตั้งแคล','ควรกินกี่แคล','แคลเท่าไร','โปรตีนเท่าไหร่','โปรตีนกี่กรัม','กี่กรัม','มาโคร','macro','tdee','bmr','bmi','calorie target','คำนวณมาโคร','ควรตั้งแคล'],
+  coach_workout:['ร่างโปรแกรม','โปรแกรมฝึกให้ลูกเทรน','ร่างโปรแกรมฝึก','จัดโปรแกรมฝึก','ตารางฝึกให้ลูกเทรน','โปรแกรมเวท','draft workout','workout program for','training program for'],
   coach_menu:['ร่างเมนู','จัดเมนูให้ลูกเทรน','เมนูให้ลูกเทรน','แผนอาหารลูกเทรน','ร่างแผนอาหาร','จัดเมนูทั้งวัน','เมนูทั้งวันให้ลูกเทรน','draft menu','meal plan for client','day menu for'],
   coach_progress:['สรุปลูกเทรน','วิเคราะห์ลูกเทรน','ความคืบหน้าลูกเทรน','สรุปลูกเทรนวันนี้','ใครน่าห่วง','ใครเสี่ยงหลุด','ภาพรวมลูกเทรน','progress client','client risk','who is at risk','clients overview'],
   coach_followup:['ติดตามลูกเทรน','ลูกเทรนที่ต้องติดตาม','ใครยังไม่ส่ง','ใครหาย','คนที่ต้องติดตาม','follow up','who to follow','inactive client','who hasn'],
@@ -812,7 +813,7 @@ function rankChips(list){ try{ return list.slice().sort(function(a,b){ return st
 function quickChips(){
   var list=(role()==='coach')?[
     [L('สรุปลูกเทรน','Clients to follow'),'👥'],[L('สรุปการบ้าน','Homework'),'📥'],[L('เขียน feedback','Write feedback'),'✍️'],
-    [L('ร่างเมนูให้ลูกเทรน','Draft a client menu'),'🍽️'],[L('สรุปกลุ่ม','Groups'),'🏷️'],[L('คนที่ต้องติดตาม','Who to follow up'),'🔔'],[L('ข้อความสำเร็จรูป','Message templates'),'💬']
+    [L('ร่างเมนูให้ลูกเทรน','Draft a client menu'),'🍽️'],[L('ร่างโปรแกรมฝึก','Draft a workout'),'🏋️'],[L('สรุปกลุ่ม','Groups'),'🏷️'],[L('คนที่ต้องติดตาม','Who to follow up'),'🔔'],[L('ข้อความสำเร็จรูป','Message templates'),'💬']
   ]:[
     [L('สรุปวันนี้','Today summary'),'📊'],[L('กินอะไรดี','What to eat'),'🍽️'],[L('สร้างเมนูจากของที่มี','Make from ingredients'),'🧺'],[L('เมนูประหยัด','Budget menu'),'💰'],
     [L('จัดแผนให้ฉัน','Build my plan'),'🎯'],[L('คำนวณแคล/มาโคร','Calorie & macros'),'🧮'],[L('ดูความคืบหน้า','My progress'),'📈'],[L('วิธีใช้แอป','How to use'),'❓']
@@ -947,6 +948,7 @@ var ACTIONS = {
   save_generated_recipe:function(p){ confirmSaveRecipe(p&&p.recipeId); },
   show_privacy:function(){ try{ IUMate.showPrivacy(); }catch(e){} },
   coach_menu_redraft:function(p){ if(p&&p.id) pushReply(buildCoachDayMenu(findClientById(p.id))); },
+  coach_workout_redraft:function(p){ if(p&&p.id) pushReply(buildCoachWorkout(findClientById(p.id), p.days, p.equip)); },
   flow_pick:function(p){ if(p&&p.v!=null) flowAnswer(p.v); },
   flow_cancel:function(){ cancelFlow(); },
   _chip:function(p){ if(p&&p.q) IUMate.chip(p.q); }
@@ -1152,6 +1154,65 @@ function startCoachMenu(){
   if(cs.length===1) return pushReply(buildCoachDayMenu(cs[0]));
   startFlow('coach_menu');
 }
+/* ---- coach drafting tool: workout program from built-in WORKOUTS (+ user S.moves) ---- */
+function enToThMove(){ var EN=window.IUFIT_EN||{}, m={}; for(var k in EN){ if(typeof EN[k]==='string') m[norm(EN[k])]=k; } return m; }
+function moveCatalog(){
+  var W=window.IUFIT_WORKOUTS||[], e2t=enToThMove(), out=[];
+  W.forEach(function(g){ var gn=g[0]||''; (g[1]||[]).forEach(function(mv){ if(!mv||!mv[0]) return; var en=mv[0], eq=mv[1]||'บอดี้เวท'; out.push({ nameTh:e2t[norm(en)]||en, nameEn:en, group:gn, eq:eq, cardio:/คาร์ดิโอ/.test(gn), source:'lib' }); }); });
+  try{ (S().moves||[]).forEach(function(u){ if(u&&u.n) out.push({ nameTh:u.n, nameEn:u.n, group:u.cat||'', eq:u.eq||'บอดี้เวท', cardio:/คาร์ดิโอ/.test(u.cat||''), source:'custom' }); }); }catch(e){}
+  return out;
+}
+function groupMatch(g, key){ return (g||'').indexOf(key)>=0; }
+function shuffleArr(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
+function movesForGroup(key, equip, used){
+  return shuffleArr(moveCatalog().filter(function(m){
+    if(!groupMatch(m.group,key)) return false;
+    if(equip==='home' && !(m.eq==='บอดี้เวท'||m.eq==='ยางยืด')) return false;
+    if(used[m.nameEn]) return false; return true;
+  }));
+}
+var DAYTMPL={ push:[['อก',2],['ไหล่',1],['แขน',1]], pull:[['หลัง',2],['แขน',1]], legs:[['ขา',3],['ท้อง',1]],
+  upper:[['อก',1],['หลัง',1],['ไหล่',1],['แขน',1]], lower:[['ขา',2],['ท้อง',2]], full:[['ขา',1],['อก',1],['หลัง',1],['ท้อง',1]] };
+var SPLITS={ 3:[['Push','push'],['Pull','pull'],['Legs','legs']],
+  4:[['Upper A','upper'],['Lower A','lower'],['Upper B','upper'],['Lower B','lower']],
+  5:[['Push','push'],['Pull','pull'],['Legs','legs'],['Upper','upper'],['Lower','lower']] };
+function setsReps(goal, cardio){
+  if(cardio) return goal==='lose'?L('15–20 นาที','15–20 min'):L('10–15 นาที','10–15 min');
+  if(goal==='lose') return L('3 เซ็ต × 12–15','3 sets × 12–15');
+  if(goal==='gain') return L('4 เซ็ต × 8–12','4 sets × 8–12');
+  return L('3 เซ็ต × 10–12','3 sets × 10–12');
+}
+function buildCoachWorkout(c, days, equip){
+  if(!consentCoach()) return coachDeniedReply();
+  if(!c) return { title:L('ไม่พบลูกเทรน','Client not found'), message:L('ลองเลือกใหม่','Try again') };
+  if(!(window.IUFIT_WORKOUTS&&window.IUFIT_WORKOUTS.length)) return { title:L('คลังท่ายังไม่พร้อม','Move library not ready'), message:L('ลองรีเฟรชแอปแล้วเปิด IU Mate อีกครั้งครับ','Please refresh the app and reopen IU Mate.') };
+  days=days||3; equip=equip||'gym'; var goal=c.goal||'lose'; var en=(window.LANG==='en');
+  var split=SPLITS[days]||SPLITS[3], dayTexts=[];
+  split.forEach(function(d, di){
+    var used={}, tmpl=DAYTMPL[d[1]]||DAYTMPL.full, moves=[];
+    tmpl.forEach(function(gp){ var pool=movesForGroup(gp[0], equip, used); for(var k=0;k<gp[1]&&k<pool.length;k++){ used[pool[k].nameEn]=1; moves.push(pool[k]); } });
+    if(goal==='lose'){ var cp=movesForGroup('คาร์ดิโอ', equip, used); if(cp[0]){ used[cp[0].nameEn]=1; moves.push(cp[0]); } }
+    var lines=moves.map(function(mv){ return '• '+mv.nameEn+' — '+setsReps(goal,mv.cardio)+(mv.source==='custom'?' ⭐':''); });
+    dayTexts.push('🗓️ '+L('วันที่ '+(di+1),'Day '+(di+1))+' — '+d[0]+'\n'+(lines.join('\n')||L('(ไม่มีท่าที่ตรงอุปกรณ์)','(no matching moves)')));
+  });
+  var head=L('โปรแกรมฝึก '+days+' วัน/สัปดาห์ — '+(c.name||'ลูกเทรน'), days+'-day/week program — '+(c.name||'client'));
+  var goalLine=L('เป้า: '+goalLabelOf(goal)+' · อุปกรณ์: '+(equip==='home'?'บอดี้เวท (ที่บ้าน)':'ยิม/อุปกรณ์ครบ'),'Goal: '+goalLabelOf(goal)+' · Equipment: '+(equip==='home'?'Bodyweight (home)':'Full gym'));
+  var body=goalLine+'\n\n'+dayTexts.join('\n\n');
+  ST.ctx={intent:'coach_workout', clientId:c.id, days:days, equip:equip};
+  return { title:head, message:body,
+    disclaimer:L('ค่าประมาณเพื่อช่วยร่าง โค้ชปรับท่า/เซ็ต/น้ำหนักก่อนส่งได้ · ⭐ = ท่าที่เพิ่มเอง','Estimates to help you draft — adjust moves/sets/load before sending · ⭐ = your custom move'),
+    actions:[
+      {label:L('🔄 ร่างใหม่','🔄 Redraft'),action:'coach_workout_redraft',payload:{id:c.id,days:days,equip:equip}},
+      {label:L('📋 คัดลอกเป็นข้อความ','📋 Copy as text'),action:'copy_text',payload:{text:head+'\n'+body}},
+      {label:L('เปิดท่าฝึก','Open Workout'),action:'go_workout'}
+    ] };
+}
+function startCoachWorkout(){
+  if(!consentCoach()) return pushReply(coachDeniedReply());
+  var cs=coachClientsList();
+  if(!cs.length) return pushReply({ title:L('ยังไม่มีลูกเทรน','No clients yet'), message:L('ยังไม่มีลูกเทรน แชร์ QR โค้ชให้สแกนเข้ามาก่อนนะครับ','No clients yet — share your Coach QR.'), actions:[{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] });
+  startFlow('coach_workout', cs.length===1?{client:cs[0].id}:null);
+}
 var FLOWS = {
   plan: {
     intro: L('โอเคครับ ขอถามนิดหน่อยเพื่อจัดให้พอดีตัวคุณ (ตอบสั้น ๆ ได้เลย)','Sure — a few quick questions to tailor this for you'),
@@ -1170,6 +1231,15 @@ var FLOWS = {
     intro: L('จะร่างเมนูทั้งวันให้ลูกเทรนคนไหนดีครับ?','Which client should I draft a full-day menu for?'),
     slots: [ { key:'client', type:'choice', q:L('เลือกลูกเทรน','Pick a client'), choicesFn:clientChoices } ],
     complete: function(sl){ return buildCoachDayMenu(findClientById(sl.client)); }
+  },
+  coach_workout: {
+    intro: L('จะร่างโปรแกรมฝึกให้ลูกเทรนคนไหนดีครับ?','Which client should I draft a workout program for?'),
+    slots: [
+      { key:'client', type:'choice', q:L('เลือกลูกเทรน','Pick a client'), choicesFn:clientChoices },
+      { key:'days', type:'choice', q:L('ฝึกกี่วันต่อสัปดาห์?','How many days per week?'), choices:[[L('3 วัน','3 days'),3],[L('4 วัน','4 days'),4],[L('5 วัน','5 days'),5]] },
+      { key:'equip', type:'choice', q:L('ใช้อุปกรณ์แบบไหน?','What equipment?'), choices:[[L('บอดี้เวท (ที่บ้าน)','Bodyweight (home)'),'home'],[L('ยิม/อุปกรณ์ครบ','Full gym'),'gym']] }
+    ],
+    complete: function(sl){ return buildCoachWorkout(findClientById(sl.client), sl.days, sl.equip); }
   }
 };
 function planFlowResult(sl){
@@ -1207,7 +1277,7 @@ function flowInput(text){
   var t=norm(text);
   if(/^(ยกเลิก|เลิก|cancel|stop|หยุด)/.test(t)){ cancelFlow(); return; }
   if(slot.type==='choice'){
-    var m=null; slotChoices(slot).forEach(function(c){ if(norm(c[0])===t || (''+c[1])===text.trim() || t.indexOf(norm(c[0]))>=0) m=c[1]; });
+    var m=null; slotChoices(slot).forEach(function(c){ var nc=norm(c[0]); if(nc===t || (''+c[1])===text.trim() || t.indexOf(nc)>=0 || (t.length>=2 && nc.indexOf(t)>=0)) m=c[1]; });
     if(m==null){ if(/ชาย|ผู้ชาย|\bmale\b/.test(t))m='m'; else if(/หญิง|ผู้หญิง|female/.test(t))m='f'; else if(/ลด/.test(t))m='lose'; else if(/เพิ่ม|กล้าม|bulk/.test(t))m='gain'; else if(/รักษา|คงน้ำหนัก|maintain/.test(t))m='keep'; else if(/ปานกลาง|moderate/.test(t))m=1.55; else if(/หนัก|hard/.test(t))m=1.725; else if(/เบา|light/.test(t))m=1.375; else if(/แทบไม่|นั่ง|sedentary/.test(t))m=1.2; }
     if(m==null){ pushBotText(L('เลือกจากตัวเลือกด้านบนได้เลยครับ','Please pick one of the options above')); return; }
     flowAnswer(m);
@@ -1228,6 +1298,7 @@ function handleMessage(text){
     var intent=detectIntent(text); try{ bumpStat('intent:'+intent); }catch(e){}
     if(intent==='make_plan'){ try{ startFlow('plan', parseProfileFromText(text)); }catch(e){} ST.ctx={intent:'make_plan'}; return; }
     if(intent==='coach_menu' && role()==='coach'){ try{ startCoachMenu(); }catch(e){} return; }
+    if(intent==='coach_workout' && role()==='coach'){ try{ startCoachWorkout(); }catch(e){} return; }
     var reply; try{ reply=buildReply(intent,text); }catch(e){ reply=buildFallback(text); }
     try{ ST.ctx={intent:intent}; if(intent==='cuisine_menu') ST.ctx.lastCuisine=true; }catch(e){}
     pushReply(reply);
