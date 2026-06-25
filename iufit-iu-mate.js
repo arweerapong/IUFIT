@@ -390,7 +390,8 @@ var INTENT_KW = {
   coach_group_summary:['สรุปกลุ่ม','กิจกรรมกลุ่ม','ภารกิจกลุ่ม','กลุ่มไหน','group summary','group activity','mission'],
   app_help:['ใช้งาน','ทำยังไง','สอน','วิธี','เข้ากลุ่ม','บันทึกอาหาร','how to','how do i','tutorial','guide'],
   setup_help:['ตั้งค่า iu mate','เปิดใช้งาน','โหลดชุดความรู้','setup','settings iu mate'],
-  share_result_text:['ข้อความแชร์','แคปชั่น','result card','แชร์ผลลัพธ์','caption','share text','share result']
+  share_result_text:['ข้อความแชร์','แคปชั่น','result card','แชร์ผลลัพธ์','caption','share text','share result'],
+  find_place:['หายิม','ยิม','หาฟิตเนส','ฟิตเนส','ฟิตเนสใกล้','หาที่ออกกำลัง','สถานที่ออกกำลัง','หาสถานที่ออกกำลัง','ที่ออกกำลังกายใกล้','ที่ออกกำลังใกล้','ใกล้ฉัน','ใกล้บ้าน','แถวนี้','แถวบ้าน','สวนสาธารณะ','ที่วิ่ง','ลู่วิ่ง','สระว่ายน้ำ','หาสนาม','สนามใกล้','สถานที่ออกกำลังกายใกล้','gym near','gyms near','find a gym','find gym','fitness near','place to work out','where to work out','park near','running track','swimming pool','workout place','near me']
 };
 function _scoreIntents(text, mode, tab, fuzzy){
   var best='unknown', bestScore=0;
@@ -499,6 +500,7 @@ function buildReply(intent, message){
     case 'app_help': return buildKnowledge(message);
     case 'setup_help': return buildKnowledge(message);
     case 'share_result_text': return buildShareText();
+    case 'find_place': return buildFindPlace(message);
     default: return buildKnowledge(message);
   }
 }
@@ -643,6 +645,22 @@ function buildResult(){
     {label:L('สร้าง Result Card','Create result card'),action:'go_result'},
     {label:L('ข้อความแชร์ผล','Share caption'),action:'share_result_text'}
   ] };
+}
+function buildFindPlace(message){
+  var t=synNorm(message||''); var cat='';
+  if(/สวน|park/.test(t)) cat=L('สวนสาธารณะ','park');
+  else if(/สระ|ว่ายน้ำ|pool|swim/.test(t)) cat=L('สระว่ายน้ำ','swimming pool');
+  else if(/ลู่วิ่ง|ที่วิ่ง|run|track/.test(t)) cat=L('ลู่วิ่ง','running track');
+  else if(/ฟิตเนส|fitness/.test(t)) cat=L('ฟิตเนส','fitness');
+  else if(/ยิม|gym/.test(t)) cat=L('ยิม','gym');
+  return {
+    title:L('หาสถานที่ออกกำลังกายใกล้ฉัน','Find a place to work out'),
+    message:L('พิมพ์ประเภทหรือชื่อสถานที่ แล้วกด "เปิดแผนที่" เพื่อค้นบน Google Maps ใกล้ตำแหน่งของคุณ','Type a place type or name, then tap "Open map" to search Google Maps near you.'),
+    placeSearch:true,
+    placeQuery:cat,
+    placeHolder:L('เช่น ยิม, ฟิตเนส, สวนสาธารณะ + ย่าน','e.g. gym, fitness, park + area'),
+    placeChips:[L('ยิม','Gym'),L('ฟิตเนส','Fitness'),L('สวนสาธารณะ','Park'),L('สระว่ายน้ำ','Pool'),L('ลู่วิ่ง','Track')]
+  };
 }
 function buildWorkout(){
   return { title:L('แนะนำการฝึกวันนี้','Workout idea'),
@@ -816,7 +834,7 @@ function quickChips(){
     [L('ร่างเมนูให้ลูกเทรน','Draft a client menu'),'🍽️'],[L('ร่างโปรแกรมฝึก','Draft a workout'),'🏋️'],[L('สรุปกลุ่ม','Groups'),'🏷️'],[L('คนที่ต้องติดตาม','Who to follow up'),'🔔'],[L('ข้อความสำเร็จรูป','Message templates'),'💬']
   ]:[
     [L('สรุปวันนี้','Today summary'),'📊'],[L('กินอะไรดี','What to eat'),'🍽️'],[L('สร้างเมนูจากของที่มี','Make from ingredients'),'🧺'],[L('เมนูประหยัด','Budget menu'),'💰'],
-    [L('จัดแผนให้ฉัน','Build my plan'),'🎯'],[L('คำนวณแคล/มาโคร','Calorie & macros'),'🧮'],[L('ดูความคืบหน้า','My progress'),'📈'],[L('วิธีใช้แอป','How to use'),'❓']
+    [L('จัดแผนให้ฉัน','Build my plan'),'🎯'],[L('คำนวณแคล/มาโคร','Calorie & macros'),'🧮'],[L('ดูความคืบหน้า','My progress'),'📈'],[L('วิธีใช้แอป','How to use'),'❓'],[L('หาที่ออกกำลังกาย','Find a place'),'📍']
   ];
   return rankChips(list);
 }
@@ -872,6 +890,12 @@ function msgHtml(m){
       '</div></div>';
   });
   (rep.more||[]).forEach(function(mo){ h+='<div class="iu-mate-subcard"><div class="st">'+esc(mo.title)+'</div><div class="sm">'+esc(mo.answer)+'</div></div>'; });
+  if(rep.placeSearch){
+    h+='<div style="margin-top:4px">';
+    if(rep.placeChips&&rep.placeChips.length){ h+='<div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px">'+rep.placeChips.map(function(pc){ return '<button class="iu-mate-chip" onclick="IUMate.placeFill(this.dataset.v)" data-v="'+esc(pc)+'">'+esc(pc)+'</button>'; }).join('')+'</div>'; }
+    h+='<div style="display:flex;gap:6px"><input id="iuPlaceInput" value="'+esc(rep.placeQuery||'')+'" placeholder="'+esc(rep.placeHolder||'')+'" style="flex:1;min-width:0;padding:9px 11px;border:1px solid #d8e2f0;border-radius:10px;font-size:13px;outline:none" onkeydown="if(event.key===\'Enter\'){event.preventDefault();IUMate.openPlace();}"><button class="iu-mate-act primary" style="white-space:nowrap" onclick="IUMate.openPlace()">'+esc(L('เปิดแผนที่','Open map'))+'</button></div>';
+    h+='</div>';
+  }
   if(rep.actions&&rep.actions.length){ h+='<div class="iu-mate-actions">'+rep.actions.map(function(a,ai){
     return '<button class="iu-mate-act'+(ai===0?' primary':'')+'" onclick="IUMate.act(\''+a.action+'\','+idx+','+ai+')">'+esc(a.label)+'</button>';
   }).join('')+'</div>'; }
@@ -1329,6 +1353,8 @@ var IUMate = {
   close:function(){ closeNow(); },
   toggleFull:function(){ ST.full=!ST.full; renderSheet(); },
   chip:function(q){ try{ bumpStat('chip:'+q); }catch(e){} handleMessage(q); },
+  placeFill:function(v){ var el=document.getElementById('iuPlaceInput'); if(el){ el.value=v; try{ el.focus(); }catch(e){} } },
+  openPlace:function(){ var el=document.getElementById('iuPlaceInput'); var q=el?(''+el.value).trim():''; if(!q){ try{ appToast(L('พิมพ์ชื่อสถานที่ก่อน','Type a place first')); }catch(e){} if(el){ try{ el.focus(); }catch(e){} } return; } var hasLoc=/ใกล้|แถว|ย่าน|near|nearby|จังหวัด|อำเภอ|เขต/i.test(q); var fq=hasLoc?q:(q+' '+L('ใกล้ฉัน','near me')); var url='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(fq); try{ bumpStat('place_open'); }catch(e){} try{ window.open(url,'_blank'); }catch(e){ try{ location.href=url; }catch(_e){} } },
   send:function(text){ handleMessage(text); },
   sendFromForm:function(ev){ if(ev&&ev.preventDefault) ev.preventDefault(); var inp=document.getElementById('iuMateInput'); if(inp){ var v=inp.value; inp.value=''; handleMessage(v); } return false; },
   act:function(action, idx, ai){
