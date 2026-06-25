@@ -896,7 +896,7 @@ function renderSheet(){
        '<div class="iu-mate-avatar">'+botIcon()+'</div>'+
        '<div class="iu-mate-title"><strong>IU Mate</strong><small>'+esc(L('ผู้ช่วยส่วนตัวใน IUFIT','Your assistant in IUFIT'))+'</small></div>'+
        '<span class="iu-mate-local-badge">Local</span>'+
-       '<button class="iu-mate-expand" onclick="IUMate.showPrivacy()" aria-label="privacy" title="privacy" style="margin-right:1px">🔒</button>'+'<button class="iu-mate-expand" onclick="IUMate.toggleFull()" aria-label="expand">'+(ST.full?'▢':'⤢')+'</button>'+
+       '<button class="iu-mate-expand" onclick="IUMate.close()" aria-label="minimize" title="'+L('ย่อหน้าต่าง','Minimize')+'">⌄</button>'+'<button class="iu-mate-expand" onclick="IUMate.showPrivacy()" aria-label="privacy" title="privacy" style="margin-right:1px">🔒</button>'+'<button class="iu-mate-expand" onclick="IUMate.toggleFull()" aria-label="expand">'+(ST.full?'▢':'⤢')+'</button>'+
      '</header>'+
      '<div class="iu-mate-chip-row">'+chips.map(function(c){ return '<button class="iu-mate-chip" onclick="IUMate.chip(this.dataset.q)" data-q="'+esc(c[0])+'"><span class="e">'+c[1]+'</span>'+esc(c[0])+'</button>'; }).join('')+'</div>'+
      '<div class="iu-mate-messages" id="iuMateMessages"></div>'+
@@ -1350,6 +1350,7 @@ window.IUMate = IUMate;
 /* ============================ boot ============================ */
 function boot(){
   renderFab();
+  try{(function(){var lastY=0,ticking=false;function onS(){var y=window.scrollY||document.documentElement.scrollTop||0;var f=document.getElementById('iuMateFab');if(f){if(y>lastY+6&&y>90)f.classList.add('fab-hide');else if(y<lastY-6)f.classList.remove('fab-hide');}lastY=y;ticking=false;clearTimeout(window._iuFabIdle);window._iuFabIdle=setTimeout(function(){var ff=document.getElementById('iuMateFab');if(ff)ff.classList.remove('fab-hide');},700);}window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(onS);ticking=true;}},{passive:true});})();}catch(e){}
   // keep FAB visibility + language synced by decorating renderAll (calls original, non-invasive)
   try{ if(fn('renderAll') && !window.renderAll.__iuMateWrapped){ var orig=window.renderAll; window.renderAll=function(){ var r=orig.apply(this,arguments); try{ IUMate._sync(); }catch(e){} return r; }; window.renderAll.__iuMateWrapped=true; } }catch(e){}
   // FAB visibility synced via the renderAll decorator above (covers login + tab change); no polling needed

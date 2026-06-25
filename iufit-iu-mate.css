@@ -7,15 +7,18 @@
 /* ---------- Floating button ---------- */
 .iu-mate-fab{
   position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:1200;
-  display:inline-flex;align-items:center;gap:8px;min-height:46px;padding:9px 15px 9px 11px;border:0;
+  display:grid;place-items:center;width:56px;height:56px;padding:0;border:0;
   border-radius:999px;color:#fff;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;
   background:linear-gradient(135deg,#0A84FF,#003C8F);box-shadow:0 14px 34px rgba(10,132,255,.36);
   transform:translateY(0);transition:transform .18s ease,opacity .18s ease;letter-spacing:.2px;
 }
 .iu-mate-fab:active{transform:scale(.96)}
 .iu-mate-fab[hidden]{display:none!important}
-.iu-mate-fab .iu-ic{width:24px;height:24px;display:grid;place-items:center}
-.iu-mate-fab .iu-ic svg{width:24px;height:24px}
+.iu-mate-fab .iu-ic{width:28px;height:28px;display:grid;place-items:center}
+.iu-mate-fab .iu-ic svg{width:28px;height:28px}
+.iu-mate-fab .iu-lbl{display:none}
+.iu-mate-fab.fab-hide{transform:translateY(150%) scale(.9);opacity:0;pointer-events:none}
+
 .iu-mate-fab .iu-spark{position:absolute;top:-3px;right:-3px;width:13px;height:13px;color:var(--iu-cyan)}
 
 /* ---------- Backdrop + sheet ---------- */
