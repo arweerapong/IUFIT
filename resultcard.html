@@ -660,10 +660,12 @@ function render(){
   var H=RH[RC.ratio];
   card.style.height=H+'px';card.style.minHeight='';
   card.innerHTML=RC.tpl==='result'?tplResult():RC.tpl==='stats'?tplStats():tplCoach();
+  if(isStats){var _cc=card.querySelector('.cc');if(_cc){_cc.style.transform='none';var _ch=_cc.scrollHeight;if(_ch>H+1){_cc.style.transformOrigin='center center';_cc.style.transform='scale('+(H/_ch).toFixed(4)+')';}}}
   var stageW=Math.min(398,$('scaler').parentElement.clientWidth-36);
   var sc=stageW/1080;
-  $('scaler').style.transformOrigin='top center';
-  $('scaler').style.width='';
+  $('scaler').style.transformOrigin='top left';
+  $('scaler').style.minWidth='0';
+  $('scaler').style.width=(1080*sc)+'px';
   $('scaler').style.transform='scale('+sc+')';
   var realH=H;
   $('scaler').style.height=(realH*sc)+'px';
@@ -759,6 +761,7 @@ async function capture(){
   var imgs=Array.prototype.slice.call(clone.querySelectorAll('img'));
   await Promise.all(imgs.map(function(im){return (im.complete&&im.naturalWidth)?Promise.resolve():new Promise(function(r){im.onload=im.onerror=r;});}));
   void clone.offsetHeight;
+  if(isStats){var _cc2=clone.querySelector('.cc');if(_cc2){_cc2.style.transform='none';var _ch2=_cc2.scrollHeight;if(_ch2>H+1){_cc2.style.transformOrigin='center center';_cc2.style.transform='scale('+(H/_ch2).toFixed(4)+')';}}}
   var capH=H;
   var canvas;
   try{ canvas=await html2canvas(clone,{scale:2,width:1080,height:capH,windowWidth:1080,windowHeight:capH,backgroundColor:null,useCORS:true,logging:false}); }

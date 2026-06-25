@@ -13,9 +13,12 @@ function L(th,en){ return EN()?en:th; }
 function uid(){ return 'iu'+Date.now().toString(36)+Math.random().toString(36).slice(2,6); }
 function esc(s){ s=(s==null?'':''+s); return s.replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
 function norm(s){ return (s==null?'':(''+s)).toLowerCase().replace(/\s+/g,''); }
-var SYN={'กระเพรา':'กะเพรา','กระเพา':'กะเพรา','กะเพา':'กะเพรา','กระเพราะ':'กะเพรา','กวยเตี๋ยว':'ก๋วยเตี๋ยว','ก๊วยเตี๋ยว':'ก๋วยเตี๋ยว','ก่วยเตี๋ยว':'ก๋วยเตี๋ยว','ไก้':'ไก่','อกไก':'อกไก่','ข้าวสวย':'ข้าว','คาดิโอ':'คาร์ดิโอ','คาร์ดิโอ้':'คาร์ดิโอ','แคลอรี่':'แคล','แคลอรี':'แคล','กี่แคล':'กี่แคล','ฟีดแบค':'feedback','ฟีดแบ็ค':'feedback','ฟีดแบ็ก':'feedback','ฟีดแบก':'feedback','ลูกเทน':'ลูกเทรน','ลูกเทรนด์':'ลูกเทรน','โปรตีนสูง':'โปรตีนสูง','ทานข้าว':'กิน','กับข้าว':'อาหาร','ออกกําลัง':'ออกกำลัง','นํ้าหนัก':'น้ำหนัก'};
+var SYN={'กระเพรา':'กะเพรา','กระเพา':'กะเพรา','กะเพา':'กะเพรา','กระเพราะ':'กะเพรา','กวยเตี๋ยว':'ก๋วยเตี๋ยว','ก๊วยเตี๋ยว':'ก๋วยเตี๋ยว','ก่วยเตี๋ยว':'ก๋วยเตี๋ยว','ไก้':'ไก่','อกไก':'อกไก่','ข้าวสวย':'ข้าว','คาดิโอ':'คาร์ดิโอ','คาร์ดิโอ้':'คาร์ดิโอ','แคลอรี่':'แคล','แคลอรี':'แคล','กี่แคล':'กี่แคล','ฟีดแบค':'feedback','ฟีดแบ็ค':'feedback','ฟีดแบ็ก':'feedback','ฟีดแบก':'feedback','ลูกเทน':'ลูกเทรน','ลูกเทรนด์':'ลูกเทรน','โปรตีนสูง':'โปรตีนสูง','ทานข้าว':'กิน','กับข้าว':'อาหาร','ออกกําลัง':'ออกกำลัง','นํ้าหนัก':'น้ำหนัก','ญีปุ่น':'ญี่ปุ่น','ญี่ปุน':'ญี่ปุ่น','ยี่ปุ่น':'ญี่ปุ่น','ตะวันตก':'ฝรั่ง','เซเวน':'เซเว่น'};
 var SYN_KEYS=Object.keys(SYN).sort(function(a,b){return b.length-a.length;});
 function synNorm(s){ var t=norm(s); for(var i=0;i<SYN_KEYS.length;i++){ var k=SYN_KEYS[i]; if(t.indexOf(k)>=0) t=t.split(k).join(SYN[k]); } return t; }
+/* fuzzy: char-trigram coverage of kw inside text (typo/variant tolerance) */
+function _bigr(s){ var g=[]; for(var i=0;i<s.length-1;i++) g.push(s.slice(i,i+2)); return g; }
+function trigCover(text, kw){ if(!kw) return 0; if(kw.length<4) return text.indexOf(kw)>=0?1:0; var g=_bigr(kw),h=0; for(var i=0;i<g.length;i++){ if(text.indexOf(g[i])>=0) h++; } return h/g.length; }
 
 /* ============================ calculation engine (estimates for planning) ============================ */
 var ACT_OPTS=[[1.2,L('นั่งทำงาน แทบไม่ออกกำลัง','Sedentary')],[1.375,L('ออกกำลังเบา 1-3 วัน/สัปดาห์','Light 1-3 d/wk')],[1.55,L('ปานกลาง 3-5 วัน/สัปดาห์','Moderate 3-5 d/wk')],[1.725,L('หนัก 6-7 วัน/สัปดาห์','Hard 6-7 d/wk')],[1.9,L('นักกีฬา/งานหนักมาก','Athlete/very hard')]];
@@ -194,6 +197,26 @@ function ingredientList(){
   }
   _ingCache=out; return out;
 }
+/* ---- Food Graph: auto swap engine (same group + closest macros) + budget intelligence ---- */
+function _baseName(s){ return (''+s).replace(/\s*\([^)]*\)\s*/g,' ').trim(); }
+var SWAP_EXCLUDE=['ตีน','กึ๋น','เอ็น','ตับ','เครื่องใน','เลือด','ไส้','กระดูก','หนังไก่','ขี้'];
+function swapsFor(ing, n){
+  if(!ing||!ing.group) return [];
+  var ib=_baseName(ing.name); var seen={}, out=[];
+  ingredientList().forEach(function(x){ if(x.group!==ing.group) return; if(SWAP_EXCLUDE.some(function(k){return (x.name||'').indexOf(k)>=0;})) return; var b=_baseName(x.name); if(b===ib||seen[b]) return; seen[b]=1; x._b=b; x._sim=Math.abs(x.kcal-(ing.kcal||0))+Math.abs(x.protein-(ing.protein||0))*4; out.push(x); });
+  out.sort(function(a,b){ return a._sim-b._sim; });
+  return out.slice(0, n||3);
+}
+var BUDGET_KW=['ไข่','อกไก่','สะโพกไก่','ข้าว','ปลากระป๋อง','ทูน่า','เต้าหู้','ถั่ว','ผักบุ้ง','กะหล่ำ','แครอท','มะเขือเทศ','โอ๊ต','หมูสับ','หมูบด','น้ำเต้าหู้','กล้วย','ฟักทอง','แตงกวา','ถั่วงอก','มันหวาน','มันฝรั่ง','คะน้า','ตำลึง','ฟัก','บวบ'];
+function isBudget(ing){ var n=(ing&&ing.name)||''; for(var i=0;i<BUDGET_KW.length;i++){ if(n.indexOf(BUDGET_KW[i])>=0) return true; } return false; }
+function budgetPantry(){ var by={}; ingredientList().forEach(function(i){ if(isBudget(i)){ (by[i.group]=by[i.group]||[]).push(i); } }); var p=[]; ['protein','carb','vegetable'].forEach(function(g){ (by[g]||[]).slice(0,2).forEach(function(i){ p.push(i); }); }); return p; }
+function swapsBlock(rc){
+  try{ var picks=(rc.ingredients||[]).filter(function(i){ return i.group==='protein'||i.group==='carb'; }).slice(0,2);
+    var lines=picks.map(function(i){ var sw=swapsFor(i,2); if(!sw.length) return ''; return esc(tFoodName(i.name))+' → '+sw.map(function(x){ return esc(tFoodName(x._b)); }).join(', '); }).filter(Boolean);
+    if(!lines.length) return '';
+    return '<div class="iu-mate-fit" style="border-top:1px dashed var(--iu-border);padding-top:8px;margin-top:8px">🔄 '+esc(L('เปลี่ยนวัตถุดิบได้','Swap options'))+': '+lines.join(' · ')+'</div>';
+  }catch(e){ return ''; }
+}
 /* schema guard: true only if IUFIT_ING exists and items expose numeric v=[kcal,prot,fat,carb,...] */
 function ingDbOk(){ try{ var ing=ING(); var ks=Object.keys(ing); if(!ks.length) return false; for(var i=0;i<ks.length;i++){ var it=ing[ks[i]]; if(it&&it.v){ return Array.isArray(it.v)&&it.v.length>=4&&typeof it.v[0]==='number'; } } return false; }catch(e){ return false; } }
 function cantCalcReply(){ return { title:L('ยังคำนวณเมนูไม่ได้','Cannot calculate menus yet'), message:L('ฐานข้อมูลวัตถุดิบยังไม่พร้อมหรือรูปแบบไม่ตรง IU Mate เลยยังคำนวณโภชนาการให้ไม่ได้ ลองรีเฟรชแอปอีกครั้งนะครับ','The ingredient database is not ready or its format does not match, so IU Mate cannot calculate nutrition. Please refresh the app.') }; }
@@ -202,6 +225,7 @@ function ingMatchForms(ing){
   var forms=[]; function add(s){ s=(s||'').trim(); if(s&&s.length>=2) forms.push(s); }
   add(ing.name); if(ing.alias) add(ing.alias);
   var base=ing.name.replace(/\s*\([^)]*\)\s*/g,' ').trim(); add(base);
+  var base2=base.replace(/(สุก|ดิบ|ต้ม|นึ่ง|ย่าง|ทอด|ผัด|ลวก|อบ|คั่ว|ปิ้ง|สด|ผง|แห้ง)\s*$/,'').trim(); if(base2&&base2!==base) add(base2);
   base.split(/[\/,]/).forEach(add);
   return forms;
 }
@@ -211,9 +235,11 @@ function findIngredientsInText(text){
   var list=ingredientList().slice().sort(function(a,b){ return b.name.length-a.name.length; });
   list.forEach(function(ing){
     if(seenName[ing.name]) return;
-    var forms=ingMatchForms(ing);
-    for(var i=0;i<forms.length;i++){ if(t.indexOf(norm(forms[i]))>=0){ found.push(ing); seenName[ing.name]=1; break; } }
+    var forms=ingMatchForms(ing), best=0;
+    for(var i=0;i<forms.length;i++){ var nf=norm(forms[i]); if(nf.length>=2 && t.indexOf(nf)>=0){ if(nf.length>best) best=nf.length; } }
+    if(best>0){ ing._ml=best; found.push(ing); seenName[ing.name]=1; }
   });
+  found.sort(function(a,b){ return (b._ml||0)-(a._ml||0); });
   return found;
 }
 function popularIngredients(){
@@ -345,11 +371,16 @@ function coachCtx(){
 var INTENT_KW = {
   today_summary:['สรุปวันนี้','วันนี้','เหลือกี่แคล','ต้องทำอะไร','แนะนำวันนี้','today','summary today','remaining','what should i'],
   ingredient_recipe_generate:['มีอะไร','มีวัตถุดิบ','ทำอะไรได้','จับคู่เมนู','สร้างเมนู','ของที่มี','ในตู้เย็น','เหลืออะไร','จัดเมนูจาก','ทำเมนู','what can i make','ingredient','from what i have','fridge','recipe from'],
+  food_swap:['แทนด้วยอะไร','ใช้อะไรแทน','เปลี่ยนเป็นอะไร','แทนได้','สลับวัตถุดิบ','เปลี่ยนวัตถุดิบ','substitute','swap ','replace','alternative'],
+  cuisine_menu:['เมนูญี่ปุ่น','อาหารญี่ปุ่น','เมนูจีน','อาหารจีน','เมนูฝรั่ง','อาหารฝรั่ง','อาหารตะวันตก','เมนู 7-11','เมนูสะดวกซื้อ','เซเว่น','7-11','เมนูร้านสะดวกซื้อ','japanese','chinese','western','convenience'],
+  budget_menu:['เมนูประหยัด','เมนูถูก','งบน้อย','เมนูงบ','ประหยัดเงิน','ราคาถูก','เมนูราคาประหยัด','cheap menu','budget meal','on a budget'],
   food_recommend:['กินอะไรดี','แนะนำเมนู','เมนูแนะนำ','แคลต่ำ','โปรตีนสูง','ลดไขมัน','what to eat','recommend menu','low cal','high protein','suggest food'],
   food_search:['หาอาหาร','ค้นหาเมนู','มีเมนู','search food','find menu'],
-  result_summary:['ผลลัพธ์','น้ำหนัก','ลดไป','ความคืบหน้า','กราฟ','รอบเอว','result','progress','weight','waist','my result'],
+  result_summary:['ผลลัพธ์','น้ำหนักตอนนี้','น้ำหนักลดไป','ดูน้ำหนัก','ลดไปกี่','ความคืบหน้า','กราฟ','รอบเอว','result','progress','my result','waist'],
   workout_recommend:['ออกกำลัง','ท่าฝึก','เล่นอะไร','เวท','คาร์ดิโอ','ดัมเบล','workout','exercise','train','cardio','weight training'],
+  make_plan:['จัดแผนให้','ช่วยวางแผน','วางแผนลด','วางแผนเพิ่มกล้าม','ทำแผนลด','จัดโปรแกรม','จัดแผนอาหาร','วางแผนให้ฉัน','make a plan','help me plan','plan for me','build a plan'],
   calc_plan:['คำนวณแคล','คำนวณโปรตีน','ตั้งแคล','ควรกินกี่แคล','แคลเท่าไร','โปรตีนเท่าไหร่','โปรตีนกี่กรัม','กี่กรัม','มาโคร','macro','tdee','bmr','bmi','calorie target','คำนวณมาโคร','ควรตั้งแคล'],
+  coach_menu:['ร่างเมนู','จัดเมนูให้ลูกเทรน','เมนูให้ลูกเทรน','แผนอาหารลูกเทรน','ร่างแผนอาหาร','จัดเมนูทั้งวัน','เมนูทั้งวันให้ลูกเทรน','draft menu','meal plan for client','day menu for'],
   coach_progress:['สรุปลูกเทรน','วิเคราะห์ลูกเทรน','ความคืบหน้าลูกเทรน','สรุปลูกเทรนวันนี้','ใครน่าห่วง','ใครเสี่ยงหลุด','ภาพรวมลูกเทรน','progress client','client risk','who is at risk','clients overview'],
   coach_followup:['ติดตามลูกเทรน','ลูกเทรนที่ต้องติดตาม','ใครยังไม่ส่ง','ใครหาย','คนที่ต้องติดตาม','follow up','who to follow','inactive client','who hasn'],
   coach_homework_summary:['สรุปการบ้าน','ตรวจการบ้าน','การบ้านค้าง','ส่งการบ้าน','homework','to review','pending homework'],
@@ -360,11 +391,10 @@ var INTENT_KW = {
   setup_help:['ตั้งค่า iu mate','เปิดใช้งาน','โหลดชุดความรู้','setup','settings iu mate'],
   share_result_text:['ข้อความแชร์','แคปชั่น','result card','แชร์ผลลัพธ์','caption','share text','share result']
 };
-function detectIntent(message){
-  var text=synNorm(message); var mode=role(); var tab=window.TAB||'';
+function _scoreIntents(text, mode, tab, fuzzy){
   var best='unknown', bestScore=0;
   Object.keys(INTENT_KW).forEach(function(intent){
-    var sc=0; INTENT_KW[intent].forEach(function(k){ if(text.indexOf(synNorm(k))>=0) sc+=2; });
+    var sc=0; INTENT_KW[intent].forEach(function(k){ var kk=synNorm(k); if(text.indexOf(kk)>=0) sc+=2; else if(fuzzy && kk.length>=6 && trigCover(text,kk)>=0.66) sc+=1; });
     if(sc>0){
       if((tab==='food') && intent.indexOf('food')>=0) sc+=1;
       if((tab==='food') && intent==='ingredient_recipe_generate') sc+=1;
@@ -374,6 +404,13 @@ function detectIntent(message){
     if(sc>bestScore){ bestScore=sc; best=intent; }
   });
   return bestScore>0?best:'unknown';
+}
+function detectIntent(message){
+  var text=synNorm(message), mode=role(), tab=window.TAB||'';
+  var ex=_scoreIntents(text,mode,tab,false); if(ex!=='unknown') return ex;  // pass 1: exact (high precision)
+  var fz=_scoreIntents(text,mode,tab,true); if(fz!=='unknown') return fz;   // pass 2: fuzzy (typo/variant)
+  try{ var igs=findIngredientsInText(message); if(igs && igs.length>=2) return 'ingredient_recipe_generate'; }catch(e){} // pass 3: bare ingredient list
+  return 'unknown';
 }
 
 /* ============================ knowledge DB (bilingual) ============================ */
@@ -425,11 +462,11 @@ var KNOWLEDGE = [
   { id:'quiet_group', cat:'coach', kw:['กลุ่มเงียบ','กระตุ้นกลุ่ม','quiet group','group engagement'], title:L('กลุ่มเงียบควรทำอะไร','Re-engaging a quiet group'), answer:L('ตั้งภารกิจกลุ่มสั้น ๆ ที่ทำง่าย ชวนแชร์ผลรายสัปดาห์ หรือถามคำถามเปิดในแชทกลุ่ม สร้างจังหวะให้คนกลับมามีส่วนร่วม','Set a short easy group mission, invite weekly result sharing, or ask an open question in group chat to bring people back.'), actions:[{label:L('สร้างภารกิจกลุ่ม','New mission'),action:'go_missions'}] },
   { id:'when_followup', cat:'coach', kw:['ติดตามเมื่อไร','ควรทักเมื่อไหร่','when to follow up'], title:L('ควรติดตามลูกเทรนเมื่อไร','When to follow up'), answer:L('ทักเมื่อขาดบันทึก 2-3 วัน หรือมีการบ้านค้าง ใช้ข้อความสั้น ให้กำลังใจ และถามแบบตอบง่าย อย่ารอจนหลุดแผนไปไกล','Reach out after 2-3 missed log days or pending homework. Keep it short, encouraging and easy to answer — do not wait until they have fully dropped off.'), actions:[{label:L('สร้างข้อความติดตาม','Draft follow-up'),action:'create_followup_message'}] }
 ];
-function searchKnowledge(message){
-  var t=synNorm(message);
-  return KNOWLEDGE.map(function(item){ var sc=0; item.kw.forEach(function(k){ if(t.indexOf(synNorm(k))>=0) sc+=2; }); if(t.indexOf(synNorm(item.title))>=0) sc+=3; return {item:item,score:sc}; })
+function _scoreKnowledge(t, fuzzy){
+  return KNOWLEDGE.map(function(item){ var sc=0; item.kw.forEach(function(k){ var kk=synNorm(k); if(t.indexOf(kk)>=0) sc+=2; else if(fuzzy && kk.length>=6 && trigCover(t,kk)>=0.66) sc+=1; }); if(t.indexOf(synNorm(item.title))>=0) sc+=3; return {item:item,score:sc}; })
     .filter(function(x){return x.score>0;}).sort(function(a,b){return b.score-a.score;}).slice(0,3).map(function(x){return x.item;});
 }
+function searchKnowledge(message){ var t=synNorm(message); var ex=_scoreKnowledge(t,false); return ex.length?ex:_scoreKnowledge(t,true); }
 
 /* ============================ reply builders ============================ */
 var MED_KW=['วินิจฉัย','เป็นโรค','โรคประจำ','กินยา','หยุดยา','ฉีดยา','ยารักษา','ยาอะไร','กินยาอะไร','diagnos','disease','medicine','medication','prescription','เบาหวาน','ความดัน','มะเร็ง','ซึมเศร้า','depress'];
@@ -440,9 +477,12 @@ function buildReply(intent, message){
   if(isMedical(message)) return { title:L('เรื่องนี้ควรปรึกษาผู้เชี่ยวชาญ','Please consult a professional'),
     message:L('เรื่องนี้ควรปรึกษาแพทย์หรือผู้เชี่ยวชาญโดยตรงนะครับ IU Mate ช่วยเรื่องการบันทึกอาหาร การฝึก และการติดตามผลทั่วไปได้','This is best discussed with a doctor or specialist. IU Mate can help with logging food, training and general tracking.') };
   var ql=(''+message).toLowerCase();
-  if(/ยังไง|ยังงัย|อย่างไร|คืออะไร|แค่ไหน|เท่าไห|เท่าไร|ทำไม|ทำไง|ดูอะไร|how |what |why /.test(ql) && intent!=='ingredient_recipe_generate' && intent!=='today_summary' && intent!=='calc_plan'){ var _kh=searchKnowledge(message); if(_kh.length) return buildKnowledge(message); }
+  if(/ยังไง|ยังงัย|อย่างไร|คืออะไร|แค่ไหน|เท่าไห|เท่าไร|ทำไม|ทำไง|ดูอะไร|how |what |why /.test(ql) && intent!=='ingredient_recipe_generate' && intent!=='today_summary' && intent!=='calc_plan' && intent!=='food_swap' && intent!=='budget_menu' && intent!=='cuisine_menu' && intent!=='result_summary' && intent!=='workout_recommend'){ var _kh=searchKnowledge(message); if(_kh.length) return buildKnowledge(message); }
   switch(intent){
     case 'today_summary': return buildToday();
+    case 'cuisine_menu': return buildCuisineMenu(message);
+    case 'food_swap': return buildSwapReply(message);
+    case 'budget_menu': return buildBudgetMenu(message);
     case 'food_recommend': return buildFoodRecommend(message);
     case 'food_search': return buildFoodSearch(message);
     case 'result_summary': return buildResult();
@@ -481,18 +521,105 @@ function buildToday(){
     {label:L('เปิดท่าฝึก','Open workout'),action:'go_workout'}
   ] };
 }
+/* ---- Auto-Tag Engine: tag every menu in the library + recommend from it (cached once) ---- */
+var _menuCache=null;
+function menuNut(ings){ var ing=ING(); var t=[0,0,0,0,0]; (ings||[]).forEach(function(p){ var it=ing[p[0]]; if(!it||!it.v) return; for(var i=0;i<5;i++) t[i]+=(it.v[i]||0)*p[1]/100; }); return {kcal:Math.round(t[0]),protein:Math.round(t[1]),fat:Math.round(t[2]),carb:Math.round(t[3]),fiber:Math.round(t[4])}; }
+function guessCuisine(name){
+  if(/ซูชิ|ราเมง|อุด้ง|เทอริยากิ|มิโซะ| ดง|เกี๊ยวซ่า|ทงคัตสึ|กิวด้ง|ซาชิมิ/.test(name)) return 'ญี่ปุ่น';
+  if(/ติ่มซำ|หมูแดง|เป็ดย่าง|ซาลาเปา|บะหมี่|เกี๊ยว|ผัดซีอิ๊ว|โจ๊ก|ก๋วยเตี๋ยว|ติ๋ม/.test(name)) return 'จีน';
+  if(/สเต๊ก|พาสต้า|พิซซ่า|เบอร์เกอร์|สลัด|แซนวิช|ออมเล็ต|เบคอน|สปาเก|ฮอทดอก/.test(name)) return 'ตะวันตก';
+  return 'ไทย';
+}
+function tagMenu(r){
+  var n=menuNut(r.ings); var name=r.n||''; var tags=[];
+  if(n.protein>=25) tags.push(L('โปรตีนสูง','High protein'));
+  if(n.kcal&&n.kcal<=400) tags.push(L('แคลต่ำ','Low cal'));
+  if(n.carb<=25) tags.push(L('คาร์บต่ำ','Low carb'));
+  var goalFit=['สุขภาพทั่วไป'];
+  if(n.kcal&&n.kcal<=550&&n.protein>=20) goalFit.push('ลดไขมัน');
+  if(n.kcal>=550&&n.carb>=50&&n.protein>=25) goalFit.push('เพิ่มกล้าม');
+  var cuisine=(r.c&&['ญี่ปุ่น','จีน','ตะวันตก','สะดวกซื้อ'].indexOf(r.c)>=0)?r.c:guessCuisine(name);
+  var budget=cuisine==='สะดวกซื้อ' || (r.ings||[]).length>0 && (r.ings||[]).every(function(p){ var it=ING()[p[0]]; return it && isBudget({name:it.n}); });
+  var mealFit=['กลางวัน','เย็น'];
+  if(/ไข่|ขนมปัง|โอ๊ต|นม|โยเกิร์ต|ซีเรียล|แซนวิช|ปั้น|ข้าวต้ม|โจ๊ก/.test(name)&&n.kcal&&n.kcal<=450) mealFit.push('เช้า');
+  if(n.protein>=25&&n.carb>=40) mealFit.push('หลังออกกำลัง');
+  var method=''; ['ทอด','ผัด','ย่าง','ต้ม','นึ่ง','อบ','ปิ้ง','ตุ๋น'].forEach(function(m){ if(name.indexOf(m)>=0) method=m; });
+  return { id:r.id, name:name, ic:r.ic, ings:r.ings, nutrition:n, tags:tags, goalFit:goalFit, mealFit:mealFit, cuisine:cuisine, budget:budget, method:method };
+}
+function menuList(){ if(_menuCache) return _menuCache; try{ var rs=fn('allRecipes')?window.allRecipes():(window.IUFIT_RECIPES||[]); _menuCache=rs.map(tagMenu).filter(function(m){ return m.nutrition.kcal>0; }); }catch(e){ _menuCache=[]; } return _menuCache; }
+function menuToCard(m){
+  var rc={ id:'lib'+m.id, name:m.name, desc:'', nutrition:m.nutrition, score:0,
+    ingredients:(m.ings||[]).map(function(p){ var it=ING()[p[0]]||{}; return {id:p[0],name:it.n||p[0],group:GROUP_MAP[it.g]||'other',amount:p[1],kcal:(it.v&&it.v[0])||0,protein:(it.v&&it.v[1])||0,fat:(it.v&&it.v[2])||0,carb:(it.v&&it.v[3])||0,fiber:(it.v&&it.v[4])||0}; }),
+    tags:(m.tags||[]).concat(m.budget?[L('ประหยัด','Budget')]:[]).slice(0,4) };
+  ST.recipeCache[rc.id]=rc; return rc;
+}
+function recommendMenus(opts){
+  opts=opts||{}; var goal=opts.goal||goalLabel(), meal=opts.meal||currentMeal();
+  var remaining=opts.remaining||(todayCtx().remaining||600);
+  var list=menuList().filter(function(m){ if(opts.cuisine&&m.cuisine!==opts.cuisine) return false; if(opts.budget&&!m.budget) return false; return true; });
+  list.forEach(function(m){ var sc=0;
+    if(m.goalFit.indexOf(goal)>=0) sc+=3;
+    if(m.mealFit.indexOf(meal)>=0) sc+=2;
+    if(m.nutrition.kcal<=remaining) sc+=2; else sc-=3;
+    if(m.nutrition.protein>=25) sc+=1;
+    sc+=Math.random()*0.6; m._sc=sc;
+  });
+  list.sort(function(a,b){ return b._sc-a._sc; });
+  return list.slice(0, opts.n||5).map(menuToCard);
+}
+function buildCuisineMenu(message){
+  if(!ingDbOk()) return cantCalcReply();
+  var t=synNorm(message), cz=null;
+  if(/ญี่ปุ่น|japanese|ซูชิ|ราเมง/.test(t)) cz='ญี่ปุ่น';
+  else if(/จีน|chinese|ติ่มซำ|เป็ดย่าง/.test(t)) cz='จีน';
+  else if(/ฝรั่ง|ตะวันตก|western|สเต๊ก|พาสต้า|เบอร์เกอร์/.test(t)) cz='ตะวันตก';
+  else if(/7-11|เซเว่น|สะดวกซื้อ|convenience/.test(t)) cz='สะดวกซื้อ';
+  if(!cz) return buildLibraryRecommend();
+  var recs=recommendMenus({ cuisine:cz, goal:goalLabel(), meal:currentMeal(), n:4 });
+  if(!recs.length) return buildLibraryRecommend();
+  return { title:L('เมนู'+cz, cz+' menus'),
+    message:L('เลือกเมนู'+cz+'ที่เข้ากับเป้าหมายและแคลที่เหลือให้ครับ','Picked '+cz+' menus that fit your goal and remaining calories:'),
+    recipes:recs.slice(0,3),
+    actions:[{label:L('เมนูอื่น','Other menus'),action:'recommend_library'},{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] };
+}
+function buildSwapReply(message){
+  if(!ingDbOk()) return cantCalcReply();
+  var ings=findIngredientsInText(message);
+  var _sn={}; ings=ings.filter(function(x){ var b=_baseName(x.name); if(_sn[b])return false; _sn[b]=1; return true; }).slice(0,2);
+  if(!ings.length) return { title:L('เปลี่ยนวัตถุดิบ','Ingredient swaps'), message:L('พิมพ์ชื่อวัตถุดิบที่อยากเปลี่ยน เช่น "อกไก่แทนด้วยอะไร" หรือ "ไม่มีข้าวกล้องใช้อะไรแทน"','Type an ingredient to swap, e.g. "what can replace chicken breast".'), actions:[{label:L('เลือกวัตถุดิบ','Pick ingredients'),action:'open_ingredient_picker'}] };
+  var blocks=ings.slice(0,3).map(function(ing){ var sw=swapsFor(ing,3); if(!sw.length) return tFoodName(ing.name)+': '+L('ยังไม่มีตัวเลือกแทน','no alternative'); return '🔄 '+tFoodName(ing.name)+' → '+sw.map(function(x){ return tFoodName(x._b)+' ('+x.kcal+' kcal/100g)'; }).join(', '); });
+  return { title:L('เปลี่ยนวัตถุดิบได้','Ingredient swaps'),
+    message:blocks.join('\n')+'\n\n'+L('เลือกตัวที่มาโครใกล้กันเพื่อคุมแคลให้ใกล้เดิมครับ','Pick the closest macros to keep calories similar.'),
+    disclaimer:L('ค่าโภชนาการต่อ 100 กรัม เป็นค่าประมาณเพื่อช่วยเลือก','Per-100g nutrition is an estimate to help you choose'),
+    actions:[{label:L('สร้างเมนูจากของที่มี','Make a menu'),action:'open_ingredient_picker'}] };
+}
+function buildBudgetMenu(message){
+  if(!ingDbOk()) return cantCalcReply();
+  var recs=recommendMenus({ goal:goalLabel(), meal:currentMeal(), budget:true, n:4 });
+  if(!recs.length){ var pantry=budgetPantry(); recs=pantry.length?generateRecipes(pantry,{goal:goalLabel(),meal:currentMeal()}):[]; }
+  if(!recs.length) return buildLibraryRecommend();
+  return { title:L('เมนูประหยัดงบ','Budget-friendly menus'),
+    message:L('เลือกเมนูราคาประหยัดที่หาง่าย คำนวณแคลให้แล้วครับ','Budget-friendly, easy-to-find menus — calories already calculated:'),
+    recipes:recs.slice(0,3),
+    actions:[{label:L('สร้างจากของที่มี','From my ingredients'),action:'open_ingredient_picker'},{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] };
+}
 function buildFoodRecommend(message){
   if(!ingDbOk()) return cantCalcReply();
-  // reuse the recipe engine with a sensible staple pantry from real ING
-  var picks=popularIngredients();
-  var byGroup=groupBy(picks);
-  var pantry=[];
-  ['protein','carb','vegetable'].forEach(function(g){ (byGroup[g]||[]).slice(0,2).forEach(function(i){ pantry.push(i); }); });
-  var recipes=generateRecipes(pantry, { goal:goalLabel(), meal:currentMeal() });
-  if(!recipes.length) return buildKnowledge(message);
+  return { title:L('อยากได้เมนูแบบไหนดี?','How would you like menus?'),
+    message:L('เลือกได้เลยครับ — จะให้จัดจากวัตถุดิบที่คุณมี หรือเลือกจากคลังเมนูสำเร็จก็ได้','Pick one — build from ingredients you have, or choose from the ready menu library:'),
+    actions:[
+      {label:L('🧺 สร้างจากวัตถุดิบที่มี','🧺 From my ingredients'),action:'open_ingredient_picker'},
+      {label:L('📋 ใช้เมนูจากคลัง','📋 From the menu library'),action:'recommend_library'}
+    ] };
+}
+function buildLibraryRecommend(){
+  if(!ingDbOk()) return cantCalcReply();
+  var recs=recommendMenus({ goal:goalLabel(), meal:currentMeal(), n:4 });
+  if(!recs.length){ var picks=popularIngredients(),byGroup=groupBy(picks),pantry=[]; ['protein','carb','vegetable'].forEach(function(g){ (byGroup[g]||[]).slice(0,2).forEach(function(i){ pantry.push(i); }); }); recs=generateRecipes(pantry,{goal:goalLabel(),meal:currentMeal()}); }
+  if(!recs.length) return buildKnowledge(message);
   return { title:L('เมนูที่เหมาะกับวันนี้','Menus that fit today'),
-    message:L('เพราะเป้าหมายของคุณคือ "'+goalLabel()+'" ผมเลือกเมนูที่คำนวณแคลจากคลังวัตถุดิบให้ครับ','Based on your goal "'+goalLabel()+'", here are menus with calories computed from the ingredient library:'),
-    recipes:recipes.slice(0,3),
+    message:L('จากคลังเมนู '+menuList().length.toLocaleString()+' รายการ ผมเลือกที่เข้ากับเป้าหมาย "'+goalLabel()+'" และแคลที่เหลือให้ครับ','From '+menuList().length.toLocaleString()+' menus, here are ones that fit your goal "'+goalLabel()+'" and remaining calories:'),
+    recipes:recs.slice(0,3),
     actions:[{label:L('สร้างจากของที่มี','From my ingredients'),action:'open_ingredient_picker'},{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] };
 }
 function buildFoodSearch(message){
@@ -685,10 +812,10 @@ function rankChips(list){ try{ return list.slice().sort(function(a,b){ return st
 function quickChips(){
   var list=(role()==='coach')?[
     [L('สรุปลูกเทรน','Clients to follow'),'👥'],[L('สรุปการบ้าน','Homework'),'📥'],[L('เขียน feedback','Write feedback'),'✍️'],
-    [L('สรุปกลุ่ม','Groups'),'🏷️'],[L('คนที่ต้องติดตาม','Who to follow up'),'🔔'],[L('ข้อความสำเร็จรูป','Message templates'),'💬']
+    [L('ร่างเมนูให้ลูกเทรน','Draft a client menu'),'🍽️'],[L('สรุปกลุ่ม','Groups'),'🏷️'],[L('คนที่ต้องติดตาม','Who to follow up'),'🔔'],[L('ข้อความสำเร็จรูป','Message templates'),'💬']
   ]:[
-    [L('สรุปวันนี้','Today summary'),'📊'],[L('กินอะไรดี','What to eat'),'🍽️'],[L('สร้างเมนูจากของที่มี','Make from ingredients'),'🧺'],
-    [L('คำนวณแคล/มาโคร','Calorie & macros'),'🧮'],[L('ดูความคืบหน้า','My progress'),'📈'],[L('วิธีใช้แอป','How to use'),'❓']
+    [L('สรุปวันนี้','Today summary'),'📊'],[L('กินอะไรดี','What to eat'),'🍽️'],[L('สร้างเมนูจากของที่มี','Make from ingredients'),'🧺'],[L('เมนูประหยัด','Budget menu'),'💰'],
+    [L('จัดแผนให้ฉัน','Build my plan'),'🎯'],[L('คำนวณแคล/มาโคร','Calorie & macros'),'🧮'],[L('ดูความคืบหน้า','My progress'),'📈'],[L('วิธีใช้แอป','How to use'),'❓']
   ];
   return rankChips(list);
 }
@@ -806,6 +933,7 @@ var ACTIONS = {
   go_missions:function(){ goTab('chmis'); },
   today_summary:function(){ pushReply(buildToday()); },
   food_recommend:function(){ pushReply(buildFoodRecommend('')); },
+  recommend_library:function(){ pushReply(buildLibraryRecommend()); },
   share_result_text:function(){ pushReply(buildShareText()); },
   add_water:function(p){ showConfirm({ title:L('ดื่มน้ำ +'+(p&&p.amount||1),'Water +'+(p&&p.amount||1)), body:L('บันทึกน้ำดื่มเพิ่มในวันนี้','Add water to today\'s log'), yes:L('บันทึก','Save'), onYes:function(){ try{ if(fn('addWater')) window.addWater(p&&p.amount||1); }catch(e){} appToast(L('บันทึกน้ำแล้ว 💧','Water logged 💧')); pushBotText(L('บันทึกน้ำเพิ่มแล้วครับ 💧','Added water to today 💧')); } }); },
   create_followup_message:function(){ var c=coachCtx(); var name=(c.follow[0]&&c.follow[0].name)||L('ลูกเทรน','client'); var tpl=L('สวัสดีครับ '+name+' วันนี้สะดวกบันทึกมื้ออาหารหรือส่งการบ้านไหมครับ? มีอะไรให้โค้ชช่วยปรับแผนบอกได้เลยครับ 💪','Hi '+name+', can you log your meals or send homework today? Let me know if you\'d like to adjust the plan 💪'); pushReply({ title:L('ข้อความติดตาม','Follow-up message'), message:tpl, actions:[{label:L('คัดลอกข้อความ','Copy text'),action:'copy_text',payload:{text:tpl}},{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] }); },
@@ -818,6 +946,9 @@ var ACTIONS = {
   add_generated_recipe_to_meal:function(p){ confirmAddRecipe(p&&p.recipeId); },
   save_generated_recipe:function(p){ confirmSaveRecipe(p&&p.recipeId); },
   show_privacy:function(){ try{ IUMate.showPrivacy(); }catch(e){} },
+  coach_menu_redraft:function(p){ if(p&&p.id) pushReply(buildCoachDayMenu(findClientById(p.id))); },
+  flow_pick:function(p){ if(p&&p.v!=null) flowAnswer(p.v); },
+  flow_cancel:function(){ cancelFlow(); },
   _chip:function(p){ if(p&&p.q) IUMate.chip(p.q); }
 };
 function runAction(name, payload){ var f=ACTIONS[name]; if(f){ f(payload); } else { /* unknown action: no-op */ } }
@@ -899,7 +1030,7 @@ function renderPreview(){
     '</div>'+
     '<div class="sub" style="margin:4px 0 2px">'+esc(L('วัตถุดิบ (ปรับปริมาณได้)','Ingredients (adjustable)'))+'</div>'+
     rc.ingredients.map(function(i,idx){ return '<div class="iu-mate-amt-row"><span class="nm">'+esc(tFoodName(i.name))+'</span><button onclick="IUMate._amt('+idx+',-1)">−</button><span class="amt">'+i.amount+' g</span><button onclick="IUMate._amt('+idx+',1)">＋</button></div>'; }).join('')+
-    '<div class="iu-mate-fit">'+esc(L('เหมาะกับ','Good for'))+': '+esc((rc.tags||[]).join(' · '))+'</div>'+
+    swapsBlock(rc)+'<div class="iu-mate-fit">'+esc(L('เหมาะกับ','Good for'))+': '+esc((rc.tags||[]).join(' · '))+'</div>'+
     '<div style="display:flex;gap:8px;margin-top:12px">'+
       '<button class="go" style="background:#eef2f7;color:#37496b" onclick="IUMate.act(\'save_generated_recipe\',-1,\''+rc.id+'\')">'+esc(L('บันทึกเมนู','Save menu'))+'</button>'+
       '<button class="go" onclick="IUMate._previewAdd(\''+rc.id+'\')">'+esc(L('เพิ่มลงมื้อ','Add to meal'))+'</button>'+
@@ -914,12 +1045,191 @@ function pushBotText(text){ ST.messages.push({role:'botText',text:text}); render
 function pushReply(reply){ var idx=ST.messages.length; ST.messages.push({role:'bot',reply:reply,idx:idx}); renderMessages(); }
 function pushTyping(){ ST.messages.push({role:'typing'}); renderMessages(); }
 function popTyping(){ for(var i=ST.messages.length-1;i>=0;i--){ if(ST.messages[i].role==='typing'){ ST.messages.splice(i,1); break; } } }
+/* ============================ multi-turn context / follow-up resolution ============================ */
+function macroFollowup(key){
+  var tg=null; try{ tg=window.target?window.target():null; }catch(e){}
+  if(!tg) return null;
+  var map={protein:['prot','โปรตีน','Protein','g'],fat:['fat','ไขมัน','Fat','g'],carb:['carb','คาร์บ','Carbs','g'],fiber:['fib','ใยอาหาร','Fiber','g'],kcal:['kcal','แคลอรี','Calories','kcal']};
+  var m=map[key]; var v=tg[m[0]]; if(v==null) return null;
+  return { title:L(m[1]+'เป้าหมาย',m[2]+' target'), message:L('เป้าหมาย'+m[1]+'ของคุณคือประมาณ '+Math.round(v)+' '+m[3]+' ต่อวันครับ','Your '+m[2].toLowerCase()+' target is about '+Math.round(v)+' '+m[3]+'/day.') };
+}
+function resolveFollowup(message){
+  if(!ST.ctx) return null;
+  var t=synNorm(message); var raw=(''+message).trim(); var shortMsg=raw.length<=20;
+  var follow=/แล้ว|ล่ะ|ละ|เท่าไห|เท่าไร|กี่|then|howabout|whatabout|instead/.test(t);
+  var recentMacro=['calc_plan','make_plan','today_summary','food_recommend'].indexOf(ST.ctx.intent)>=0;
+  // a) macro ellipsis: "แล้วโปรตีนล่ะ"
+  if((follow||shortMsg) && (recentMacro||ST.ctx.macro)){
+    var mm=[['โปรตีน','protein'],['ไขมัน','fat'],['คาร์โบ','carb'],['คาร์บ','carb'],['ใยอาหาร','fiber'],['ไฟเบอร์','fiber'],['แคล','kcal'],['พลังงาน','kcal']];
+    for(var i=0;i<mm.length;i++){ if(t.indexOf(mm[i][0])>=0){ var r=macroFollowup(mm[i][1]); if(r){ ST.ctx.macro=true; return r; } } }
+  }
+  // b) cuisine switch: "แล้วจีนล่ะ"
+  if((ST.ctx.intent==='cuisine_menu'||ST.ctx.lastCuisine) && (follow||shortMsg) && /ญี่ปุ่น|japan|จีน|china|chinese|ฝรั่ง|ตะวันตก|western|สะดวก|7-11|เซเว่น|conven/.test(t)){
+    return buildCuisineMenu(message);
+  }
+  // c) "more / another"
+  if(['food_recommend','cuisine_menu','budget_menu','recommend_library','ingredient_recipe_generate'].indexOf(ST.ctx.intent)>=0 && shortMsg && /อีก|เพิ่ม|อื่น|more|another|other|next/.test(t)){
+    return buildLibraryRecommend();
+  }
+  return null;
+}
+/* ============================ proactive nudges (on open) ============================ */
+function proactiveNudge(){
+  try{
+    if(role()==='coach'){
+      var cc=coachCtx(); if(cc.denied) return null;
+      var risk=(cc.follow||[]).filter(function(f){return f.daysAgo!=null&&f.daysAgo>=3;});
+      if(risk.length) return { title:L('มีลูกเทรนที่ควรติดตาม','Clients to check on'),
+        message:L('มี '+risk.length+' คนที่เงียบไป 3 วันขึ้นไป อยากให้ผมสรุปและช่วยร่างข้อความติดตามไหมครับ?','There are '+risk.length+' client(s) quiet for 3+ days — want me to summarize and draft a follow-up?'),
+        actions:[{label:L('ดูใครบ้าง','See who'),action:'_chip',payload:{q:L('คนที่ต้องติดตาม','who to follow up')}}] };
+      return null;
+    }
+    var c=todayCtx(); if(c.empty) return null; var hr=new Date().getHours();
+    if(c.mealsLogged===0 && hr>=11) return { title:L('ยังไม่ได้บันทึกมื้อวันนี้','No meals logged yet'),
+      message:L('วันนี้ยังไม่ได้บันทึกมื้อไหนเลย เริ่มมื้อแรกหรือให้ผมแนะนำเมนูดีไหมครับ?','You haven\'t logged any meal today — start your first meal or want a menu idea?'),
+      actions:[{label:L('แนะนำเมนู','Suggest a menu'),action:'recommend_library'},{label:L('บันทึกอาหาร','Log food'),action:'go_food'}] };
+    if(c.targetProtein && c.eatenProtein < c.targetProtein*0.5 && c.mealsLogged>=1 && hr>=15) return { title:L('โปรตีนวันนี้ยังน้อย','Protein looks low today'),
+      message:L('ตอนนี้โปรตีน '+c.eatenProtein+'/'+Math.round(c.targetProtein)+' g อยากได้เมนูโปรตีนสูงเสริมไหมครับ?','Protein is '+c.eatenProtein+'/'+Math.round(c.targetProtein)+' g so far — want a high-protein menu?'),
+      actions:[{label:L('เมนูโปรตีนสูง','High-protein menu'),action:'recommend_library'}] };
+    if(c.remaining>0 && c.mealsLogged>=2) return { title:L('เช็กอินสั้น ๆ','Quick check-in'),
+      message:L('เหลืออีกประมาณ '+fmtN(c.remaining)+' kcal วันนี้ ทำได้ดีมากครับ 👍','About '+fmtN(c.remaining)+' kcal left today — nice work 👍'),
+      actions:[{label:L('ดูสรุปเต็ม','Full summary'),action:'today_summary'}] };
+    return null;
+  }catch(e){ return null; }
+}
+/* ============================ multi-turn slot-filling flows ============================ */
+/* ---- coach drafting tool: full-day menu for a selected trainee (helps coach, coach edits & sends) ---- */
+function coachClientsList(){ return (S().users||[]).filter(function(u){ return u.tr; }); }
+function findClientById(id){ var cs=coachClientsList(); for(var i=0;i<cs.length;i++){ if(cs[i].id===id) return cs[i]; } return null; }
+function clientChoices(){ return coachClientsList().slice(0,8).map(function(c){ return [c.name||L('ลูกเทรน','Client'), c.id]; }); }
+function goalLabelOf(g){ if(g==='lose') return 'ลดไขมัน'; if(g==='gain') return 'เพิ่มกล้าม'; return 'สุขภาพทั่วไป'; }
+function latestClientW(c){ try{ var a=analyzeClient(c); return a.latestW || c.w0 || c.w || null; }catch(e){ return c.w0||c.w||null; } }
+function clientTarget(c){
+  var w=latestClientW(c), h=c.h||null, sex=c.sex||'m', age=ageOf(c), act=c.act||1.375, goal=c.goal||'lose', kcal;
+  if(w&&h){ var tdee=CALC.bmr(sex,w,h,age)*act; kcal= goal==='lose'?tdee-400 : goal==='gain'?tdee+300 : tdee; }
+  else { kcal= goal==='lose'?1500 : goal==='gain'?2200 : 1800; }
+  kcal=Math.round(kcal/10)*10;
+  var prot = w?Math.round(w*1.8):Math.round(kcal*0.3/4);
+  return { kcal:kcal, prot:prot, goal:goal, goalLab:goalLabelOf(goal), w:w, h:h, partial:!(w&&h) };
+}
+function pickMealMenu(kcalTarget, mealName, goalLab, used){
+  var list=menuList().filter(function(m){ return !used[m.id] && m.mealFit && m.mealFit.indexOf(mealName)>=0; });
+  if(!list.length) list=menuList().filter(function(m){ return !used[m.id]; });
+  list.forEach(function(m){ var sc=0; sc-=Math.abs(m.nutrition.kcal-kcalTarget)/50; if(m.goalFit&&m.goalFit.indexOf(goalLab)>=0) sc+=3; if(m.nutrition.protein>=20) sc+=1; sc+=Math.random()*0.8; m._ms=sc; });
+  list.sort(function(a,b){ return b._ms-a._ms; });
+  var p=list[0]; if(p) used[p.id]=1; return p;
+}
+function mealEmoji(m){ return m==='เช้า'?'🌅':m==='กลางวัน'?'☀️':m==='เย็น'?'🌙':'🍎'; }
+function buildCoachDayMenu(c){
+  if(!consentCoach()) return coachDeniedReply();
+  if(!c) return { title:L('เลือกลูกเทรนก่อน','Pick a client first'), message:L('ยังไม่พบลูกเทรน','Client not found') };
+  if(!ingDbOk()) return cantCalcReply();
+  var tg=clientTarget(c);
+  var splits=[['เช้า',0.25],['กลางวัน',0.35],['เย็น',0.30],['ว่าง',0.10]];
+  var used={}, picks=[], tot={kcal:0,protein:0};
+  splits.forEach(function(sp){ var p=pickMealMenu(tg.kcal*sp[1], sp[0], tg.goalLab, used); if(p){ picks.push({meal:sp[0],m:p}); tot.kcal+=p.nutrition.kcal; tot.protein+=p.nutrition.protein; } });
+  var mealEN={'เช้า':'Breakfast','กลางวัน':'Lunch','เย็น':'Dinner','ว่าง':'Snack'};
+  var lines=picks.map(function(x){ return mealEmoji(x.meal)+' '+L(x.meal,mealEN[x.meal])+': '+x.m.name+' ('+x.m.nutrition.kcal+' kcal · P'+x.m.nutrition.protein+')'; });
+  var head=L('แผนเมนู 1 วัน — '+(c.name||'ลูกเทรน'),'1-day menu — '+(c.name||'client'));
+  var tline=L('เป้า ~'+tg.kcal+' kcal/วัน · โปรตีน ~'+tg.prot+' g ('+tg.goalLab+')','Target ~'+tg.kcal+' kcal/day · protein ~'+tg.prot+' g');
+  var sumline=L('รวม ~'+Math.round(tot.kcal)+' kcal · โปรตีน ~'+Math.round(tot.protein)+' g','Total ~'+Math.round(tot.kcal)+' kcal · protein ~'+Math.round(tot.protein)+' g');
+  var msg=tline+'\n\n'+lines.join('\n')+'\n\n'+sumline;
+  var copyText=head+'\n'+msg;
+  ST.ctx={intent:'coach_menu', clientId:c.id};
+  return { title:head, message:msg,
+    disclaimer: tg.partial ? L('ข้อมูลลูกเทรนไม่ครบ ใช้ค่าประมาณ — โค้ชปรับก่อนส่งได้','Client profile incomplete — estimates; adjust before sending')
+                           : L('ค่าประมาณเพื่อช่วยร่าง โค้ชตรวจ/แก้ก่อนส่งให้ลูกเทรนได้','Estimates to help you draft — review/edit before sending'),
+    actions:[
+      {label:L('🔄 ร่างใหม่','🔄 Redraft'),action:'coach_menu_redraft',payload:{id:c.id}},
+      {label:L('📋 คัดลอกเป็นข้อความ','📋 Copy as text'),action:'copy_text',payload:{text:copyText}},
+      {label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}
+    ] };
+}
+function startCoachMenu(){
+  if(!consentCoach()) return pushReply(coachDeniedReply());
+  var cs=coachClientsList();
+  if(!cs.length) return pushReply({ title:L('ยังไม่มีลูกเทรน','No clients yet'), message:L('ยังไม่มีลูกเทรน แชร์ QR โค้ชให้สแกนเข้ามาก่อนนะครับ','No clients yet — share your Coach QR.'), actions:[{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] });
+  if(cs.length===1) return pushReply(buildCoachDayMenu(cs[0]));
+  startFlow('coach_menu');
+}
+var FLOWS = {
+  plan: {
+    intro: L('โอเคครับ ขอถามนิดหน่อยเพื่อจัดให้พอดีตัวคุณ (ตอบสั้น ๆ ได้เลย)','Sure — a few quick questions to tailor this for you'),
+    slots: [
+      { key:'sex', type:'choice', q:L('คุณเป็นเพศอะไรครับ?','What is your sex?'), choices:[[L('ชาย','Male'),'m'],[L('หญิง','Female'),'f']] },
+      { key:'age', type:'num', min:10, max:100, q:L('อายุเท่าไหร่ครับ? (ปี)','How old are you? (years)') },
+      { key:'h', type:'num', min:120, max:220, q:L('ส่วนสูงกี่เซนติเมตรครับ?','Height in cm?') },
+      { key:'w', type:'num', min:30, max:250, q:L('น้ำหนักปัจจุบันกี่กิโลครับ?','Current weight in kg?') },
+      { key:'goal', type:'choice', q:L('เป้าหมายหลักคืออะไรครับ?','Main goal?'), choices:[[L('ลดไขมัน','Fat loss'),'lose'],[L('เพิ่มกล้าม','Muscle'),'gain'],[L('รักษาน้ำหนัก','Maintain'),'keep']] },
+      { key:'act', type:'choice', q:L('ออกกำลังบ่อยแค่ไหนครับ?','How active are you?'), choices:[[L('แทบไม่','Sedentary'),1.2],[L('เบา 1-3 วัน','Light'),1.375],[L('ปานกลาง 3-5 วัน','Moderate'),1.55],[L('หนัก 6-7 วัน','Hard'),1.725]] }
+    ],
+    prefill: function(sl){ if(role()==='coach') return; try{ var u=curUser()||{}; if(sl.sex==null&&u.sex)sl.sex=u.sex; if(sl.h==null&&u.h)sl.h=u.h; if(sl.w==null){ var w=fn('curW')?window.curW(u):u.w0; if(w)sl.w=w; } if(sl.age==null){ var a=ageOf(u); if(a)sl.age=a; } if(sl.act==null&&u.act)sl.act=u.act; if(sl.goal==null&&u.goal)sl.goal=u.goal; }catch(e){} },
+    complete: function(sl){ return planFlowResult(sl); }
+  },
+  coach_menu: {
+    intro: L('จะร่างเมนูทั้งวันให้ลูกเทรนคนไหนดีครับ?','Which client should I draft a full-day menu for?'),
+    slots: [ { key:'client', type:'choice', q:L('เลือกลูกเทรน','Pick a client'), choicesFn:clientChoices } ],
+    complete: function(sl){ return buildCoachDayMenu(findClientById(sl.client)); }
+  }
+};
+function planFlowResult(sl){
+  var rep=calcReply({sex:sl.sex,age:sl.age,h:sl.h,w:sl.w,goal:sl.goal,act:sl.act});
+  rep.title=L('แผนของคุณพร้อมแล้ว ✨','Your plan is ready ✨');
+  rep.actions=[{label:L('ดูเมนูที่เข้าแผน','Menus that fit'),action:'recommend_library'}].concat(rep.actions||[]);
+  return rep;
+}
+function startFlow(id, seed){
+  var def=FLOWS[id]; if(!def) return;
+  ST.flow={ id:id, slots:{}, cur:null };
+  if(seed){ for(var k in seed){ if(seed[k]!=null) ST.flow.slots[k]=seed[k]; } }
+  if(def.prefill) def.prefill(ST.flow.slots);
+  if(def.intro) pushBotText(def.intro);
+  flowNext();
+}
+function flowNext(){
+  if(!ST.flow) return; var def=FLOWS[ST.flow.id];
+  var slot=null; for(var i=0;i<def.slots.length;i++){ if(ST.flow.slots[def.slots[i].key]==null){ slot=def.slots[i]; break; } }
+  if(!slot){ var res=null; try{ res=def.complete(ST.flow.slots); }catch(e){} ST.flow=null; if(res) pushReply(res); return; }
+  ST.flow.cur=slot.key; askSlot(slot);
+}
+function slotChoices(slot){ return slot.choices || (slot.choicesFn?slot.choicesFn():[]); }
+function askSlot(slot){
+  var acts=[];
+  if(slot.type==='choice') acts=slotChoices(slot).map(function(c){ return {label:c[0],action:'flow_pick',payload:{v:c[1]}}; });
+  acts.push({label:L('ยกเลิก','Cancel'),action:'flow_cancel'});
+  pushReply({ title:null, message:slot.q+(slot.type==='num'?L(' (พิมพ์ตัวเลข)',' (type a number)'):''), actions:acts });
+}
+function flowCurSlot(){ if(!ST.flow) return null; var def=FLOWS[ST.flow.id],r=null; def.slots.forEach(function(s){ if(s.key===ST.flow.cur) r=s; }); return r; }
+function flowAnswer(v){ if(!ST.flow) return; var slot=flowCurSlot(); if(!slot) return; ST.flow.slots[slot.key]=v; flowNext(); }
+function cancelFlow(){ ST.flow=null; pushBotText(L('ยกเลิกแล้วครับ ถามอย่างอื่นได้เลย','Cancelled — ask me anything else')); }
+function flowInput(text){
+  var slot=flowCurSlot(); if(!slot){ ST.flow=null; handleMessage(text); return; }
+  var t=norm(text);
+  if(/^(ยกเลิก|เลิก|cancel|stop|หยุด)/.test(t)){ cancelFlow(); return; }
+  if(slot.type==='choice'){
+    var m=null; slotChoices(slot).forEach(function(c){ if(norm(c[0])===t || (''+c[1])===text.trim() || t.indexOf(norm(c[0]))>=0) m=c[1]; });
+    if(m==null){ if(/ชาย|ผู้ชาย|\bmale\b/.test(t))m='m'; else if(/หญิง|ผู้หญิง|female/.test(t))m='f'; else if(/ลด/.test(t))m='lose'; else if(/เพิ่ม|กล้าม|bulk/.test(t))m='gain'; else if(/รักษา|คงน้ำหนัก|maintain/.test(t))m='keep'; else if(/ปานกลาง|moderate/.test(t))m=1.55; else if(/หนัก|hard/.test(t))m=1.725; else if(/เบา|light/.test(t))m=1.375; else if(/แทบไม่|นั่ง|sedentary/.test(t))m=1.2; }
+    if(m==null){ pushBotText(L('เลือกจากตัวเลือกด้านบนได้เลยครับ','Please pick one of the options above')); return; }
+    flowAnswer(m);
+  } else {
+    var mm=(''+text).match(/\d+(\.\d+)?/); var n=mm?parseFloat(mm[0]):NaN;
+    if(isNaN(n)){ pushBotText(L('พิมพ์เป็นตัวเลขนะครับ','Please type a number')); return; }
+    if(slot.min!=null && (n<slot.min||n>slot.max)){ pushBotText(L('ค่าน่าจะอยู่ระหว่าง '+slot.min+'–'+slot.max+' ลองใหม่นะครับ','Should be '+slot.min+'–'+slot.max+', try again')); return; }
+    flowAnswer(n);
+  }
+}
 function handleMessage(text){
   text=(text||'').trim(); if(!text) return;
+  if(ST.flow){ pushUser(text); flowInput(text); return; }
   pushUser(text); pushTyping();
   setTimeout(function(){ popTyping();
+    var fu=null; try{ fu=resolveFollowup(text); }catch(e){}
+    if(fu){ pushReply(fu); return; }
     var intent=detectIntent(text); try{ bumpStat('intent:'+intent); }catch(e){}
+    if(intent==='make_plan'){ try{ startFlow('plan', parseProfileFromText(text)); }catch(e){} ST.ctx={intent:'make_plan'}; return; }
+    if(intent==='coach_menu' && role()==='coach'){ try{ startCoachMenu(); }catch(e){} return; }
     var reply; try{ reply=buildReply(intent,text); }catch(e){ reply=buildFallback(text); }
+    try{ ST.ctx={intent:intent}; if(intent==='cuisine_menu') ST.ctx.lastCuisine=true; }catch(e){}
     pushReply(reply);
   }, 320+Math.random()*220);
 }
@@ -931,7 +1241,7 @@ var IUMate = {
   open:function(mode){ if(!appReady()){ appToast(L('เข้าสู่ระบบก่อนใช้ IU Mate','Sign in to use IU Mate')); return; }
     ST.isOpen=true; ST.mode=mode||'global';
     if(!hasConsent()){ ST.full=false; renderConsentScreen(); renderFab(); return; }
-    if(!ST.messages.length){ ST.messages.push({role:'botText',text:greeting()}); }
+    if(!ST.messages.length){ ST.messages.push({role:'botText',text:greeting()}); var _nz=proactiveNudge(); if(_nz){ ST.messages.push({role:'bot',reply:_nz,idx:ST.messages.length}); } }
     renderSheet(); renderFab();
     setTimeout(function(){ var inp=document.getElementById('iuMateInput'); /* no autofocus to avoid keyboard jump on open */ }, 50);
   },
@@ -958,7 +1268,7 @@ var IUMate = {
   _sex:function(x){ readCalcInputs(); ST.calc.sex=x; openCalcForm(ST.calc); },
   _goal:function(x){ readCalcInputs(); ST.calc.goal=x; openCalcForm(ST.calc); },
   _calc:function(){ readCalcInputs(); var p=ST.calc||{}; if(p.w==null||p.h==null||p.age==null||p.sex==null){ appToast(L('กรอกเพศ อายุ ส่วนสูง น้ำหนักให้ครบก่อนครับ','Please fill sex, age, height and weight')); return; } if(!(p.age>=10&&p.age<=100)||!(p.h>=120&&p.h<=220)||!(p.w>=30&&p.w<=250)){ appToast(L('ตรวจค่าอีกครั้ง: อายุ 10–100 ปี · สูง 120–220 ซม. · หนัก 30–250 กก.','Check values: age 10–100 · height 120–220 cm · weight 30–250 kg')); return; } modalClose(); if(!ST.isOpen) IUMate.open('global'); pushReply(calcReply(p)); },
-  acceptConsent:function(){ var coachData=true; var cb=document.getElementById('iuMateCoachConsent'); if(cb) coachData=!!cb.checked; saveConsent(coachData); ST.messages=[]; ST.messages.push({role:'botText',text:greeting()}); renderSheet(); renderFab(); },
+  acceptConsent:function(){ ST.flow=null; ST.ctx=null; var coachData=true; var cb=document.getElementById('iuMateCoachConsent'); if(cb) coachData=!!cb.checked; saveConsent(coachData); ST.messages=[]; ST.messages.push({role:'botText',text:greeting()}); renderSheet(); renderFab(); },
   declineConsent:function(){ closeNow(); },
   showPrivacy:function(){ showConfirm({ title:L('ความเป็นส่วนตัว','Privacy'), body:L('IU Mate ทำงานในเครื่อง บทสนทนาไม่ถูกบันทึกหรือส่งออกนอกเครื่อง และอ่านข้อมูลในแอปเพื่อช่วยสรุปเท่านั้น','IU Mate runs on-device. Conversations are not saved or sent anywhere, and it only reads your in-app data to help summarize.'), yes:L('เพิกถอนความยินยอม','Withdraw consent'), onYes:function(){ revokeConsent(); appToast(L('เพิกถอนความยินยอมแล้ว','Consent withdrawn')); closeNow(); } }); },
   _sync:function(){ try{ renderFab(); }catch(e){} try{ injectEntryPoints(); }catch(e){} },
