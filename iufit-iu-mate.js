@@ -162,7 +162,7 @@ function renderConsentScreen(){
   var r=root();
   r.innerHTML='<div class="iu-mate-backdrop" onclick="IUMate.close()"></div>'+
    '<section class="iu-mate-sheet" role="dialog" aria-label="IU Mate">'+
-     '<div class="iu-mate-grab"></div>'+
+     '<button type="button" class="iu-mate-grab" onclick="IUMate.close()" aria-label="'+L('ย่อหน้าต่าง','Minimize')+'" title="'+L('ย่อหน้าต่าง','Minimize')+'"></button>'+
      '<header class="iu-mate-header">'+
        '<div class="iu-mate-avatar">'+botIcon()+'</div>'+
        '<div class="iu-mate-title"><strong>IU Mate</strong><small>'+esc(L('ความเป็นส่วนตัว','Privacy & consent'))+'</small></div>'+
@@ -885,12 +885,21 @@ function renderMessages(){
   box.innerHTML=ST.messages.map(msgHtml).join('');
   box.scrollTop=box.scrollHeight;
 }
+function setupSheetDrag(){
+  var sheet=document.querySelector('.iu-mate-sheet'); if(!sheet) return;
+  var startY=0,curY=0,dragging=false;
+  sheet.addEventListener('touchstart',function(e){var t=e.target; if(!t.closest('.iu-mate-grab')&&!t.closest('.iu-mate-header')){dragging=false;return;} startY=e.touches[0].clientY; curY=0; dragging=true; sheet.style.transition='none';},{passive:true});
+  sheet.addEventListener('touchmove',function(e){ if(!dragging) return; var dy=e.touches[0].clientY-startY; if(dy<0)dy=0; curY=dy; sheet.style.transform='translateY('+dy+'px)'; if(dy>4&&e.cancelable)e.preventDefault();},{passive:false});
+  function end(e){ if(!dragging) return; dragging=false; sheet.style.transition='transform .22s cubic-bezier(.22,1,.36,1)'; if(curY>110){ sheet.style.transform='translateY(100%)'; setTimeout(function(){ try{IUMate.close();}catch(_e){} },180); } else { sheet.style.transform='translateY(0)'; } if(curY>6&&e.cancelable)e.preventDefault(); }
+  sheet.addEventListener('touchend',end,{passive:false});
+  sheet.addEventListener('touchcancel',end,{passive:false});
+}
 function renderSheet(){
   var r=root(); var chips=quickChips();
   r.innerHTML=
    '<div class="iu-mate-backdrop" onclick="IUMate.close()"></div>'+
    '<section class="iu-mate-sheet'+(ST.full?' full':'')+'" role="dialog" aria-label="IU Mate">'+
-     '<div class="iu-mate-grab"></div>'+
+     '<button type="button" class="iu-mate-grab" onclick="IUMate.close()" aria-label="'+L('ย่อหน้าต่าง','Minimize')+'" title="'+L('ย่อหน้าต่าง','Minimize')+'"></button>'+
      '<header class="iu-mate-header">'+
        '<button class="iu-mate-close" onclick="IUMate.close()" aria-label="close">←</button>'+
        '<div class="iu-mate-avatar">'+botIcon()+'</div>'+
@@ -906,7 +915,7 @@ function renderSheet(){
      '</form>'+
      '<div class="iu-mate-privacy-note">'+esc(L('ทำงานในเครื่อง • บทสนทนาไม่ถูกบันทึกหรือส่งออกนอกเครื่อง','On-device • conversations are not saved or sent anywhere'))+'</div>'+
    '</section>';
-  renderMessages();
+  renderMessages(); try{ setupSheetDrag(); }catch(e){}
 }
 
 /* ============================ confirm dialog ============================ */
