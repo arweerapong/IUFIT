@@ -164,7 +164,7 @@ function renderConsentScreen(){
    '<section class="iu-mate-sheet" role="dialog" aria-label="IU Mate">'+
      '<button type="button" class="iu-mate-grab" onclick="IUMate.close()" aria-label="'+L('ย่อหน้าต่าง','Minimize')+'" title="'+L('ย่อหน้าต่าง','Minimize')+'"></button>'+
      '<header class="iu-mate-header">'+
-       '<div class="iu-mate-avatar">'+botIcon()+'</div>'+
+       '<div class="iu-mate-avatar">'+botAvatar()+'</div>'+
        '<div class="iu-mate-title"><strong>IU Mate</strong><small>'+esc(L('ความเป็นส่วนตัว','Privacy & consent'))+'</small></div>'+
        '<span class="iu-mate-local-badge">Local</span>'+
      '</header>'+
@@ -175,6 +175,7 @@ function renderConsentScreen(){
 /* ============================ icons ============================ */
 function botIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="3.5"/><path d="M12 8V4.5M12 4.5a1.4 1.4 0 1 0 0-2.8 1.4 1.4 0 0 0 0 2.8Z"/><path d="M9 13h.01M15 13h.01"/><path d="M1.8 12.5v3M22.2 12.5v3"/></svg>'; }
 function sparkIcon(){ return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 4.7L18 8.3l-4.4 1.6L12 14l-1.6-4.1L6 8.3l4.4-1.6L12 2z"/></svg>'; }
+function botAvatar(){ return '<svg viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block"><circle cx="28" cy="28" r="25.9" fill="none" stroke="#D8EBFF" stroke-width="1.22"/><circle cx="28" cy="28" r="24.5" fill="#EEF6FF" stroke="#7EB9FF" stroke-width="1.75"/><g transform="scale(0.875)"><circle cx="32" cy="11.6" r="4" fill="#0A84FF"/><circle cx="13.8" cy="29.3" r="3.8" fill="#0A84FF"/><circle cx="50.2" cy="29.3" r="3.8" fill="#0A84FF"/><rect x="17.8" y="19.6" width="28.4" height="17.4" rx="8" fill="#071E4A"/><path d="M23.7 26.6C23.7 25.1 24.9 23.9 26.4 23.9C27.9 23.9 29.1 25.1 29.1 26.6" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/><path d="M34.9 26.6C34.9 25.1 36.1 23.9 37.6 23.9C39.1 23.9 40.3 25.1 40.3 26.6" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/><path d="M28.4 31C29.2 31.8 30.4 32.3 32 32.3C33.6 32.3 34.8 31.8 35.6 31" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/><path d="M32 50.2L25.7 46.45C24 45.44 22.95 43.63 22.95 41.66C22.95 38.53 25.5 35.98 28.64 35.98C30.16 35.98 31.54 36.52 32.55 37.52C33.56 36.52 34.94 35.98 36.46 35.98C39.6 35.98 42.15 38.53 42.15 41.66C42.15 43.63 41.1 45.44 39.4 46.45L32 50.2Z" fill="#0A84FF"/><path d="M27.85 42.5H30.05L31.3 39.9L33.1 44.4L34.55 41.55H37.25" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></g></svg>'; }
 function fabOrb(){ return '<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="IU MATE tinted 56px"> <defs> <linearGradient id="gBlue" x1="15.75" y1="8.75" x2="40.25" y2="47.25" gradientUnits="userSpaceOnUse"> <stop offset="0" stop-color="#20D5FF"/> <stop offset="0.52" stop-color="#0A84FF"/> <stop offset="1" stop-color="#005CFF"/> </linearGradient> </defs> <circle cx="28.0" cy="28.0" r="25.90" fill="none" stroke="#D8EBFF" stroke-width="1.22"/> <circle cx="28.0" cy="28.0" r="24.50" fill="#EEF6FF" stroke="#7EB9FF" stroke-width="1.75"/> <g transform="translate(0.00 0.00) scale(0.87500)"> <circle cx="32" cy="11.6" r="4" fill="url(#gBlue)"/> <circle cx="13.8" cy="29.3" r="3.8" fill="url(#gBlue)"/> <circle cx="50.2" cy="29.3" r="3.8" fill="url(#gBlue)"/> <rect x="17.8" y="19.6" width="28.4" height="17.4" rx="8" fill="#071E4A"/> <path d="M23.7 26.6C23.7 25.1 24.9 23.9 26.4 23.9C27.9 23.9 29.1 25.1 29.1 26.6" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M34.9 26.6C34.9 25.1 36.1 23.9 37.6 23.9C39.1 23.9 40.3 25.1 40.3 26.6" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M28.4 31C29.2 31.8 30.4 32.3 32 32.3C33.6 32.3 34.8 31.8 35.6 31" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M32 50.2L25.7 46.45C24 45.44 22.95 43.63 22.95 41.66C22.95 38.53 25.5 35.98 28.64 35.98C30.16 35.98 31.54 36.52 32.55 37.52C33.56 36.52 34.94 35.98 36.46 35.98C39.6 35.98 42.15 38.53 42.15 41.66C42.15 43.63 41.1 45.44 39.4 46.45L32 50.2Z" fill="#0A84FF"/> <path d="M27.85 42.5H30.05L31.3 39.9L33.1 44.4L34.55 41.55H37.25" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/> </g> </svg>'; }
 function sendIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-7-7 16-2.5-6.5L4 12z"/></svg>'; }
 function checkIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'; }
@@ -969,7 +970,7 @@ function injectEntryPoints(){
     else if(tab==='body') cfg={icon:'✨',label:L('อธิบายผลลัพธ์ของฉัน ด้วย IU Mate','Explain my results with IU Mate'),q:L('ดูความคืบหน้า','my progress')};
     if(!cfg) return;
     var b=document.createElement('button'); b.id='iuMateEntry'; b.className='iu-mate-entry'; b.type='button';
-    b.innerHTML='<span class="ico">'+cfg.icon+'</span><span class="lbl">'+esc(cfg.label)+'</span><span class="go">'+botIcon()+'</span>';
+    b.innerHTML='<span class="ico">'+cfg.icon+'</span><span class="lbl">'+esc(cfg.label)+'</span><span class="go">'+botAvatar()+'</span>';
     b.addEventListener('click',function(){ IUMate.open(tab); if(hasConsent()){ setTimeout(function(){ IUMate.chip(cfg.q); },260); } });
     view.insertBefore(b, view.firstChild);
   }catch(e){}
@@ -992,10 +993,10 @@ function renderFab(){
 }
 function msgHtml(m){
   if(m.role==='user') return '<div class="iu-mate-bubble user">'+esc(m.text)+'</div>';
-  if(m.role==='typing') return '<div class="iu-mate-row-bot"><span class="mini">'+botIcon()+'</span><div class="iu-mate-bubble bot"><span class="iu-mate-typing"><i></i><i></i><i></i></span></div></div>';
-  if(m.role==='botText') return '<div class="iu-mate-row-bot"><span class="mini">'+botIcon()+'</span><div class="iu-mate-bubble bot">'+esc(m.text)+'</div></div>';
+  if(m.role==='typing') return '<div class="iu-mate-row-bot"><span class="mini">'+botAvatar()+'</span><div class="iu-mate-bubble bot"><span class="iu-mate-typing"><i></i><i></i><i></i></span></div></div>';
+  if(m.role==='botText') return '<div class="iu-mate-row-bot"><span class="mini">'+botAvatar()+'</span><div class="iu-mate-bubble bot">'+esc(m.text)+'</div></div>';
   // bot reply object
-  var rep=m.reply, idx=m.idx; var h='<div class="iu-mate-row-bot"><span class="mini">'+botIcon()+'</span><div style="max-width:88%"><div class="iu-mate-card">';
+  var rep=m.reply, idx=m.idx; var h='<div class="iu-mate-row-bot"><span class="mini">'+botAvatar()+'</span><div style="max-width:88%"><div class="iu-mate-card">';
   if(rep.title) h+='<div class="ttl">'+sparkInline()+esc(rep.title)+'</div>';
   if(rep.message) h+='<div class="msg">'+esc(rep.message)+'</div>';
   (rep.recipes||[]).forEach(function(rc){
@@ -1046,7 +1047,7 @@ function renderSheet(){
      '<button type="button" class="iu-mate-grab" onclick="IUMate.close()" aria-label="'+L('ย่อหน้าต่าง','Minimize')+'" title="'+L('ย่อหน้าต่าง','Minimize')+'"></button>'+
      '<header class="iu-mate-header">'+
        '<button class="iu-mate-close" onclick="IUMate.close()" aria-label="close">←</button>'+
-       '<div class="iu-mate-avatar">'+botIcon()+'</div>'+
+       '<div class="iu-mate-avatar">'+botAvatar()+'</div>'+
        '<div class="iu-mate-title"><strong>IU Mate</strong><small>'+esc(L('ผู้ช่วยส่วนตัวใน IUFIT','Your assistant in IUFIT'))+'</small></div>'+
        '<span class="iu-mate-local-badge">Local</span>'+
        '<button class="iu-mate-expand" onclick="IUMate.close()" aria-label="minimize" title="'+L('ย่อหน้าต่าง','Minimize')+'">⌄</button>'+'<button class="iu-mate-expand" onclick="IUMate.showPrivacy()" aria-label="privacy" title="privacy" style="margin-right:1px">🔒</button>'+'<button class="iu-mate-expand" onclick="IUMate.toggleFull()" aria-label="expand">'+(ST.full?'▢':'⤢')+'</button>'+

@@ -45,8 +45,8 @@
 /* ---------- Header ---------- */
 .iu-mate-header{padding:10px 14px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--iu-border)}
 .iu-mate-close{width:34px;height:34px;border:0;border-radius:50%;background:#eef3fb;color:#48597a;font-size:18px;cursor:pointer;flex:none}
-.iu-mate-avatar{width:42px;height:42px;border-radius:15px;flex:none;background:linear-gradient(135deg,#0A84FF,#003C8F);color:#fff;display:grid;place-items:center;box-shadow:0 10px 24px rgba(10,132,255,.28)}
-.iu-mate-avatar svg{width:24px;height:24px}
+.iu-mate-avatar{width:42px;height:42px;flex:none;display:grid;place-items:center}
+.iu-mate-avatar svg{width:100%;height:100%}
 .iu-mate-title{flex:1;min-width:0;line-height:1.15}
 .iu-mate-title strong{display:block;font-size:16px;color:var(--iu-navy);font-weight:850}
 .iu-mate-title small{display:block;font-size:11px;color:var(--iu-muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -67,8 +67,8 @@
 .iu-mate-bubble.user{margin-left:auto;color:#fff;background:linear-gradient(135deg,#0A84FF,#003C8F);border-bottom-right-radius:7px}
 .iu-mate-bubble.bot{margin-right:auto;color:var(--iu-text);background:#fff;border:1px solid var(--iu-border);border-bottom-left-radius:7px;box-shadow:0 8px 22px rgba(13,54,110,.07)}
 .iu-mate-row-bot{display:flex;gap:8px;align-items:flex-end;margin:8px 0}
-.iu-mate-row-bot .mini{width:28px;height:28px;border-radius:9px;flex:none;background:linear-gradient(135deg,#0A84FF,#003C8F);color:#fff;display:grid;place-items:center}
-.iu-mate-row-bot .mini svg{width:16px;height:16px}
+.iu-mate-row-bot .mini{width:28px;height:28px;flex:none;display:grid;place-items:center}
+.iu-mate-row-bot .mini svg{width:100%;height:100%}
 .iu-mate-row-bot .iu-mate-bubble{margin:0}
 .iu-mate-typing{display:inline-flex;gap:4px;padding:4px 2px}
 .iu-mate-typing i{width:7px;height:7px;border-radius:50%;background:#9fb3d4;animation:iu-blink 1.2s infinite}
@@ -152,6 +152,6 @@
 .iu-mate-entry{display:flex;align-items:center;gap:9px;width:calc(100% - 4px);margin:6px 2px 12px;padding:11px 14px;border:1px solid var(--iu-border);border-radius:16px;background:linear-gradient(120deg,#EEF6FF,#F8FBFF);color:var(--iu-deep);font-weight:800;font-size:13.5px;font-family:inherit;cursor:pointer;box-shadow:0 6px 18px rgba(13,54,110,.06)}
 .iu-mate-entry .ico{font-size:18px;flex:none;line-height:1}
 .iu-mate-entry .lbl{flex:1;text-align:left;line-height:1.3}
-.iu-mate-entry .go{width:26px;height:26px;flex:none;border-radius:8px;background:linear-gradient(135deg,#0A84FF,#003C8F);color:#fff;display:grid;place-items:center}
-.iu-mate-entry .go svg{width:16px;height:16px}
+.iu-mate-entry .go{width:30px;height:30px;flex:none;display:grid;place-items:center}
+.iu-mate-entry .go svg{width:100%;height:100%}
 .iu-mate-entry:active{transform:scale(.99)}
