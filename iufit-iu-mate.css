@@ -4,22 +4,27 @@
   --iu-blue:#0A84FF;--iu-deep:#003C8F;--iu-navy:#002766;--iu-cyan:#20D5FF;--iu-green:#12B7A8;
   --iu-warning:#F5A623;--iu-border:#DDE7F5;--iu-shadow:0 16px 42px rgba(13,54,110,.14);--iu-radius:24px;
 }
-/* ---------- Floating button ---------- */
+/* ---------- Floating button (IU Mate orb) ---------- */
 .iu-mate-fab{
-  position:fixed;right:16px;bottom:calc(88px + env(safe-area-inset-bottom));z-index:1200;
+  position:fixed;right:max(18px,env(safe-area-inset-right));bottom:calc(88px + env(safe-area-inset-bottom));z-index:1200;
   display:grid;place-items:center;width:56px;height:56px;padding:0;border:0;
-  border-radius:999px;color:#fff;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;
-  background:linear-gradient(135deg,#0A84FF,#003C8F);box-shadow:0 14px 34px rgba(10,132,255,.36);
-  transform:translateY(0);transition:transform .18s ease,opacity .18s ease;letter-spacing:.2px;
+  border-radius:999px;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  filter:drop-shadow(0 10px 22px rgba(7,30,74,.20));
+  transform:translateY(0);transition:transform .18s ease,opacity .18s ease,filter .18s ease;
 }
+.iu-mate-fab:hover{transform:translateY(-2px);filter:drop-shadow(0 14px 26px rgba(7,30,74,.26))}
 .iu-mate-fab:active{transform:scale(.96)}
+.iu-mate-fab:focus-visible{outline:3px solid rgba(10,132,255,.35);outline-offset:4px}
 .iu-mate-fab[hidden]{display:none!important}
-.iu-mate-fab .iu-ic{width:28px;height:28px;display:grid;place-items:center}
-.iu-mate-fab .iu-ic svg{width:28px;height:28px}
-.iu-mate-fab .iu-lbl{display:none}
+.iu-mate-fab .iu-orb{width:100%;height:100%;display:grid;place-items:center;position:relative}
+.iu-mate-fab .iu-orb svg{width:100%;height:100%;display:block}
 .iu-mate-fab.fab-hide{transform:translateY(150%) scale(.9);opacity:0;pointer-events:none}
-
-.iu-mate-fab .iu-spark{position:absolute;top:-3px;right:-3px;width:13px;height:13px;color:var(--iu-cyan)}
+.iu-mate-fab.is-dimmed{opacity:.45}
+.iu-mate-fab.has-unread::after{content:"";position:absolute;top:3px;right:3px;width:13px;height:13px;border-radius:999px;background:#E5484D;border:2px solid #fff;box-shadow:0 2px 6px rgba(7,30,74,.25)}
+.iu-mate-fab.is-loading::before{content:"";position:absolute;inset:-3px;border-radius:999px;border:2.6px solid transparent;border-top-color:var(--iu-blue);animation:iu-fab-spin .8s linear infinite}
+@keyframes iu-fab-spin{to{transform:rotate(360deg)}}
+@media (max-width:390px){.iu-mate-fab{width:52px;height:52px;right:14px}}
+@media (min-width:768px){.iu-mate-fab{bottom:28px;right:28px}}
 
 /* ---------- Backdrop + sheet ---------- */
 .iu-mate-backdrop{position:fixed;inset:0;z-index:1300;background:rgba(6,18,40,.42);backdrop-filter:blur(2px);

@@ -175,6 +175,7 @@ function renderConsentScreen(){
 /* ============================ icons ============================ */
 function botIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="3.5"/><path d="M12 8V4.5M12 4.5a1.4 1.4 0 1 0 0-2.8 1.4 1.4 0 0 0 0 2.8Z"/><path d="M9 13h.01M15 13h.01"/><path d="M1.8 12.5v3M22.2 12.5v3"/></svg>'; }
 function sparkIcon(){ return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 4.7L18 8.3l-4.4 1.6L12 14l-1.6-4.1L6 8.3l4.4-1.6L12 2z"/></svg>'; }
+function fabOrb(){ return '<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"> <defs> <linearGradient id="iufitBlue" x1="18" y1="10" x2="46" y2="54" gradientUnits="userSpaceOnUse"> <stop offset="0" stop-color="#20D5FF"/> <stop offset="0.52" stop-color="#0A84FF"/> <stop offset="1" stop-color="#005CFF"/> </linearGradient> </defs> <circle cx="28.0" cy="28.0" r="24.50" fill="#FFFFFF" stroke="#DCE8F7" stroke-width="1.31"/> <g opacity="1"> <g transform="translate(0.0 0.0) scale(0.875)"> <circle cx="32" cy="11.6" r="4" fill="url(#iufitBlue)"/> <circle cx="13.8" cy="29.3" r="3.8" fill="url(#iufitBlue)"/> <circle cx="50.2" cy="29.3" r="3.8" fill="url(#iufitBlue)"/> <rect x="17.8" y="19.6" width="28.4" height="17.4" rx="8" fill="#071E4A"/> <path d="M23.7 26.6C23.7 25.1 24.9 23.9 26.4 23.9C27.9 23.9 29.1 25.1 29.1 26.6" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M34.9 26.6C34.9 25.1 36.1 23.9 37.6 23.9C39.1 23.9 40.3 25.1 40.3 26.6" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M28.4 31C29.2 31.8 30.4 32.3 32 32.3C33.6 32.3 34.8 31.8 35.6 31" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M32 50.2L25.7 46.45C24 45.44 22.95 43.63 22.95 41.66C22.95 38.53 25.5 35.98 28.64 35.98C30.16 35.98 31.54 36.52 32.55 37.52C33.56 36.52 34.94 35.98 36.46 35.98C39.6 35.98 42.15 38.53 42.15 41.66C42.15 43.63 41.1 45.44 39.4 46.45L32 50.2Z" fill="#0A84FF"/> <path d="M27.85 42.5H30.05L31.3 39.9L33.1 44.4L34.55 41.55H37.25" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/> </g> </g> </svg>'; }
 function sendIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-7-7 16-2.5-6.5L4 12z"/></svg>'; }
 function checkIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'; }
 
@@ -443,8 +444,8 @@ var KNOWLEDGE = [
     actions:[{label:L('เปิดแท็บโค้ช','Open Coach'),action:'go_coach'}] },
   { id:'how_to_share_app', cat:'app_help', kw:['แชร์แอป','ชวนเพื่อน','แนะนำแอป','share app','invite friend','tell a friend'],
     title:L('วิธีแชร์แอปให้เพื่อน','How to share IUFIT'),
-    answer:L('ไปที่ตั้งค่า กด "แชร์แอปให้เพื่อน" ระบบจะเปิดเมนูแชร์ของมือถือให้ส่งลิงก์ iufit.com ได้ทันที','In Settings, tap "Share IUFIT" — your phone\'s share menu opens with the iufit.com link.'),
-    actions:[{label:L('แชร์เลย','Share now'),action:'open_share'},{label:L('ไปตั้งค่า','Open Settings'),action:'go_settings'}] },
+    answer:L('อยากบอกต่อ ส่งลิงก์ iufit.com ให้เพื่อนได้เลยครับ เพื่อนเปิดลิงก์แล้วเริ่มใช้ฟรีได้ทันที','Want to share IUFIT? Just send the link iufit.com — friends open it and start free right away.'),
+    actions:[] },
   { id:'how_to_referral', cat:'app_help', kw:['ชวนเทรนเนอร์','รับโปรฟรี','referral','invite coach','pro ฟรี','วันฟรี'],
     title:L('ชวนเทรนเนอร์ รับ Pro ฟรี','Invite coaches for free Pro'),
     answer:L('โค้ชชวนเพื่อนเทรนเนอร์ได้ที่การ์ด "ชวนเพื่อนเทรนเนอร์" บนหน้าโฮม เมื่อเพื่อนสมัครและเพิ่มลูกเทรน รับ Pro ฟรี 7 วัน ถ้าเพื่อนจ่ายแพ็ก รับเพิ่มอีก 14 วัน','Coaches can invite friends from the "Invite coaches" card on Home — get 7 free Pro days when they sign up & add a client, +14 more if they subscribe.'),
@@ -503,8 +504,8 @@ var KNOWLEDGE = [
     actions:[{label:L('สร้างข้อความติดตาม','Draft follow-up'),action:'create_followup_message'}] },
   { id:'create_result_card', cat:'app_help', kw:['result card','การ์ดผลลัพธ์','แชร์ผล','share result'],
     title:L('สร้างการ์ดผลลัพธ์','Create a result card'),
-    answer:L('ไปหน้าผลลัพธ์ แล้วกดสร้างการ์ดผลลัพธ์ เลือกแบบการ์ด ใส่รูป/ข้อมูล แล้วบันทึกหรือแชร์','Go to Results and create a result card — pick a template, add photo/data, then save or share.'),
-    actions:[{label:L('เปิดผลลัพธ์','Open Results'),action:'go_result'}] },
+    answer:L('กดปุ่มด้านล่างเพื่อเปิดตัวสร้างการ์ดผลลัพธ์ได้เลย เลือกแบบการ์ด ใส่รูป/ข้อมูล แล้วบันทึกหรือแชร์','Tap below to open the result card builder — pick a template, add photo/data, then save or share.'),
+    actions:[{label:L('สร้างการ์ดผลลัพธ์','Create result card'),action:'open_result_card'},{label:L('เปิดผลลัพธ์','Open Results'),action:'go_result'}] },
   { id:'how_to_make_recipe', cat:'app_help', kw:['สร้างเมนูเอง','เพิ่มเมนู','custom recipe','create menu'], title:L('สร้างเมนูเอง','Create your own menu'), answer:L('หน้าอาหาร > เพิ่มเมนู ใส่ชื่อและวัตถุดิบจากคลัง ระบบคำนวณแคลให้ หรือให้ IU Mate สร้างจากวัตถุดิบที่มีก็ได้','On Food > add menu, enter a name and pick ingredients — calories are auto-calculated. Or let IU Mate build one from your ingredients.'), actions:[{label:L('สร้างจากของที่มี','From ingredients'),action:'open_ingredient_picker'}] },
   { id:'how_to_food_library', cat:'app_help', kw:['คลังเมนู','ค้นเมนู','food library','search menu'], title:L('ใช้คลังเมนู','Using the food library'), answer:L('หน้าอาหาร แตะช่องค้นหาแล้วพิมพ์ชื่อเมนู คลังมี 4,500+ เมนูพร้อมค่าโภชนาการ เลือกแล้วกดบันทึกลงมื้อ','On Food, tap search and type a menu name — 4,500+ menus with nutrition. Pick one and save it to a meal.'), actions:[{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] },
   { id:'how_to_see_plan', cat:'app_help', kw:['ดูแผน','แผนจากโค้ช','my plan','coach plan'], title:L('ดูแผนจากโค้ช','See your coach plan'), answer:L('เมื่อโค้ชส่งแผนจะมีแจ้งเตือน เปิดหน้าโค้ชเพื่อดูแผนอาหาร/ฝึก/เป้าหมาย และทำตามได้เลย','When your coach sends a plan you get a notification — open the Coach page to view meal/workout/goal plans and follow them.'), actions:[{label:L('เปิดหน้าโค้ช','Open Coach'),action:'go_coach'}] },
@@ -525,7 +526,7 @@ var KNOWLEDGE = [
   { id:'when_followup', cat:'coach', kw:['ติดตามเมื่อไร','ควรทักเมื่อไหร่','when to follow up'], title:L('ควรติดตามลูกเทรนเมื่อไร','When to follow up'), answer:L('ทักเมื่อขาดบันทึก 2-3 วัน หรือมีการบ้านค้าง ใช้ข้อความสั้น ให้กำลังใจ และถามแบบตอบง่าย อย่ารอจนหลุดแผนไปไกล','Reach out after 2-3 missed log days or pending homework. Keep it short, encouraging and easy to answer — do not wait until they have fully dropped off.'), actions:[{label:L('สร้างข้อความติดตาม','Draft follow-up'),action:'create_followup_message'}] },
    { id:'how_to_log_water', cat:'app_help', kw:['บันทึกน้ำ','ดื่มน้ำ','เพิ่มน้ำ','log water','track water','add water'], title:L('วิธีบันทึกน้ำดื่ม','How to log water'), answer:L('หน้าวันนี้มีแก้วน้ำ แตะเพื่อเพิ่ม/ลดทีละแก้ว (1 แก้ว = 250 มล. เป้า 10 แก้ว/วัน)','On Today there are water glasses — tap to add or remove one glass (1 glass = 250 ml, goal 10/day).'), actions:[{label:L('เปิดหน้าวันนี้','Open Today'),action:'go_today'}] },
    { id:'how_to_log_weight', cat:'app_help', kw:['บันทึกน้ำหนัก','ลงน้ำหนัก','วัดสัดส่วน','รอบเอว','log weight','body measurement'], title:L('วิธีบันทึกน้ำหนัก/สัดส่วน','How to log weight'), answer:L('ไปหน้าผลลัพธ์ กดเพิ่มบันทึก ใส่น้ำหนัก รอบเอว หรือ % ไขมัน เพื่อดูกราฟความคืบหน้า','Go to Results, add an entry with weight, waist or body fat to see your progress chart.'), actions:[{label:L('เปิดผลลัพธ์','Open Results'),action:'go_result'}] },
-   { id:'how_to_share_result', cat:'app_help', kw:['แชร์ผลลัพธ์','การ์ดผลลัพธ์','result card','share progress'], title:L('วิธีสร้างการ์ดผลลัพธ์','Make a result card'), answer:L('หน้าผลลัพธ์มีปุ่มสร้างการ์ด เลือกวันและเทมเพลต แล้วบันทึกรูปไปแชร์ได้เลย','On Results, tap create card, pick a date and template, then save the image to share.'), actions:[{label:L('เปิดผลลัพธ์','Open Results'),action:'go_result'}] },
+   { id:'how_to_share_result', cat:'app_help', kw:['แชร์ผลลัพธ์','การ์ดผลลัพธ์','result card','share progress'], title:L('วิธีสร้างการ์ดผลลัพธ์','Make a result card'), answer:L('หน้าผลลัพธ์มีปุ่มสร้างการ์ด เลือกวันและเทมเพลต แล้วบันทึกรูปไปแชร์ได้เลย','On Results, tap create card, pick a date and template, then save the image to share.'), actions:[{label:L('สร้างการ์ดผลลัพธ์','Create result card'),action:'open_result_card'}] },
    { id:'change_language', cat:'app_help', kw:['เปลี่ยนภาษา','ภาษาอังกฤษ','english','switch language'], title:L('เปลี่ยนภาษา','Change language'), answer:L('ไปที่ตั้งค่า แล้วเลือกภาษาไทยหรืออังกฤษ ทั้งแอปจะเปลี่ยนตาม','Go to Settings and choose Thai or English — the whole app switches.') },
    { id:'install_app', cat:'app_help', kw:['ติดตั้งแอป','ลงหน้าจอ','add to home','install','ออฟไลน์','offline'], title:L('ติดตั้งลงหน้าจอ','Install to home screen'), answer:L('เปิดเมนูเบราว์เซอร์แล้วเลือกเพิ่มลงหน้าจอหลัก จะใช้แบบเต็มจอและออฟไลน์ได้','Open the browser menu and choose Add to Home Screen — it runs full-screen and works offline.') },
    { id:'backup_restore', cat:'app_help', kw:['สำรองข้อมูล','กู้คืน','backup','restore','ย้ายเครื่อง'], title:L('สำรอง/กู้คืนข้อมูล','Backup and restore'), answer:L('ในตั้งค่ามีสำรองข้อมูลในเครื่องอัตโนมัติรายวัน และสำรอง/กู้คืนผ่าน LINE เพื่อย้ายเครื่องได้','Settings has automatic daily local backup, plus LINE backup/restore so you can move devices.') },
@@ -723,7 +724,7 @@ function buildResult(){
   if(!lines.length) lines.push(L('เริ่มมีข้อมูลแล้ว บันทึกต่อเนื่องเพื่อเห็นแนวโน้มชัดขึ้น','Data is starting to build — keep logging to see clearer trends.'));
   var msg=lines.join('\n')+'\n\n'+L('สรุป: รักษาความสม่ำเสมอต่อไป ผลลัพธ์กำลังมา','Summary: keep it consistent — progress is coming.');
   return { title:L('สรุปผลลัพธ์','Result summary'), message:msg, actions:[
-    {label:L('สร้าง Result Card','Create result card'),action:'go_result'},
+    {label:L('สร้าง Result Card','Create result card'),action:'open_result_card'},
     {label:L('ข้อความแชร์ผล','Share caption'),action:'share_result_text'}
   ] };
 }
@@ -908,7 +909,7 @@ function buildShareText(){
   var caption=parts.join('\n');
   return { title:L('ข้อความสำหรับแชร์ผลลัพธ์','Share caption'), message:caption, actions:[
     {label:L('คัดลอกข้อความ','Copy text'),action:'copy_text',payload:{text:caption}},
-    {label:L('สร้าง Result Card','Create result card'),action:'go_result'}
+    {label:L('สร้าง Result Card','Create result card'),action:'open_result_card'}
   ] };
 }
 function buildRecipeReply(message){
@@ -970,13 +971,20 @@ function injectEntryPoints(){
   }catch(e){}
 }
 function renderFab(){
-  var r=root(); var fab=document.getElementById('iuMateFab');
-  if(!fab){ fab=document.createElement('button'); fab.id='iuMateFab'; fab.className='iu-mate-fab'; fab.type='button';
-    fab.innerHTML='<span class="iu-ic">'+botIcon()+'<span class="iu-spark">'+sparkIcon()+'</span></span><span class="iu-lbl">IU Mate</span>';
+  var fab=document.getElementById('iuMateFab');
+  if(!fab){ fab=document.createElement('button'); fab.id='iuMateFab'; fab.className='iu-mate-fab'; fab.type='button'; fab.setAttribute('aria-label',L('เปิด IU Mate','Open IU Mate'));
+    fab.innerHTML='<span class="iu-orb">'+fabOrb()+'</span>';
     fab.addEventListener('click',function(){ IUMate.open('global'); });
     document.body.appendChild(fab);
   }
-  fab.hidden = ST.isOpen || !appReady();
+  var rdy=appReady();
+  fab.hidden = ST.isOpen || !rdy || fabModalOpen() || !!document.getElementById('rcOverlay');
+  var dim = rdy && !hasConsent();
+  fab.classList.toggle('is-dimmed', !!dim);
+  fab.classList.toggle('is-loading', !!ST.busy);
+  var unread=false;
+  if(rdy && !ST.isOpen && !dim && !ST.busy && !ST._nudgeSeen){ try{ unread=!!proactiveNudge(); }catch(e){ unread=false; } }
+  fab.classList.toggle('has-unread', !!unread);
 }
 function msgHtml(m){
   if(m.role==='user') return '<div class="iu-mate-bubble user">'+esc(m.text)+'</div>';
@@ -1078,6 +1086,7 @@ var ACTIONS = {
   open_pricing:function(){ ST.isOpen=false; closeNow(); try{ if(fn('pricingPage')) window.pricingPage(); }catch(e){} },
   open_referral:function(){ ST.isOpen=false; closeNow(); try{ if(fn('referralPage')) window.referralPage(); }catch(e){} },
   open_tour:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTour')) window.iuTour(true); }catch(e){} },
+  open_result_card:function(){ ST.isOpen=false; closeNow(); try{ if(fn('openResultCard')) window.openResultCard(); else if(fn('go')) window.go('body'); }catch(e){} },
   today_summary:function(){ pushReply(buildToday()); },
   food_recommend:function(){ pushReply(buildFoodRecommend('')); },
   recommend_library:function(){ pushReply(buildLibraryRecommend()); },
@@ -1458,7 +1467,7 @@ var IUMate = {
   open:function(mode){ if(!appReady()){ appToast(L('เข้าสู่ระบบก่อนใช้ IU Mate','Sign in to use IU Mate')); return; }
     ST.isOpen=true; ST.mode=mode||'global';
     if(!hasConsent()){ ST.full=false; renderConsentScreen(); renderFab(); return; }
-    if(!ST.messages.length){ ST.messages.push({role:'botText',text:greeting()}); var _nz=proactiveNudge(); if(_nz){ ST.messages.push({role:'bot',reply:_nz,idx:ST.messages.length}); } }
+    if(!ST.messages.length){ ST.messages.push({role:'botText',text:greeting()}); var _nz=proactiveNudge(); if(_nz){ ST.messages.push({role:'bot',reply:_nz,idx:ST.messages.length}); } } ST._nudgeSeen=true;
     renderSheet(); renderFab();
     setTimeout(function(){ var inp=document.getElementById('iuMateInput'); /* no autofocus to avoid keyboard jump on open */ }, 50);
   },
