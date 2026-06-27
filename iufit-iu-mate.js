@@ -175,7 +175,7 @@ function renderConsentScreen(){
 /* ============================ icons ============================ */
 function botIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="8" width="16" height="11" rx="3.5"/><path d="M12 8V4.5M12 4.5a1.4 1.4 0 1 0 0-2.8 1.4 1.4 0 0 0 0 2.8Z"/><path d="M9 13h.01M15 13h.01"/><path d="M1.8 12.5v3M22.2 12.5v3"/></svg>'; }
 function sparkIcon(){ return '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l1.6 4.7L18 8.3l-4.4 1.6L12 14l-1.6-4.1L6 8.3l4.4-1.6L12 2z"/></svg>'; }
-function fabOrb(){ return '<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg"> <defs> <linearGradient id="iufitBlue" x1="18" y1="10" x2="46" y2="54" gradientUnits="userSpaceOnUse"> <stop offset="0" stop-color="#20D5FF"/> <stop offset="0.52" stop-color="#0A84FF"/> <stop offset="1" stop-color="#005CFF"/> </linearGradient> </defs> <circle cx="28.0" cy="28.0" r="24.50" fill="#FFFFFF" stroke="#DCE8F7" stroke-width="1.31"/> <g opacity="1"> <g transform="translate(0.0 0.0) scale(0.875)"> <circle cx="32" cy="11.6" r="4" fill="url(#iufitBlue)"/> <circle cx="13.8" cy="29.3" r="3.8" fill="url(#iufitBlue)"/> <circle cx="50.2" cy="29.3" r="3.8" fill="url(#iufitBlue)"/> <rect x="17.8" y="19.6" width="28.4" height="17.4" rx="8" fill="#071E4A"/> <path d="M23.7 26.6C23.7 25.1 24.9 23.9 26.4 23.9C27.9 23.9 29.1 25.1 29.1 26.6" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M34.9 26.6C34.9 25.1 36.1 23.9 37.6 23.9C39.1 23.9 40.3 25.1 40.3 26.6" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M28.4 31C29.2 31.8 30.4 32.3 32 32.3C33.6 32.3 34.8 31.8 35.6 31" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M32 50.2L25.7 46.45C24 45.44 22.95 43.63 22.95 41.66C22.95 38.53 25.5 35.98 28.64 35.98C30.16 35.98 31.54 36.52 32.55 37.52C33.56 36.52 34.94 35.98 36.46 35.98C39.6 35.98 42.15 38.53 42.15 41.66C42.15 43.63 41.1 45.44 39.4 46.45L32 50.2Z" fill="#0A84FF"/> <path d="M27.85 42.5H30.05L31.3 39.9L33.1 44.4L34.55 41.55H37.25" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/> </g> </g> </svg>'; }
+function fabOrb(){ return '<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="IU MATE tinted 56px"> <defs> <linearGradient id="gBlue" x1="15.75" y1="8.75" x2="40.25" y2="47.25" gradientUnits="userSpaceOnUse"> <stop offset="0" stop-color="#20D5FF"/> <stop offset="0.52" stop-color="#0A84FF"/> <stop offset="1" stop-color="#005CFF"/> </linearGradient> </defs> <circle cx="28.0" cy="28.0" r="25.90" fill="none" stroke="#D8EBFF" stroke-width="1.22"/> <circle cx="28.0" cy="28.0" r="24.50" fill="#EEF6FF" stroke="#7EB9FF" stroke-width="1.75"/> <g transform="translate(0.00 0.00) scale(0.87500)"> <circle cx="32" cy="11.6" r="4" fill="url(#gBlue)"/> <circle cx="13.8" cy="29.3" r="3.8" fill="url(#gBlue)"/> <circle cx="50.2" cy="29.3" r="3.8" fill="url(#gBlue)"/> <rect x="17.8" y="19.6" width="28.4" height="17.4" rx="8" fill="#071E4A"/> <path d="M23.7 26.6C23.7 25.1 24.9 23.9 26.4 23.9C27.9 23.9 29.1 25.1 29.1 26.6" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M34.9 26.6C34.9 25.1 36.1 23.9 37.6 23.9C39.1 23.9 40.3 25.1 40.3 26.6" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M28.4 31C29.2 31.8 30.4 32.3 32 32.3C33.6 32.3 34.8 31.8 35.6 31" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M32 50.2L25.7 46.45C24 45.44 22.95 43.63 22.95 41.66C22.95 38.53 25.5 35.98 28.64 35.98C30.16 35.98 31.54 36.52 32.55 37.52C33.56 36.52 34.94 35.98 36.46 35.98C39.6 35.98 42.15 38.53 42.15 41.66C42.15 43.63 41.1 45.44 39.4 46.45L32 50.2Z" fill="#0A84FF"/> <path d="M27.85 42.5H30.05L31.3 39.9L33.1 44.4L34.55 41.55H37.25" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/> </g> </svg>'; }
 function sendIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-7-7 16-2.5-6.5L4 12z"/></svg>'; }
 function checkIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'; }
 
@@ -424,8 +424,8 @@ var KNOWLEDGE = [
     actions:[{label:L('ไปหน้าวันนี้','Open Today'),action:'go_today'}] },
   { id:'how_to_log_body', cat:'app_help', kw:['น้ำหนัก','สัดส่วน','บันทึกร่างกาย','วัดรอบ','body','weight','measurement'],
     title:L('วิธีบันทึกน้ำหนัก/สัดส่วน','How to log weight & measurements'),
-    answer:L('ไปหน้าผลลัพธ์ กดบันทึกสัดส่วน ใส่น้ำหนักและรอบตัว แล้วระบบจะวาดกราฟความก้าวหน้าให้','Go to Results, tap log body, enter weight & measurements — charts update automatically.'),
-    actions:[{label:L('เปิดผลลัพธ์','Open Results'),action:'go_result'}] },
+    answer:L('หน้าแรก (วันนี้) กดทางลัด บันทึกร่างกาย ใส่น้ำหนัก/รอบเอว/% ไขมัน แล้วดูกราฟความก้าวหน้าในหน้าผลลัพธ์ (แก้ไขรายการเดิมได้จากประวัติในหน้าผลลัพธ์)','On the Today page, tap the Log body shortcut to enter weight/waist/body fat, then view your progress charts on Results (edit past entries from the Results history).'),
+    actions:[{label:L('ไปหน้าวันนี้','Open Today'),action:'go_today'}] },
   { id:'how_to_result_card', cat:'app_help', kw:['การ์ดผลลัพธ์','แชร์ผล','การ์ดแชร์','result card','share progress','progress card'],
     title:L('วิธีสร้างการ์ดผลลัพธ์','How to make a result card'),
     answer:L('ที่หน้าผลลัพธ์ กดสร้างการ์ด จะได้รูปสรุปความก้าวหน้าสวย ๆ ไว้แชร์ให้เพื่อนหรือลงโซเชียล','On Results, tap make a card to get a shareable progress image.'),
@@ -440,7 +440,7 @@ var KNOWLEDGE = [
     actions:[{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] },
   { id:'how_to_missions', cat:'app_help', kw:['ภารกิจ','mission','challenge','ตราสะสม','badge','เก็บตรา','collection'],
     title:L('ภารกิจ & ตราสะสม','Missions & badges'),
-    answer:L('ภารกิจคือเป้าหมายที่ทำสำเร็จแล้วได้ตราสะสม (badge) ผู้ใช้ดูภารกิจของตัวเองได้ในแท็บโค้ช ส่วนโค้ชสร้างภารกิจให้ลูกเทรนได้ที่แท็บภารกิจ','Missions are goals you complete to earn collectible badges — clients see theirs in the Coach tab; coaches create them in the Missions tab.'),
+    answer:L('ภารกิจคือเป้าหมายที่ทำสำเร็จแล้วได้ตราสะสม (badge) ผู้ใช้ดูภารกิจของตัวเองได้ในแท็บโค้ช ส่วนโค้ชสร้างภารกิจให้ลูกเทรนได้ที่แท็บภารกิจ เลือกประเภทให้ระบบนับอัตโนมัติ (ออกกำลังกาย/คาร์ดิโอ บันทึกอาหาร ดื่มน้ำ น้ำหนัก สตรีค) หรือกำหนดเอง','Missions are goals you complete to earn collectible badges — clients see theirs in the Coach tab; coaches create them in the Missions tab, choosing an auto-tracked type (workout/cardio, food, water, weight, streak) or a manual one.'),
     actions:[{label:L('เปิดแท็บโค้ช','Open Coach'),action:'go_coach'}] },
   { id:'how_to_share_app', cat:'app_help', kw:['แชร์แอป','ชวนเพื่อน','แนะนำแอป','share app','invite friend','tell a friend'],
     title:L('วิธีแชร์แอปให้เพื่อน','How to share IUFIT'),
@@ -472,8 +472,12 @@ var KNOWLEDGE = [
     actions:[{label:L('เปิดลูกเทรน','Open Clients'),action:'go_clients'}] },
   { id:'coach_course', cat:'app_help', kw:['คอร์ส','นับครั้ง','คอร์สเทรน','session pack','course','count sessions','กี่ครั้ง'],
     title:L('โค้ช: คอร์สนับครั้ง','Coach: training course'),
-    answer:L('ในโปรไฟล์ลูกเทรนรายคน กดสร้างคอร์ส ใส่จำนวนครั้งที่ซื้อ แต่ละครั้งกด "บันทึกการเทรน" ลูกเทรนยืนยัน แล้วนับ X/N เห็นทั้งสองฝั่ง','In a client\'s profile, create a course with total sessions — tap "log session" each time, the client confirms, and X/N shows on both sides.'),
+    answer:L('ในโปรไฟล์ลูกเทรนรายคน กดสร้างคอร์ส ใส่จำนวนครั้งที่ซื้อ แต่ละครั้งกด "บันทึกการเทรน" ลูกเทรนยืนยัน แล้วนับ X/N เห็นทั้งสองฝั่ง · แก้ไข/ลบคอร์สได้จากปุ่มในการ์ด เมื่อครบกดจบคอร์สเพื่อเก็บประวัติ','In a client\'s profile, create a course with total sessions — tap "log session" each time, the client confirms, and X/N shows on both sides. Edit or delete a course from the card buttons; Finish archives a completed one.'),
     actions:[{label:L('เปิดลูกเทรน','Open Clients'),action:'go_clients'}] },
+  { id:'coach_profile', cat:'app_help', kw:['โปรไฟล์โค้ช','รูปโค้ช','ชื่อแบรนด์','แบรนด์โค้ช','coach profile','coach photo','brand name'],
+    title:L('โปรไฟล์โค้ช (แยกจากส่วนตัว)','Coach profile (separate)'),
+    answer:L('ตั้งค่า → โปรไฟล์โค้ช ตั้งรูปและชื่อแบรนด์โค้ชแยกจากโปรไฟล์ส่วนตัวได้ (ถ้าไม่ตั้ง จะใช้รูป/ชื่อส่วนตัวแทน) แสดงที่หน้าโฮมโค้ชและการ์ดผลลัพธ์','Settings then Coach profile lets you set a coach brand photo and name separate from your personal profile (falls back to personal if unset), shown on the coach home and result cards.'),
+    actions:[{label:L('เปิดตั้งค่า','Open Settings'),action:'go_settings'}] },
   { id:'coach_groups', cat:'app_help', kw:['สร้างกลุ่ม','กลุ่มเทรน','create group','group'],
     title:L('โค้ช: สร้างกลุ่ม','Coach: create a group'),
     answer:L('โค้ชสร้างกลุ่มได้ที่แท็บกลุ่ม ดึงลูกเทรนเข้ากลุ่ม ตั้งภารกิจกลุ่ม เปิดแชทกลุ่ม และดูอันดับได้','Coaches create groups in the Groups tab — add clients, set group missions, group chat, and see rankings.'),
@@ -525,7 +529,7 @@ var KNOWLEDGE = [
   { id:'quiet_group', cat:'coach', kw:['กลุ่มเงียบ','กระตุ้นกลุ่ม','quiet group','group engagement'], title:L('กลุ่มเงียบควรทำอะไร','Re-engaging a quiet group'), answer:L('ตั้งภารกิจกลุ่มสั้น ๆ ที่ทำง่าย ชวนแชร์ผลรายสัปดาห์ หรือถามคำถามเปิดในแชทกลุ่ม สร้างจังหวะให้คนกลับมามีส่วนร่วม','Set a short easy group mission, invite weekly result sharing, or ask an open question in group chat to bring people back.'), actions:[{label:L('สร้างภารกิจกลุ่ม','New mission'),action:'go_missions'}] },
   { id:'when_followup', cat:'coach', kw:['ติดตามเมื่อไร','ควรทักเมื่อไหร่','when to follow up'], title:L('ควรติดตามลูกเทรนเมื่อไร','When to follow up'), answer:L('ทักเมื่อขาดบันทึก 2-3 วัน หรือมีการบ้านค้าง ใช้ข้อความสั้น ให้กำลังใจ และถามแบบตอบง่าย อย่ารอจนหลุดแผนไปไกล','Reach out after 2-3 missed log days or pending homework. Keep it short, encouraging and easy to answer — do not wait until they have fully dropped off.'), actions:[{label:L('สร้างข้อความติดตาม','Draft follow-up'),action:'create_followup_message'}] },
    { id:'how_to_log_water', cat:'app_help', kw:['บันทึกน้ำ','ดื่มน้ำ','เพิ่มน้ำ','log water','track water','add water'], title:L('วิธีบันทึกน้ำดื่ม','How to log water'), answer:L('หน้าวันนี้มีแก้วน้ำ แตะเพื่อเพิ่ม/ลดทีละแก้ว (1 แก้ว = 250 มล. เป้า 10 แก้ว/วัน)','On Today there are water glasses — tap to add or remove one glass (1 glass = 250 ml, goal 10/day).'), actions:[{label:L('เปิดหน้าวันนี้','Open Today'),action:'go_today'}] },
-   { id:'how_to_log_weight', cat:'app_help', kw:['บันทึกน้ำหนัก','ลงน้ำหนัก','วัดสัดส่วน','รอบเอว','log weight','body measurement'], title:L('วิธีบันทึกน้ำหนัก/สัดส่วน','How to log weight'), answer:L('ไปหน้าผลลัพธ์ กดเพิ่มบันทึก ใส่น้ำหนัก รอบเอว หรือ % ไขมัน เพื่อดูกราฟความคืบหน้า','Go to Results, add an entry with weight, waist or body fat to see your progress chart.'), actions:[{label:L('เปิดผลลัพธ์','Open Results'),action:'go_result'}] },
+   { id:'how_to_log_weight', cat:'app_help', kw:['บันทึกน้ำหนัก','ลงน้ำหนัก','วัดสัดส่วน','รอบเอว','log weight','body measurement'], title:L('วิธีบันทึกน้ำหนัก/สัดส่วน','How to log weight'), answer:L('หน้าแรก (วันนี้) กดทางลัด บันทึกร่างกาย ใส่น้ำหนัก รอบเอว หรือ % ไขมัน แล้วดูกราฟความคืบหน้าในหน้าผลลัพธ์','On the Today page, tap the Log body shortcut to add weight, waist or body fat, then see your progress chart on Results.'), actions:[{label:L('ไปหน้าวันนี้','Open Today'),action:'go_today'}] },
    { id:'how_to_share_result', cat:'app_help', kw:['แชร์ผลลัพธ์','การ์ดผลลัพธ์','result card','share progress'], title:L('วิธีสร้างการ์ดผลลัพธ์','Make a result card'), answer:L('หน้าผลลัพธ์มีปุ่มสร้างการ์ด เลือกวันและเทมเพลต แล้วบันทึกรูปไปแชร์ได้เลย','On Results, tap create card, pick a date and template, then save the image to share.'), actions:[{label:L('สร้างการ์ดผลลัพธ์','Create result card'),action:'open_result_card'}] },
    { id:'change_language', cat:'app_help', kw:['เปลี่ยนภาษา','ภาษาอังกฤษ','english','switch language'], title:L('เปลี่ยนภาษา','Change language'), answer:L('ไปที่ตั้งค่า แล้วเลือกภาษาไทยหรืออังกฤษ ทั้งแอปจะเปลี่ยนตาม','Go to Settings and choose Thai or English — the whole app switches.') },
    { id:'install_app', cat:'app_help', kw:['ติดตั้งแอป','ลงหน้าจอ','add to home','install','ออฟไลน์','offline'], title:L('ติดตั้งลงหน้าจอ','Install to home screen'), answer:L('เปิดเมนูเบราว์เซอร์แล้วเลือกเพิ่มลงหน้าจอหลัก จะใช้แบบเต็มจอและออฟไลน์ได้','Open the browser menu and choose Add to Home Screen — it runs full-screen and works offline.') },
@@ -714,8 +718,8 @@ function buildFoodSearch(message){
 }
 function buildResult(){
   var r=resultCtx();
-  if(r.empty) return { title:L('ยังไม่มีข้อมูลผลลัพธ์','No results yet'), message:L('ยังไม่มีข้อมูลร่างกายพอ ลองบันทึกน้ำหนัก/สัดส่วนที่หน้าผลลัพธ์ก่อนนะครับ','Not enough body data — log weight/measurements on the Results page first.'),
-    actions:[{label:L('เปิดผลลัพธ์','Open Results'),action:'go_result'}] };
+  if(r.empty) return { title:L('ยังไม่มีข้อมูลผลลัพธ์','No results yet'), message:L('ยังไม่มีข้อมูลร่างกายพอ ลองบันทึกร่างกาย (น้ำหนัก/สัดส่วน) ที่หน้าแรกก่อนนะครับ','Not enough body data — log your body (weight/measurements) on the Today page first.'),
+    actions:[{label:L('ไปหน้าวันนี้','Open Today'),action:'go_today'}] };
   var lines=[];
   if(r.weightChange!=null) lines.push(L('น้ำหนักเปลี่ยน '+(r.weightChange>0?'+':'')+r.weightChange+' กก.','Weight change '+(r.weightChange>0?'+':'')+r.weightChange+' kg'));
   if(r.waistChange!=null) lines.push(L('รอบเอวเปลี่ยน '+(r.waistChange>0?'+':'')+r.waistChange+' ซม.','Waist change '+(r.waistChange>0?'+':'')+r.waistChange+' cm'));
@@ -978,7 +982,7 @@ function renderFab(){
     document.body.appendChild(fab);
   }
   var rdy=appReady();
-  fab.hidden = ST.isOpen || !rdy || fabModalOpen() || !!document.getElementById('rcOverlay');
+  fab.hidden = ST.isOpen || !rdy || fabModalOpen() || !!document.getElementById('rcOverlay') || !!document.getElementById('scan-ov');
   var dim = rdy && !hasConsent();
   fab.classList.toggle('is-dimmed', !!dim);
   fab.classList.toggle('is-loading', !!ST.busy);
