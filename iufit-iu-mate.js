@@ -477,7 +477,7 @@ var KNOWLEDGE = [
     actions:[{label:L('เปิดลูกเทรน','Open Clients'),action:'go_clients'}] },
   { id:'coach_profile', cat:'app_help', kw:['โปรไฟล์โค้ช','รูปโค้ช','ชื่อแบรนด์','แบรนด์โค้ช','coach profile','coach photo','brand name'],
     title:L('โปรไฟล์โค้ช (แยกจากส่วนตัว)','Coach profile (separate)'),
-    answer:L('ตั้งค่า → โปรไฟล์โค้ช ตั้งรูปและชื่อแบรนด์โค้ชแยกจากโปรไฟล์ส่วนตัวได้ (ถ้าไม่ตั้ง จะใช้รูป/ชื่อส่วนตัวแทน) แสดงที่หน้าโฮมโค้ชและการ์ดผลลัพธ์','Settings then Coach profile lets you set a coach brand photo and name separate from your personal profile (falls back to personal if unset), shown on the coach home and result cards.'),
+    answer:L('ตั้งค่า → โปรไฟล์โค้ช ตั้งรูป ชื่อแบรนด์ ความเชี่ยวชาญ และประสบการณ์ (ปี) แยกจากโปรไฟล์ส่วนตัว ข้อมูลนี้แสดงที่หน้าโฮมโค้ช การ์ดผลลัพธ์ และหน้าคำเชิญที่ลูกเทรนเห็นตอนสแกน QR (ถ้าไม่ตั้ง จะใช้รูป/ชื่อส่วนตัวแทน)','Settings then Coach profile lets you set a brand photo, name, expertise and years of experience separate from your personal profile — shown on the coach home, result cards, and the invite screen clients see when scanning your QR (falls back to personal if unset).'),
     actions:[{label:L('เปิดตั้งค่า','Open Settings'),action:'go_settings'}] },
   { id:'coach_groups', cat:'app_help', kw:['สร้างกลุ่ม','กลุ่มเทรน','create group','group'],
     title:L('โค้ช: สร้างกลุ่ม','Coach: create a group'),
@@ -489,7 +489,7 @@ var KNOWLEDGE = [
     actions:[{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] },
   { id:'how_to_join_group', cat:'app_help', kw:['เข้ากลุ่ม','qr','สแกน','join group','scan'],
     title:L('วิธีเข้าเป็นลูกเทรน','How to join a coach'),
-    answer:L('สแกน QR ของโค้ช แล้วยืนยันเข้าร่วมใน IUFIT จากนั้นจะรับแผนและส่งการบ้านได้','Scan your coach\'s QR and confirm in IUFIT — then you can receive plans and send homework.'),
+    answer:L('สแกน QR ของโค้ช จะมีหน้าคำเชิญแสดงโปรไฟล์โค้ช (ชื่อ/รูป/ความเชี่ยวชาญ) ติ๊กยินยอมให้โค้ชดูข้อมูลสุขภาพ แล้วกดยืนยันเข้าร่วม จากนั้นรับแผนและส่งการบ้านได้','Scanning your coach QR shows an invite screen with the coach profile (name/photo/expertise); tick consent to let the coach view your health data, then confirm — after that you can receive plans and send homework.'),
     actions:[{label:L('เปิดหน้าโค้ช','Open Coach'),action:'go_coach'}] },
   { id:'how_to_log_workout', cat:'app_help', kw:['บันทึกท่าฝึก','ออกกำลัง','log workout','add workout'],
     title:L('วิธีบันทึกการออกกำลังกาย','How to log a workout'),
@@ -1010,7 +1010,7 @@ function renderFab(){
     document.body.appendChild(fab);
   }
   var rdy=appReady();
-  fab.hidden = ST.isOpen || !rdy || fabModalOpen() || !!document.getElementById('rcOverlay') || !!document.getElementById('scan-ov');
+  var _nav=document.getElementById('nav');var _navEmpty=!_nav||!_nav.innerHTML.trim();fab.hidden = ST.isOpen || !rdy || _navEmpty || (document.body&&document.body.classList&&document.body.classList.contains('iu-noapp')) || fabModalOpen() || !!document.getElementById('rcOverlay') || !!document.getElementById('scan-ov');
   var dim = rdy && !hasConsent();
   fab.classList.toggle('is-dimmed', !!dim);
   fab.classList.toggle('is-loading', !!ST.busy);
