@@ -251,6 +251,19 @@ input[type=file]{display:none}
 #card.stats .title{font-size:60px}
 #card.stats .applogo{font-size:56px}
 #card.stats .cc{gap:20px;justify-content:center}
+/* === 1:1 (square) Stats — square-specific 2-col layout so content fills the square (no portrait-scale) v8.44 === */
+#card.sq.stats .cc{display:grid;grid-template-columns:1fr 1fr;gap:14px 20px;align-content:start;padding:46px;justify-content:stretch}
+#card.sq.stats .cc>.logoR,#card.sq.stats .cc>.tag,#card.sq.stats .cc>.title,#card.sq.stats .cc>.subln,#card.sq.stats .cc>.heroc,#card.sq.stats .cc>.sgrid,#card.sq.stats .cc>.foot{grid-column:1/-1}
+#card.sq.stats .sgrid{display:grid!important;grid-template-columns:repeat(4,1fr);gap:11px}
+#card.sq.stats .sgrid .scard{width:auto!important;min-width:0;padding:14px 8px}
+#card.sq.stats .sgrid .scard .sv{font-size:28px}
+#card.sq.stats .sgrid .scard .sl{font-size:14px}
+#card.sq.stats .sgrid .scard .se{font-size:12px;margin-bottom:6px}
+#card.sq.stats .sgrid .scard .dn{width:38px;height:38px;margin-top:8px}
+#card.sq.stats .heroc{padding:18px 26px}
+#card.sq.stats .achieve,#card.sq.stats .quote,#card.sq.stats .foot{margin:0}
+#card.sq.stats .quote{padding:16px 22px}
+#card.sq.stats .foot{padding:14px 18px}
 body.embed .app{display:none}
 body.embed{background:#eef2f8}
 .wiz{position:fixed;inset:0;display:flex;flex-direction:column;background:#eef2f8;font-family:'Kanit',sans-serif;z-index:50}
