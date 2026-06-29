@@ -653,6 +653,36 @@ function tplProgress(){
     '<div class="hashtag">#IUFITTransformation</div></div></div>';
 }
 
+function fitCC(cc,H){
+  if(!cc) return;
+  // measure TRUE content height with flex-start (centered overflow is under-reported by scrollHeight)
+  cc.style.transform='none'; cc.style.transformOrigin='top center';
+  var prevJ=cc.style.justifyContent; cc.style.justifyContent='flex-start';
+  var ch=cc.scrollHeight;
+  if(ch>H+1){ cc.style.justifyContent='flex-start'; cc.style.transform='scale('+(H/ch).toFixed(4)+')'; }
+  else { cc.style.justifyContent='center'; }
+}
+function rescale(){
+  var el=$('scaler'); if(!el) return;
+  var stage=el.parentElement;
+  var cardW=1080, cardH=(RH[RC.ratio]||1920);
+  var pad=18;
+  var availW=Math.max(1,(stage&&stage.clientWidth?stage.clientWidth:360)-pad*2);
+  var vh=(window.innerHeight||700);
+  var availH=Math.max(140, Math.round(vh*0.66));            // fit within viewport height (not just width)
+  var sc=Math.min(availW/cardW, availH/cardH);              // fit BOTH dimensions
+  sc=Math.max(0.05, Math.min(sc,1));
+  el.style.transformOrigin='top left';
+  el.style.minWidth='0';
+  el.style.width=(cardW*sc)+'px';
+  el.style.height=(cardH*sc)+'px';
+  el.style.transform='scale('+sc+')';
+}
+if(!window._rcRescaleHooked){window._rcRescaleHooked=1;
+  window.addEventListener('resize',function(){try{rescale()}catch(e){}});
+  window.addEventListener('orientationchange',function(){setTimeout(function(){try{rescale()}catch(e){}},120);});
+  try{if(window.ResizeObserver){var _pw=document.querySelector('.previewWrap')||document.querySelector('.stage');if(_pw)new ResizeObserver(function(){try{rescale()}catch(e){}}).observe(_pw);}}catch(e){}
+}
 function render(){
   var card=$('card');
   var isStats=(RC.tpl==='stats');
@@ -660,15 +690,8 @@ function render(){
   var H=RH[RC.ratio];
   card.style.height=H+'px';card.style.minHeight='';
   card.innerHTML=RC.tpl==='result'?tplResult():RC.tpl==='stats'?tplStats():tplCoach();
-  if(isStats){var _cc=card.querySelector('.cc');if(_cc){_cc.style.transform='none';var _ch=_cc.scrollHeight;if(_ch>H+1){_cc.style.transformOrigin='center center';_cc.style.transform='scale('+(H/_ch).toFixed(4)+')';}}}
-  var stageW=Math.min(398,$('scaler').parentElement.clientWidth-36);
-  var sc=stageW/1080;
-  $('scaler').style.transformOrigin='top left';
-  $('scaler').style.minWidth='0';
-  $('scaler').style.width=(1080*sc)+'px';
-  $('scaler').style.transform='scale('+sc+')';
-  var realH=H;
-  $('scaler').style.height=(realH*sc)+'px';
+  var _fit=function(){var c=card.querySelector('.cc');if(c)fitCC(c,RH[RC.ratio]);};_fit();try{if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){requestAnimationFrame(_fit);});}catch(_e){}setTimeout(_fit,160);
+  rescale();
 }
 window.addEventListener('resize',render);
 initSource();
@@ -761,7 +784,7 @@ async function capture(){
   var imgs=Array.prototype.slice.call(clone.querySelectorAll('img'));
   await Promise.all(imgs.map(function(im){return (im.complete&&im.naturalWidth)?Promise.resolve():new Promise(function(r){im.onload=im.onerror=r;});}));
   void clone.offsetHeight;
-  if(isStats){var _cc2=clone.querySelector('.cc');if(_cc2){_cc2.style.transform='none';var _ch2=_cc2.scrollHeight;if(_ch2>H+1){_cc2.style.transformOrigin='center center';_cc2.style.transform='scale('+(H/_ch2).toFixed(4)+')';}}}
+  if(isStats){fitCC(clone.querySelector('.cc'),H);}
   var capH=H;
   var canvas;
   try{ canvas=await html2canvas(clone,{scale:2,width:1080,height:capH,windowWidth:1080,windowHeight:capH,backgroundColor:null,useCORS:true,logging:false}); }
