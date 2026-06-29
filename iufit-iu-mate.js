@@ -137,6 +137,7 @@ var STATS_KEY='iufit_iu_mate_stats';
 function loadStats(){ try{ return JSON.parse(localStorage.getItem(STATS_KEY)||'{}')||{}; }catch(e){ return {}; } }
 function bumpStat(k){ try{ var st=loadStats(); st[k]=(st[k]||0)+1; localStorage.setItem(STATS_KEY, JSON.stringify(st)); }catch(e){} }
 function statCount(k){ try{ return loadStats()[k]||0; }catch(e){ return 0; } }
+function _logFeedback(m, up){ try{ var rep=m.reply||{}; var intent=rep._intent||'unknown'; var input=''; try{ var pm=ST.messages[(m.idx||0)-1]; if(pm&&pm.role==='user') input=(''+pm.text).slice(0,120); }catch(e){} var rec={ ts:Date.now(), intent:intent, rating:up?'helpful':'not_helpful', input:input, title:(rep.title||'').slice(0,80) }; var KEY='iufit_iu_mate_feedback'; var arr=[]; try{ arr=JSON.parse(localStorage.getItem(KEY)||'[]')||[]; }catch(e){} arr.push(rec); if(arr.length>300) arr=arr.slice(-300); try{ localStorage.setItem(KEY, JSON.stringify(arr)); }catch(e){} bumpStat('fb:'+(up?'up':'down')); bumpStat('fbintent:'+intent+':'+(up?'up':'down')); }catch(e){} }
 var CONSENT_KEY='iufit_iu_mate_consent';
 function loadConsent(){ try{ return JSON.parse(localStorage.getItem(CONSENT_KEY)||'null'); }catch(e){ return null; } }
 function hasConsent(){ var c=loadConsent(); return !!(c&&c.accepted); }
@@ -495,6 +496,7 @@ var KNOWLEDGE = [
     title:L('วิธีบันทึกการออกกำลังกาย','How to log a workout'),
     answer:L('ไปที่หน้าท่าฝึก กดบันทึก เลือกเวทเทรนนิ่งหรือคาร์ดิโอ แล้วใส่ค่าจากคลังท่า','Go to Workout, tap log, choose weight training or cardio, then fill from the move library.'),
     actions:[{label:L('เปิดท่าฝึก','Open Workout'),action:'go_workout'}] },
+  { id:'food_not_found', cat:'nutrition', kw:['หาเมนูไม่เจอ','ไม่มีเมนู','ไม่เจอเมนู','เพิ่มเมนูเอง','เมนูไม่มีในระบบ','menu not found','cant find food','add custom food'], title:L('หาเมนูไม่เจอ','Menu not found'), answer:L('ถ้ายังไม่พบเมนูนี้ในคลัง ลองเลือกเมนูที่ใกล้เคียง หรือเพิ่มเมนูใหม่โดยกรอกค่าโภชนาการเองได้ครับ (IU Mate ยังไม่ประเมินค่าโภชนาการของเมนูใหม่อัตโนมัติ)','If a menu is not in the library, pick a similar item or add a new one by entering its nutrition manually. (IU Mate does not auto-estimate nutrition for new menus.)'), actions:[{label:L('ไปหน้าอาหาร','Open Food'),action:'go_food'}] },
   { id:'nutrition_weight_loss', cat:'nutrition', kw:['ลดน้ำหนัก','ลดไขมัน','แคล','fat loss','weight loss','calorie'],
     title:L('หลักการลดไขมันเบื้องต้น','Fat loss basics'),
     answer:L('ลดไขมันเน้นภาพรวมพลังงาน กินโปรตีนพอ ออกกำลังสม่ำเสมอ และติดตามผล ไม่ควรลดแคลมากเกินไป','Fat loss is about overall energy balance, enough protein, consistent training and tracking — don\'t cut calories too hard.'),
@@ -589,7 +591,11 @@ var MED_KW=['วินิจฉัย','เป็นโรค','โรคปร�
 function isMedical(message){ var t=synNorm(message); return MED_KW.some(function(k){return t.indexOf(synNorm(k))>=0;}); }
 function disclaimer(){ return L('คำแนะนำจาก IU Mate ใช้เพื่อช่วยวางแผนสุขภาพและการออกกำลังกายทั่วไป ไม่ใช่คำวินิจฉัยหรือคำแนะนำทางการแพทย์','IU Mate gives general fitness/nutrition guidance only — not medical diagnosis or advice.'); }
 
+var RISK_KW=['เจ็บหน้าอก','แน่นหน้าอก','หายใจไม่ออก','หายใจลำบาก','หอบ','เวียนหัว','หน้ามืด','เป็นลม','จะเป็นลม','วูบ','ใจสั่น','ชาแขน','ชาขา','ปวดมาก','เจ็บมาก','บาดเจ็บ','เจ็บเข่า','เจ็บหลัง','เจ็บข้อ','เจ็บข้อมือ','ข้อเท้าพลิก','เคล็ด','ตั้งครรภ์','ท้องอยู่','คนท้อง','chest pain','cant breathe','short of breath','dizzy','faint','passed out','injured','injury','sprain','severe pain','pregnan'];
+function isHealthRisk(message){ var t=synNorm(message); return RISK_KW.some(function(k){return t.indexOf(synNorm(k))>=0;}); }
+function safetyReply(){ return { title:L('ดูแลความปลอดภัยก่อนนะครับ','Safety first'), message:L('ถ้ามีอาการเจ็บ บาดเจ็บ หรือรู้สึกผิดปกติ (เช่น เจ็บหน้าอก หายใจไม่ออก เวียนหัว หรือเป็นลม) แนะนำให้หยุดออกกำลังกายก่อน แล้วปรึกษาแพทย์หรือผู้เชี่ยวชาญนะครับ · IU Mate ช่วยดูข้อมูลบันทึกทั่วไปในแอปได้ แต่วินิจฉัยหรือรักษาแทนผู้เชี่ยวชาญไม่ได้','If you feel pain, an injury, or anything unusual (chest pain, trouble breathing, dizziness, fainting), please stop exercising first and consult a doctor or professional. IU Mate can read your general logs in the app, but cannot diagnose or treat.'), disclaimer:disclaimer() }; }
 function buildReply(intent, message){
+  if(isHealthRisk(message)) return safetyReply();
   if(isMedical(message)) return { title:L('เรื่องนี้ควรปรึกษาผู้เชี่ยวชาญ','Please consult a professional'),
     message:L('เรื่องนี้ควรปรึกษาแพทย์หรือผู้เชี่ยวชาญโดยตรงนะครับ IU Mate ช่วยเรื่องการบันทึกอาหาร การฝึก และการติดตามผลทั่วไปได้','This is best discussed with a doctor or specialist. IU Mate can help with logging food, training and general tracking.') };
   var ql=(''+message).toLowerCase();
@@ -1047,6 +1053,7 @@ function msgHtml(m){
     return '<button class="iu-mate-act'+(ai===0?' primary':'')+'" onclick="IUMate.act(\''+a.action+'\','+idx+','+ai+')">'+esc(a.label)+'</button>';
   }).join('')+'</div>'; }
   if(rep.disclaimer) h+='<div class="disc">'+esc(rep.disclaimer)+'</div>';
+  if(idx!=null && rep && !rep.noFeedback && !rep.placeSearch){ h+= m.fb ? ('<div class="iu-mate-fbk" style="margin-top:9px;font-size:11px;color:#15a05a">'+esc(L('ขอบคุณสำหรับฟีดแบ็ก 🙏','Thanks for the feedback 🙏'))+'</div>') : ('<div class="iu-mate-fbk" style="display:flex;align-items:center;gap:7px;margin-top:9px"><span style="font-size:10.5px;color:#9aa6bf">'+esc(L('คำตอบนี้ช่วยได้ไหม?','Was this helpful?'))+'</span><button type="button" onclick="IUMate.fb('+idx+',1)" style="border:1px solid #dbe5f5;background:#fff;border-radius:8px;padding:2px 9px;cursor:pointer;font-size:12px">👍 '+esc(L('มีประโยชน์','Helpful'))+'</button><button type="button" onclick="IUMate.fb('+idx+',0)" style="border:1px solid #dbe5f5;background:#fff;border-radius:8px;padding:2px 9px;cursor:pointer;font-size:12px">👎 '+esc(L('ยังไม่ตรง','Not quite'))+'</button></div>'); }
   h+='</div></div></div>';
   return h;
 }
@@ -1489,7 +1496,7 @@ function handleMessage(text){
     if(intent==='make_plan'){ try{ startFlow('plan', parseProfileFromText(text)); }catch(e){} ST.ctx={intent:'make_plan'}; return; }
     if(intent==='coach_menu' && role()==='coach'){ try{ startCoachMenu(); }catch(e){} return; }
     if(intent==='coach_workout' && role()==='coach'){ try{ startCoachWorkout(); }catch(e){} return; }
-    var reply; try{ reply=buildReply(intent,text); }catch(e){ reply=buildFallback(text); }
+    var reply; try{ reply=buildReply(intent,text); }catch(e){ reply=buildFallback(text); } try{ if(reply) reply._intent=intent; }catch(e){}
     try{ ST.ctx={intent:intent}; if(intent==='cuisine_menu') ST.ctx.lastCuisine=true; }catch(e){}
     pushReply(reply);
   }, 320+Math.random()*220);
@@ -1509,6 +1516,7 @@ var IUMate = {
   close:function(){ closeNow(); },
   toggleFull:function(){ ST.full=!ST.full; renderSheet(); },
   chip:function(q){ try{ bumpStat('chip:'+q); }catch(e){} handleMessage(q); },
+  fb:function(idx, up){ try{ var m=ST.messages[idx]; if(!m||m.role!=='bot'||m.fb) return; m.fb=up?'helpful':'not_helpful'; _logFeedback(m, up); renderMessages(); }catch(e){} },
   placeFill:function(v){ var el=document.getElementById('iuPlaceInput'); if(el){ el.value=v; try{ el.focus(); }catch(e){} } },
   openPlace:function(){ var el=document.getElementById('iuPlaceInput'); var q=el?(''+el.value).trim():''; if(!q){ try{ appToast(L('พิมพ์ชื่อสถานที่ก่อน','Type a place first')); }catch(e){} if(el){ try{ el.focus(); }catch(e){} } return; } var hasLoc=/ใกล้|แถว|ย่าน|near|nearby|จังหวัด|อำเภอ|เขต/i.test(q); var fq=hasLoc?q:(q+' '+L('ใกล้ฉัน','near me')); var url='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(fq); try{ bumpStat('place_open'); }catch(e){} try{ window.open(url,'_blank'); }catch(e){ try{ location.href=url; }catch(_e){} } },
   send:function(text){ handleMessage(text); },
