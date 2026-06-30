@@ -760,7 +760,34 @@ function _wpExplain(tpl,bp,inp,safetyLevel){ if(!tpl)return ''; var ln=[];
  if(safetyLevel==='low_impact') ln.push(L('ผมเลือกแนว Low Impact เพื่อลดแรงกระแทกและเริ่มจากความหนักที่คุมได้ก่อน','I chose a low-impact approach to reduce joint stress and start at a controllable intensity.'));
  if(safetyLevel==='caution') ln.push(L('เพราะมีข้อจำกัดที่แจ้งมา ผมเลือกแผนที่เบาและปลอดภัยเป็นพิเศษ และแนะนำให้เลี่ยงท่าที่ทำให้เจ็บ','Because of the limitation you mentioned, I chose an especially gentle plan and suggest avoiding any move that hurts.'));
  return ln.join('\n'); }
-function buildWorkoutPlan(message){
+function _riskyMove(en,level){var t=(''+en).toLowerCase();
+ if(/plyo|box jump|jump squat|jumping|burpee|sprint|skater|snatch|clean|muscle-up|handstand|ab wheel|pistol/.test(t))return true;
+ if(level!=='advanced'&&/deadlift|rack pull|hack squat|sumo deadlift|good morning/.test(t))return true;
+ return false;}
+function _safePool(key,equip,used,level){return shuffleArr(moveCatalog().filter(function(m){
+ if(/ผู้สูงอายุ|ออฟฟิศ|คนท้อง|ฟื้นฟู|กีฬา|ยืดเหยียด|คาร์ดิโอ/.test(m.group||''))return false;
+ if(!groupMatch(m.group,key))return false;
+ if(equip==='home'&&!(m.eq==='บอดี้เวท'||m.eq==='ยางยืด'))return false;
+ if(equip==='dumbbell'&&!(m.eq==='บอดี้เวท'||m.eq==='ยางยืด'||m.eq==='ดัมเบล'))return false;
+ if(_riskyMove(m.nameEn,level))return false;
+ if(used[m.nameEn])return false;return true;}));}
+function _libWorkoutPlan(inp){
+ if(!(window.IUFIT_WORKOUTS&&window.IUFIT_WORKOUTS.length))return null;
+ var days=inp.daysPerWeek||3,goal=(inp.goal==='fat_loss'?'lose':inp.goal==='muscle_gain'?'gain':'general'),level=inp.level||'beginner';
+ var eq=inp.equipment||[],equip=(eq.indexOf('none')>=0||eq.indexOf('bodyweight')>=0||eq.indexOf('resistance_band')>=0)?'home':(eq.indexOf('dumbbell')>=0?'dumbbell':'gym');
+ var split=SPLITS[days]||SPLITS[3],dayTexts=[];
+ split.forEach(function(d,di){var used={},tmpl=DAYTMPL[d[1]]||DAYTMPL.full,moves=[];
+  tmpl.forEach(function(gp){var pool=_safePool(gp[0],equip,used,level);for(var k=0;k<gp[1]&&k<pool.length;k++){used[pool[k].nameEn]=1;moves.push(pool[k]);}});
+  var lines=moves.map(function(mv){return '• '+mv.nameEn+' — '+setsReps(goal,mv.cardio);});
+  if(lines.length)dayTexts.push('🗓️ '+L('วันที่ ','Day ')+(di+1)+' — '+d[0]+'\n'+lines.join('\n'));});
+ if(dayTexts.length<Math.min(days,2))return null;
+ return dayTexts.join('\n\n');}
+function _libExplain(inp,bp){var ln=[];
+ ln.push(L('ผมจัดตารางจากคลังท่าฝึกให้ตามเป้าหมาย ระดับ และอุปกรณ์ของคุณครับ','I built this plan from the move library to match your goal, level and equipment.'));
+ if(bp&&bp.bmi!=null)ln.push(L('จากข้อมูล BMI ประมาณ ','From your data, BMI ≈ ')+bp.bmi+L(' ผมเลี่ยงท่ากระแทกสูง/เสี่ยงให้แล้ว',' — high-impact/risky moves were filtered out.'));
+ ln.push(L('ทุกท่ามีปุ่ม ▶ ดูคลิปสอนในหน้าท่าฝึก','Each move has a ▶ tutorial in the Workout tab.'));
+ return ln.join('\n');}
+function buildWorkoutPlan(message,inpOverride,limOverride){
  var coach=(role()==='coach');
  try{var S=window.S;
   if(!coach&&S&&S.follow&&S.follow.code){
@@ -769,11 +796,12 @@ function buildWorkoutPlan(message){
    return {title:L('ยังไม่มีแผนจากโค้ช','No coach plan yet'),message:L('ตอนนี้ยังไม่มีแผนฝึกจากโค้ชครับ คุณสามารถทักโค้ชเพื่อขอแผน หรือให้ IU MATE ช่วยสร้างแผนพื้นฐานชั่วคราวได้','No coach plan yet — you can message your coach to request one, or let me make a temporary basic plan.'),actions:[{label:L('สร้างแผนพื้นฐาน','Make a basic plan'),action:'_chip',payload:{q:L('จัดตารางฝึกพื้นฐานไม่มีอุปกรณ์','make a basic bodyweight plan')}},{label:L('แชทหาโค้ช','Chat coach'),action:'go_coach'}]};
   }
  }catch(e){}
- var inp=_wpParse(message);var limitation=_wpLimit(message);var bp=coach?null:_bodyProfile();
+ var inp=inpOverride||_wpParse(message);var limitation=limOverride||_wpLimit(message);var bp=coach?null:_bodyProfile();
  var sel=selectWorkoutTemplateByBody({goal:inp.goal,level:inp.level,daysPerWeek:inp.daysPerWeek,equipment:inp.equipment,limitation:limitation,bodyProfile:bp,hasCoach:false,hasCoachWorkoutPlan:false});
  var tpl=getWorkoutTemplateById(sel.templateId)||WORKOUT_TEMPLATES[0];
- var explain=coach?'':_wpExplain(tpl,bp,inp,sel.safetyLevel);
- var msg=(explain?explain+'\n\n———\n\n':'')+_wpFormat(tpl)+L('หมายเหตุ: เลือกความหนักที่ยังคุมท่าได้ ไม่ต้องฝืนจนหมดแรง · ถ้าทำได้ครบทุกเซ็ตคุมท่าดี 2 ครั้งติด ค่อยเพิ่มครั้ง/น้ำหนักเล็กน้อย','Note: pick a load you can control, no need to go to failure. If you hit all sets with good form twice, add reps/a little weight.');
+ var _libBody=(!coach&&sel.safetyLevel!=='caution'&&sel.safetyLevel!=='low_impact'&&limitation==='none')?(function(){try{return _libWorkoutPlan(inp);}catch(e){return null;}})():null;
+ var explain=coach?'':(_libBody?_libExplain(inp,bp):_wpExplain(tpl,bp,inp,sel.safetyLevel));
+ var msg=(explain?explain+'\n\n———\n\n':'')+(_libBody||_wpFormat(tpl))+L('หมายเหตุ: เลือกความหนักที่ยังคุมท่าได้ ไม่ต้องฝืนจนหมดแรง · ถ้าทำได้ครบทุกเซ็ตคุมท่าดี 2 ครั้งติด ค่อยเพิ่มครั้ง/น้ำหนักเล็กน้อย','Note: pick a load you can control, no need to go to failure. If you hit all sets with good form twice, add reps/a little weight.');
  var note=coach?L('นี่คือร่างแผนสำหรับลูกเทรน ตรวจ/แก้ก่อนส่งได้ · IU MATE ไม่ส่งให้ลูกเทรนอัตโนมัติ และไม่เปลี่ยนแผนเดิมโดยไม่ยืนยัน','Draft for your client — review/edit before sending. IU MATE never auto-sends or overrides an active plan.'):L('แผนนี้เป็นแผนพื้นฐาน ปรับได้ตามความพร้อมของร่างกาย หากมีอาการเจ็บหรือโรคประจำตัว ควรปรึกษาผู้เชี่ยวชาญก่อนเริ่มฝึก','This is a basic plan — adjust to your readiness. If you have pain or a health condition, consult a professional first.');
  var chips=[
   {label:L('ลดไขมัน 3 วัน','Fat loss 3d'),action:'_chip',payload:{q:L('จัดตารางฝึกลดไขมัน 3 วัน','fat loss workout plan 3 days')}},
@@ -933,13 +961,15 @@ function buildFoodRecommend(message){
       {label:L('📋 ใช้เมนูจากคลัง','📋 From the menu library'),action:'recommend_library'}
     ] };
 }
-function buildLibraryRecommend(){
+function _menuSeed(text){var t=(''+text).toLowerCase();var sd={};if(/มื้อเช้า|ตอนเช้า|breakfast/.test(t))sd.meal='เช้า';else if(/กลางวัน|เที่ยง|lunch/.test(t))sd.meal='กลางวัน';else if(/มื้อเย็น|ตอนเย็น|ค่ำ|dinner/.test(t))sd.meal='เย็น';if(/ลดไขมัน|ลดน้ำหนัก|แคลต่ำ|fat ?loss|low.?cal/.test(t))sd.goal='ลดไขมัน';else if(/เพิ่มกล้าม|โปรตีนสูง|muscle|high.?protein/.test(t))sd.goal='เพิ่มกล้าม';return sd;}
+function buildLibraryRecommend(opts){opts=opts||{};
   if(!ingDbOk()) return cantCalcReply();
-  var recs=recommendMenus({ goal:goalLabel(), meal:currentMeal(), n:4 });
-  if(!recs.length){ var picks=popularIngredients(),byGroup=groupBy(picks),pantry=[]; ['protein','carb','vegetable'].forEach(function(g){ (byGroup[g]||[]).slice(0,2).forEach(function(i){ pantry.push(i); }); }); recs=generateRecipes(pantry,{goal:goalLabel(),meal:currentMeal()}); }
-  if(!recs.length) return buildKnowledge(message);
-  return { title:L('เมนูที่เหมาะกับวันนี้','Menus that fit today'),
-    message:L('จากคลังเมนู '+menuList().length.toLocaleString()+' รายการ ผมเลือกที่เข้ากับเป้าหมาย "'+goalLabel()+'" และแคลที่เหลือให้ครับ','From '+menuList().length.toLocaleString()+' menus, here are ones that fit your goal "'+goalLabel()+'" and remaining calories:'),
+  var _g=opts.goal||goalLabel(),_m=opts.meal||currentMeal();
+  var recs=recommendMenus({ goal:_g, meal:_m, n:4 });
+  if(!recs.length){ var picks=popularIngredients(),byGroup=groupBy(picks),pantry=[]; ['protein','carb','vegetable'].forEach(function(g){ (byGroup[g]||[]).slice(0,2).forEach(function(i){ pantry.push(i); }); }); recs=generateRecipes(pantry,{goal:_g,meal:_m}); }
+  if(!recs.length) return buildKnowledge('');
+  return { title:L('เมนู'+_m+'ที่แนะนำ','Recommended menus'),
+    message:L('จากคลังเมนู '+menuList().length.toLocaleString()+' รายการ ผมเลือกเมนู'+_m+'ที่เข้ากับเป้าหมาย "'+_g+'" ให้ครับ','From '+menuList().length.toLocaleString()+' menus, here are ones that fit your goal "'+goalLabel()+'" and remaining calories:'),
     recipes:recs.slice(0,3),
     actions:[{label:L('สร้างจากของที่มี','From my ingredients'),action:'open_ingredient_picker'},{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] };
 }
@@ -1609,6 +1639,23 @@ function startCoachWorkout(){
   startFlow('coach_workout', cs.length===1?{client:cs[0].id}:null);
 }
 var FLOWS = {
+  menu: {
+    intro: L('ได้เลยครับ ขอถามสั้น ๆ เพื่อเลือกเมนูให้ตรงใจ (แตะตอบได้เลย)','Sure — quick questions to find the right menus (tap to answer)'),
+    slots: [
+      { key:'meal', type:'choice', q:L('มื้อไหนดีครับ?','Which meal?'), choices:[[L('มื้อเช้า','Breakfast'),'เช้า'],[L('มื้อกลางวัน','Lunch'),'กลางวัน'],[L('มื้อเย็น','Dinner'),'เย็น']] },
+      { key:'goal', type:'choice', q:L('เป้าหมายของมื้อนี้?','Goal for this meal?'), choices:[[L('ลดไขมัน / แคลต่ำ','Fat loss / low-cal'),'ลดไขมัน'],[L('เพิ่มกล้าม / โปรตีนสูง','Muscle / high-protein'),'เพิ่มกล้าม'],[L('สุขภาพทั่วไป','General'),'สุขภาพทั่วไป']] }
+    ],
+    complete: function(sl){ try{ return buildLibraryRecommend({meal:sl.meal,goal:sl.goal}); }catch(e){ return null; } }
+  },
+  workout: {
+    intro: L('โอเคครับ ขอถามสั้น ๆ 3 ข้อ เพื่อจัดตารางให้ตรงกับคุณ (แตะปุ่มตอบได้เลย)','Sure — 3 quick questions to tailor your plan (tap to answer)'),
+    slots: [
+      { key:'goal', type:'choice', q:L('เป้าหมายหลักคืออะไรครับ?','What is your main goal?'), choices:[[L('ลดไขมัน','Fat loss'),'fat_loss'],[L('เพิ่มกล้าม','Build muscle'),'muscle_gain'],[L('สุขภาพ/ฟิตทั่วไป','General fitness'),'general_fitness']] },
+      { key:'days', type:'choice', q:L('อยากฝึกกี่วันต่อสัปดาห์?','How many days per week?'), choices:[[L('2 วัน','2 days'),2],[L('3 วัน','3 days'),3],[L('4 วัน','4 days'),4],[L('5 วัน','5 days'),5]] },
+      { key:'equip', type:'choice', q:L('มีอุปกรณ์แบบไหนครับ?','What equipment do you have?'), choices:[[L('ไม่มี / บอดี้เวท','None / bodyweight'),'none'],[L('ดัมเบล','Dumbbell'),'dumbbell'],[L('ฟิตเนส / ยิม','Full gym'),'full_gym']] }
+    ],
+    complete: function(sl){ var inp={goal:sl.goal||'general_fitness',level:'beginner',daysPerWeek:(+sl.days||3),sessionDurationMinutes:30,equipment:(sl.equip==='none'?['none','bodyweight']:[sl.equip||'bodyweight'])}; try{return buildWorkoutPlan('',inp,'none');}catch(e){return null;} }
+  },
   plan: {
     intro: L('โอเคครับ ขอถามนิดหน่อยเพื่อจัดให้พอดีตัวคุณ (ตอบสั้น ๆ ได้เลย)','Sure — a few quick questions to tailor this for you'),
     slots: [
@@ -1692,6 +1739,8 @@ function handleMessage(text){
     if(fu){ pushReply(fu); return; }
     var intent=detectIntent(text); try{ bumpStat('intent:'+intent); }catch(e){}
     if(intent==='make_plan'){ try{ startFlow('plan', parseProfileFromText(text)); }catch(e){} ST.ctx={intent:'make_plan'}; return; }
+    if(intent==='food_recommend'){ try{ startFlow('menu', _menuSeed(text)); }catch(e){} return; }
+    if(intent==='workout_plan'){ var _wt=(''+text).toLowerCase(); var _spec=/[2-5]\s*วัน|[2-5]\s*day|ลดไขมัน|เพิ่มกล้าม|fat ?loss|muscle|ไม่มีอุปกรณ์|no equipment|ดัมเบล|dumbbell|ยิม|gym|บอดี้เวท|bodyweight/.test(_wt); if(!_spec){ try{ startFlow('workout'); }catch(e){} return; } }
     if(intent==='coach_menu' && role()==='coach'){ try{ startCoachMenu(); }catch(e){} return; }
     if(intent==='coach_workout' && role()==='coach'){ try{ startCoachWorkout(); }catch(e){} return; }
     var reply; try{ reply=buildReply(intent,text); }catch(e){ reply=buildFallback(text); } try{ if(reply) reply._intent=intent; }catch(e){}
