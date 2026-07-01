@@ -377,10 +377,10 @@ var INTENT_KW = {
   food_swap:['แทนด้วยอะไร','ใช้อะไรแทน','เปลี่ยนเป็นอะไร','แทนได้','สลับวัตถุดิบ','เปลี่ยนวัตถุดิบ','substitute','swap ','replace','alternative'],
   cuisine_menu:['เมนูญี่ปุ่น','อาหารญี่ปุ่น','เมนูจีน','อาหารจีน','เมนูฝรั่ง','อาหารฝรั่ง','อาหารตะวันตก','เมนู 7-11','เมนูสะดวกซื้อ','เซเว่น','7-11','เมนูร้านสะดวกซื้อ','japanese','chinese','western','convenience'],
   budget_menu:['เมนูประหยัด','เมนูถูก','งบน้อย','เมนูงบ','ประหยัดเงิน','ราคาถูก','เมนูราคาประหยัด','cheap menu','budget meal','on a budget'],
-  food_recommend:['กินอะไรดี','แนะนำเมนู','เมนูแนะนำ','แคลต่ำ','โปรตีนสูง','ลดไขมัน','what to eat','recommend menu','low cal','high protein','suggest food'],
+  food_recommend:['กินอะไรดี','แนะนำเมนู','เมนูแนะนำ','แคลต่ำ','โปรตีนสูง','ลดไขมัน','หิว','อยากกิน','กินไรดี','เมนูอะไรดี','ขอเมนู','ไม่รู้จะกินอะไร','เบื่ออาหาร','มื้อนี้กินอะไร','ของว่าง','what to eat','recommend menu','low cal','high protein','suggest food','hungry','meal idea','snack idea'],
   food_search:['หาอาหาร','ค้นหาเมนู','มีเมนู','search food','find menu'],
   result_summary:['ผลลัพธ์','น้ำหนักตอนนี้','น้ำหนักลดไป','ดูน้ำหนัก','ลดไปกี่','ความคืบหน้า','กราฟ','รอบเอว','result','progress','my result','waist'],
-  workout_recommend:['ออกกำลัง','ท่าฝึก','เล่นอะไร','เวท','คาร์ดิโอ','ดัมเบล','workout','exercise','train','cardio','weight training'],
+  workout_recommend:['ออกกำลัง','ท่าฝึก','เล่นอะไร','เวท','คาร์ดิโอ','ดัมเบล','เล่นไรดี','ท่าอะไรดี','เบื่อท่าเดิม','ขอท่า','ลดพุง','ลดต้นขา','บริหาร','เล่นกล้าม','workout','exercise','train','cardio','weight training','move idea','what to train'],
   workout_plan:['จัดตาราง','จัดตารางฝึก','จัดตารางออกกำลัง','จัดตารางออกกำลังกาย','สร้างแผนฝึก','สร้างแผน','แผนฝึก','ตารางฝึก','โปรแกรมฝึก','จัดโปรแกรม','จัดแผนฝึก','ฝึกกี่วัน','กี่วันต่อสัปดาห์','วันต่อสัปดาห์','เริ่มออกกำลังกายยังไง','อยากออกกำลังกาย','ต่อสัปดาห์','แผนให้ลูกเทรน','สร้างแผนให้ลูก','โปรแกรมให้ลูกเทรน','workout plan','training plan','training schedule','make a workout plan','build a plan'],
   exercise_alternative:['ท่าแทน','ใช้อะไรแทน','ใช้ท่าอะไรแทน','ไม่มีดัมเบล','ไม่มีอุปกรณ์ใช้ท่า','แทนท่า','ท่าทดแทน','ท่าอื่นแทน','alternative exercise','substitute exercise','replace exercise','no dumbbell'],
   make_plan:['จัดแผนให้','ช่วยวางแผน','วางแผนลด','วางแผนเพิ่มกล้าม','ทำแผนลด','จัดโปรแกรม','จัดแผนอาหาร','วางแผนให้ฉัน','make a plan','help me plan','plan for me','build a plan'],
@@ -1678,9 +1678,13 @@ function resolveFollowup(message){
   if((ST.ctx.intent==='cuisine_menu'||ST.ctx.lastCuisine) && (follow||shortMsg) && /ญี่ปุ่น|japan|จีน|china|chinese|ฝรั่ง|ตะวันตก|western|สะดวก|7-11|เซเว่น|conven/.test(t)){
     return buildCuisineMenu(message);
   }
-  // c) "more / another"
-  if(['food_recommend','cuisine_menu','budget_menu','recommend_library','ingredient_recipe_generate'].indexOf(ST.ctx.intent)>=0 && shortMsg && /อีก|เพิ่ม|อื่น|more|another|other|next/.test(t)){
+  // c) "more / another" — broadened phrases (menu + workout)
+  var moreRe=/อีก|เพิ่มเติม|เพิ่ม|อื่น|อย่างอื่น|ตัวเลือก|ไม่ถูกใจ|ไม่ชอบ|ไม่เอา|เปลี่ยน|ขอใหม่|มีอะไรอีก|more|another|other|next|different|else|not this/;
+  if(['food_recommend','cuisine_menu','budget_menu','recommend_library','ingredient_recipe_generate'].indexOf(ST.ctx.intent)>=0 && (shortMsg||follow) && moreRe.test(t)){
     return buildLibraryRecommend();
+  }
+  if(['workout_plan','workout_recommend','coach_workout'].indexOf(ST.ctx.intent)>=0 && (shortMsg||follow) && moreRe.test(t)){
+    try{ return buildWorkoutPlan(message); }catch(e){ return null; }
   }
   return null;
 }
