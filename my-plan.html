@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>แพ็กของฉัน · IUFIT</title>
+<meta name="description" content="สถานะแพ็กเทรนเนอร์ IUFIT — แพ็กปัจจุบัน วันหมดอายุ ทดลองใช้งาน และต่ออายุ">
+<link rel="stylesheet" href="billing.css">
+</head>
+<body>
+<div class="wrap">
+<a class="logo" href="https://iufit.com">IU<span>FIT</span></a>
+<div class="nav"><a href="pricing.html">ราคา</a><a href="billing.html">สมัคร</a><a class="on" href="my-plan.html">แพ็กของฉัน</a></div>
+
+<h1>แพ็กของฉัน</h1>
+<p class="sub" id="acctLine"></p>
+
+<div id="reminder"></div>
+
+<div class="card" id="statusCard"></div>
+
+<div id="actions" style="margin-top:14px"></div>
+
+<div class="how" style="margin-top:18px">
+  <h2>ดี ๆ ที่ควรรู้</h2>
+  <ol>
+    <li>หมด trial แล้ว <b>ข้อมูลไม่หาย</b> — กลับเป็น Trainer Free (ดูแลลูกเทรนได้ 1 คน)</li>
+    <li>ลูกเทรนที่เกินสิทธิ์จะถูกล็อกเป็น <b>อ่านอย่างเดียว</b> ชั่วคราว (ไม่ถูกลบ) — อัปเกรดเมื่อไรก็กลับมาใช้ได้ครบ</li>
+    <li>อัปเกรด/ต่ออายุได้ทุกเมื่อ แพ็กจะปลดล็อกในแอปอัตโนมัติ</li>
+  </ol>
+</div>
+
+<p class="foot">© 2026 IUFIT · <a class="blue" href="https://iufit.com">iufit.com</a></p>
+</div>
+
+<script src="billing-common.js"></script>
+<script>
+var B=window.IUFIT_BILLING;
+function thDate(ymd){if(!ymd)return '';var p=ymd.split('-');return p[2]+'/'+p[1]+'/'+(+p[0]+543);}
+
+function render(){
+  var lbl=B.accountLabel();
+  document.getElementById('acctLine').textContent=lbl?('บัญชี: '+lbl):'เปิดหน้านี้บนอุปกรณ์เดียวกับที่ใช้แอป เพื่อดูสถานะแพ็กของคุณ';
+
+  var planKey=B.currentPlanKey(), p=B.getPlan(planKey);
+  var trial=B.trialActive(), tdl=B.trialDaysLeft();
+  var paid=B.paidActive(), exp=B.planExpiry(), edl=B.daysUntil(exp);
+  var expired=B.trialExpired();
+
+  // ----- reminder banner (10/7/3/1) -----
+  var rEl=document.getElementById('reminder'),rb='';
+  if(trial){
+    var tier=B.reminderTier(tdl);
+    if(tier){
+      var cls=(tdl<=1)?'urgent':(tdl<=3)?'urgent':(tdl<=7)?'warn':'info';
+      rb='<div class="bn '+cls+'"><b>'+(tdl<=3?'⚠️ ทดลองใกล้หมด':'⏳ แจ้งเตือนทดลองใช้งาน')+'</b>เหลืออีก '+tdl+' วัน · สมัครต่อเพื่อคงสิทธิ์ Trainer Pro และลูกเทรนทั้งหมด</div>';
+    }
+  }else if(expired){
+    rb='<div class="bn urgent"><b>หมดช่วงทดลองแล้ว</b>ตอนนี้เป็น Trainer Free · ข้อมูลอยู่ครบ · อัปเกรดเพื่อปลดล็อกลูกเทรนและฟีเจอร์ Pro กลับมา</div>';
+  }else if(paid&&edl!=null&&edl<=10){
+    var pcls=(edl<=3)?'urgent':'warn';
+    rb='<div class="bn '+pcls+'"><b>⏰ แพ็กใกล้หมดอายุ</b>อีก '+edl+' วัน ('+thDate(exp)+') · ต่ออายุเพื่อคงลูกเทรนและฟีเจอร์ไว้</div>';
+  }
+  rEl.innerHTML=rb;
+
+  // ----- status card -----
+  var sc=document.getElementById('statusCard'),h='';
+  var planName = trial?'Trainer Pro (ทดลอง)':(paid?(p?p.name:'Trainer'):(expired?'Trainer Free':(p&&p.k!=='free'?p.name:'Trainer Free')));
+  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">';
+  h+='<div><div class="psub" style="margin:0">แพ็กปัจจุบัน</div><div class="pname" style="font-size:21px">'+planName+'</div>';
+  if(trial)h+='<div class="save" style="color:var(--blue)">ทดลองฟรี · เหลือ '+tdl+' วัน · ไม่ต้องใส่บัตร</div>';
+  else if(paid&&exp)h+='<div class="psub" style="margin-top:3px">หมดอายุ '+thDate(exp)+(edl!=null?(' · อีก '+edl+' วัน'):'')+'</div>';
+  else if(expired)h+='<div class="save" style="color:var(--red)">ดูแลลูกเทรนได้ 1 คน</div>';
+  h+='</div>';
+  var pillBg=trial?'#eaf3ff':(paid?'#eafaf0':'#f1f4f9'),pillFg=trial?'#0a84ff':(paid?'#18b26b':'#7a8aa6');
+  h+='<span style="background:'+pillBg+';color:'+pillFg+';font-size:11px;font-weight:800;padding:5px 12px;border-radius:20px;white-space:nowrap">'+(trial?'TRIAL':(paid?'ACTIVE':'FREE'))+'</span>';
+  h+='</div>';
+  // feature snapshot
+  if(p&&p.k!=='free'){h+='<div class="feats" style="margin-top:12px;border-top:1px solid var(--line);padding-top:11px">';p.feats.slice(0,4).forEach(function(f){h+='✓ '+f+'<br>';});h+='</div>';}
+  sc.innerHTML=h;
+
+  // ----- actions -----
+  var aEl=document.getElementById('actions'),a='';
+  if(B.IS_STORE){
+    a='<div class="bn info"><b>จัดการแพ็กผ่านเว็บ/LINE</b>เปิด iufit.com/billing.html ในเบราว์เซอร์ หรือทักไลน์เพื่อสมัคร/ต่ออายุ — แพ็กจะปลดล็อกในแอปอัตโนมัติ</div>'
+      +'<a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">💬 ทักไลน์ @987qyznd</a>';
+  }else if(trial){
+    a='<a class="btn pri" href="billing.html?plan=pro&cycle=mo">สมัครต่อ · คงสิทธิ์ Pro</a><a class="btn ghost" style="margin-top:8px" href="pricing.html">ดูแพ็กทั้งหมด</a>';
+  }else if(paid){
+    a='<a class="btn pri" href="billing.html?plan='+planKey+'&cycle=mo">🔄 ต่ออายุแพ็กนี้</a><a class="btn ghost" style="margin-top:8px" href="pricing.html">เปลี่ยน/อัปเกรดแพ็ก</a>';
+  }else{
+    a='<a class="btn green" href="billing.html?plan=pro&cycle=mo">อัปเกรดเป็น Trainer Pro</a><a class="btn ghost" style="margin-top:8px" href="pricing.html">ดูแพ็กทั้งหมด</a>';
+  }
+  aEl.innerHTML=a;
+}
+render();
+</script>
+</body>
+</html>

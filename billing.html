@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>สมัครแพ็ก · IUFIT</title>
+<meta name="description" content="สมัครแพ็กเทรนเนอร์ IUFIT — เลือกแพ็ก รอบบิล และชำระเงินผ่าน Omise">
+<link rel="stylesheet" href="billing.css">
+</head>
+<body>
+<div class="wrap">
+<a class="logo" href="https://iufit.com">IU<span>FIT</span></a>
+<div class="nav"><a href="pricing.html">ราคา</a><a class="on" href="billing.html">สมัคร</a><a href="my-plan.html">แพ็กของฉัน</a></div>
+
+<!-- result states -->
+<div id="resultPanel" class="hide"></div>
+
+<!-- store guard -->
+<div id="storeGuard" class="hide">
+  <h1>สมัครแพ็ก</h1>
+  <div class="bn info"><b>สมัครผ่านเว็บหรือ LINE</b>การชำระเงินทำนอกแอป · เปิด iufit.com/billing.html ในเบราว์เซอร์ หรือทักไลน์เพื่อสมัคร — เปิดแอปด้วยบัญชีเดิมแล้วแพ็กจะปลดล็อกให้อัตโนมัติ</div>
+  <a class="btn line" href="https://line.me/R/ti/p/@987qyznd" target="_blank" rel="noopener">💬 ทักไลน์ @987qyznd</a>
+</div>
+
+<!-- checkout -->
+<div id="checkout" class="hide">
+  <h1>สมัครแพ็ก</h1>
+  <p class="sub" id="acctLine"></p>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="toggle" style="margin-bottom:14px">
+      <button id="t-mo" class="on" onclick="setCycle(false)">รายเดือน</button>
+      <button id="t-yr" onclick="setCycle(true)">รายปี · ประหยัด</button>
+    </div>
+    <label style="font-size:12.5px;font-weight:700;color:var(--navy);display:block;margin-bottom:6px">เลือกแพ็ก</label>
+    <div id="planPick"></div>
+    <div id="summary" style="margin-top:14px"></div>
+  </div>
+
+  <div class="card" id="payCard">
+    <b style="font-size:15px;color:var(--navy)">วิธีชำระเงิน</b>
+    <div id="payBody"></div>
+  </div>
+
+  <p class="note">ค่าแพ็กชำระผ่านเว็บไซต์ IUFIT (Omise) · ราคารวมภาษีแล้ว · ยกเลิกการต่ออายุได้ทุกเมื่อในหน้าแพ็กของฉัน · <a class="blue" href="terms.html">ข้อกำหนด</a></p>
+</div>
+
+<p class="foot">© 2026 IUFIT · <a class="blue" href="https://iufit.com">iufit.com</a></p>
+</div>
+
+<script src="billing-common.js"></script>
+<script>
+var B=window.IUFIT_BILLING;
+var YR=(B.qs('cycle')==='yr');
+var PLAN=B.qs('plan')||'pro';
+var PM='card';
+
+function setCycle(yr){YR=yr;document.getElementById('t-mo').className=yr?'':'on';document.getElementById('t-yr').className=yr?'on':'';renderPlanPick();renderSummary();}
+function pickPlan(k){PLAN=k;renderPlanPick();renderSummary();}
+
+function renderPlanPick(){
+  var el=document.getElementById('planPick'),h='';
+  B.PLANS.forEach(function(p){
+    if(p.k==='free'||p.contact)return;
+    var on=(PLAN===p.k);
+    var pr=YR?p.yr:p.mo, un=YR?'/ปี':'/เดือน';
+    h+='<button onclick="pickPlan(\''+p.k+'\')" style="width:100%;text-align:left;border:1.5px solid '+(on?'var(--blue)':'var(--line)')+';background:'+(on?'#eef4ff':'#fff')+';border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between;align-items:center">'
+      +'<span><b style="color:var(--navy);font-size:14.5px">'+p.name+'</b>'+(p.badge?' <span class="badge" style="margin:0;vertical-align:middle">'+p.badge+'</span>':'')+'<br><span style="font-size:11.5px;color:var(--muted)">ลูกเทรน '+p.clients+' คน</span></span>'
+      +'<span style="font-weight:850;color:var(--blue);white-space:nowrap">฿'+B.fmt(pr)+'<span style="font-size:11px;color:var(--muted)"> '+un+'</span></span></button>';
+  });
+  el.innerHTML=h;
+}
+function renderSummary(){
+  var p=B.getPlan(PLAN);if(!p)return;
+  var pr=YR?p.yr:p.mo, un=YR?'ปี':'เดือน', was=YR?p.yrWas:p.moWas;
+  var h='<div class="sumrow"><span>'+p.name+' · ราย'+un+'</span><span>'+(was?'<span style="color:#9aa6bf;text-decoration:line-through;margin-right:6px">฿'+B.fmt(was)+'</span>':'')+'฿'+B.fmt(pr)+'</span></div>';
+  if(YR)h+='<div class="sumrow"><span class="psub" style="margin:0">เทียบเท่า</span><span class="psub" style="margin:0">฿'+B.fmt(Math.round(pr/12))+'/เดือน</span></div>';
+  h+='<div class="sumrow total"><span>ยอดชำระ</span><span>฿'+B.fmt(pr)+'</span></div>';
+  document.getElementById('summary').innerHTML=h;
+}
+function renderPay(){
+  var body=document.getElementById('payBody');
+  if(!B.OMISE_READY){
+    // Omise ยังไม่พร้อม -> จองราคาเปิดตัว + LINE
+    body.innerHTML='<div class="bn warn" style="margin:10px 0"><b>ระบบชำระออนไลน์กำลังเปิดให้บริการ</b>จองราคาเปิดตัวไว้ก่อนได้ — ราคานี้จะถูกล็อกให้คุณ แล้วแอดมินช่วยเปิดแพ็กให้ทันที</div>'
+      +'<a class="btn line" id="bookBtn" href="'+B.LINE_URL+'" target="_blank" rel="noopener">💬 จองราคา &amp; สมัครทาง LINE</a>'
+      +'<button class="btn ghost" style="margin-top:8px" onclick="reserveLocal()">🔖 จองราคานี้ไว้ในเครื่อง</button>';
+    return;
+  }
+  // Omise พร้อม
+  body.innerHTML='<div class="pm"><button id="pm-card" class="on" onclick="setPM(\'card\')">💳 บัตรเครดิต/เดบิต</button><button id="pm-pp" onclick="setPM(\'promptpay\')">📱 PromptPay</button></div>'
+    +'<div id="cardForm" class="'+(PM==='card'?'':'hide')+'"><div class="field"><label>ชื่อบนบัตร</label><input id="card-name" placeholder="ชื่อ-สกุล"></div><div class="field"><label>หมายเลขบัตร</label><input id="card-num" inputmode="numeric" placeholder="0000 0000 0000 0000"></div><div style="display:flex;gap:10px"><div class="field" style="flex:1"><label>หมดอายุ (ดด/ปป)</label><input id="card-exp" placeholder="MM/YY"></div><div class="field" style="flex:1"><label>CVV</label><input id="card-cvv" inputmode="numeric" placeholder="123"></div></div></div>'
+    +'<button class="btn pri" style="margin-top:6px" onclick="payNow()">ชำระเงิน ฿'+B.fmt(YR?B.getPlan(PLAN).yr:B.getPlan(PLAN).mo)+'</button>'
+    +'<p class="note" style="margin-top:10px">🔒 ข้อมูลบัตรถูกเข้ารหัสและส่งตรงให้ Omise · IUFIT ไม่เก็บเลขบัตร</p>';
+}
+function setPM(m){PM=m;renderPay();}
+function reserveLocal(){
+  try{var r=JSON.parse(localStorage.getItem('iufit_reserve')||'{}');r.plan=PLAN;r.cycle=YR?'yr':'mo';r.ts=Date.now();localStorage.setItem('iufit_reserve',JSON.stringify(r));}catch(e){}
+  alert('จองราคา '+B.getPlan(PLAN).name+' ('+(YR?'รายปี':'รายเดือน')+') ไว้แล้ว · ทักไลน์เพื่อยืนยันและเปิดใช้งานได้เลย');
+}
+
+/* ---- Omise charge (ทำงานเมื่อ OMISE_READY=true) ---- */
+function loadOmise(cb){if(window.Omise){cb();return;}var s=document.createElement('script');s.src='https://cdn.omise.co/omise.js';s.onload=cb;s.onerror=function(){alert('โหลดระบบชำระเงินไม่สำเร็จ ลองใหม่อีกครั้ง');};document.head.appendChild(s);}
+function payNow(){
+  if(!B.OMISE_READY)return;
+  loadOmise(function(){
+    try{Omise.setPublicKey(B.OMISE_PUBLIC_KEY);}catch(e){}
+    var p=B.getPlan(PLAN),amt=(YR?p.yr:p.mo)*100; // สตางค์
+    var exp=(document.getElementById('card-exp').value||'').split('/');
+    Omise.createToken('card',{
+      name:document.getElementById('card-name').value,
+      number:(document.getElementById('card-num').value||'').replace(/\s/g,''),
+      expiration_month:(exp[0]||'').trim(),
+      expiration_year:('20'+(exp[1]||'').trim()).slice(-4),
+      security_code:document.getElementById('card-cvv').value
+    },function(status,resp){
+      if(status!==200){alert('บัตรไม่ถูกต้อง: '+(resp.message||''));return;}
+      fetch(B.CHARGE_ENDPOINT+'/charge',{method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({token:resp.id,plan:PLAN,cycle:YR?'yr':'mo',amount:amt,account:B.accountKey()})})
+        .then(function(r){return r.json();})
+        .then(function(j){location.href='billing.html?result='+(j.status==='successful'?'success':(j.status==='pending'?'pending':'failed'));})
+        .catch(function(){location.href='billing.html?result=failed';});
+    });
+  });
+}
+
+/* ---- result panel ---- */
+function showResult(kind){
+  var el=document.getElementById('resultPanel');el.classList.remove('hide');
+  var data={
+    success:{cls:'success',ic:'✓',t:'ชำระเงินสำเร็จ',m:'แพ็กของคุณเปิดใช้งานแล้ว · เปิดแอป IUFIT ด้วยบัญชีเดิม แพ็กจะปลดล็อกอัตโนมัติภายในไม่กี่วินาที'},
+    pending:{cls:'pending',ic:'⏳',t:'รอการยืนยันการชำระ',m:'เรากำลังรอผลการชำระเงิน (เช่น PromptPay) · เมื่อสำเร็จ แพ็กจะเปิดให้อัตโนมัติ ดูสถานะได้ที่หน้าแพ็กของฉัน'},
+    failed:{cls:'failed',ic:'✕',t:'ชำระเงินไม่สำเร็จ',m:'ยังไม่มีการตัดเงิน · ลองใหม่อีกครั้ง หรือทักไลน์ให้เราช่วย'}
+  }[kind];
+  if(!data)return;
+  el.innerHTML='<div class="result '+data.cls+'"><div class="ic">'+data.ic+'</div><h2>'+data.t+'</h2><p class="sub">'+data.m+'</p>'
+    +'<a class="btn pri" style="max-width:320px;margin:10px auto 0" href="my-plan.html">ไปหน้าแพ็กของฉัน</a>'
+    +(kind==='failed'?'<a class="btn ghost" style="max-width:320px;margin:8px auto 0" href="billing.html?plan='+PLAN+'&cycle='+(YR?'yr':'mo')+'">ลองชำระอีกครั้ง</a>':'')
+    +(kind!=='success'?'<a class="btn line" style="max-width:320px;margin:8px auto 0" href="'+B.LINE_URL+'" target="_blank" rel="noopener">ทักไลน์ขอความช่วยเหลือ</a>':'')
+    +'</div>';
+}
+
+/* ---- init ---- */
+(function(){
+  var res=B.qs('result');
+  if(res){showResult(res);return;}
+  if(B.IS_STORE){document.getElementById('storeGuard').classList.remove('hide');return;}
+  document.getElementById('checkout').classList.remove('hide');
+  var lbl=B.accountLabel();
+  document.getElementById('acctLine').textContent=lbl?('บัญชี: '+lbl+' · แพ็กจะผูกกับบัญชีนี้'):'เข้าสู่ระบบในแอปด้วยอีเมล/LINE เพื่อให้แพ็กปลดล็อกอัตโนมัติ';
+  document.getElementById('t-mo').className=YR?'':'on';document.getElementById('t-yr').className=YR?'on':'';
+  renderPlanPick();renderSummary();renderPay();
+})();
+</script>
+</body>
+</html>
