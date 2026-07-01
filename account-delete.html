@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ขอลบบัญชีและข้อมูล · IUFIT</title>
+<meta name="description" content="วิธีลบบัญชี IUFIT และข้อมูลทั้งหมดของคุณ — ทำเองในแอป หรือส่งคำขอถึงเรา">
+<style>
+:root{--navy:#071E4A;--blue:#0A84FF;--bg:#F6F9FF;--card:#fff;--line:#DDE7F5;--muted:#6B7890;--ink:#10233F;--red:#e8505b}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Thai',sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+.wrap{max-width:780px;margin:0 auto;padding:28px 18px 70px}
+.logo{font-style:italic;font-weight:850;font-size:26px;color:#0a1f4d}
+.logo span{color:var(--blue)}
+h1{font-size:25px;color:var(--navy);margin:18px 0 4px;letter-spacing:-.01em}
+.upd{color:var(--muted);font-size:13px;margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 10px 30px rgba(7,30,74,.05);margin-bottom:16px}
+h2{font-size:18px;color:var(--navy);margin:0 0 10px}
+p,li{font-size:14.5px;color:var(--ink)}
+ol,ul{padding-left:20px;margin:8px 0}
+li{margin:5px 0}
+a{color:var(--blue);font-weight:700}
+.step{background:#f4f8ff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin:10px 0}
+.tag{display:inline-block;background:#eafaf0;color:#15a05a;font-weight:800;font-size:12px;border-radius:999px;padding:3px 10px}
+.warn{background:#fff5f5;border:1px solid #f3c9c9;color:#a23;border-radius:12px;padding:12px 14px;font-size:13.5px}
+.muted{color:var(--muted);font-size:13px}
+.btn{display:inline-block;background:var(--blue);color:#fff;font-weight:800;text-decoration:none;border-radius:11px;padding:11px 18px;margin:4px 8px 4px 0}
+.btn.line{background:#06c755}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="logo">IU<span>FIT</span></div>
+<h1>ขอลบบัญชีและข้อมูล</h1>
+<p class="upd">Request account &amp; data deletion · อัปเดต 1 ก.ค. 2569</p>
+
+<div class="card">
+<h2>วิธีที่ 1 — ลบเองในแอป (เร็วที่สุด)</h2>
+<div class="step">
+<ol>
+<li>เปิดแอป IUFIT</li>
+<li>ไปที่ <b>⚙️ ตั้งค่า → ความเป็นส่วนตัว &amp; ความยินยอม</b></li>
+<li>กด <b>ลบบัญชี</b> แล้วยืนยัน</li>
+</ol>
+</div>
+<p class="muted">การลบจะลบ: บัญชี ข้อมูลสำรองบนคลาวด์ และทะเบียนผู้ใช้ของคุณทันที</p>
+</div>
+
+<div class="card">
+<h2>วิธีที่ 2 — ส่งคำขอถึงเรา</h2>
+<p>ถ้าคุณเข้าแอปไม่ได้ หรือต้องการให้เราดำเนินการให้ ส่งคำขอมาได้เลย พร้อมแจ้งอีเมล/LINE ที่ใช้สมัคร เพื่อให้เรายืนยันตัวตน</p>
+<p>
+<a class="btn" href="mailto:ar.weerapong@gmail.com?subject=ขอลบบัญชี%20IUFIT">ส่งอีเมลขอลบบัญชี</a>
+<a class="btn line" href="https://line.me/R/ti/p/@987qyznd" target="_blank" rel="noopener">แจ้งทาง LINE @987qyznd</a>
+</p>
+<p class="muted">เราจะดำเนินการภายใน 30 วันตาม PDPA และยืนยันกลับเมื่อลบเสร็จ</p>
+</div>
+
+<div class="card">
+<h2>ข้อมูลที่จะถูกลบ</h2>
+<ul>
+<li>ข้อมูลโปรไฟล์ (ชื่อ เพศ วันเกิด ส่วนสูง น้ำหนัก รูป)</li>
+<li>ข้อมูลสุขภาพ/การออกกำลังกาย (น้ำหนัก สัดส่วน บันทึกอาหาร การฝึก น้ำดื่ม)</li>
+<li>ข้อมูลสำรองบนคลาวด์ (Firebase) และทะเบียนผู้ใช้</li>
+<li>อีเมล/LINE ที่ผูกไว้กับบัญชี</li>
+</ul>
+<p class="muted" style="margin-top:10px">รูป/วิดีโอที่เคยส่งในแชท (เก็บบน Cloudflare R2) <b>ถูกลบอัตโนมัติภายใน 24 ชั่วโมง</b>อยู่แล้ว</p>
+<div class="warn" style="margin-top:12px">การลบบัญชีเป็นการลบถาวร กู้คืนไม่ได้ — หากต้องการเก็บข้อมูล ให้ส่งออก (Backup/Export) ในตั้งค่าก่อนลบ</div>
+</div>
+
+<p class="muted">ผู้ควบคุมข้อมูล: IUFIT · ติดต่อ: ar.weerapong@gmail.com · LINE @987qyznd · ดูเพิ่มที่ <a href="privacy.html">นโยบายความเป็นส่วนตัว</a></p>
+<hr style="border:none;border-top:1px solid var(--line);margin:22px 0">
+<p class="muted"><b>English:</b> To delete your IUFIT account and all data, open the app → Settings → Privacy &amp; consent → Delete account. If you cannot access the app, email <a href="mailto:ar.weerapong@gmail.com?subject=Delete%20my%20IUFIT%20account">ar.weerapong@gmail.com</a> or contact LINE @987qyznd. We process requests within 30 days. Account data (profile, health/workout logs, cloud backup) is permanently deleted; chat photos/videos auto-delete within 24 hours.</p>
+</div>
+</body>
+</html>
