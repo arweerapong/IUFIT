@@ -1891,19 +1891,19 @@ var FLOWS = {
   menu: {
     intro: L('ได้เลยครับ ขอถามสั้น ๆ เพื่อเลือกเมนูให้ตรงใจ (แตะตอบได้เลย)','Sure — quick questions to find the right menus (tap to answer)'),
     slots: [
-      { key:'meal', type:'choice', q:L('มื้อไหนดีครับ?','Which meal?'), choices:[[L('มื้อเช้า','Breakfast'),'เช้า'],[L('มื้อกลางวัน','Lunch'),'กลางวัน'],[L('มื้อเย็น','Dinner'),'เย็น']] },
-      { key:'goal', type:'choice', q:L('เป้าหมายของมื้อนี้?','Goal for this meal?'), choices:[[L('ลดไขมัน / แคลต่ำ','Fat loss / low-cal'),'ลดไขมัน'],[L('เพิ่มกล้าม / โปรตีนสูง','Muscle / high-protein'),'เพิ่มกล้าม'],[L('สุขภาพทั่วไป','General'),'สุขภาพทั่วไป']] }
+      { key:'meal', type:'choice', q:L('มื้อไหนดีครับ?','Which meal?'), choices:[[L('มื้อเช้า','Breakfast'),'เช้า'],[L('มื้อกลางวัน','Lunch'),'กลางวัน'],[L('มื้อเย็น','Dinner'),'เย็น'],[L('ของว่าง','Snack'),'ของว่าง']], other:true },
+      { key:'goal', type:'choice', q:L('เป้าหมายของมื้อนี้?','Goal for this meal?'), choices:[[L('ลดไขมัน / แคลต่ำ','Fat loss / low-cal'),'ลดไขมัน'],[L('เพิ่มกล้าม / โปรตีนสูง','Muscle / high-protein'),'เพิ่มกล้าม'],[L('สุขภาพทั่วไป','General'),'สุขภาพทั่วไป']], other:true }
     ],
     complete: function(sl){ try{ return buildLibraryRecommend({meal:sl.meal,goal:sl.goal}); }catch(e){ return null; } }
   },
   workout: {
     intro: L('โอเคครับ ขอถามสั้น ๆ 3 ข้อ เพื่อจัดตารางให้ตรงกับคุณ (แตะปุ่มตอบได้เลย)','Sure — 3 quick questions to tailor your plan (tap to answer)'),
     slots: [
-      { key:'goal', type:'choice', q:L('เป้าหมายหลักคืออะไรครับ?','What is your main goal?'), choices:[[L('ลดไขมัน','Fat loss'),'fat_loss'],[L('เพิ่มกล้าม','Build muscle'),'muscle_gain'],[L('สุขภาพ/ฟิตทั่วไป','General fitness'),'general_fitness']] },
-      { key:'days', type:'choice', q:L('อยากฝึกกี่วันต่อสัปดาห์?','How many days per week?'), choices:[[L('2 วัน','2 days'),2],[L('3 วัน','3 days'),3],[L('4 วัน','4 days'),4],[L('5 วัน','5 days'),5]] },
+      { key:'goal', type:'choice', q:L('เป้าหมายหลักคืออะไรครับ?','What is your main goal?'), choices:[[L('ลดไขมัน','Fat loss'),'fat_loss'],[L('เพิ่มกล้าม','Build muscle'),'muscle_gain'],[L('สุขภาพ/ฟิตทั่วไป','General fitness'),'general_fitness']], other:true },
+      { key:'days', type:'choice', q:L('อยากฝึกกี่วันต่อสัปดาห์?','How many days per week?'), choices:[[L('2 วัน','2 days'),2],[L('3 วัน','3 days'),3],[L('4 วัน','4 days'),4],[L('5 วัน','5 days'),5]], other:true },
       { key:'equip', type:'choice', q:L('มีอุปกรณ์แบบไหนครับ?','What equipment do you have?'), choices:[[L('ไม่มี / บอดี้เวท','None / bodyweight'),'none'],[L('ดัมเบล','Dumbbell'),'dumbbell'],[L('ฟิตเนส / ยิม','Full gym'),'full_gym']], other:true }
     ],
-    complete: function(sl){ var inp={goal:sl.goal||'general_fitness',level:'beginner',daysPerWeek:(+sl.days||3),sessionDurationMinutes:30,equipment:(sl.equip==='none'?['none','bodyweight']:(['dumbbell','full_gym','bodyweight'].indexOf(sl.equip)>=0?[sl.equip]:['bodyweight'].concat(sl.equip?[sl.equip]:[])))}; try{return buildWorkoutPlan('',inp,'none');}catch(e){return null;} }
+    complete: function(sl){ var inp={goal:(['fat_loss','muscle_gain','general_fitness'].indexOf(sl.goal)>=0?sl.goal:'general_fitness'),level:'beginner',daysPerWeek:(+sl.days||3),sessionDurationMinutes:30,equipment:(sl.equip==='none'?['none','bodyweight']:(['dumbbell','full_gym','bodyweight'].indexOf(sl.equip)>=0?[sl.equip]:['bodyweight'].concat(sl.equip?[sl.equip]:[])))}; try{return buildWorkoutPlan('',inp,'none');}catch(e){return null;} }
   },
   plan: {
     intro: L('โอเคครับ ขอถามนิดหน่อยเพื่อจัดให้พอดีตัวคุณ (ตอบสั้น ๆ ได้เลย)','Sure — a few quick questions to tailor this for you'),
@@ -1927,10 +1927,10 @@ var FLOWS = {
     intro: L('จะร่างโปรแกรมฝึกให้ลูกเทรนคนไหนดีครับ?','Which client should I draft a workout program for?'),
     slots: [
       { key:'client', type:'choice', q:L('เลือกลูกเทรน','Pick a client'), choicesFn:clientChoices },
-      { key:'days', type:'choice', q:L('ฝึกกี่วันต่อสัปดาห์?','How many days per week?'), choices:[[L('3 วัน','3 days'),3],[L('4 วัน','4 days'),4],[L('5 วัน','5 days'),5]] },
-      { key:'equip', type:'choice', q:L('ใช้อุปกรณ์แบบไหน?','What equipment?'), choices:[[L('บอดี้เวท (ที่บ้าน)','Bodyweight (home)'),'home'],[L('ยิม/อุปกรณ์ครบ','Full gym'),'gym']] }
+      { key:'days', type:'choice', q:L('ฝึกกี่วันต่อสัปดาห์?','How many days per week?'), choices:[[L('3 วัน','3 days'),3],[L('4 วัน','4 days'),4],[L('5 วัน','5 days'),5]], other:true },
+      { key:'equip', type:'choice', q:L('ใช้อุปกรณ์แบบไหน?','What equipment?'), choices:[[L('บอดี้เวท (ที่บ้าน)','Bodyweight (home)'),'home'],[L('ยิม/อุปกรณ์ครบ','Full gym'),'gym']], other:true }
     ],
-    complete: function(sl){ return buildCoachWorkout(findClientById(sl.client), sl.days, sl.equip); }
+    complete: function(sl){ return buildCoachWorkout(findClientById(sl.client), (+sl.days||3), (['home','gym'].indexOf(sl.equip)>=0?sl.equip:'gym')); }
   }
 };
 function planFlowResult(sl){
