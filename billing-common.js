@@ -114,8 +114,8 @@
      feats:['ลูกเทรน 20 คน','ทุกอย่างใน Starter','กลุ่ม + ภารกิจ + leaderboard','สรุปลูกเทรนที่น่าห่วง','สรุปการบ้านหลายรายการ','IU MATE Coach 500 ครั้ง/เดือน','วิเคราะห์ย้อนหลัง 30–90 วัน','Progress report + share card'],
      featsEn:['20 clients','Everything in Starter','Groups + missions + leaderboard','At-risk client summary','Batch homework summary','IU MATE Coach 500/mo','30–90 day history','Progress report + share card']},
     {k:'growth',name:'Trainer Growth',sub:'สำหรับโค้ชออนไลน์ลูกเทรนเยอะ',subEn:'For online coaches with many clients',clients:50,mo:990,moWas:1490,yr:9900,yrWas:14900,
-     feats:['ลูกเทรน 50 คน','ทุกอย่างใน Pro','ผู้ช่วย 1 คน','จัดการกลุ่มได้ถึง 10 กลุ่ม','รายงานลูกเทรนละเอียดขึ้น','ระบบต่ออายุ / Payment Tracker','Priority support'],
-     featsEn:['50 clients','Everything in Pro','1 assistant seat','Up to 10 groups','Detailed client reports','Renewal / Payment Tracker','Priority support']},
+     feats:['ลูกเทรน 50 คน','ทุกอย่างใน Pro','ผู้ช่วย 1 คน (เร็ว ๆ นี้)','จัดการกลุ่มได้ถึง 10 กลุ่ม','รายงานลูกเทรนละเอียดขึ้น','ระบบต่ออายุ / Payment Tracker','Priority support'],
+     featsEn:['50 clients','Everything in Pro','1 assistant seat (soon)','Up to 10 groups','Detailed client reports','Renewal / Payment Tracker','Priority support']},
     {k:'studio',name:'Studio',sub:'ฟิตเนส สตูดิโอ ทีม หรือองค์กร',subEn:'Gyms, studios, teams & orgs',contact:1,clients:'100+',
      feats:['หลายเทรนเนอร์ / หลายกลุ่ม','รองรับลูกเทรนจำนวนมาก','Team dashboard','รายงานภาพรวมทีม','ระบบจัดการสิทธิ์แอดมิน','ปรับแพ็กตามการใช้งานจริง'],
      featsEn:['Multiple coaches / groups','Many clients','Team dashboard','Team-wide reports','Admin role management','Custom to your usage']}
