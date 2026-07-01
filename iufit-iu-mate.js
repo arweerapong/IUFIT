@@ -1463,13 +1463,71 @@ function msgHtml(m){
     h+='<div style="display:flex;gap:6px"><input id="iuPlaceInput" value="'+esc(rep.placeQuery||'')+'" placeholder="'+esc(rep.placeHolder||'')+'" style="flex:1;min-width:0;padding:9px 11px;border:1px solid #d8e2f0;border-radius:10px;font-size:13px;outline:none" onkeydown="if(event.key===\'Enter\'){event.preventDefault();IUMate.openPlace();}"><button class="iu-mate-act primary" style="white-space:nowrap" onclick="IUMate.openPlace()">'+esc(L('เปิดแผนที่','Open map'))+'</button></div>';
     h+='</div>';
   }
-  if(rep.actions&&rep.actions.length){ h+='<div class="iu-mate-actions">'+rep.actions.map(function(a,ai){
-    return '<button class="iu-mate-act'+(ai===0?' primary':'')+'" onclick="IUMate.act(\''+a.action+'\','+idx+','+ai+')">'+esc(a.label)+'</button>';
-  }).join('')+'</div>'; }
+  if(rep.actions&&rep.actions.length){ h+=_actionsHtml(rep,idx,m); }
   if(rep.disclaimer) h+='<div class="disc">'+esc(rep.disclaimer)+'</div>';
-  if(idx!=null && rep && !rep.noFeedback && !rep.placeSearch){ h+= m.fb ? ('<div class="iu-mate-fbk" style="margin-top:9px;font-size:11px;color:#15a05a">'+esc(L('ขอบคุณสำหรับฟีดแบ็ก 🙏','Thanks for the feedback 🙏'))+'</div>') : ('<div class="iu-mate-fbk" style="display:flex;align-items:center;gap:7px;margin-top:9px"><span style="font-size:10.5px;color:#9aa6bf">'+esc(L('คำตอบนี้ช่วยได้ไหม?','Was this helpful?'))+'</span><button type="button" onclick="IUMate.fb('+idx+',1)" style="border:1px solid #dbe5f5;background:#fff;border-radius:8px;padding:2px 9px;cursor:pointer;font-size:12px">👍 '+esc(L('มีประโยชน์','Helpful'))+'</button><button type="button" onclick="IUMate.fb('+idx+',0)" style="border:1px solid #dbe5f5;background:#fff;border-radius:8px;padding:2px 9px;cursor:pointer;font-size:12px">👎 '+esc(L('ยังไม่ตรง','Not quite'))+'</button></div>'); }
   h+='</div></div></div>';
   return h;
+}
+function _actionsHtml(rep,idx,m){
+  var acts=rep.actions||[];
+  var isFlowQ=acts.some(function(a){return a.action==='flow_pick'||a.action==='flow_other'||a.action==='flow_cancel';});
+  if(isFlowQ && m && m.picked!==undefined){
+    var picks=acts.filter(function(a){return a.action==='flow_pick';});
+    var h='<div class="iu-mate-actions">', inList=false;
+    picks.forEach(function(a){ var chosen=a.payload&&a.payload.v===m.picked; if(chosen)inList=true;
+      h+='<span class="iu-mate-act" style="cursor:default;'+(chosen?'background:#eafaf0;border-color:#18b26b;color:#0f7a44;font-weight:700':'opacity:.4')+'">'+(chosen?'✓ ':'')+esc(a.label)+'</span>'; });
+    if(!inList) h+='<span class="iu-mate-act" style="cursor:default;background:#eafaf0;border-color:#18b26b;color:#0f7a44;font-weight:700">✓ '+esc(''+m.picked)+'</span>';
+    return h+'</div>';
+  }
+  return '<div class="iu-mate-actions">'+acts.map(function(a,ai){
+    return '<button class="iu-mate-act'+(ai===0?' primary':'')+'" onclick="IUMate.act(\''+a.action+'\','+idx+','+ai+')">'+esc(a.label)+'</button>';
+  }).join('')+'</div>';
+}
+function _flowOtherPrompt(){ var slot=flowCurSlot(); if(!slot) return; pushBotText(L('พิมพ์คำตอบของคุณได้เลยครับ','Type your own answer below')); setTimeout(function(){ var inp=document.getElementById('iuMateInput'); if(inp){ try{ inp.focus(); }catch(e){} } },60); }
+/* ============================ review (star rating on close, rare) ============================ */
+var REVIEW_KEY='iufit_iu_mate_review';
+function loadReview(){ try{ return JSON.parse(localStorage.getItem(REVIEW_KEY)||'{}')||{}; }catch(e){ return {}; } }
+function saveReview(r){ try{ localStorage.setItem(REVIEW_KEY, JSON.stringify(r)); }catch(e){} }
+function _reviewStars(n){ n=n||0; var h=''; for(var i=1;i<=5;i++){ h+='<button type="button" onclick="IUMate._rvSet('+i+')" style="background:none;border:none;cursor:pointer;font-size:30px;line-height:1;padding:0 2px;color:'+(i<=n?'#ffb400':'#d4dbe8')+'">'+(i<=n?'★':'☆')+'</button>'; } return h; }
+function _reviewClose(){ var w=document.getElementById('iuMateReview'); if(w) w.remove(); }
+function _reviewDismiss(){ var rv=loadReview(); rv.dismiss=(rv.dismiss||0)+1; rv.last=Date.now(); saveReview(rv); _reviewClose(); }
+function _reviewSubmit(){
+  var n=ST.rvStar||0; if(!n) return;
+  var t=''; var ta=document.getElementById('iuRvText'); if(ta) t=(''+ta.value).slice(0,600);
+  var rec={ rating:n, text:t, role:role(), lang:(EN()?'en':'th'), ts:Date.now(), dev:((window.S&&window.S.devId)||'') };
+  try{ if(typeof fbPush==='function') fbPush('/reviews', rec).catch(function(){}); }catch(e){}
+  try{ var arr=JSON.parse(localStorage.getItem('iufit_iu_mate_reviews')||'[]')||[]; arr.push(rec); if(arr.length>50)arr=arr.slice(-50); localStorage.setItem('iufit_iu_mate_reviews', JSON.stringify(arr)); }catch(e){}
+  var rv=loadReview(); rv.done=true; rv.last=Date.now(); rv.rating=n; saveReview(rv);
+  _reviewClose(); try{ appToast(L('ขอบคุณสำหรับรีวิว 🙏','Thanks for your review 🙏')); }catch(e){}
+}
+function _reviewOpen(){
+  ST.rvStar=0;
+  var w=document.createElement('div'); w.id='iuMateReview'; w.className='iu-mate-confirm-wrap';
+  w.innerHTML='<div class="iu-mate-confirm" style="max-width:380px;width:100%;text-align:center;padding:20px 18px">'+
+    '<div style="font-size:15px;font-weight:800;color:#1b2a4a;margin-bottom:4px">'+sparkInline()+esc(L('ให้คะแนน IU Mate','Rate IU Mate'))+'</div>'+
+    '<div style="font-size:12.5px;color:#5a6b88;line-height:1.5;margin-bottom:12px">'+esc(L('ประสบการณ์ใช้ IU Mate ของคุณเป็นอย่างไรบ้าง? ช่วยรีวิวเพื่อการนำไปพัฒนา IU Mate ให้ดียิ่งขึ้น','How was your experience with IU Mate? Your review helps us improve it.'))+'</div>'+
+    '<div id="iuRvStars" style="display:flex;justify-content:center;gap:4px;margin-bottom:12px">'+_reviewStars(0)+'</div>'+
+    '<textarea id="iuRvText" rows="3" placeholder="'+esc(L('เขียนรีวิว (ไม่บังคับ)','Write a review (optional)'))+'" style="width:100%;box-sizing:border-box;border:1px solid #d8e2f0;border-radius:10px;padding:9px 11px;font-size:13px;font-family:inherit;resize:none;outline:none"></textarea>'+
+    '<div style="font-size:10px;color:#9aa6bf;margin:7px 0 12px">'+esc(L('ส่งให้ทีม IUFIT เพื่อพัฒนา · ไม่รวมบทสนทนาของคุณ','Sent to the IUFIT team to improve · your chat is not included'))+'</div>'+
+    '<button id="iuRvSend" class="go" style="width:100%;opacity:.5" disabled onclick="IUMate._rvSend()">'+esc(L('ส่งรีวิว','Send review'))+'</button>'+
+    '<button type="button" onclick="IUMate._rvDismiss()" style="width:100%;margin-top:8px;background:none;border:none;color:#9aa6bf;font-size:12.5px;cursor:pointer;font-family:inherit">'+esc(L('ไว้ทีหลัง','Maybe later'))+'</button>'+
+    '</div>';
+  w.addEventListener('click',function(ev){ if(ev.target===w) _reviewDismiss(); });
+  document.body.appendChild(w);
+}
+function _reviewMaybe(){
+  try{
+    if(!hasConsent()) return;
+    if(ST.flow) return;
+    if(document.getElementById('iuMateReview')) return;
+    var rv=loadReview(); if(rv.optout) return;
+    var now=Date.now(), DAY=86400000;
+    var gap=rv.done?120*DAY:((rv.dismiss||0)>=3?60*DAY:14*DAY);
+    if(rv.last && (now-rv.last)<gap) return;
+    if(statCount('umsg')<5) return;
+    if(Math.random()>0.25) return;
+    _reviewOpen();
+  }catch(e){}
 }
 function sparkInline(){ return '<span style="color:#0A84FF;width:16px;height:16px;display:inline-grid;place-items:center">'+sparkIcon()+'</span>'; }
 function renderMessages(){
@@ -1561,6 +1619,7 @@ var ACTIONS = {
   coach_menu_redraft:function(p){ if(p&&p.id) pushReply(buildCoachDayMenu(findClientById(p.id))); },
   coach_workout_redraft:function(p){ if(p&&p.id) pushReply(buildCoachWorkout(findClientById(p.id), p.days, p.equip)); },
   flow_pick:function(p){ if(p&&p.v!=null) flowAnswer(p.v); },
+  flow_other:function(){ _flowOtherPrompt(); },
   flow_cancel:function(){ cancelFlow(); },
   _chip:function(p){ if(p&&p.q) IUMate.chip(p.q); }
 };
@@ -1842,9 +1901,9 @@ var FLOWS = {
     slots: [
       { key:'goal', type:'choice', q:L('เป้าหมายหลักคืออะไรครับ?','What is your main goal?'), choices:[[L('ลดไขมัน','Fat loss'),'fat_loss'],[L('เพิ่มกล้าม','Build muscle'),'muscle_gain'],[L('สุขภาพ/ฟิตทั่วไป','General fitness'),'general_fitness']] },
       { key:'days', type:'choice', q:L('อยากฝึกกี่วันต่อสัปดาห์?','How many days per week?'), choices:[[L('2 วัน','2 days'),2],[L('3 วัน','3 days'),3],[L('4 วัน','4 days'),4],[L('5 วัน','5 days'),5]] },
-      { key:'equip', type:'choice', q:L('มีอุปกรณ์แบบไหนครับ?','What equipment do you have?'), choices:[[L('ไม่มี / บอดี้เวท','None / bodyweight'),'none'],[L('ดัมเบล','Dumbbell'),'dumbbell'],[L('ฟิตเนส / ยิม','Full gym'),'full_gym']] }
+      { key:'equip', type:'choice', q:L('มีอุปกรณ์แบบไหนครับ?','What equipment do you have?'), choices:[[L('ไม่มี / บอดี้เวท','None / bodyweight'),'none'],[L('ดัมเบล','Dumbbell'),'dumbbell'],[L('ฟิตเนส / ยิม','Full gym'),'full_gym']], other:true }
     ],
-    complete: function(sl){ var inp={goal:sl.goal||'general_fitness',level:'beginner',daysPerWeek:(+sl.days||3),sessionDurationMinutes:30,equipment:(sl.equip==='none'?['none','bodyweight']:[sl.equip||'bodyweight'])}; try{return buildWorkoutPlan('',inp,'none');}catch(e){return null;} }
+    complete: function(sl){ var inp={goal:sl.goal||'general_fitness',level:'beginner',daysPerWeek:(+sl.days||3),sessionDurationMinutes:30,equipment:(sl.equip==='none'?['none','bodyweight']:(['dumbbell','full_gym','bodyweight'].indexOf(sl.equip)>=0?[sl.equip]:['bodyweight'].concat(sl.equip?[sl.equip]:[])))}; try{return buildWorkoutPlan('',inp,'none');}catch(e){return null;} }
   },
   plan: {
     intro: L('โอเคครับ ขอถามนิดหน่อยเพื่อจัดให้พอดีตัวคุณ (ตอบสั้น ๆ ได้เลย)','Sure — a few quick questions to tailor this for you'),
@@ -1898,11 +1957,13 @@ function slotChoices(slot){ return slot.choices || (slot.choicesFn?slot.choicesF
 function askSlot(slot){
   var acts=[];
   if(slot.type==='choice') acts=slotChoices(slot).map(function(c){ return {label:c[0],action:'flow_pick',payload:{v:c[1]}}; });
+  if(slot.other) acts.push({label:L('อื่น ๆ (พิมพ์เอง)','Other (type it)'),action:'flow_other'});
   acts.push({label:L('ยกเลิก','Cancel'),action:'flow_cancel'});
-  pushReply({ title:null, message:slot.q+(slot.type==='num'?L(' (พิมพ์ตัวเลข)',' (type a number)'):''), actions:acts });
+  pushReply({ title:null, message:slot.q+(slot.type==='num'?L(' (พิมพ์ตัวเลข)',' (type a number)'):(slot.other?L(' (แตะเลือก หรือพิมพ์เอง)',' (tap one, or type your own)'):'')), actions:acts });
+  if(ST.flow) ST.flow.askIdx=ST.messages.length-1;
 }
 function flowCurSlot(){ if(!ST.flow) return null; var def=FLOWS[ST.flow.id],r=null; def.slots.forEach(function(s){ if(s.key===ST.flow.cur) r=s; }); return r; }
-function flowAnswer(v){ if(!ST.flow) return; var slot=flowCurSlot(); if(!slot) return; ST.flow.slots[slot.key]=v; flowNext(); }
+function flowAnswer(v){ if(!ST.flow) return; var slot=flowCurSlot(); if(!slot) return; if(ST.flow.askIdx!=null && ST.messages[ST.flow.askIdx]){ ST.messages[ST.flow.askIdx].picked=v; renderMessages(); } ST.flow.slots[slot.key]=v; ST.flow.askIdx=null; flowNext(); }
 function cancelFlow(){ ST.flow=null; pushBotText(L('ยกเลิกแล้วครับ ถามอย่างอื่นได้เลย','Cancelled — ask me anything else')); }
 function flowInput(text){
   var slot=flowCurSlot(); if(!slot){ ST.flow=null; handleMessage(text); return; }
@@ -1911,7 +1972,7 @@ function flowInput(text){
   if(slot.type==='choice'){
     var m=null; slotChoices(slot).forEach(function(c){ var nc=norm(c[0]); if(nc===t || (''+c[1])===text.trim() || t.indexOf(nc)>=0 || (t.length>=2 && nc.indexOf(t)>=0)) m=c[1]; });
     if(m==null){ if(/ชาย|ผู้ชาย|\bmale\b/.test(t))m='m'; else if(/หญิง|ผู้หญิง|female/.test(t))m='f'; else if(/ลด/.test(t))m='lose'; else if(/เพิ่ม|กล้าม|bulk/.test(t))m='gain'; else if(/รักษา|คงน้ำหนัก|maintain/.test(t))m='keep'; else if(/ปานกลาง|moderate/.test(t))m=1.55; else if(/หนัก|hard/.test(t))m=1.725; else if(/เบา|light/.test(t))m=1.375; else if(/แทบไม่|นั่ง|sedentary/.test(t))m=1.2; }
-    if(m==null){ pushBotText(L('เลือกจากตัวเลือกด้านบนได้เลยครับ','Please pick one of the options above')); return; }
+    if(m==null){ if(slot.other){ flowAnswer(text.trim()); return; } pushBotText(L('เลือกจากตัวเลือกด้านบนได้เลยครับ','Please pick one of the options above')); return; }
     flowAnswer(m);
   } else {
     var mm=(''+text).match(/\d+(\.\d+)?/); var n=mm?parseFloat(mm[0]):NaN;
@@ -1921,7 +1982,7 @@ function flowInput(text){
   }
 }
 function handleMessage(text){
-  text=(text||'').trim(); if(!text) return;
+  text=(text||'').trim(); if(!text) return; try{ bumpStat('umsg'); }catch(e){}
   if(ST.flow){ pushUser(text); flowInput(text); return; }
   pushUser(text); pushTyping();
   setTimeout(function(){ popTyping();
@@ -1950,7 +2011,7 @@ var IUMate = {
     renderSheet(); renderFab();
     setTimeout(function(){ var inp=document.getElementById('iuMateInput'); /* no autofocus to avoid keyboard jump on open */ }, 50);
   },
-  close:function(){ closeNow(); },
+  close:function(){ closeNow(); try{ _reviewMaybe(); }catch(e){} },
   toggleFull:function(){ ST.full=!ST.full; renderSheet(); },
   chip:function(q){ try{ bumpStat('chip:'+q); }catch(e){} handleMessage(q); },
   fb:function(idx, up){ try{ var m=ST.messages[idx]; if(!m||m.role!=='bot'||m.fb) return; m.fb=up?'helpful':'not_helpful'; _logFeedback(m, up); renderMessages(); }catch(e){} },
@@ -1971,6 +2032,9 @@ var IUMate = {
   _pg:function(g){ ST.pickerGrp=g; renderPicker(); },
   _ptoggle:function(id){ pickerToggle(id); },
   _pgo:function(){ pickerGo(); },
+  _rvSet:function(n){ ST.rvStar=n; var s=document.getElementById('iuRvStars'); if(s)s.innerHTML=_reviewStars(n); var b=document.getElementById('iuRvSend'); if(b){ b.disabled=false; b.style.opacity='1'; } },
+  _rvSend:function(){ _reviewSubmit(); },
+  _rvDismiss:function(){ _reviewDismiss(); },
   _amt:function(idx,dir){ previewAmt(idx,dir); },
   _previewAdd:function(rid){ modalClose(); confirmAddRecipe(rid); },
   _sex:function(x){ readCalcInputs(); ST.calc.sex=x; openCalcForm(ST.calc); },
