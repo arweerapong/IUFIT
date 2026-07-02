@@ -42,7 +42,7 @@
   <p class="note" id="co-note"></p>
 </div>
 
-<p class="foot">© 2026 IUFIT · <a class="blue" href="https://iufit.com">iufit.com</a></p>
+<div id="foot"></div>
 </div>
 
 <script src="billing-common.js"></script>
@@ -77,16 +77,15 @@ function renderSummary(){
 }
 function renderPay(){
   var body=document.getElementById('payBody');
-  if(!B.OMISE_READY){
-    body.innerHTML='<div class="bn warn" style="margin:10px 0"><b>'+B.t('omise_soon_t')+'</b>'+B.t('omise_soon_m')+'</div>'
-      +'<a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('book_line')+'</a>'
-      +'<button class="btn ghost" style="margin-top:8px" onclick="reserveLocal()">'+B.t('reserve_local')+'</button>';
-    return;
-  }
-  body.innerHTML='<div class="pm"><button id="pm-card" class="on" onclick="setPM(\'card\')">'+B.t('pm_card')+'</button><button id="pm-pp" onclick="setPM(\'promptpay\')">'+B.t('pm_pp')+'</button></div>'
-    +'<div id="cardForm" class="'+(PM==='card'?'':'hide')+'"><div class="field"><label>'+B.t('card_name')+'</label><input id="card-name" placeholder="'+B.t('card_name_ph')+'"></div><div class="field"><label>'+B.t('card_num')+'</label><input id="card-num" inputmode="numeric" placeholder="0000 0000 0000 0000"></div><div style="display:flex;gap:10px"><div class="field" style="flex:1"><label>'+B.t('card_exp')+'</label><input id="card-exp" placeholder="MM/YY"></div><div class="field" style="flex:1"><label>'+B.t('card_cvv')+'</label><input id="card-cvv" inputmode="numeric" placeholder="123"></div></div></div>'
-    +'<button class="btn pri" style="margin-top:6px" onclick="payNow()">'+B.t('pay_btn')+' ฿'+B.fmt(YR?B.getPlan(PLAN).yr:B.getPlan(PLAN).mo)+'</button>'
-    +'<p class="note" style="margin-top:10px">'+B.t('secure_note')+'</p>';
+  var soon=!B.OMISE_READY, amt='฿'+B.fmt(YR?B.getPlan(PLAN).yr:B.getPlan(PLAN).mo), h='';
+  if(soon)h+='<div class="bn warn" style="margin:0 0 10px"><b>'+B.t('omise_soon_t')+'</b>'+B.t('omise_soon_m')+'</div>';
+  h+='<div class="pm"><button id="pm-card" class="'+(PM==='card'?'on':'')+'" onclick="setPM(\'card\')">'+B.t('pm_card')+'</button><button id="pm-pp" class="'+(PM==='promptpay'?'on':'')+'" onclick="setPM(\'promptpay\')">'+B.t('pm_pp')+'</button></div>';
+  h+='<div id="cardForm" class="'+(PM==='card'?'':'hide')+'"><div class="field"><label>'+B.t('card_name')+'</label><input id="card-name" placeholder="'+B.t('card_name_ph')+'"></div><div class="field"><label>'+B.t('card_num')+'</label><input id="card-num" inputmode="numeric" placeholder="0000 0000 0000 0000"></div><div style="display:flex;gap:10px"><div class="field" style="flex:1"><label>'+B.t('card_exp')+'</label><input id="card-exp" placeholder="MM/YY"></div><div class="field" style="flex:1"><label>'+B.t('card_cvv')+'</label><input id="card-cvv" inputmode="numeric" placeholder="123"></div></div></div>';
+  h+='<label style="display:flex;gap:9px;align-items:flex-start;margin:12px 0;font-size:12px;line-height:1.5;cursor:pointer;color:var(--navy)"><input type="checkbox" id="agree" onchange="var b=document.getElementById(\'payBtn\');if(b){b.disabled=!this.checked;b.style.opacity=this.checked?1:.5;}" style="margin-top:2px;flex:none"><span>'+B.t('consent_refund')+' — <a class="blue" href="refund.html?lang='+B.LANG+'" target="_blank" rel="noopener">'+B.t('nav_refund')+'</a></span></label>';
+  h+='<button id="payBtn" class="btn pri" disabled style="opacity:.5" onclick="payNow()">'+B.t('pay_btn')+' '+amt+'</button>';
+  if(soon)h+='<a class="btn line" style="margin-top:8px" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('book_line')+'</a><button class="btn ghost" style="margin-top:8px" onclick="reserveLocal()">'+B.t('reserve_local')+'</button>';
+  h+='<p class="note" style="margin-top:10px">'+B.t('secure_note')+'</p>';
+  body.innerHTML=h;
 }
 function setPM(m){PM=m;renderPay();}
 function reserveLocal(){
@@ -95,7 +94,8 @@ function reserveLocal(){
 }
 function loadOmise(cb){if(window.Omise){cb();return;}var s=document.createElement('script');s.src='https://cdn.omise.co/omise.js';s.onload=cb;s.onerror=function(){alert('Omise load failed');};document.head.appendChild(s);}
 function payNow(){
-  if(!B.OMISE_READY)return;
+  var ag=document.getElementById('agree');if(ag&&!ag.checked){alert(B.t('consent_req'));return;}
+  if(!B.OMISE_READY){try{window.open(B.LINE_URL,'_blank');}catch(x){}return;}
   loadOmise(function(){
     try{Omise.setPublicKey(B.OMISE_PUBLIC_KEY);}catch(e){}
     var p=B.getPlan(PLAN),amt=(YR?p.yr:p.mo)*100,exp=(document.getElementById('card-exp').value||'').split('/');
@@ -126,6 +126,7 @@ function showResult(kind){
   document.getElementById('t-mo').className=YR?'':'on';document.getElementById('t-yr').className=YR?'on':'';
   renderPlanPick();renderSummary();renderPay();
 })();
+try{var _f=document.getElementById('foot');if(_f)_f.innerHTML=B.footerHtml();}catch(e){}
 </script>
 </body>
 </html>

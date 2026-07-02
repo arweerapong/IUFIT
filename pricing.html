@@ -3,81 +3,85 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>ราคาแพ็กเทรนเนอร์ · IUFIT</title>
-<meta name="description" content="ราคาแพ็กเทรนเนอร์ IUFIT — Free / Starter / Pro / Growth / Studio ดูแลลูกเทรนเป็นระบบ">
+<title>Trainer plans · IUFIT</title>
+<meta name="description" content="IUFIT trainer plans — Free / Starter / Pro / Growth / Studio">
 <link rel="stylesheet" href="billing.css">
 </head>
 <body>
 <div class="wrap">
-<a class="logo" href="https://iufit.com">IU<span>FIT</span></a>
-<div class="nav"><a class="on" href="pricing.html">ราคา</a><a href="billing.html">สมัคร</a><a href="my-plan.html">แพ็กของฉัน</a></div>
+<div style="display:flex;justify-content:space-between;align-items:center">
+  <a class="logo" href="https://iufit.com">IU<span>FIT</span></a>
+  <span id="langtog" style="font-size:12px;font-weight:800;color:var(--muted);cursor:pointer"></span>
+</div>
+<div class="nav"><a class="on" id="n-pr" href="pricing.html"></a><a id="n-bl" href="billing.html"></a><a id="n-mp" href="my-plan.html"></a></div>
 
-<h1>แพ็กเทรนเนอร์</h1>
-<p class="sub">ดูแลลูกเทรนเป็นระบบ — ส่งแผน รับการบ้าน ติดตามผล และให้ IU MATE ช่วยลดงานทุกวัน</p>
-<div class="launch">✨ ราคาเปิดตัวสำหรับเทรนเนอร์กลุ่มแรก · ทดลอง Trainer Pro ฟรี 30 วันในแอป (ไม่ต้องใส่บัตร)</div>
-
-<div id="storeNote" class="bn info hide"><b>เปิดในแอป</b>การสมัคร/ชำระเงินทำผ่านเว็บไซต์หรือ LINE · ในแอปกดทดลองฟรีและดูสถานะแพ็กได้</div>
+<h1 id="h-title"></h1>
+<p class="sub" id="h-sub"></p>
+<div class="launch" id="h-launch"></div>
+<div id="storeNote" class="bn info hide"><b id="sn-t"></b><span id="sn-m"></span></div>
 
 <div class="toggle" id="toggle">
-  <button id="t-mo" class="on" onclick="setCycle(false)">รายเดือน</button>
-  <button id="t-yr" onclick="setCycle(true)">รายปี · ประหยัด 2 เดือน</button>
+  <button id="t-mo" class="on" onclick="setCycle(false)"></button>
+  <button id="t-yr" onclick="setCycle(true)"></button>
 </div>
 
 <div class="grid" id="grid"></div>
 
 <div class="card addon" style="margin-top:14px">
-  <b style="font-size:15px;color:var(--navy)">➕ Add-on · เพิ่มลูกเทรน</b>
-  <div class="psub" style="margin-top:3px">ขยายจำนวนลูกเทรนได้โดยไม่ต้องเปลี่ยนแพ็ก (Starter &amp; Pro)</div>
-  <div style="font-size:16px;font-weight:850;color:var(--blue);margin-top:5px">+5 ลูกเทรน = ฿99/เดือน</div>
-  <div class="psub">เช่น Pro ฿599 + add-on ฿99 = ฿698/เดือน ดูแลได้ 25 คน</div>
+  <b style="font-size:15px;color:var(--navy)" id="ad-t"></b>
+  <div class="psub" style="margin-top:3px" id="ad-d"></div>
+  <div style="font-size:16px;font-weight:850;color:var(--blue);margin-top:5px" id="ad-p"></div>
+  <div class="psub" id="ad-e"></div>
 </div>
 
 <div class="how">
-  <h2>เริ่มยังไง</h2>
-  <ol>
-    <li><b>ทดลองฟรีในแอป</b> — เปิดแอป IUFIT → ตั้งค่า → ทดลอง Trainer Pro ฟรี 30 วัน (ไม่ต้องใส่บัตร)</li>
-    <li><b>พร้อมสมัครจริง</b> — กด “สมัคร” เลือกแพ็ก/รอบบิล แล้วชำระเงิน (หรือทักไลน์)</li>
-    <li><b>ปลดล็อกอัตโนมัติ</b> — เปิดแอปด้วยบัญชีเดิม แพ็กจะเปิดให้เอง ลูกเทรนและข้อมูลอยู่ครบ</li>
-  </ol>
+  <h2 id="hw-t"></h2>
+  <ol><li id="hw-1"></li><li id="hw-2"></li><li id="hw-3"></li></ol>
 </div>
 
-<p class="note">ค่าแพ็กเป็นการสมัครใช้ซอฟต์แวร์ IUFIT ผ่านเว็บไซต์ · ค่าเทรนระหว่างลูกเทรนกับโค้ชโอนตรงผ่าน PromptPay ของโค้ช (IUFIT ไม่ถือเงินแทน) · ดู <a class="blue" href="terms.html">ข้อกำหนด</a> · <a class="blue" href="privacy.html">ความเป็นส่วนตัว</a></p>
-<p class="foot">© 2026 IUFIT · <a class="blue" href="https://iufit.com">iufit.com</a></p>
+<p class="note"><span id="p-note"></span> · <a class="blue" href="terms.html" id="l-terms">Terms</a> · <a class="blue" href="privacy.html" id="l-priv">Privacy</a></p>
+<div id="foot"></div>
 </div>
 
 <script src="billing-common.js"></script>
 <script>
 var B=window.IUFIT_BILLING, YR=false;
-if(B.IS_STORE){document.getElementById('storeNote').classList.remove('hide');}
+function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
+document.getElementById('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
+document.getElementById('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
+T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
+T('h-title','pricing_title');T('h-sub','pricing_sub');T('h-launch','launch');
+T('t-mo','monthly');T('t-yr','yearly');
+T('ad-t','addon_title');T('ad-d','addon_desc');T('ad-p','addon_price');T('ad-e','addon_eg');
+T('hw-t','how_title');T('hw-1','how1');T('hw-2','how2');T('hw-3','how3');
+T('p-note','note_soft');
+document.getElementById('l-terms').textContent=(B.LANG==='en'?'Terms':'ข้อกำหนด');
+document.getElementById('l-priv').textContent=(B.LANG==='en'?'Privacy':'ความเป็นส่วนตัว');
+if(B.IS_STORE){document.getElementById('storeNote').classList.remove('hide');T('sn-t','store_note_t');T('sn-m','store_note_m');}
 function setCycle(yr){YR=yr;document.getElementById('t-mo').className=yr?'':'on';document.getElementById('t-yr').className=yr?'on':'';draw();}
 function draw(){
-  var cur=B.currentPlanKey();
-  var g=document.getElementById('grid'),h='';
+  var cur=B.currentPlanKey(),g=document.getElementById('grid'),h='';
   B.PLANS.forEach(function(p){
-    if(p.k==='free')return; // หน้าราคาโชว์เฉพาะแพ็กโค้ช
+    if(p.k==='free')return;
     var isCur=(cur===p.k);
     h+='<div class="card'+(p.hot?' hot':'')+(isCur?' cur':'')+'">';
-    if(isCur)h+='<span class="badge cur">แพ็กปัจจุบัน</span>';
-    else if(p.badge)h+='<span class="badge">'+p.badge+'</span>';
-    h+='<div class="pname">'+p.name+'</div><div class="psub">'+p.sub+'</div>';
+    if(isCur)h+='<span class="badge cur">'+B.t('current_plan')+'</span>';
+    else if(p.badge)h+='<span class="badge">'+B.planBadge(p)+'</span>';
+    h+='<div class="pname">'+p.name+'</div><div class="psub">'+B.planSub(p)+'</div>';
     h+='<div class="price">';
-    if(p.contact)h+='<span class="now" style="font-size:20px;color:var(--navy)">ติดต่อสอบถาม</span>';
-    else if(YR)h+=(p.yrWas?'<span class="was">฿'+B.fmt(p.yrWas)+'</span>':'')+'<span class="now">฿'+B.fmt(p.yr)+'</span><span class="unit"> /ปี</span><div class="save">≈ ฿'+B.fmt(Math.round(p.yr/12))+'/เดือน · ราคาเปิดตัว</div>';
-    else h+=(p.moWas?'<span class="was">฿'+B.fmt(p.moWas)+'</span>':'')+'<span class="now">฿'+B.fmt(p.mo)+'</span><span class="unit"> /เดือน</span><div class="save">ราคาเปิดตัว</div>';
-    h+='</div><div class="feats">';p.feats.forEach(function(f){h+='✓ '+f+'<br>';});h+='</div>';
-    // CTA — store build: ไม่มีปุ่มซื้อ/ลิงก์ checkout
-    if(B.IS_STORE){
-      h+='<div class="psub" style="text-align:center;margin:0">จัดการแพ็กผ่านเว็บ/ไลน์</div>';
-    }else if(p.contact){
-      h+='<a class="cta ghost" href="'+B.LINE_URL+'" target="_blank" rel="noopener">ติดต่อสอบถาม</a>';
-    }else{
-      h+='<a class="cta pri" href="billing.html?plan='+p.k+'&cycle='+(YR?'yr':'mo')+'">เลือกแพ็กนี้</a>';
-    }
+    if(p.contact)h+='<span class="now" style="font-size:20px;color:var(--navy)">'+B.t('contact')+'</span>';
+    else if(YR)h+=(p.yrWas?'<span class="was">฿'+B.fmt(p.yrWas)+'</span>':'')+'<span class="now">฿'+B.fmt(p.yr)+'</span><span class="unit"> '+B.t('per_yr')+'</span><div class="save">≈ ฿'+B.fmt(Math.round(p.yr/12))+B.t('per_mo')+' · '+B.t('launch_price')+'</div>';
+    else h+=(p.moWas?'<span class="was">฿'+B.fmt(p.moWas)+'</span>':'')+'<span class="now">฿'+B.fmt(p.mo)+'</span><span class="unit"> '+B.t('per_mo')+'</span><div class="save">'+B.t('launch_price')+'</div>';
+    h+='</div><div class="feats">';B.planFeats(p).forEach(function(f){h+='✓ '+f+'<br>';});h+='</div>';
+    if(B.IS_STORE)h+='<div class="psub" style="text-align:center;margin:0">'+B.t('manage_web')+'</div>';
+    else if(p.contact)h+='<a class="cta ghost" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('contact')+'</a>';
+    else h+='<a class="cta pri" href="billing.html?plan='+p.k+'&cycle='+(YR?'yr':'mo')+'&lang='+B.LANG+'">'+B.t('choose_plan')+'</a>';
     h+='</div>';
   });
   g.innerHTML=h;
 }
 draw();
+try{var _f=document.getElementById("foot");if(_f)_f.innerHTML=B.footerHtml();}catch(e){}
 </script>
 </body>
 </html>

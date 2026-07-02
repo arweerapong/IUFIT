@@ -21,6 +21,30 @@
   var OMISE_READY=false;
   var CHARGE_ENDPOINT='https://iufit-omise.ar-weerapong.workers.dev';
   var LINE_URL='https://line.me/R/ti/p/@987qyznd';
+  /* ===== ข้อมูลติดต่อผู้ให้บริการ (Omise requires public contact) — แก้ค่าให้เป็นข้อมูลจริงก่อนยื่น =====
+     TODO(กรอกจริง): name = ชื่อ-นามสกุลผู้สมัคร (บุคคลธรรมดา, ต้องตรงกับบัตร ปชช./บัญชีธนาคาร)
+                     addr = ที่อยู่ตามที่ใช้ยืน Omise · phone = เบอร์ติดต่อจริง */
+  var CONTACT={
+    name:'วีระพงศ์ แซ่เอี๊ยว',
+    addr:'18/70 หมู่บ้านแอริพระราม 2 แขวงแสมดำ เขตบางขุนเทียน กรุงเทพฯ 10150',
+    phone:'[เบอร์โทรศัพท์ / Phone number]',
+    email:'ar.weerapong@gmail.com',
+    line:'@987qyznd'
+  };
+  function contactRowsHtml(){
+    return '<div class="crow"><span>'+t('c_name')+'</span><b>'+CONTACT.name+'</b></div>'+
+      '<div class="crow"><span>'+t('c_addr')+'</span><b>'+CONTACT.addr+'</b></div>'+
+      '<div class="crow"><span>'+t('c_phone')+'</span><b><a class="blue" href="tel:'+CONTACT.phone.replace(/[^0-9+]/g,'')+'">'+CONTACT.phone+'</a></b></div>'+
+      '<div class="crow"><span>'+t('c_email')+'</span><b><a class="blue" href="mailto:'+CONTACT.email+'">'+CONTACT.email+'</a></b></div>'+
+      '<div class="crow"><span>'+t('c_line')+'</span><b><a class="blue" href="'+LINE_URL+'" target="_blank" rel="noopener">'+CONTACT.line+'</a></b></div>';
+  }
+  function footerHtml(){
+    return '<div class="ftcontact"><b>'+t('contact_title')+'</b>'+
+      '<div>'+CONTACT.name+' · '+CONTACT.addr+'</div>'+
+      '<div>'+t('c_phone')+': '+CONTACT.phone+' · '+t('c_email')+': <a class="blue" href="mailto:'+CONTACT.email+'">'+CONTACT.email+'</a> · LINE: <a class="blue" href="'+LINE_URL+'" target="_blank" rel="noopener">'+CONTACT.line+'</a></div>'+
+      '<div style="margin-top:6px"><a class="blue" href="pricing.html?lang='+LANG+'">'+t('nav_pricing')+'</a> · <a class="blue" href="refund.html?lang='+LANG+'">'+t('nav_refund')+'</a> · <a class="blue" href="terms.html">'+(LANG==='en'?'Terms':'ข้อกำหนด')+'</a> · <a class="blue" href="privacy.html">'+(LANG==='en'?'Privacy':'ความเป็นส่วนตัว')+'</a> · <a class="blue" href="contact.html?lang='+LANG+'">'+t('nav_contact')+'</a></div>'+
+      '</div><div class="ftcopy">© 2026 IUFIT · <a class="blue" href="https://iufit.com">iufit.com</a></div>';
+  }
 
   function appState(){try{return JSON.parse(localStorage.getItem('iufit')||'{}')||{};}catch(e){return {};}}
   function detectLang(){
@@ -66,7 +90,17 @@
       rem_paid_t:'⏰ แพ็กใกล้หมดอายุ',rem_paid_m:'อีก {d} วัน ({date}) · ต่ออายุเพื่อคงลูกเทรนและฟีเจอร์ไว้',
       know_title:'เมื่อสมาชิกหมดอายุ',know1:'เมื่อแพ็ก/ช่วงทดลองหมดอายุ <b>ข้อมูลไม่หาย</b> — กลับเป็น Trainer Free (ดูแลลูกเทรนได้ 1 คน)',know2:'ลูกเทรนที่เกินสิทธิ์จะถูกล็อกเป็น <b>อ่านอย่างเดียว</b> ชั่วคราว (ไม่ถูกลบ) — อัปเกรดเมื่อไรก็กลับมาใช้ได้ครบ',know3:'อัปเกรด/ต่ออายุได้ทุกเมื่อ แพ็กจะปลดล็อกในแอปอัตโนมัติ',
       act_store_t:'จัดการแพ็กผ่านเว็บ/LINE',act_store_m:'เปิด iufit.com/billing.html ในเบราว์เซอร์ หรือทักไลน์เพื่อสมัคร/ต่ออายุ — แพ็กจะปลดล็อกในแอปอัตโนมัติ',
-      act_sub_keep:'สมัครต่อ · คงสิทธิ์ Pro',act_see_all:'ดูแพ็กทั้งหมด',act_renew:'🔄 ต่ออายุแพ็กนี้',act_change:'เปลี่ยน/อัปเกรดแพ็ก',act_upgrade:'อัปเกรดเป็น Trainer Pro'
+      act_sub_keep:'สมัครต่อ · คงสิทธิ์ Pro',act_see_all:'ดูแพ็กทั้งหมด',act_renew:'🔄 ต่ออายุแพ็กนี้',act_change:'เปลี่ยน/อัปเกรดแพ็ก',act_upgrade:'อัปเกรดเป็น Trainer Pro',
+      nav_refund:'คืนเงิน',nav_contact:'ติดต่อ',
+      refund_title:'นโยบายการยกเลิกและคืนเงิน',refund_sub:'สำหรับบริการสมาชิกซอฟต์แวร์ IUFIT (บริการดิจิทัลแบบสมัครสมาชิก)',
+      refund_p1:'<b>ทดลองใช้ฟรี 30 วัน</b> ก่อนชำระเงินทุกแพ็ก — โปรดทดลองใช้ให้แน่ใจก่อนสมัคร',
+      refund_p2:'<b>ไม่มีการคืนเงิน (No refund)</b> เมื่อชำระค่าบริการแล้วทุกกรณี เนื่องจากเป็นบริการดิจิทัลที่เปิดใช้งานให้ทันที',
+      refund_p3:'<b>การยกเลิก:</b> ยกเลิกการต่ออายุอัตโนมัติได้ทุกเมื่อ จะไม่ถูกเรียกเก็บเงินรอบถัดไป และยังใช้งานได้จนครบรอบที่ชำระไว้',
+      refund_p4:'<b>กรณีพิเศษ:</b> หากมีการคืนเงินตามดุลยพินิจของผู้ให้บริการ จะคืนผ่าน<b>ช่องทางการชำระเงินเดิมเท่านั้น</b> ภายใน 7–14 วันทำการ',
+      refund_p5:'มีคำถามหรือต้องการความช่วยเหลือ ติดต่อเราตามช่องทางด้านล่างได้ทุกเมื่อ',
+      consent_refund:'ฉันได้อ่านและยอมรับนโยบายไม่คืนเงินและข้อกำหนดการใช้บริการ',
+      consent_req:'กรุณายอมรับนโยบายคืนเงินก่อนชำระเงิน',
+      contact_title:'ข้อมูลติดต่อผู้ให้บริการ',c_name:'ชื่อผู้ประกอบการ',c_addr:'ที่อยู่',c_phone:'โทรศัพท์',c_email:'อีเมล',c_line:'LINE'
     },
     en:{
       nav_pricing:'Pricing',nav_billing:'Subscribe',nav_myplan:'My plan',
@@ -99,7 +133,17 @@
       rem_paid_t:'⏰ Plan expiring soon',rem_paid_m:'{d} days left ({date}) · renew to keep your clients and features.',
       know_title:'When your membership expires',know1:'When your plan or trial expires <b>your data is safe</b> — you return to Trainer Free (1 client).',know2:'Clients over the limit become <b>read-only</b> temporarily (never deleted) — upgrade anytime to restore full access.',know3:'Upgrade/renew anytime; your plan unlocks in the app automatically.',
       act_store_t:'Manage on web / LINE',act_store_m:'Open iufit.com/billing.html in a browser or chat on LINE to subscribe/renew — your plan unlocks in the app automatically.',
-      act_sub_keep:'Subscribe · keep Pro',act_see_all:'See all plans',act_renew:'🔄 Renew this plan',act_change:'Change / upgrade plan',act_upgrade:'Upgrade to Trainer Pro'
+      act_sub_keep:'Subscribe · keep Pro',act_see_all:'See all plans',act_renew:'🔄 Renew this plan',act_change:'Change / upgrade plan',act_upgrade:'Upgrade to Trainer Pro',
+      nav_refund:'Refunds',nav_contact:'Contact',
+      refund_title:'Cancellation & Refund Policy',refund_sub:'For IUFIT software membership (a digital subscription service)',
+      refund_p1:'<b>30-day free trial</b> on every plan before any payment — please try it first to make sure it fits.',
+      refund_p2:'<b>No refund</b> once a subscription fee has been paid, in all cases, as this is a digital service activated immediately.',
+      refund_p3:'<b>Cancellation:</b> you can cancel auto-renewal anytime; you will not be charged for the next cycle and keep access until the end of the paid period.',
+      refund_p4:'<b>Exceptions:</b> if a refund is granted at the provider’s discretion, it will be returned <b>only to the original payment method</b> within 7–14 business days.',
+      refund_p5:'Questions or need help? Contact us via the channels below anytime.',
+      consent_refund:'I have read and accept the no-refund policy and the terms of service.',
+      consent_req:'Please accept the refund policy before paying.',
+      contact_title:'Service provider contact',c_name:'Business owner',c_addr:'Address',c_phone:'Phone',c_email:'Email',c_line:'LINE'
     }
   };
   function t(k){return (T[LANG]&&T[LANG][k])||T.th[k]||k;}
@@ -158,6 +202,7 @@
     appState:appState, accountKey:accountKey, accountLabel:accountLabel,
     currentPlanKey:currentPlanKey, planExpiry:planExpiry,
     trialDaysLeft:trialDaysLeft, trialActive:trialActive, trialExpired:trialExpired,
-    paidActive:paidActive, daysUntil:daysUntil, reminderTier:reminderTier, today:today, qs:qs
+    paidActive:paidActive, daysUntil:daysUntil, reminderTier:reminderTier, today:today, qs:qs,
+    CONTACT:CONTACT, contactRowsHtml:contactRowsHtml, footerHtml:footerHtml
   };
 })();

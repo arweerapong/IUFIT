@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Refunds · IUFIT</title>
+<meta name="description" content="IUFIT cancellation and refund policy">
+<link rel="stylesheet" href="billing.css">
+</head>
+<body>
+<div class="wrap">
+<div style="display:flex;justify-content:space-between;align-items:center">
+  <a class="logo" href="https://iufit.com">IU<span>FIT</span></a>
+  <span id="langtog" style="font-size:12px;font-weight:800;color:var(--muted);cursor:pointer"></span>
+</div>
+<div class="nav"><a id="n-pr" href="pricing.html"></a><a id="n-bl" href="billing.html"></a><a id="n-mp" href="my-plan.html"></a></div>
+
+<h1 id="h-title"></h1>
+<p class="sub" id="h-sub"></p>
+
+<div class="card policy">
+  <div class="pt"><span class="ic">🎁</span><div id="p1"></div></div>
+  <div class="pt"><span class="ic">🚫</span><div id="p2"></div></div>
+  <div class="pt"><span class="ic">🔁</span><div id="p3"></div></div>
+  <div class="pt"><span class="ic">💳</span><div id="p4"></div></div>
+  <div class="pt"><span class="ic">💬</span><div id="p5"></div></div>
+</div>
+
+<h2 id="c-title" style="font-size:16px;color:var(--navy);margin:20px 0 6px"></h2>
+<div class="card" id="contactCard"></div>
+
+<div id="foot"></div>
+</div>
+
+<script src="billing-common.js"></script>
+<script>
+var B=window.IUFIT_BILLING;
+function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
+document.getElementById('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
+document.getElementById('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
+T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
+T('h-title','refund_title');T('h-sub','refund_sub');
+T('p1','refund_p1');T('p2','refund_p2');T('p3','refund_p3');T('p4','refund_p4');T('p5','refund_p5');
+T('c-title','contact_title');
+document.getElementById('contactCard').innerHTML=B.contactRowsHtml();
+document.getElementById('foot').innerHTML=B.footerHtml();
+</script>
+</body>
+</html>
