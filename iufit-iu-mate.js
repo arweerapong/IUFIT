@@ -1547,9 +1547,10 @@ function setupSheetDrag(){
 }
 function renderSheet(){
   var r=root(); var chips=quickChips();
+  var noAnim=!!ST._skipAnim; ST._skipAnim=false; /* already-open sheet re-render: keep it fully open, no entry animation */
   r.innerHTML=
-   '<div class="iu-mate-backdrop" onclick="IUMate.close()"></div>'+
-   '<section class="iu-mate-sheet'+(ST.full?' full':'')+'" role="dialog" aria-label="IU Mate">'+
+   '<div class="iu-mate-backdrop'+(noAnim?' no-anim':'')+'" onclick="IUMate.close()"></div>'+
+   '<section class="iu-mate-sheet'+(ST.full?' full':'')+(noAnim?' no-anim':'')+'" role="dialog" aria-label="IU Mate">'+
      '<button type="button" class="iu-mate-grab" onclick="IUMate.close()" aria-label="'+L('ย่อหน้าต่าง','Minimize')+'" title="'+L('ย่อหน้าต่าง','Minimize')+'"></button>'+
      '<header class="iu-mate-header">'+
        '<button class="iu-mate-close" onclick="IUMate.close()" aria-label="close">←</button>'+
@@ -2040,7 +2041,7 @@ var IUMate = {
   _sex:function(x){ readCalcInputs(); ST.calc.sex=x; openCalcForm(ST.calc); },
   _goal:function(x){ readCalcInputs(); ST.calc.goal=x; openCalcForm(ST.calc); },
   _calc:function(){ readCalcInputs(); var p=ST.calc||{}; if(p.w==null||p.h==null||p.age==null||p.sex==null){ appToast(L('กรอกเพศ อายุ ส่วนสูง น้ำหนักให้ครบก่อนครับ','Please fill sex, age, height and weight')); return; } if(!(p.age>=10&&p.age<=100)||!(p.h>=120&&p.h<=220)||!(p.w>=30&&p.w<=250)){ appToast(L('ตรวจค่าอีกครั้ง: อายุ 10–100 ปี · สูง 120–220 ซม. · หนัก 30–250 กก.','Check values: age 10–100 · height 120–220 cm · weight 30–250 kg')); return; } modalClose(); if(!ST.isOpen) IUMate.open('global'); pushReply(calcReply(p)); },
-  acceptConsent:function(){ ST.flow=null; ST.ctx=null; var coachData=true; var cb=document.getElementById('iuMateCoachConsent'); if(cb) coachData=!!cb.checked; saveConsent(coachData); ST.messages=[]; ST.messages.push({role:'botText',text:greeting()}); renderSheet(); renderFab(); },
+  acceptConsent:function(){ ST.flow=null; ST.ctx=null; var coachData=true; var cb=document.getElementById('iuMateCoachConsent'); if(cb) coachData=!!cb.checked; saveConsent(coachData); ST.messages=[]; ST.messages.push({role:'botText',text:greeting()}); ST.isOpen=true; ST._nudgeSeen=true; ST._skipAnim=true; renderSheet(); renderFab(); },
   declineConsent:function(){ closeNow(); },
   showPrivacy:function(){ showConfirm({ title:L('ความเป็นส่วนตัว','Privacy'), body:L('IU Mate ทำงานในเครื่อง บทสนทนาไม่ถูกบันทึกหรือส่งออกนอกเครื่อง และอ่านข้อมูลในแอปเพื่อช่วยสรุปเท่านั้น','IU Mate runs on-device. Conversations are not saved or sent anywhere, and it only reads your in-app data to help summarize.'), yes:L('เพิกถอนความยินยอม','Withdraw consent'), onYes:function(){ revokeConsent(); appToast(L('เพิกถอนความยินยอมแล้ว','Consent withdrawn')); closeNow(); } }); },
   _sync:function(){ try{ renderFab(); }catch(e){} try{ injectEntryPoints(); }catch(e){} },

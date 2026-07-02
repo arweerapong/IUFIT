@@ -28,16 +28,18 @@
 
 /* ---------- Backdrop + sheet ---------- */
 .iu-mate-backdrop{position:fixed;inset:0;z-index:1300;background:rgba(6,18,40,.42);backdrop-filter:blur(2px);
-  opacity:0;animation:iu-fade .2s ease forwards}
-@keyframes iu-fade{to{opacity:1}}
+  opacity:1;animation:iu-fade .2s ease}
+@keyframes iu-fade{from{opacity:0}}
 .iu-mate-sheet{
   position:fixed;inset:auto 0 0 0;z-index:1310;max-width:520px;margin:0 auto;width:100%;
   height:min(88vh,820px);background:linear-gradient(180deg,#FFFFFF,#F6F9FF);
   border-radius:30px 30px 0 0;box-shadow:0 -24px 80px rgba(0,39,102,.30);
   display:flex;flex-direction:column;overflow:hidden;font-family:inherit;color:var(--iu-text);
-  transform:translateY(100%);animation:iu-up .26s cubic-bezier(.22,1,.36,1) forwards}
+  transform:translateY(0);animation:iu-up .26s cubic-bezier(.22,1,.36,1)}
 .iu-mate-sheet.full{height:100dvh;border-radius:0}
-@keyframes iu-up{to{transform:translateY(0)}}
+@keyframes iu-up{from{transform:translateY(100%)}}
+/* re-render of an already-open sheet (e.g. right after consent accept): no entry animation */
+.iu-mate-sheet.no-anim,.iu-mate-backdrop.no-anim{animation:none}
 .iu-mate-grab{position:relative;width:48px;height:5px;border-radius:999px;background:linear-gradient(90deg,#0A84FF,#20D5FF);margin:9px auto 2px;border:0;padding:0;cursor:pointer;display:block}
 .iu-mate-grab::before{content:"";position:absolute;inset:-13px -60px}
 .iu-mate-grab:active{background:linear-gradient(90deg,#003C8F,#0A84FF)}
@@ -99,7 +101,7 @@
 .iu-mate-privacy-note{font-size:10.5px;color:var(--iu-muted);text-align:center;padding:0 14px 6px;line-height:1.4}
 
 /* ---------- Confirm dialog ---------- */
-.iu-mate-confirm-wrap{position:fixed;inset:0;z-index:1400;display:grid;place-items:center;background:rgba(6,18,40,.5);padding:24px;opacity:0;animation:iu-fade .16s ease forwards}
+.iu-mate-confirm-wrap{position:fixed;inset:0;z-index:1400;display:grid;place-items:center;background:rgba(6,18,40,.5);padding:24px;opacity:1;animation:iu-fade .16s ease}
 .iu-mate-confirm{background:#fff;border-radius:24px;max-width:360px;width:100%;padding:20px;box-shadow:var(--iu-shadow);text-align:center}
 .iu-mate-confirm .ci{width:54px;height:54px;border-radius:18px;margin:0 auto 12px;background:var(--iu-bg-soft);display:grid;place-items:center;color:var(--iu-blue)}
 .iu-mate-confirm .ci svg{width:28px;height:28px}

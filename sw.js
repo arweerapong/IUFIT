@@ -1,7 +1,7 @@
 /* เวลาอัปเดตแอป ให้เปลี่ยนเลขเวอร์ชัน v157 -> v158 ...
    HTML = network-first (ออนไลน์ได้ตัวล่าสุดเสมอ, ออฟไลน์ใช้ cache สำรอง)
    asset = cache-first (เร็ว) */
-const CACHE='iufit-v663-modern-ui';
+const CACHE='iufit-v665-modern-ui';
 const FILES=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./iufit-modern-theme.css','./food-db.js','./resultcard.html','./iufit-iu-mate.css','./iufit-iu-mate.js'];
 /* resilient install: a single missing/404 file must NOT block the whole update */
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>Promise.allSettled(FILES.map(function(f){return c.add(f)}))));self.skipWaiting()});
