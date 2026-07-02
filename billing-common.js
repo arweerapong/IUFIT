@@ -26,9 +26,9 @@
                      addr = ที่อยู่ตามที่ใช้ยืน Omise · phone = เบอร์ติดต่อจริง */
   var CONTACT={
     name:'วีระพงศ์ แซ่เอี๊ยว',
-    addr:'18/70 หมู่บ้านแอริพระราม 2 แขวงแสมดำ เขตบางขุนเทียน กรุงเทพฯ 10150',
-    phone:'[เบอร์โทรศัพท์ / Phone number]',
-    email:'ar.weerapong@gmail.com',
+    addr:'9 รามคำแหง 170 แยก 8 ถนนรามคำแหง แขวงมีนบุรี เขตมีนบุรี กรุงเทพฯ 10510',
+    phone:'099-395-9266',
+    email:'support@iufit.com',
     line:'@987qyznd'
   };
   function contactRowsHtml(){
