@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Trainer plans · IUFIT</title>
 <meta name="description" content="IUFIT trainer plans — Free / Starter / Pro / Growth / Studio">
-<link rel="stylesheet" href="billing.css">
+<link rel="stylesheet" href="billing.css?v=v107">
 </head>
 <body>
 <div class="wrap">
@@ -18,6 +18,7 @@
 <h1 id="h-title"></h1>
 <p class="sub" id="h-sub"></p>
 <div class="launch" id="h-launch"></div>
+<div class="trial-hero"><b id="th-t"></b><span id="th-m"></span><br><a id="th-cta" href="open.html"></a></div>
 <div id="storeNote" class="bn info hide"><b id="sn-t"></b><span id="sn-m"></span></div>
 
 <div class="toggle" id="toggle">
@@ -34,16 +35,26 @@
   <div class="psub" id="ad-e"></div>
 </div>
 
+<div class="trust-row"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><i id="tr-pay"></i></span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><i id="tr-pp"></i></span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><i id="tr-ssl"></i></span></div>
 <div class="how">
   <h2 id="hw-t"></h2>
   <ol><li id="hw-1"></li><li id="hw-2"></li><li id="hw-3"></li></ol>
 </div>
 
+<h2 class="sec-title" id="why-t"></h2>
+<div class="why-grid"><div class="why"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg></div><div><b id="w1t"></b><p id="w1m"></p></div></div><div class="why"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v4M12 17v4M4 12h4M16 12h4M6.5 6.5l2.5 2.5M15 15l2.5 2.5M17.5 6.5L15 9M9 15l-2.5 2.5"/></svg></div><div><b id="w2t"></b><p id="w2m"></p></div></div><div class="why"><div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><path d="M16.5 5.3a3 3 0 0 1 0 5.4M18.5 20c0-2-1-3.6-2.6-4.4"/></svg></div><div><b id="w3t"></b><p id="w3m"></p></div></div></div>
+<!-- พื้นที่รีวิวจริง: เมื่อมีรีวิวลูกค้าจริง ใส่การ์ด <div class="why">...</div> เพิ่มตรงนี้ได้ -->
+<h2 class="sec-title" id="faq-t"></h2>
+<details class="faq"><summary id="f1q"></summary><p id="f1a"></p></details>
+<details class="faq"><summary id="f2q"></summary><p id="f2a"></p></details>
+<details class="faq"><summary id="f3q"></summary><p id="f3a"></p></details>
+<details class="faq"><summary id="f4q"></summary><p id="f4a"></p></details>
+<details class="faq"><summary id="f5q"></summary><p id="f5a"></p></details>
 <p class="note"><span id="p-note"></span> · <a class="blue" href="terms.html" id="l-terms">Terms</a> · <a class="blue" href="privacy.html" id="l-priv">Privacy</a></p>
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js"></script>
+<script src="billing-common.js?v=v107"></script>
 <script>
 var B=window.IUFIT_BILLING, YR=false;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
@@ -54,6 +65,10 @@ T('h-title','pricing_title');T('h-sub','pricing_sub');T('h-launch','launch');
 T('t-mo','monthly');T('t-yr','yearly');
 T('ad-t','addon_title');T('ad-d','addon_desc');T('ad-p','addon_price');T('ad-e','addon_eg');
 T('hw-t','how_title');T('hw-1','how1');T('hw-2','how2');T('hw-3','how3');
+T('th-t','trial_hero_t');T('th-m','trial_hero_m');T('th-cta','trial_hero_cta');
+T('tr-pay','trust_pay');T('tr-pp','trust_pp');T('tr-ssl','trust_ssl');
+T('why-t','why_title');T('w1t','why1_t');T('w1m','why1_m');T('w2t','why2_t');T('w2m','why2_m');T('w3t','why3_t');T('w3m','why3_m');
+T('faq-t','faq_title');T('f1q','faq1_q');T('f1a','faq1_a');T('f2q','faq2_q');T('f2a','faq2_a');T('f3q','faq3_q');T('f3a','faq3_a');T('f4q','faq4_q');T('f4a','faq4_a');T('f5q','faq5_q');T('f5a','faq5_a');
 T('p-note','note_soft');
 document.getElementById('l-terms').textContent=(B.LANG==='en'?'Terms':'ข้อกำหนด');
 document.getElementById('l-priv').textContent=(B.LANG==='en'?'Privacy':'ความเป็นส่วนตัว');

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Subscribe · IUFIT</title>
 <meta name="description" content="Subscribe to an IUFIT trainer plan — choose plan, cycle and pay via Omise">
-<link rel="stylesheet" href="billing.css">
+<link rel="stylesheet" href="billing.css?v=v107">
 </head>
 <body>
 <div class="wrap">
@@ -45,7 +45,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js"></script>
+<script src="billing-common.js?v=v107"></script>
 <script>
 var B=window.IUFIT_BILLING;
 var YR=(B.qs('cycle')==='yr'), PLAN=B.qs('plan')||'pro', PM='card';
@@ -85,6 +85,7 @@ function renderPay(){
   h+='<button id="payBtn" class="btn pri" disabled style="opacity:.5" onclick="payNow()">'+B.t('pay_btn')+' '+amt+'</button>';
   if(soon)h+='<a class="btn line" style="margin-top:8px" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('book_line')+'</a><button class="btn ghost" style="margin-top:8px" onclick="reserveLocal()">'+B.t('reserve_local')+'</button>';
   h+='<p class="note" style="margin-top:10px">'+B.t('secure_note')+'</p>';
+  h+='<div style="margin-top:14px;padding:12px 14px;background:#f6f9ff;border:1px solid var(--line);border-radius:12px"><b style="font-size:12.5px;color:var(--navy);display:block;margin-bottom:7px">'+B.t('contact_title')+'</b>'+B.contactRowsHtml()+'</div>';
   body.innerHTML=h;
 }
 function setPM(m){PM=m;renderPay();}

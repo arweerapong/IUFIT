@@ -40,8 +40,8 @@
   }
   function footerHtml(){
     return '<div class="ftcontact"><b>'+t('contact_title')+'</b>'+
-      '<div>'+CONTACT.name+' · '+CONTACT.addr+'</div>'+
-      '<div>'+t('c_phone')+': '+CONTACT.phone+' · '+t('c_email')+': <a class="blue" href="mailto:'+CONTACT.email+'">'+CONTACT.email+'</a> · LINE: <a class="blue" href="'+LINE_URL+'" target="_blank" rel="noopener">'+CONTACT.line+'</a></div>'+
+      '<div>'+CONTACT.name+'</div>'+
+      '<div>'+t('c_email')+': <a class="blue" href="mailto:'+CONTACT.email+'">'+CONTACT.email+'</a> · LINE: <a class="blue" href="'+LINE_URL+'" target="_blank" rel="noopener">'+CONTACT.line+'</a></div>'+
       '<div style="margin-top:6px"><a class="blue" href="pricing.html?lang='+LANG+'">'+t('nav_pricing')+'</a> · <a class="blue" href="refund.html?lang='+LANG+'">'+t('nav_refund')+'</a> · <a class="blue" href="terms.html">'+(LANG==='en'?'Terms':'ข้อกำหนด')+'</a> · <a class="blue" href="privacy.html">'+(LANG==='en'?'Privacy':'ความเป็นส่วนตัว')+'</a> · <a class="blue" href="contact.html?lang='+LANG+'">'+t('nav_contact')+'</a></div>'+
       '</div><div class="ftcopy">© 2026 IUFIT · <a class="blue" href="https://iufit.com">iufit.com</a></div>';
   }
@@ -62,6 +62,10 @@
     th:{
       nav_pricing:'ราคา',nav_billing:'สมัคร',nav_myplan:'แพ็กของฉัน',
       pricing_title:'แพ็กเทรนเนอร์',pricing_sub:'ดูแลลูกเทรนเป็นระบบ — ส่งแผน รับการบ้าน ติดตามผล และให้ IU MATE ช่วยลดงานทุกวัน',
+      trial_hero_t:'ทดลอง Trainer Pro ฟรี 30 วัน',trial_hero_m:'ไม่ต้องใส่บัตร · ยกเลิกได้ทุกเมื่อ · เริ่มใช้ได้ทันทีในแอป',trial_hero_cta:'เปิดแอปเพื่อทดลองฟรี →',
+      trust_pay:'ชำระเงินปลอดภัย Omise',trust_pp:'รองรับ PromptPay',trust_ssl:'เข้ารหัส SSL',
+      why_title:'ทำไมเทรนเนอร์เลือก IUFIT',why1_t:'ครบในแอปเดียว',why1_m:'ส่งแผนอาหาร/ฝึก รับ-ตรวจการบ้าน แชท และติดตามผลลูกเทรน',why2_t:'IU MATE ช่วยลดงาน',why2_m:'ร่างเมนู/โปรแกรมฝึก สรุปการบ้าน และคนที่ต้องตามให้',why3_t:'ลูกเทรนไม่ต้องจ่าย',why3_m:'เชิญด้วย QR เข้าใช้ผ่านที่นั่งของคุณ ไม่ต้องซื้อแพ็กเอง',
+      faq_title:'คำถามที่พบบ่อย',faq1_q:'จ่ายเงินยังไงบ้าง?',faq1_a:'เลือกแพ็ก → ชำระผ่านบัตรเครดิต/เดบิต หรือ PromptPay ผ่าน Omise ที่ปลอดภัย → เปิดแอปด้วยบัญชีเดิม แพ็กปลดล็อกอัตโนมัติ',faq2_q:'ทำไมในแอปไม่มีปุ่มซื้อ?',faq2_a:'ตามนโยบาย Google Play การสมัครแพ็กซอฟต์แวร์ทำผ่านเว็บนี้ (นอกแอป) · ส่วนค่าคอร์สเทรนตัวต่อตัว (บริการจริงระหว่างคุณกับลูกเทรน) จ่าย PromptPay ในแอปได้ปกติ',faq3_q:'ต่ออายุ / ยกเลิกยังไง?',faq3_a:'ต่ออายุที่หน้านี้เมื่อใกล้หมดอายุ (มีแจ้งเตือนล่วงหน้า) · ยกเลิกได้ทุกเมื่อ ไม่มีสัญญาผูกมัด · ข้อมูลลูกเทรนไม่หายแม้ลดแพ็ก',faq4_q:'1 แพ็กใช้ได้กี่เครื่อง?',faq4_a:'ใช้ได้ตามจำนวนที่กำหนดต่อแพ็ก · ย้ายเครื่องได้โดยติดต่อทีมงาน',faq5_q:'มีรับประกันคืนเงินไหม?',faq5_a:'มีทดลองฟรี 30 วันให้ลองเต็มระบบก่อน · เมื่อชำระแล้วเป็นแบบไม่คืนเงิน (ดูนโยบายคืนเงิน)',
       launch:'✨ ราคาเปิดตัวสำหรับเทรนเนอร์กลุ่มแรก · ทดลอง Trainer Pro ฟรี 30 วันในแอป (ไม่ต้องใส่บัตร)',
       monthly:'รายเดือน',yearly:'รายปี · ประหยัด 2 เดือน',launch_price:'ราคาเปิดตัว',per_mo:'/เดือน',per_yr:'/ปี',
       current_plan:'แพ็กปัจจุบัน',choose_plan:'เลือกแพ็กนี้',contact:'ติดต่อสอบถาม',manage_web:'จัดการแพ็กผ่านเว็บ/ไลน์',
@@ -105,6 +109,10 @@
     en:{
       nav_pricing:'Pricing',nav_billing:'Subscribe',nav_myplan:'My plan',
       pricing_title:'Trainer plans',pricing_sub:'Coach clients systematically — send plans, collect homework, track results, and let IU MATE cut your daily work.',
+      trial_hero_t:'Try Trainer Pro free · 30 days',trial_hero_m:'No card · cancel anytime · start instantly in the app',trial_hero_cta:'Open the app to start free →',
+      trust_pay:'Secure payments by Omise',trust_pp:'PromptPay supported',trust_ssl:'SSL encrypted',
+      why_title:'Why coaches choose IUFIT',why1_t:'All in one app',why1_m:'Send meal/workout plans, review homework, chat, and track clients',why2_t:'IU MATE cuts your work',why2_m:'Draft menus/programs, summarize homework and at-risk clients',why3_t:'Clients pay nothing',why3_m:'Invite by QR — they join on your seats, no purchase needed',
+      faq_title:'FAQ',faq1_q:'How do I pay?',faq1_a:'Pick a plan → pay by card or PromptPay via secure Omise → open the app with the same account and your plan unlocks automatically.',faq2_q:'Why is there no buy button in the app?',faq2_a:'Per Google Play policy, software plans are purchased on this website (outside the app). One-on-one PT fees (a real service between you and your client) can still be paid via PromptPay inside the app.',faq3_q:'How do I renew / cancel?',faq3_a:'Renew here when your plan is about to expire (you get reminders) · cancel anytime, no contract · client data is never lost even if you downgrade.',faq4_q:'How many devices per plan?',faq4_a:'Each plan allows a set number of devices · contact us to move devices.',faq5_q:'Is there a refund guarantee?',faq5_a:'A 30-day free trial lets you test the full system first · once paid it is non-refundable (see refund policy).',
       launch:'✨ Launch price for the first coaches · Try Trainer Pro free 30 days in the app (no card).',
       monthly:'Monthly',yearly:'Yearly · save 2 months',launch_price:'Launch price',per_mo:'/mo',per_yr:'/yr',
       current_plan:'Current plan',choose_plan:'Choose this plan',contact:'Contact us',manage_web:'Manage on web / LINE',

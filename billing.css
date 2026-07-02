@@ -1,10 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap');
 /* IUFIT billing — shared theme (pricing.html / billing.html / my-plan.html) */
 :root{
   --navy:#071E4A;--blue:#0A84FF;--green:#18b26b;--amber:#a86b00;--red:#c0392b;
-  --bg:#F6F9FF;--card:#fff;--line:#DDE7F5;--muted:#6B7890;--ink:#10233F;--line-green:#06c755;
+  --bg:#F6F9FF;--card:#fff;--line:#DDE7F5;--muted:#5f6b7a;--ink:#10233F;--line-green:#06c755;
 }
 *{box-sizing:border-box}
-body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Thai',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+body{margin:0;font-family:'Kanit','Segoe UI','Noto Sans Thai',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
 .wrap{max-width:880px;margin:0 auto;padding:24px 16px 70px}
 .logo{font-style:italic;font-weight:850;font-size:25px;color:#0a1f4d;text-decoration:none;display:inline-block}
 .logo span{color:var(--blue)}
@@ -26,10 +27,10 @@ h1{font-size:24px;color:var(--navy);margin:14px 0 4px;letter-spacing:-.01em}
 .pname{font-size:18px;font-weight:850;color:var(--navy)}
 .psub{font-size:12px;color:var(--muted);margin:2px 0 10px}
 .price{margin:4px 0 10px}
-.price .now{font-size:27px;font-weight:850;color:var(--blue)}
+.price .now{font-size:27px;font-weight:800;color:var(--blue);font-family:'Montserrat','Kanit',sans-serif}
 .price .unit{font-size:13px;color:var(--muted)}
 .price .was{font-size:14px;color:#9aa6bf;text-decoration:line-through;margin-right:7px}
-.price .free{font-size:25px;font-weight:850;color:var(--green)}
+.price .free{font-size:25px;font-weight:800;color:var(--green);font-family:'Montserrat','Kanit',sans-serif}
 .save{font-size:11px;color:var(--green);font-weight:700;margin-top:2px}
 .feats{font-size:13px;line-height:1.8;color:var(--ink);margin:0 0 14px;flex:1}
 .btn{display:block;width:100%;text-align:center;text-decoration:none;font-weight:800;border-radius:12px;padding:13px;font-size:14.5px;border:none;cursor:pointer;font-family:inherit}
@@ -85,3 +86,26 @@ a.blue{color:var(--blue);font-weight:700}
 .policy{font-size:13.5px;line-height:1.75;color:var(--navy)}
 .policy .pt{display:flex;gap:10px;margin:11px 0}
 .policy .pt .ic{flex:none;font-size:17px;line-height:1.3}
+
+/* ===== pricing extras (v10.7): trial hero · trust · why · faq ===== */
+.trial-hero{background:linear-gradient(135deg,var(--blue),#0060d0);color:#fff;border-radius:18px;padding:16px 18px;margin:14px 0;text-align:center;box-shadow:0 12px 28px rgba(10,132,255,.28)}
+.trial-hero b{font-size:16px;font-weight:800;display:block}
+.trial-hero span{font-size:12.5px;opacity:.95}
+.trial-hero a{display:inline-block;background:#fff;color:var(--blue);font-weight:800;font-size:14px;padding:10px 20px;border-radius:12px;margin-top:11px;text-decoration:none}
+.trust-row{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.trust-row span{display:inline-flex;align-items:center;gap:6px;background:#fff;border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:12px;font-weight:600;color:#33405a}
+.trust-row svg{width:15px;height:15px;color:var(--green);flex:none}
+.sec-title{font-size:18px;font-weight:800;color:var(--navy);text-align:center;margin:28px 0 12px}
+.why-grid{display:grid;gap:10px}
+@media(min-width:640px){.why-grid{grid-template-columns:1fr 1fr}}
+.why{display:flex;gap:12px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 15px}
+.why .ic{width:38px;height:38px;flex:none;border-radius:11px;background:#eaf2ff;color:var(--blue);display:flex;align-items:center;justify-content:center}
+.why .ic svg{width:20px;height:20px}
+.why b{font-size:14px;color:var(--navy)}
+.why p{font-size:12.5px;color:var(--muted);margin:2px 0 0}
+.faq{background:#fff;border:1px solid var(--line);border-radius:12px;margin:8px 0;overflow:hidden}
+.faq summary{font-weight:700;font-size:13.5px;color:var(--navy);padding:13px 15px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:10px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:'+';color:var(--blue);font-size:20px;font-weight:400;flex:none}
+.faq[open] summary::after{content:'\2013'}
+.faq p{font-size:12.5px;color:var(--muted);padding:0 15px 14px;line-height:1.65;margin:0}
