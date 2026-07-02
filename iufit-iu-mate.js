@@ -326,12 +326,20 @@ function generateRecipes(ings, ctx){
 }
 
 /* ============================ context engine (local data) ============================ */
+function logKP(l){
+  /* kcal/protein of one log entry — must match core logNut(): fx wins, else compute from ings */
+  try{ if(fn('logNut')){ var n=window.logNut(l)||[]; return [num(n[0]),num(n[1])]; } }catch(e){}
+  if(l&&l.fx) return [num(l.fx[0]),num(l.fx[1])];
+  var t=[0,0], ing=ING();
+  ((l&&l.ings)||[]).forEach(function(p){ var it=ing[p[0]]; if(!it||!it.v) return; var g=num(p[1]); t[0]+=num(it.v[0])*g/100; t[1]+=num(it.v[1])*g/100; });
+  return t;
+}
 function todayCtx(){
   var u=curUser(); if(!u) return {empty:true};
   var d=todayDate(); var t={}; try{ t=window.target?window.target():{}; }catch(e){ t={}; }
   var s=S(); var logs=(s.logs||[]).filter(function(l){return l.user===u.id&&l.date===d;});
   var exs=(s.ex||[]).filter(function(x){return x.user===u.id&&x.date===d;});
-  var eatenK=0,eatenP=0; logs.forEach(function(l){ var e=(l.eaten==null?1:l.eaten); eatenK+=num(l.fx&&l.fx[0])*e; eatenP+=num(l.fx&&l.fx[1])*e; });
+  var eatenK=0,eatenP=0; logs.forEach(function(l){ var e=(l.eaten==null?1:l.eaten); var kp=logKP(l); eatenK+=kp[0]*e; eatenP+=kp[1]*e; });
   var burn=exs.reduce(function(a,x){return a+num(x.kcal);},0);
   var water=0; try{ water=num((s.water||{})[u.id+'|'+d]); }catch(e){}
   var streak=0; try{ streak=window.streakOf?window.streakOf():0; }catch(e){}
@@ -1553,7 +1561,7 @@ function renderSheet(){
    '<section class="iu-mate-sheet'+(ST.full?' full':'')+(noAnim?' no-anim':'')+'" role="dialog" aria-label="IU Mate">'+
      '<button type="button" class="iu-mate-grab" onclick="IUMate.close()" aria-label="'+L('ย่อหน้าต่าง','Minimize')+'" title="'+L('ย่อหน้าต่าง','Minimize')+'"></button>'+
      '<header class="iu-mate-header">'+
-       '<button class="iu-mate-close" onclick="IUMate.close()" aria-label="close">←</button>'+
+       '<button class="iu-mate-close" onclick="IUMate.close()" aria-label="close" title="ปิด">✕</button>'+
        '<div class="iu-mate-avatar">'+botAvatar()+'</div>'+
        '<div class="iu-mate-title"><strong>IU Mate</strong><small>'+esc(L('ผู้ช่วยส่วนตัวใน IUFIT','Your assistant in IUFIT'))+'</small></div>'+
        '<span class="iu-mate-local-badge">Local</span>'+

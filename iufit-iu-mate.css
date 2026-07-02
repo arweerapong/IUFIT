@@ -1,6 +1,6 @@
 /*! IUFIT — IU Mate local assistant · styles (standalone, does not touch app theme) */
 :root{
-  --iu-bg:#F6F9FF;--iu-bg-soft:#EEF6FF;--iu-card:#FFFFFF;--iu-text:#10233F;--iu-muted:#6B7890;
+  --iu-bg:#F6F9FF;--iu-bg-soft:#EEF6FF;--iu-card:#FFFFFF;--iu-text:#10233F;--iu-muted:#5b6678;
   --iu-blue:#0A84FF;--iu-deep:#003C8F;--iu-navy:#002766;--iu-cyan:#20D5FF;--iu-green:#12B7A8;
   --iu-warning:#F5A623;--iu-border:#DDE7F5;--iu-shadow:0 16px 42px rgba(13,54,110,.14);--iu-radius:24px;
 }

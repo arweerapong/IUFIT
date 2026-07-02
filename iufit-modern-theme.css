@@ -45,7 +45,7 @@
   --radius-xl:34px;
   --bg-soft:#eef6ff;
   --text-strong:#002766;
-  --text-soft:#8a96aa;
+  --text-soft:#5f6b7a;
   --success:#12b7a8;--success-soft:#e8fbf7;
   --warning:#f5a623;--warning-soft:#fff5dd;
   --danger:#ef4444;--danger-soft:#fff1f1;
@@ -672,11 +672,11 @@ header{display:none!important}
 .action-icon{width:52px;height:52px;border-radius:18px;background:linear-gradient(180deg,#FFFFFF,#EEF6FF);border:1px solid #DDE7F5;color:var(--icon-color-primary);display:flex;align-items:center;justify-content:center;flex:none}
 
 /* meal-plan multi-menu chips */
-.mpchip{display:inline-fle
+.mpchip{display:inline-flex;align-items:center;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:4px 6px 4px 12px;font-size:12px;font-weight:600;color:var(--ink);margin:0}
+.mpchip button{flex:none;border:none;background:var(--line);color:var(--ink2);width:18px;height:18px;border-radius:50%;font-size:10px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;padding:0;line-height:1}
 /* food library page selector */
 .mpg{min-width:30px;height:30px;border:1px solid var(--border);background:#fff;border-radius:9px;font-size:12.5px;font-weight:700;color:var(--ink2);cursor:pointer;font-family:var(--font-ui);padding:0 6px;line-height:1}
 .mpg.on{background:var(--brand-gradient);color:#fff;border-color:transparent}
-s:center;justify-content:center;flex:none;box-shadow:0 2px 5px rgba(13,54,110,.1)}
 
 /* ===== meal-plan single-day view (v6.31) ===== */
 .dselrow{display:flex;gap:5px;overflow:hidden;margin:12px 0 2px}
