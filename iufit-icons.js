@@ -376,29 +376,27 @@ function getIcon(name, size, opt = '') {
     if (ICONS[lk]) return label(resize(ICONS[lk], size || 56), opt.label || '');
   }
 
-  /* LINE tier — default ใหม่ */
-  if (window.IULine && window.IULine.hasLineIcon(key)) {
-    return window.IULine.getLineIcon(key, size || 24, { label: opt.label });
-  }
-  /* LINE ผ่าน legacy alias (เช่น fire→calorie, add→plus) */
-  const ak = ALIASES[key];
-  if (ak && window.IULine && window.IULine.hasLineIcon(ak)) {
-    return window.IULine.getLineIcon(ak, size || 24, { label: opt.label });
+  /* LINE tier — ใช้ PHICONS เดิม (เส้น คม มืออาชีพ) ผ่าน phic() */
+  var PHIC_ALIAS = { edit: 'pencil', book: 'books', compass: 'refresh', door: 'lock', close: 'x', add: 'plus' };
+  if (typeof window.phic === 'function') {
+    var pk = PHIC_ALIAS[key] || key;
+    var po = window.phic(pk, size || 22);
+    if (po) return po;
   }
 
-  /* fallback 1: TILE clean ขนาดเล็ก */
+  /* fallback 1: TILE clean ขนาดเล็ก (master) */
   if (window.IUMaster && window.IUMaster.hasIcon(key, 'clean')) {
     return window.IUMaster.getIcon(key, size || 24, { variant: 'clean', label: opt.label });
   }
 
-  /* fallback 2: legacy tile ICONS (กันพังสำหรับ key เก่าที่ไม่อยู่ใน LINE/Master) */
+  /* fallback 2: legacy tile ICONS */
   const lk2 = ALIASES[key] || key;
-  if (ICONS[lk2]) return label(resize(ICONS[lk2], size || 56), opt.label || '');
+  if (ICONS[lk2]) return label(resize(ICONS[lk2], size || 24), opt.label || '');
 
   /* fallback 3: question + TODO warn */
   try { console.warn('TODO missing icon: ' + name); } catch (e) {}
-  if (window.IULine) return window.IULine.getLineIcon('question', size || 24, { label: opt.label || 'missing icon' });
-  return label(resize(ICONS.food, size || 56), opt.label || '');
+  if (typeof window.phic === 'function') { var q = window.phic('question', size || 22); if (q) return q; }
+  return label(resize(ICONS.food, size || 24), opt.label || '');
 }
 
 function renderIcon(target, name, size = 56, ariaLabel = '') {
