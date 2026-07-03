@@ -355,50 +355,15 @@ function label(svg, text) {
   return svg.replace(/aria-label="[^"]*"/, `aria-label="${String(text).replace(/"/g, '&quot;')}"`);
 }
 
-const LEGACY_SVG_MAP = {
-  'i-bowl': 'today', 'i-apple': 'food', 'i-fit': 'workout', 'i-chart': 'chart',
-  'i-gear': 'gear', 'i-users': 'users', 'i-run': 'run', 'i-clipcheck': 'clipboard',
-  'i-target': 'target', 'i-chat': 'chat'
-};
-
-function getIcon(name, size, opt = '') {
+function getIcon(name, size = 56, opt = '') {
   if (typeof opt === 'string') opt = opt ? { label: opt } : {};
   opt = opt || {};
-  const key = LEGACY_SVG_MAP[name] || name;
-
-  /* TILE tier — explicit {tile:true} (behavior v10.33 เดิม) */
-  if (opt.tile === true) {
-    if (window.IUMaster) {
-      const m = window.IUMaster.getIcon(key, size || 56, { variant: opt.variant, label: opt.label });
-      if (m) return m;
-    }
-    const lk = ALIASES[key] || key;
-    if (ICONS[lk]) return label(resize(ICONS[lk], size || 56), opt.label || '');
+  if (opt.tile === true && window.IUMaster) {
+    const m = window.IUMaster.getIcon(name, size, { variant: opt.variant, label: opt.label });
+    if (m) return m;
   }
-
-  /* LINE tier — default ใหม่ */
-  if (window.IULine && window.IULine.hasLineIcon(key)) {
-    return window.IULine.getLineIcon(key, size || 24, { label: opt.label });
-  }
-  /* LINE ผ่าน legacy alias (เช่น fire→calorie, add→plus) */
-  const ak = ALIASES[key];
-  if (ak && window.IULine && window.IULine.hasLineIcon(ak)) {
-    return window.IULine.getLineIcon(ak, size || 24, { label: opt.label });
-  }
-
-  /* fallback 1: TILE clean ขนาดเล็ก */
-  if (window.IUMaster && window.IUMaster.hasIcon(key, 'clean')) {
-    return window.IUMaster.getIcon(key, size || 24, { variant: 'clean', label: opt.label });
-  }
-
-  /* fallback 2: legacy tile ICONS (กันพังสำหรับ key เก่าที่ไม่อยู่ใน LINE/Master) */
-  const lk2 = ALIASES[key] || key;
-  if (ICONS[lk2]) return label(resize(ICONS[lk2], size || 56), opt.label || '');
-
-  /* fallback 3: question + TODO warn */
-  try { console.warn('TODO missing icon: ' + name); } catch (e) {}
-  if (window.IULine) return window.IULine.getLineIcon('question', size || 24, { label: opt.label || 'missing icon' });
-  return label(resize(ICONS.food, size || 56), opt.label || '');
+  const key = ALIASES[name] || name;
+  return label(resize(ICONS[key] || ICONS.food, size), opt.label || '');
 }
 
 function renderIcon(target, name, size = 56, ariaLabel = '') {
@@ -409,5 +374,5 @@ function renderIcon(target, name, size = 56, ariaLabel = '') {
 window.IUIcon={ICONS:ICONS,ALIASES:ALIASES,getIcon:getIcon,renderIcon:renderIcon,keys:iconKeys,meta:iconMeta};
 window.iuIcon=getIcon;
 var FOOD_KW=[['ไข่เจียว','fried_egg'],['ไข่ดาว','fried_egg'],['ไข่','egg'],['ไก่','chicken'],['แซลมอน','salmon'],['ปลา','fish'],['กุ้ง','shrimp'],['เนื้อ','beef'],['หมู','beef'],['เต้าหู้','tofu'],['กล้วย','banana'],['แอปเปิ','apple'],['ส้ม','orange_fruit'],['แครอท','carrot'],['สลัด','salad'],['ผัก','leafy_greens'],['โยเกิร์ต','yogurt'],['เวย์','protein_shake'],['โปรตีนเชค','protein_shake'],['นม','milk'],['กาแฟ','coffee'],['ก๋วยเตี๋ยว','noodle'],['บะหมี่','noodle'],['เส้น','noodle'],['ซุป','soup'],['ต้ม','soup'],['ขนมปัง','bread'],['ชีส','cheese'],['ถั่ว','nuts'],['ข้าว','rice_bowl']];
-window.iuFoodIcon=function(name,size,opt){opt=opt||{};if(opt.tile!==true)opt=Object.assign({},opt,{tile:true});name=String(name||'');for(var i=0;i<FOOD_KW.length;i++){if(name.indexOf(FOOD_KW[i][0])>-1)return getIcon(FOOD_KW[i][1],size||34,opt);}return getIcon('food',size||34,opt);};
+window.iuFoodIcon=function(name,size,opt){name=String(name||'');for(var i=0;i<FOOD_KW.length;i++){if(name.indexOf(FOOD_KW[i][0])>-1)return getIcon(FOOD_KW[i][1],size||34,opt);}return getIcon('food',size||34,opt);};
 })();
