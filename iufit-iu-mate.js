@@ -144,14 +144,41 @@ function hasConsent(){ var c=loadConsent(); return !!(c&&c.accepted); }
 function consentCoach(){ var c=loadConsent(); return !!(c&&c.accepted&&c.coachData!==false); }
 function saveConsent(coachData){ try{ localStorage.setItem(CONSENT_KEY, JSON.stringify({accepted:true,coachData:coachData!==false,ts:Date.now()})); }catch(e){} }
 function revokeConsent(){ try{ localStorage.removeItem(CONSENT_KEY); }catch(e){} }
+/* ---- opt-in chat history (default OFF = privacy-first, nothing persisted) ---- */
+var KEEPHIST_KEY='iufit_iu_mate_keephist';
+var HIST_KEY='iufit_iu_mate_hist';
+var HIST_MAX=50;
+function keepHist(){ try{ return localStorage.getItem(KEEPHIST_KEY)==='1'; }catch(e){ return false; } }
+function setKeepHist(on){ try{ if(on){ localStorage.setItem(KEEPHIST_KEY,'1'); } else { localStorage.removeItem(KEEPHIST_KEY); clearHist(); } }catch(e){} }
+function clearHist(){ try{ localStorage.removeItem(HIST_KEY); }catch(e){} }
+function _histOK(m){ return !!(m&&(m.role==='user'||m.role==='botText'||(m.role==='bot'&&m.reply))); }
+function saveHist(){
+  if(!keepHist()||!hasConsent()){ clearHist(); return; }
+  try{
+    var arr=ST.messages.filter(_histOK);
+    if(arr.length>HIST_MAX) arr=arr.slice(-HIST_MAX);
+    localStorage.setItem(HIST_KEY, JSON.stringify(arr));
+  }catch(e){ clearHist(); }
+}
+function loadHist(){
+  if(!keepHist()||!hasConsent()) return null;
+  try{
+    var arr=JSON.parse(localStorage.getItem(HIST_KEY)||'null');
+    if(!arr||!arr.length) return null;
+    arr=arr.filter(_histOK).slice(-HIST_MAX);
+    arr.forEach(function(m,i){ if(m.role==='bot'){ m.idx=i; try{ (m.reply.recipes||[]).forEach(function(rc){ if(rc&&rc.id) ST.recipeCache[rc.id]=rc; }); }catch(e){} } });
+    return arr.length?arr:null;
+  }catch(e){ return null; }
+}
 function consentBodyHtml(coach){
   function pt(ic,th,en){ return '<div style="display:flex;gap:10px;align-items:flex-start;margin:11px 0"><span style="font-size:19px;flex:none;line-height:1.2">'+ic+'</span><div style="font-size:13.5px;line-height:1.55;color:#28364f">'+esc(L(th,en))+'</div></div>'; }
   return '<div class="iu-mate-card"><div class="ttl">'+sparkInline()+esc(L('ยินดีต้อนรับสู่ IU Mate','Welcome to IU Mate'))+'</div>'+
     '<div class="msg" style="margin-bottom:4px">'+esc(L('ก่อนเริ่ม ขออธิบายเรื่องข้อมูลสั้น ๆ ครับ','Before we start, a quick note about your data:'))+'</div>'+
-    pt('🔒','ทำงานในเครื่อง 100% — บทสนทนาไม่ถูกบันทึกและไม่ถูกส่งออกนอกเครื่อง','100% on-device — conversations are not saved and never leave your device')+
+    pt('🔒','ทำงานในเครื่อง 100% — บทสนทนาไม่ถูกส่งออกนอกเครื่อง จะเก็บไว้ในเครื่องเฉพาะเมื่อคุณเปิด “เก็บประวัติแชท”','100% on-device — conversations never leave your device, and are kept locally only if you turn on “Keep chat history”')+
     pt('📊','IU Mate อ่านข้อมูลในแอปของคุณ (เป้าหมาย อาหาร การฝึก ผลลัพธ์) เพื่อช่วยสรุปและแนะนำเท่านั้น','IU Mate reads your in-app data (goals, food, workouts, results) only to summarize and suggest')+
     pt('🩺','คำแนะนำเป็นข้อมูลทั่วไป ไม่ใช่คำวินิจฉัยหรือคำแนะนำทางการแพทย์','Guidance is general info — not a medical diagnosis or advice')+
     (coach?('<label style="display:flex;gap:9px;align-items:center;margin:14px 0 2px;font-size:13px;color:#28364f;cursor:pointer"><input type="checkbox" id="iuMateCoachConsent" checked style="width:18px;height:18px;flex:none">'+esc(L('อนุญาตให้ IU Mate ใช้ข้อมูลลูกเทรน/กลุ่มในเครื่องเพื่อช่วยสรุป','Let IU Mate use local client/group data to help summarize'))+'</label>'):'')+
+    '<label style="display:flex;gap:9px;align-items:center;margin:12px 0 2px;font-size:13px;color:#28364f;cursor:pointer"><input type="checkbox" id="iuMateKeepHist" style="width:18px;height:18px;flex:none">'+esc(L('เก็บประวัติแชทไว้ในเครื่องนี้ (ปิดอยู่ = ไม่บันทึก ประวัติหายเมื่อปิดแชท)','Keep chat history on this device (off = nothing saved, cleared when chat closes)'))+'</label>'+
     '<div class="iu-mate-actions" style="margin-top:16px">'+
       '<button class="iu-mate-act" onclick="IUMate.declineConsent()">'+esc(L('ไม่ใช่ตอนนี้','Not now'))+'</button>'+
       '<button class="iu-mate-act primary" onclick="IUMate.acceptConsent()">'+esc(L('ยอมรับและเริ่มใช้','Accept & start'))+'</button>'+
@@ -1539,6 +1566,7 @@ function _reviewMaybe(){
 }
 function sparkInline(){ return '<span style="color:#0A84FF;width:16px;height:16px;display:inline-grid;place-items:center">'+sparkIcon()+'</span>'; }
 function renderMessages(){
+  try{ saveHist(); }catch(e){}
   var box=document.getElementById('iuMateMessages'); if(!box) return;
   box.innerHTML=ST.messages.map(msgHtml).join('');
   box.scrollTop=box.scrollHeight;
@@ -1573,7 +1601,7 @@ function renderSheet(){
        '<input id="iuMateInput" placeholder="'+esc(L('ถาม IU Mate...','Ask IU Mate...'))+'" autocomplete="off" enterkeyhint="send">'+
        '<button class="iu-mate-send" type="submit" aria-label="send">'+sendIcon()+'</button>'+
      '</form>'+
-     '<div class="iu-mate-privacy-note">'+esc(L('ทำงานในเครื่อง • บทสนทนาไม่ถูกบันทึกหรือส่งออกนอกเครื่อง','On-device • conversations are not saved or sent anywhere'))+'</div>'+
+     '<div class="iu-mate-privacy-note">'+esc(keepHist()?L('ทำงานในเครื่อง • ประวัติแชทเก็บในเครื่องนี้เท่านั้น ไม่ถูกส่งออก','On-device • chat history stays on this device only'):L('ทำงานในเครื่อง • บทสนทนาไม่ถูกบันทึกหรือส่งออกนอกเครื่อง','On-device • conversations are not saved or sent anywhere'))+'</div>'+
    '</section>';
   renderMessages(); try{ setupSheetDrag(); }catch(e){}
 }
@@ -2010,13 +2038,13 @@ function handleMessage(text){
 }
 
 /* ============================ public API ============================ */
-function closeNow(){ ST.isOpen=false; var r=root(); r.innerHTML=''; renderFab(); }
+function closeNow(){ try{ saveHist(); }catch(e){} ST.isOpen=false; var r=root(); r.innerHTML=''; renderFab(); }
 function readCalcInputs(){ ST.calc=ST.calc||{}; var a=document.getElementById('iuCalcAge'),h=document.getElementById('iuCalcH'),w=document.getElementById('iuCalcW'),ac=document.getElementById('iuCalcAct'); if(a&&a.value!=='')ST.calc.age=parseFloat(a.value); if(h&&h.value!=='')ST.calc.h=parseFloat(h.value); if(w&&w.value!=='')ST.calc.w=parseFloat(w.value); if(ac&&ac.value)ST.calc.act=parseFloat(ac.value); }
 var IUMate = {
   open:function(mode){ if(!appReady()){ appToast(L('เข้าสู่ระบบก่อนใช้ IU Mate','Sign in to use IU Mate')); return; }
     ST.isOpen=true; ST.mode=mode||'global';
     if(!hasConsent()){ ST.full=false; renderConsentScreen(); renderFab(); return; }
-    if(!ST.messages.length){ ST.messages.push({role:'botText',text:greeting()}); var _nz=proactiveNudge(); if(_nz){ ST.messages.push({role:'bot',reply:_nz,idx:ST.messages.length}); } } ST._nudgeSeen=true;
+    if(!ST.messages.length){ var _h=loadHist(); if(_h){ ST.messages=_h; } else { ST.messages.push({role:'botText',text:greeting()}); var _nz=proactiveNudge(); if(_nz){ ST.messages.push({role:'bot',reply:_nz,idx:ST.messages.length}); } } } ST._nudgeSeen=true;
     renderSheet(); renderFab();
     setTimeout(function(){ var inp=document.getElementById('iuMateInput'); /* no autofocus to avoid keyboard jump on open */ }, 50);
   },
@@ -2049,9 +2077,24 @@ var IUMate = {
   _sex:function(x){ readCalcInputs(); ST.calc.sex=x; openCalcForm(ST.calc); },
   _goal:function(x){ readCalcInputs(); ST.calc.goal=x; openCalcForm(ST.calc); },
   _calc:function(){ readCalcInputs(); var p=ST.calc||{}; if(p.w==null||p.h==null||p.age==null||p.sex==null){ appToast(L('กรอกเพศ อายุ ส่วนสูง น้ำหนักให้ครบก่อนครับ','Please fill sex, age, height and weight')); return; } if(!(p.age>=10&&p.age<=100)||!(p.h>=120&&p.h<=220)||!(p.w>=30&&p.w<=250)){ appToast(L('ตรวจค่าอีกครั้ง: อายุ 10–100 ปี · สูง 120–220 ซม. · หนัก 30–250 กก.','Check values: age 10–100 · height 120–220 cm · weight 30–250 kg')); return; } modalClose(); if(!ST.isOpen) IUMate.open('global'); pushReply(calcReply(p)); },
-  acceptConsent:function(){ ST.flow=null; ST.ctx=null; var coachData=true; var cb=document.getElementById('iuMateCoachConsent'); if(cb) coachData=!!cb.checked; saveConsent(coachData); ST.messages=[]; ST.messages.push({role:'botText',text:greeting()}); ST.isOpen=true; ST._nudgeSeen=true; ST._skipAnim=true; renderSheet(); renderFab(); },
+  acceptConsent:function(){ ST.flow=null; ST.ctx=null; var coachData=true; var cb=document.getElementById('iuMateCoachConsent'); if(cb) coachData=!!cb.checked; saveConsent(coachData); var kh=document.getElementById('iuMateKeepHist'); setKeepHist(!!(kh&&kh.checked)); ST.messages=[]; ST.messages.push({role:'botText',text:greeting()}); ST.isOpen=true; ST._nudgeSeen=true; ST._skipAnim=true; renderSheet(); renderFab(); },
   declineConsent:function(){ closeNow(); },
-  showPrivacy:function(){ showConfirm({ title:L('ความเป็นส่วนตัว','Privacy'), body:L('IU Mate ทำงานในเครื่อง บทสนทนาไม่ถูกบันทึกหรือส่งออกนอกเครื่อง และอ่านข้อมูลในแอปเพื่อช่วยสรุปเท่านั้น','IU Mate runs on-device. Conversations are not saved or sent anywhere, and it only reads your in-app data to help summarize.'), yes:L('เพิกถอนความยินยอม','Withdraw consent'), onYes:function(){ revokeConsent(); appToast(L('เพิกถอนความยินยอมแล้ว','Consent withdrawn')); closeNow(); } }); },
+  showPrivacy:function(){
+    var wrap=document.createElement('div'); wrap.className='iu-mate-confirm-wrap'; wrap.id='iuMateConfirm';
+    var kh=keepHist();
+    wrap.innerHTML='<div class="iu-mate-confirm"><div class="ci">'+checkIcon()+'</div><h4>'+esc(L('ความเป็นส่วนตัว','Privacy'))+'</h4>'+
+      '<p>'+esc(L('IU Mate ทำงานในเครื่อง บทสนทนาไม่ถูกส่งออกนอกเครื่อง และอ่านข้อมูลในแอปเพื่อช่วยสรุปเท่านั้น ประวัติแชทจะถูกเก็บไว้ในเครื่องเฉพาะเมื่อคุณเปิด “เก็บประวัติแชท”','IU Mate runs on-device. Conversations never leave your device, and it only reads your in-app data to help summarize. Chat history is kept on this device only while “Keep chat history” is on.'))+'</p>'+
+      '<label style="display:flex;gap:9px;align-items:center;margin:4px 2px 10px;font-size:13px;color:#28364f;cursor:pointer;text-align:left"><input type="checkbox" id="iuMateKeepHistTgl"'+(kh?' checked':'')+' style="width:18px;height:18px;flex:none">'+esc(L('เก็บประวัติแชทไว้ในเครื่องนี้','Keep chat history on this device'))+'</label>'+
+      '<button type="button" class="iu-mate-act" id="iuMateClearHist" style="width:100%;margin:0 0 10px'+(kh?'':';display:none')+'">'+esc(L('ล้างประวัติแชท','Clear chat history'))+'</button>'+
+      '<div class="row"><button class="no">'+esc(L('ปิด','Close'))+'</button><button class="yes">'+esc(L('เพิกถอนความยินยอม','Withdraw consent'))+'</button></div></div>';
+    document.body.appendChild(wrap);
+    var tgl=wrap.querySelector('#iuMateKeepHistTgl'), clr=wrap.querySelector('#iuMateClearHist');
+    if(tgl) tgl.onchange=function(){ var on=!!tgl.checked; setKeepHist(on); if(on){ try{ saveHist(); }catch(e){} } if(clr) clr.style.display=on?'':'none'; appToast(on?L('จะเก็บประวัติแชทไว้ในเครื่อง','Chat history will be kept on this device'):L('ปิดแล้ว · ลบประวัติที่เก็บไว้แล้ว','Turned off · saved history deleted')); try{ if(ST.isOpen&&hasConsent()){ ST._skipAnim=true; renderSheet(); } }catch(e){} };
+    if(clr) clr.onclick=function(){ clearHist(); ST.messages=[]; if(ST.isOpen&&hasConsent()){ ST.messages.push({role:'botText',text:greeting()}); ST._skipAnim=true; renderSheet(); } appToast(L('ล้างประวัติแชทแล้ว','Chat history cleared')); wrap.remove(); };
+    wrap.querySelector('.no').onclick=function(){ wrap.remove(); };
+    wrap.addEventListener('click',function(e){ if(e.target===wrap) wrap.remove(); });
+    wrap.querySelector('.yes').onclick=function(){ wrap.remove(); revokeConsent(); setKeepHist(false); appToast(L('เพิกถอนความยินยอมแล้ว','Consent withdrawn')); closeNow(); };
+  },
   _sync:function(){ try{ renderFab(); }catch(e){} try{ injectEntryPoints(); }catch(e){} },
   _state:ST
 };
