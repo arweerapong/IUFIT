@@ -692,3 +692,57 @@ header{display:none!important}
 .mealsel{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
 .mradd{flex:none;font-weight:800;font-size:13px;color:var(--coral);border:1.5px dashed #b9d4f7;border-radius:12px;padding:8px 12px;white-space:nowrap}
 .mradd.filled{color:var(--mint);border-style:solid;border-color:#bfe9e2;background:#effbf9}
+
+
+/* ===== IUFIT Dark Mode · toggle via <html data-theme="dark"> · appended (keep at end) ===== */
+:root[data-theme="dark"]{
+  --bg:#0e1626; --bg2:#101c30; --ink:#e7edf6; --ink2:#9db0ca;
+  --coral2:#16304d; --mint2:#0f2e2b; --sun2:#33290f; --berry:#7c9dff; --berry2:#1c2748; --red:#f87171;
+  --card:#1a2436; --line:#2a3650; --navy:#dbe7fb; --deep:#9cc4ff; --glass:rgba(20,30,50,.78);
+  --shadow-sm:0 10px 28px rgba(0,0,0,.38); --shadow-md:0 16px 42px rgba(0,0,0,.46); --shadow-lg:0 20px 56px rgba(0,0,0,.55);
+  --surface:#1a2436; --surface-soft:#22304a; --bg-soft:#16233a; --text-strong:#dbe7fb; --text-soft:#9db0ca;
+  --success-soft:#0f2e2b; --warning-soft:#33290f; --danger:#f87171; --danger-soft:#3a1d1f; --purple:#a78bfa; --purple-soft:#2b2350;
+  --shadow-soft:0 12px 32px rgba(0,0,0,.42); --shadow-card:0 18px 48px rgba(0,0,0,.50); --soft:#22304a;
+  --icon-color-default:#93a3ba; --icon-color-deep:#9cc4ff; --icon-color-muted:#7f8ea6;
+  --icon-bg-blue:#16304d; --icon-bg-green:#0f2e2b; --icon-bg-orange:#33290f; --icon-bg-red:#3a1d1f;
+}
+html[data-theme="dark"]{background:#0e1626}
+html[data-theme="dark"] body{color:var(--ink);background:radial-gradient(circle at 10% -10%,rgba(10,132,255,.15) 0,transparent 34%),radial-gradient(circle at 95% 6%,rgba(32,213,255,.07) 0,transparent 30%),linear-gradient(180deg,#0c1424 0%,#0e1626 43%,#0b1220 100%);}
+html[data-theme="dark"] body::before{background-image:linear-gradient(rgba(120,170,255,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(120,170,255,.05) 1px,transparent 1px);}
+html[data-theme="dark"] .chip:not(.sel):not(.warn){background:rgba(26,36,54,.82)}
+html[data-theme="dark"] .chip.warn{background:#3a1d1f;border-color:#7f1d1d;color:#fca5a5}
+html[data-theme="dark"] .btn:not(.pri):not(.mint):not(.sun):not(.ghost){background:var(--card);box-shadow:0 6px 16px rgba(0,0,0,.35)}
+html[data-theme="dark"] .btn.ghost{background:rgba(255,255,255,.04)}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#141f33;color:var(--ink);border-color:#2a3650}
+html[data-theme="dark"] nav{background:rgba(15,23,40,.94);border-color:rgba(42,54,80,.9)}
+html[data-theme="dark"] nav button:not(.on){color:#8ea3c2}
+html[data-theme="dark"] .mwrap{background:rgba(0,0,0,.6)}
+html[data-theme="dark"] .modal{background:linear-gradient(180deg,#182236,#111a2c);border-color:rgba(66,84,120,.55)}
+html[data-theme="dark"] .modal::before{background:#33456b}
+html[data-theme="dark"] .mclose{background:#22304a;border-color:#33456b;box-shadow:0 8px 18px rgba(0,0,0,.4)}
+html[data-theme="dark"] .seg{background:#141f33}
+html[data-theme="dark"] table.nut td{border-bottom-color:#243149}
+html[data-theme="dark"] .inglist .it{border-bottom-color:#243149}
+html[data-theme="dark"] .trow{border-bottom-color:#243149}
+html[data-theme="dark"] .dot{border-color:#1a2436;box-shadow:0 0 0 1px #33456b}
+html[data-theme="dark"] .pslot .ps{background:#141f33;border-color:#3a4a6a}
+html[data-theme="dark"] .pslot .ps.has{background:#16304d;border-color:#0a84ff}
+html[data-theme="dark"] .mchart{border-bottom-color:#2a3650}
+html[data-theme="dark"] .kpi{background:linear-gradient(180deg,#1a2436,#16223a)}
+html[data-theme="dark"] .profsel,html[data-theme="dark"] .profadd,html[data-theme="dark"] .treeclose,html[data-theme="dark"] .bell,html[data-theme="dark"] .mealrow,html[data-theme="dark"] .mpg:not(.on),html[data-theme="dark"] .dsel:not(.on),html[data-theme="dark"] .trchip:not(.on),html[data-theme="dark"] .owgoal:not(.sel){background:var(--card)}
+html[data-theme="dark"] .logli .logx,html[data-theme="dark"] .ingrow .x{background:#2a1a1d;border-color:#5f2a30}
+html[data-theme="dark"] .warnbox{background:#3a1d1f;border-color:#7f1d1d;color:#fca5a5}
+html[data-theme="dark"] .okbox{background:#0f2e2b;border-color:#155e52;color:#5eead4}
+html[data-theme="dark"] .clbadge.wait{background:#3a1d1f;color:#fca5a5}
+html[data-theme="dark"] .tag{border-color:#2c3d63}
+html[data-theme="dark"] .tag:not(.age):not(.al){color:#a9c1ff}
+html[data-theme="dark"] .tag.age{color:#fbbf24}
+html[data-theme="dark"] .tag.al{background:#3a1d1f;color:#fca5a5;border-color:#7f1d1d}
+html[data-theme="dark"] .action-icon{background:linear-gradient(180deg,#1c2942,#141f33);border-color:#2a3650}
+html[data-theme="dark"] .mchev{color:#7186a8}
+html[data-theme="dark"] .logll,html[data-theme="dark"] .loglist{background:var(--card)}
+html[data-theme="dark"] .planitem,html[data-theme="dark"] .planrow{border-color:#2a3650}
+
+/* nav label fit — longer tab names (ตารางอาหาร/ตารางฝึก) v10.20 */
+nav button{white-space:nowrap;letter-spacing:-.1px}
+@media (max-width:400px){nav button{font-size:9px;letter-spacing:-.3px}}

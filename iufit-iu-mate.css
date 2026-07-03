@@ -157,3 +157,30 @@
 .iu-mate-entry .go{width:30px;height:30px;flex:none;display:grid;place-items:center}
 .iu-mate-entry .go svg{width:100%;height:100%}
 .iu-mate-entry:active{transform:scale(.99)}
+
+
+/* ===== IU Mate Dark Mode · toggle via <html data-theme="dark"> · appended (keep at end) ===== */
+:root[data-theme="dark"]{
+  --iu-bg:#0e1626;--iu-bg-soft:#16233a;--iu-card:#182236;--iu-text:#e7edf6;--iu-muted:#9db0ca;
+  --iu-navy:#dbe7fb;--iu-deep:#9cc4ff;--iu-border:#2a3650;--iu-shadow:0 16px 42px rgba(0,0,0,.5);
+}
+html[data-theme="dark"] .iu-mate-sheet{background:linear-gradient(180deg,#182236,#0e1626);box-shadow:0 -24px 80px rgba(0,0,0,.6)}
+html[data-theme="dark"] .iu-mate-close,html[data-theme="dark"] .iu-mate-expand{background:#22304a;color:#9db0ca}
+html[data-theme="dark"] .iu-mate-local-badge{background:#0f2e2b;color:#5eead4}
+html[data-theme="dark"] .iu-mate-chip{background:var(--iu-card)}
+html[data-theme="dark"] .iu-mate-chip:active{background:var(--iu-bg-soft)}
+html[data-theme="dark"] .iu-mate-bubble.bot{background:var(--iu-card);box-shadow:0 8px 22px rgba(0,0,0,.35)}
+html[data-theme="dark"] .iu-mate-card{background:var(--iu-card);box-shadow:0 8px 22px rgba(0,0,0,.35)}
+html[data-theme="dark"] .iu-mate-subcard{background:linear-gradient(180deg,#1c2942,#141f33)}
+html[data-theme="dark"] .iu-mate-act:not(.primary){background:var(--iu-card)}
+html[data-theme="dark"] .iu-mate-composer{background:rgba(14,22,38,.96)}
+html[data-theme="dark"] .iu-mate-composer input{background:#141f33}
+html[data-theme="dark"] .iu-mate-confirm{background:#182236}
+html[data-theme="dark"] .iu-mate-confirm .no{background:#22304a;color:#9db0ca}
+html[data-theme="dark"] .iu-mate-recipe-card{background:linear-gradient(180deg,#1c2942,#141f33);box-shadow:0 8px 22px rgba(0,0,0,.35)}
+html[data-theme="dark"] .iu-mate-recipe-tag{background:#16304d}
+html[data-theme="dark"] .iu-mate-grp-chip{background:var(--iu-card)}
+html[data-theme="dark"] .iu-mate-grp-chip.on{background:#16304d}
+html[data-theme="dark"] .iu-mate-amt-row{border-bottom-color:#243149}
+html[data-theme="dark"] .iu-mate-amt-row button{background:#22304a}
+html[data-theme="dark"] .iu-mate-ip input.search{background:#141f33;color:var(--iu-text)}
