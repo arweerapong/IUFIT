@@ -2502,6 +2502,16 @@ function flowInput(text){
     flowAnswer(n);
   }
 }
+function _nluLog(msg,nlu){ try{
+  var k='iufit_iu_mate_misses', arr=[];
+  try{ arr=JSON.parse(localStorage.getItem(k)||'[]')||[]; }catch(e){}
+  arr.push({ q:(''+msg).slice(0,140), i:(nlu&&nlu.intent)||'unknown', sc:(nlu&&nlu.score)||0,
+    cl:(nlu&&nlu.clarify)?nlu.clarify.slice(0,3):null, cp:(nlu&&nlu.concepts)?Object.keys(nlu.concepts):[],
+    ts:Date.now(), lang:(window.LANG||'th') });
+  if(arr.length>300) arr=arr.slice(-300);
+  localStorage.setItem(k,JSON.stringify(arr));
+  try{ if(fn('fbPut')&&window.S&&window.S.devId){ window.fbPut('/nluMisses/'+window.S.devId+'/'+Date.now(), {q:(''+msg).slice(0,140), i:(nlu&&nlu.intent)||'unknown', ts:Date.now()}); } }catch(e){}
+}catch(e){} }
 function handleMessage(text){
   text=(text||'').trim(); if(!text) return; try{ bumpStat('umsg'); }catch(e){}
   if(ST.flow){ pushUser(text); flowInput(text); return; }
@@ -2513,6 +2523,7 @@ function handleMessage(text){
     var nlu=null; try{ nlu=detectIntentEx(text); }catch(e){}
     if(!nlu) nlu={intent:'unknown',score:0,v2score:0,legacyScore:0,concepts:{},entities:null,question:false,clarify:null};
     var intent=nlu.intent; try{ bumpStat('intent:'+intent); }catch(e){}
+    try{ if(intent==='unknown'||(nlu.clarify&&nlu.clarify.length)) _nluLog(text,nlu); }catch(e){}
     function _setCtx(){ try{ ST.ctx={intent:intent,concepts:nlu.concepts,entities:nlu.entities,ts:Date.now()}; if(intent==='cuisine_menu') ST.ctx.lastCuisine=true; }catch(e){} }
     if(nlu.clarify && !ST.flow && !ST._lastWasClarify){
       var _kh0=[]; try{ _kh0=searchKnowledge(text); }catch(e){}
@@ -2550,6 +2561,9 @@ var IUMate = {
   close:function(){ closeNow(); try{ _reviewMaybe(); }catch(e){} },
   toggleFull:function(){ ST.full=!ST.full; renderSheet(); },
   chip:function(q){ try{ bumpStat('chip:'+q); }catch(e){} handleMessage(q); },
+  misses:function(){ try{ return JSON.parse(localStorage.getItem('iufit_iu_mate_misses')||'[]')||[]; }catch(e){ return []; } },
+  exportMisses:function(){ var a=this.misses(); var t=a.map(function(x){ return (new Date(x.ts)).toISOString().slice(0,16)+' ['+x.i+'] '+x.q; }).join('\n'); try{ navigator.clipboard.writeText(t); }catch(e){} try{ console.log(t); }catch(e){} return a.length+' misses (copied to clipboard)'; },
+  clearMisses:function(){ try{ localStorage.removeItem('iufit_iu_mate_misses'); }catch(e){} return 'cleared'; },
   fb:function(idx, up){ try{ var m=ST.messages[idx]; if(!m||m.role!=='bot'||m.fb) return; m.fb=up?'helpful':'not_helpful'; _logFeedback(m, up); renderMessages(); }catch(e){} },
   placeFill:function(v){ var el=document.getElementById('iuPlaceInput'); if(el){ el.value=v; try{ el.focus(); }catch(e){} } },
   openPlace:function(){ var el=document.getElementById('iuPlaceInput'); var q=el?(''+el.value).trim():''; if(!q){ try{ appToast(L('พิมพ์ชื่อสถานที่ก่อน','Type a place first')); }catch(e){} if(el){ try{ el.focus(); }catch(e){} } return; } var hasLoc=/ใกล้|แถว|ย่าน|near|nearby|จังหวัด|อำเภอ|เขต/i.test(q); var fq=hasLoc?q:(q+' '+L('ใกล้ฉัน','near me')); var url='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(fq); try{ bumpStat('place_open'); }catch(e){} try{ window.open(url,'_blank'); }catch(e){ try{ location.href=url; }catch(_e){} } },
