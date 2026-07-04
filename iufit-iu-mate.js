@@ -1688,7 +1688,7 @@ function _actionsHtml(rep,idx,m){
     return h+'</div>';
   }
   return '<div class="iu-mate-actions">'+acts.map(function(a,ai){
-    return '<button class="iu-mate-act'+(ai===0?' primary':'')+'" onclick="IUMate.act(\''+a.action+'\','+idx+','+ai+')">'+esc(a.label)+'</button>';
+    return '<button class="iu-mate-act'+(a.on?' sel':'')+'" onclick="IUMate.act(\''+a.action+'\','+idx+','+ai+')">'+(a.on?'✓ ':'')+esc(a.label)+'</button>';
   }).join('')+'</div>';
 }
 function _flowOtherPrompt(){ var slot=flowCurSlot(); if(!slot) return; pushBotText(L('พิมพ์คำตอบของคุณได้เลยครับ','Type your own answer below')); setTimeout(function(){ var inp=document.getElementById('iuMateInput'); if(inp){ try{ inp.focus(); }catch(e){} } },60); }
@@ -2184,7 +2184,7 @@ function flowNext(){
 }
 function slotChoices(slot){ return slot.choices || (slot.choicesFn?slot.choicesFn():[]); }
 function _wdayAbbr(){ return (window.LANG==='en')?[['Mon',0],['Tue',1],['Wed',2],['Thu',3],['Fri',4],['Sat',5],['Sun',6]]:[['จ',0],['อ',1],['พ',2],['พฤ',3],['ศ',4],['ส',5],['อา',6]]; }
-function _wdayMultiActions(){ var sel=(ST.flow&&ST.flow._msel)||{}; var acts=_wdayAbbr().map(function(c){ return {label:(sel[c[1]]?'✓ ':'')+c[0],action:'flow_multi',payload:{v:c[1]}}; }); acts.push({label:L('📅 ให้จัดวันให้','📅 Arrange for me'),action:'flow_pick',payload:{v:'auto'}}); var n=Object.keys(sel).length; acts.push({label:L('ยืนยัน'+(n?' ('+n+' วัน)':''),'Confirm'+(n?' ('+n+')':'')),action:'flow_multi_done'}); acts.push({label:L('ยกเลิก','Cancel'),action:'flow_cancel'}); return acts; }
+function _wdayMultiActions(){ var sel=(ST.flow&&ST.flow._msel)||{}; var acts=_wdayAbbr().map(function(c){ return {label:c[0],on:!!sel[c[1]],action:'flow_multi',payload:{v:c[1]}}; }); acts.push({label:L('📅 ให้จัดวันให้','📅 Arrange for me'),action:'flow_pick',payload:{v:'auto'}}); var n=Object.keys(sel).length; acts.push({label:L('ยืนยัน'+(n?' ('+n+' วัน)':''),'Confirm'+(n?' ('+n+')':'')),action:'flow_multi_done'}); acts.push({label:L('ยกเลิก','Cancel'),action:'flow_cancel'}); return acts; }
 function askSlot(slot){
   if(slot.multi){ if(ST.flow)ST.flow._msel={}; pushReply({ title:null, message:slot.q+L(' (แตะวันที่ต้องการ แล้วกดยืนยัน)',' (tap days, then Confirm)'), actions:_wdayMultiActions() }); if(ST.flow)ST.flow.askIdx=ST.messages.length-1; return; }
   var acts=[];

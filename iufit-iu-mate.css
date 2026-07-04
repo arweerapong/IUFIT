@@ -172,7 +172,8 @@ html[data-theme="dark"] .iu-mate-chip:active{background:var(--iu-bg-soft)}
 html[data-theme="dark"] .iu-mate-bubble.bot{background:var(--iu-card);box-shadow:0 8px 22px rgba(0,0,0,.35)}
 html[data-theme="dark"] .iu-mate-card{background:var(--iu-card);box-shadow:0 8px 22px rgba(0,0,0,.35)}
 html[data-theme="dark"] .iu-mate-subcard{background:linear-gradient(180deg,#1c2942,#141f33)}
-html[data-theme="dark"] .iu-mate-act:not(.primary){background:var(--iu-card)}
+html[data-theme="dark"] .iu-mate-act:not(.primary):not(.sel){background:var(--iu-card)}
+.iu-mate-act.sel{background:linear-gradient(135deg,#0A84FF,#003C8F);color:#fff;border-color:transparent}
 html[data-theme="dark"] .iu-mate-composer{background:rgba(14,22,38,.96)}
 html[data-theme="dark"] .iu-mate-composer input{background:#141f33}
 html[data-theme="dark"] .iu-mate-confirm{background:#182236}
