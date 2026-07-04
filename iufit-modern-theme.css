@@ -719,6 +719,7 @@ html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="da
 html[data-theme="dark"] nav{background:rgba(15,23,40,.94);border-color:rgba(42,54,80,.9)}
 html[data-theme="dark"] nav button:not(.on){color:#8ea3c2}
 html[data-theme="dark"] .mwrap{background:rgba(0,0,0,.6)}
+body.iu-modal-open #coach-edit-fab,body.iu-modal-open #coach-back-fab{display:none!important}
 html[data-theme="dark"] .modal{background:linear-gradient(180deg,#182236,#111a2c);border-color:rgba(66,84,120,.55)}
 html[data-theme="dark"] .modal::before{background:#33456b}
 html[data-theme="dark"] .mclose{background:#22304a;border-color:#33456b;box-shadow:0 8px 18px rgba(0,0,0,.4)}
