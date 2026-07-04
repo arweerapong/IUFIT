@@ -184,3 +184,4 @@ html[data-theme="dark"] .iu-mate-grp-chip.on{background:#16304d}
 html[data-theme="dark"] .iu-mate-amt-row{border-bottom-color:#243149}
 html[data-theme="dark"] .iu-mate-amt-row button{background:#22304a}
 html[data-theme="dark"] .iu-mate-ip input.search{background:#141f33;color:var(--iu-text)}
+body.iumate-open #coach-edit-fab,body.iumate-open #coach-back-fab{display:none!important}

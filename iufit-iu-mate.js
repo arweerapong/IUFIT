@@ -389,7 +389,7 @@ function resultCtx(){
 }
 function coachCtx(){
   if(!consentCoach()) return {clients:0,follow:[],groups:0,groupNames:[],sentToday:0,denied:true};
-  var s=S(); var clients=(s.users||[]).filter(function(u){return u.tr;});
+  var s=S(); var clients=(s.users||[]).filter(function(u){return u.tr&&!u.removedAt;});
   var today=todayDate();
   // last activity per client from saved notes (cnote) or homework cache
   var follow=[]; var cn=s.cnote||{};
@@ -1455,7 +1455,7 @@ function analyzeClient(c){
 }
 function buildCoachProgress(){
   if(!consentCoach()) return coachDeniedReply();
-  var clients=(S().users||[]).filter(function(u){ return u.tr; });
+  var clients=(S().users||[]).filter(function(u){ return u.tr && !u.removedAt; });
   if(!clients.length) return { title:L('ยังไม่มีลูกเทรน','No clients yet'), message:L('ยังไม่มีลูกเทรน แชร์ QR โค้ชให้สแกนเข้ามาก่อนนะครับ','No clients yet — share your Coach QR.'), actions:[{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] };
   var rows=clients.map(analyzeClient).sort(function(a,b){ return b.score-a.score; });
   var risky=rows.filter(function(r){ return r.score>=2; });
@@ -1475,7 +1475,7 @@ function buildCoachProgress(){
 }
 function buildCoachFollowup(){
   if(!consentCoach()) return coachDeniedReply();
-  var clients=(S().users||[]).filter(function(u){ return u.tr; });
+  var clients=(S().users||[]).filter(function(u){ return u.tr && !u.removedAt; });
   if(!clients.length) return { title:L('ยังไม่มีลูกเทรน','No clients yet'), message:L('ยังไม่มีลูกเทรน แชร์ QR โค้ชให้สแกนเข้ามาก่อนนะครับ','No clients yet — share your Coach QR for them to scan.'),
     actions:[{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] };
   var rows=clients.map(analyzeClient).filter(function(r){ return r.score>=2; }).sort(function(a,b){ return b.score-a.score; });
@@ -1530,7 +1530,7 @@ var MSG_TEMPLATES=[
     th:'{name} ครับ น้ำหนักนิ่งช่วงนี้เป็นเรื่องปกติของการลดไขมัน อย่าเพิ่งท้อนะครับ ขอดูบันทึกอาหาร 3-4 วันกับการนอน/น้ำ แล้วโค้ชจะช่วยปรับให้ บางทีรอบเอวลดแม้น้ำหนักยังไม่ขยับครับ',
     en:'{name}, a weight stall is a normal part of fat loss — do not get discouraged. Send me 3-4 days of food logs plus sleep/water and I will help adjust. Sometimes the waist drops even when the scale does not.'}
 ];
-function topClientName(){ try{ var cs=(S().users||[]).filter(function(u){return u.tr;}); if(!cs.length) return L('ลูกเทรน','your client'); var r=cs.map(analyzeClient).sort(function(a,b){return b.score-a.score;})[0]; return (r&&r.name)||cs[0].name||L('ลูกเทรน','your client'); }catch(e){ return L('ลูกเทรน','your client'); } }
+function topClientName(){ try{ var cs=(S().users||[]).filter(function(u){return u.tr&&!u.removedAt;}); if(!cs.length) return L('ลูกเทรน','your client'); var r=cs.map(analyzeClient).sort(function(a,b){return b.score-a.score;})[0]; return (r&&r.name)||cs[0].name||L('ลูกเทรน','your client'); }catch(e){ return L('ลูกเทรน','your client'); } }
 function buildCoachTemplates(){
   if(!consentCoach()) return coachDeniedReply();
   return { title:L('ข้อความสำเร็จรูปสำหรับโค้ช','Coach message templates'),
@@ -1823,6 +1823,10 @@ var ACTIONS = {
   show_privacy:function(){ try{ IUMate.showPrivacy(); }catch(e){} },
   coach_menu_redraft:function(p){ if(p&&p.id) pushReply(buildCoachDayMenu(findClientById(p.id))); },
   coach_workout_redraft:function(p){ if(p&&p.id) pushReply(buildCoachWorkout(findClientById(p.id), p.days, p.equip)); },
+  coach_wplan_pick:function(){ var lc=window._LAST_COACH_WPLAN; if(!lc||!(lc.struct&&lc.struct.length)){ appToast(L('ยังไม่มีแผนให้ใส่','No plan yet')); return; } var chips=[]; try{ var cs=(typeof clientChoices==='function')?clientChoices():[]; (cs||[]).forEach(function(c){ chips.push({label:c[0],action:'coach_wplan_do',payload:{id:c[1]}}); }); }catch(x){} if(!chips.length&&lc.cid){ chips.push({label:(lc.name||L('ลูกเทรน','client')),action:'coach_wplan_do',payload:{id:lc.cid}}); } chips.push({label:L('ยกเลิก','Cancel'),action:'noop'}); pushReply({ title:L('ใส่แผนลงตารางลูกเทรนคนไหน?','Add plan to which client?'), message:L('เลือกลูกเทรนที่จะใส่แผนนี้ลงตารางฝึก · ระบบจะแทนที่ตารางเดิมของคนนั้น (เข้าไปปรับต่อได้ในหน้าลูกเทรน)','Pick a client — this replaces their current schedule (you can edit it in their page).'), actions:chips }); },
+  coach_wplan_do:function(p){ var lc=window._LAST_COACH_WPLAN; var cid=p&&p.id; if(!lc||!cid){ appToast(L('ไม่สำเร็จ','Failed')); return; } try{ var Sx=window.S; Sx.wplan=Sx.wplan||{}; var day={}; lc.struct.forEach(function(d){ var arr=[]; d.moves.forEach(function(m){ arr.push({n:m.n,eq:m.eq,s:'-×10×3'}); }); day[d.wd]=arr; }); Sx.wplan[cid]=day; if(fn('save')) window.save(); }catch(x){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); return; } var nm=''; try{ var cu=(window.S.users||[]).filter(function(u){return u.id===cid;})[0]; nm=(cu&&cu.name)||''; }catch(x){} appToast(L('ใส่ลงตาราง '+nm+' แล้ว 📅','Added to '+nm+' 📅')); pushReply({ title:L('ใส่ลงตารางแล้ว ✓','Added to schedule ✓'), message:L('ใส่แผนลงตารางของ '+nm+' เรียบร้อย · จะส่งให้ลูกเทรนเลย หรือเข้าไปปรับก่อนก็ได้ครับ','Added to '+nm+"'s schedule. Send it now, or edit first in their page."), actions:[{label:L('📤 ส่งให้ลูกเทรนเลย','📤 Send to client'),action:'coach_wplan_send',payload:{id:cid}},{label:L('เปิดหน้าลูกเทรน','Open client'),action:'go_clients'}] }); },
+  coach_wplan_send:function(p){ var cid=p&&p.id; if(cid&&fn('sendClientPlan')){ try{ window.sendClientPlan(cid); }catch(x){ appToast(L('ส่งไม่สำเร็จ','Send failed')); } } },
+  noop:function(){},
   find_trainer:function(){ try{ goTab('coachview'); }catch(e){} },
   workout_redraft:function(){ try{ startFlow('workout'); }catch(e){} },
   wplan_save:function(){ try{ var u=(fn('curUser')?window.curUser():null); var Sx=window.S; if(!u||!Sx||!_LAST_WPLAN||!(_LAST_WPLAN.struct&&_LAST_WPLAN.struct.length)){ appToast(L('ไม่มีแผนให้บันทึก','No plan to save')); return; } Sx.wplan=Sx.wplan||{}; Sx.wplan[u.id]=Sx.wplan[u.id]||{}; _LAST_WPLAN.struct.forEach(function(d){ var arr=[]; d.moves.forEach(function(m){ arr.push({n:m.n,eq:m.eq,s:'-×10×3'}); }); Sx.wplan[u.id][d.wd]=arr; }); if(fn('save')) window.save(); appToast(L('บันทึกลงตารางฝึกแล้ว 📅','Saved to your schedule 📅')); ST.isOpen=false; closeNow(); try{ goTab('workout'); }catch(e){} }catch(e){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); } },
@@ -1983,7 +1987,7 @@ function proactiveNudge(){
 }
 /* ============================ multi-turn slot-filling flows ============================ */
 /* ---- coach drafting tool: full-day menu for a selected trainee (helps coach, coach edits & sends) ---- */
-function coachClientsList(){ return (S().users||[]).filter(function(u){ return u.tr; }); }
+function coachClientsList(){ return (S().users||[]).filter(function(u){ return u.tr && !u.removedAt; }); }
 function findClientById(id){ var cs=coachClientsList(); for(var i=0;i<cs.length;i++){ if(cs[i].id===id) return cs[i]; } return null; }
 function clientChoices(){ return coachClientsList().slice(0,8).map(function(c){ return [c.name||L('ลูกเทรน','Client'), c.id]; }); }
 function goalLabelOf(g){ if(g==='lose') return 'ลดไขมัน'; if(g==='gain') return 'เพิ่มกล้าม'; return 'สุขภาพทั่วไป'; }
@@ -2070,14 +2074,16 @@ function buildCoachWorkout(c, days, equip){
   if(!(window.IUFIT_WORKOUTS&&window.IUFIT_WORKOUTS.length)) return { title:L('คลังท่ายังไม่พร้อม','Move library not ready'), message:L('ลองรีเฟรชแอปแล้วเปิด IU Mate อีกครั้งครับ','Please refresh the app and reopen IU Mate.') };
   days=days||3; equip=equip||'gym'; var goal=c.goal||'lose'; var en=(window.LANG==='en');
   var _cq=wplanQuota(); if(!_cq.ok) return wplanQuotaReply(_cq);
-  var split=SPLITS[days]||SPLITS[3], dayTexts=[];
+  var split=SPLITS[days]||SPLITS[3], dayTexts=[], _cwd=((typeof _defaultWdays==='function')?_defaultWdays(days):[0,2,4,1,3,5,6].slice(0,days)), _cstruct=[];
   split.forEach(function(d, di){
     var used={}, tmpl=DAYTMPL[d[1]]||DAYTMPL.full, moves=[];
     tmpl.forEach(function(gp){ var pool=movesForGroup(gp[0], equip, used); for(var k=0;k<gp[1]&&k<pool.length;k++){ used[pool[k].nameEn]=1; moves.push(pool[k]); } });
     if(goal==='lose'){ var cp=movesForGroup('คาร์ดิโอ', equip, used); if(cp[0]){ used[cp[0].nameEn]=1; moves.push(cp[0]); } }
     var lines=moves.map(function(mv){ return '• '+mv.nameEn+' — '+setsReps(goal,mv.cardio)+(mv.source==='custom'?' ⭐':''); });
     dayTexts.push('🗓️ '+L('วันที่ '+(di+1),'Day '+(di+1))+' — '+d[0]+'\n'+(lines.join('\n')||L('(ไม่มีท่าที่ตรงอุปกรณ์)','(no matching moves)')));
+    _cstruct.push({wd:(_cwd[di]!=null?_cwd[di]:di),moves:moves.map(function(mv){return {n:(mv.nameTh||mv.nameEn),eq:mv.eq||'บอดี้เวท'};})});
   });
+  try{ window._LAST_COACH_WPLAN={cid:c.id,name:c.name,struct:_cstruct}; }catch(_e){}
   var head=L('โปรแกรมฝึก '+days+' วัน/สัปดาห์ — '+(c.name||'ลูกเทรน'), days+'-day/week program — '+(c.name||'client'));
   var goalLine=L('เป้า: '+goalLabelOf(goal)+' · อุปกรณ์: '+(equip==='home'?'บอดี้เวท (ที่บ้าน)':'ยิม/อุปกรณ์ครบ'),'Goal: '+goalLabelOf(goal)+' · Equipment: '+(equip==='home'?'Bodyweight (home)':'Full gym'));
   var _cNote='';
@@ -2089,7 +2095,7 @@ function buildCoachWorkout(c, days, equip){
     disclaimer:L('ค่าประมาณเพื่อช่วยร่าง โค้ชปรับท่า/เซ็ต/น้ำหนักก่อนส่งได้ · ⭐ = ท่าที่เพิ่มเอง','Estimates to help you draft — adjust moves/sets/load before sending · ⭐ = your custom move')+_cqL,
     actions:[
       {label:L('🔄 ร่างใหม่','🔄 Redraft'),action:'coach_workout_redraft',payload:{id:c.id,days:days,equip:equip}},
-      {label:L('📋 คัดลอกเป็นข้อความ','📋 Copy as text'),action:'copy_text',payload:{text:head+'\n'+body}},
+      {label:L('📅 ใส่ลงตารางลูกเทรน','📅 Add to client schedule'),action:'coach_wplan_pick'},
       {label:L('เปิดท่าฝึก','Open Workout'),action:'go_workout'}
     ] };
 }
@@ -2215,11 +2221,11 @@ function handleMessage(text){
 }
 
 /* ============================ public API ============================ */
-function closeNow(){ try{ saveHist(); }catch(e){} ST.isOpen=false; var r=root(); r.innerHTML=''; renderFab(); }
+function closeNow(){ try{ saveHist(); }catch(e){} try{document.body.classList.remove('iumate-open');}catch(_e){} ST.isOpen=false; var r=root(); r.innerHTML=''; renderFab(); }
 function readCalcInputs(){ ST.calc=ST.calc||{}; var a=document.getElementById('iuCalcAge'),h=document.getElementById('iuCalcH'),w=document.getElementById('iuCalcW'),ac=document.getElementById('iuCalcAct'); if(a&&a.value!=='')ST.calc.age=parseFloat(a.value); if(h&&h.value!=='')ST.calc.h=parseFloat(h.value); if(w&&w.value!=='')ST.calc.w=parseFloat(w.value); if(ac&&ac.value)ST.calc.act=parseFloat(ac.value); }
 var IUMate = {
   open:function(mode){ if(!appReady()){ appToast(L('เข้าสู่ระบบก่อนใช้ IU Mate','Sign in to use IU Mate')); return; }
-    ST.isOpen=true; ST.mode=mode||'global';
+    ST.isOpen=true; ST.mode=mode||'global'; try{document.body.classList.add('iumate-open');}catch(_e){}
     if(!hasConsent()){ ST.full=false; renderConsentScreen(); renderFab(); return; }
     if(!ST.messages.length){ var _h=loadHist(); if(_h){ ST.messages=_h; } else { ST.messages.push({role:'botText',text:greeting()}); var _nz=proactiveNudge(); if(_nz){ ST.messages.push({role:'bot',reply:_nz,idx:ST.messages.length}); } } } ST._nudgeSeen=true;
     renderSheet(); renderFab();
