@@ -687,11 +687,14 @@ function rescale(){
   var availH=Math.max(140, Math.round(vh*0.66));            // fit within viewport height (not just width)
   var sc=Math.min(availW/cardW, availH/cardH);              // fit BOTH dimensions
   sc=Math.max(0.05, Math.min(sc,1));
+  el.style.transform='none';
   el.style.transformOrigin='top left';
   el.style.minWidth='0';
   el.style.width=(cardW*sc)+'px';
   el.style.height=(cardH*sc)+'px';
-  el.style.transform='scale('+sc+')';
+  el.style.overflow='hidden';
+  var _cd=document.getElementById('card');
+  if(_cd){_cd.style.transformOrigin='top left';_cd.style.transform='scale('+sc+')';}
 }
 if(!window._rcRescaleHooked){window._rcRescaleHooked=1;
   window.addEventListener('resize',function(){try{rescale()}catch(e){}});
