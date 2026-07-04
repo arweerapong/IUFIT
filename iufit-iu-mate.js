@@ -1472,7 +1472,7 @@ function buildWorkoutPlan(message,inpOverride,limOverride){
  var chips=[];
  var _cl=[]; try{ _cl=(typeof coachClientsList==='function')?coachClientsList():[]; }catch(_e){}
  if(coach&&_cl&&_cl.length&&_LAST_WPLAN&&_LAST_WPLAN.struct&&_LAST_WPLAN.struct.length){ try{window._LAST_COACH_WPLAN={cid:null,name:'',struct:_LAST_WPLAN.struct};}catch(_e){} chips.push({label:L('📅 เพิ่มลงตารางลูกเทรน','📅 Add to a client'),action:'coach_wplan_pick'}); }
- if(_canSave) chips.push({label:L('📅 บันทึกลงตารางฝึก','📅 Save to my schedule'),action:'wplan_save'});
+ if(_canSave) chips.push({label:L('📅 บันทึกลงตารางฝึก','📅 Save to my schedule'),action:'wplan_save',payload:{struct:_LAST_WPLAN.struct}});
  chips.push({label:L('🔄 สร้างตารางใหม่','🔄 Regenerate'),action:'workout_redraft'});
  chips.push({label:L('ไม่มีอุปกรณ์','No equipment'),action:'_chip',payload:{q:L('จัดตารางฝึกไม่มีอุปกรณ์','workout plan no equipment')}});
  chips.push({label:L('ไปหน้าตารางฝึก','Open plan'),action:'go_workout'});
@@ -2107,7 +2107,7 @@ var ACTIONS = {
   noop:function(){},
   find_trainer:function(){ try{ goTab('coachview'); }catch(e){} },
   workout_redraft:function(){ try{ startFlow('workout'); }catch(e){} },
-  wplan_save:function(){ try{ var u=(fn('curUser')?window.curUser():null); var Sx=window.S; if(!u||!Sx||!_LAST_WPLAN||!(_LAST_WPLAN.struct&&_LAST_WPLAN.struct.length)){ appToast(L('ไม่มีแผนให้บันทึก','No plan to save')); return; } Sx.wplan=Sx.wplan||{}; Sx.wplan[u.id]=Sx.wplan[u.id]||{}; _LAST_WPLAN.struct.forEach(function(d){ var arr=[]; d.moves.forEach(function(m){ arr.push({n:m.n,eq:m.eq,s:'-×10×3'}); }); Sx.wplan[u.id][d.wd]=arr; }); if(fn('save')) window.save(); appToast(L('บันทึกลงตารางฝึกแล้ว 📅','Saved to your schedule 📅')); ST.isOpen=false; closeNow(); try{ goTab('workout'); }catch(e){} }catch(e){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); } },
+  wplan_save:function(p){ try{ var u=(fn('curUser')?window.curUser():null); var Sx=window.S; var _st=(p&&p.struct)||(_LAST_WPLAN&&_LAST_WPLAN.struct); if(!u||!Sx||!(_st&&_st.length)){ appToast(L('ไม่มีแผนให้บันทึก','No plan to save')); return; } Sx.wplan=Sx.wplan||{}; Sx.wplan[u.id]=Sx.wplan[u.id]||{}; _st.forEach(function(d){ var arr=[]; d.moves.forEach(function(m){ arr.push({n:m.n,eq:m.eq,s:'-×10×3'}); }); Sx.wplan[u.id][d.wd]=arr; }); if(fn('save')) window.save(); appToast(L('บันทึกลงตารางฝึกแล้ว 📅','Saved to your schedule 📅')); ST.isOpen=false; closeNow(); try{ goTab('workout'); }catch(e){} }catch(e){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); } },
   flow_multi:function(p){ if(!ST.flow)return; ST.flow._msel=ST.flow._msel||{}; var k=(p&&p.v); if(k==null)return; if(ST.flow._msel[k])delete ST.flow._msel[k]; else ST.flow._msel[k]=1; var m=ST.messages[ST.flow.askIdx]; if(m&&m.reply){ m.reply.actions=_wdayMultiActions(); try{renderMessages();}catch(e){} } },
   flow_multi_done:function(){ if(!ST.flow)return; var sel=Object.keys(ST.flow._msel||{}).map(Number).sort(function(a,b){return a-b;}); if(!sel.length){ appToast(L('เลือกวันอย่างน้อย 1 วัน หรือกด “ให้จัดวันให้”','Pick at least 1 day, or tap “Arrange for me”')); return; } ST.flow._msel=null; var slot=flowCurSlot(); if(!slot)return; var ab=_wdayAbbr(); var lbl=sel.map(function(i){var f=ab.filter(function(c){return c[1]===i;})[0];return f?f[0]:(''+i);}).join(' '); if(ST.flow.askIdx!=null&&ST.messages[ST.flow.askIdx]){ ST.messages[ST.flow.askIdx].picked=lbl; try{renderMessages();}catch(e){} } ST.flow.slots[slot.key]=sel; ST.flow.askIdx=null; flowNext(); },
   flow_pick:function(p){ if(p&&p.v!=null) flowAnswer(p.v); },
