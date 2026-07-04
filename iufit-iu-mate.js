@@ -1030,13 +1030,16 @@ function _riskyMove(en,level){var t=(''+en).toLowerCase();
  if(/plyo|box jump|jump squat|jumping|burpee|sprint|skater|snatch|clean|muscle-up|handstand|ab wheel|pistol/.test(t))return true;
  if(level!=='advanced'&&/deadlift|rack pull|hack squat|sumo deadlift|good morning/.test(t))return true;
  return false;}
-function _safePool(key,equip,used,level){return shuffleArr(moveCatalog().filter(function(m){
+function _eqRank(eq,mode){ if(mode==='gym'){ return (eq==='บอดี้เวท'||eq==='ยางยืด')?0:1; } if(mode==='dumbbell'){ return eq==='ดัมเบล'?1:0; } return 0; }
+function _safePool(key,equip,used,level){var _pool=shuffleArr(moveCatalog().filter(function(m){
  if(/ผู้สูงอายุ|ออฟฟิศ|คนท้อง|ฟื้นฟู|กีฬา|ยืดเหยียด|คาร์ดิโอ/.test(m.group||''))return false;
  if(!groupMatch(m.group,key))return false;
  if(equip==='home'&&!(m.eq==='บอดี้เวท'||m.eq==='ยางยืด'))return false;
  if(equip==='dumbbell'&&!(m.eq==='บอดี้เวท'||m.eq==='ยางยืด'||m.eq==='ดัมเบล'))return false;
  if(_riskyMove(m.nameEn,level))return false;
- if(used[m.nameEn])return false;return true;}));}
+ if(used[m.nameEn])return false;return true;}));
+ if(equip==='gym'||equip==='dumbbell')_pool.sort(function(a,b){return _eqRank(b.eq,equip)-_eqRank(a.eq,equip);});
+ return _pool;}
 /* ===== IU MATE workout program builder: split + weekday helpers ===== */
 function _autoSplit(days){ days=+days||3; if(days<=3) return 'full'; if(days===4) return 'ul'; return 'ppl'; }
 function _splitPattern(split,days){
@@ -1185,7 +1188,7 @@ function buildWorkoutPlan(message,inpOverride,limOverride){
  }catch(eA){ _adNote=''; }
  var sel=selectWorkoutTemplateByBody({goal:inp.goal,level:inp.level,daysPerWeek:inp.daysPerWeek,equipment:inp.equipment,limitation:limitation,bodyProfile:bp,hasCoach:false,hasCoachWorkoutPlan:false});
  var tpl=getWorkoutTemplateById(sel.templateId)||WORKOUT_TEMPLATES[0];
- var _libBody=(!coach&&sel.safetyLevel!=='caution'&&sel.safetyLevel!=='low_impact'&&limitation==='none')?(function(){try{return _libWorkoutPlan(inp);}catch(e){return null;}})():null;
+ var _libBody=(sel.safetyLevel!=='caution'&&sel.safetyLevel!=='low_impact'&&limitation==='none')?(function(){try{return _libWorkoutPlan(inp);}catch(e){return null;}})():null;
  var explain=coach?'':(_libBody?_libExplain(inp,bp):_wpExplain(tpl,bp,inp,sel.safetyLevel));
  var msg=(_adNote?_adNote+'\n\n———\n\n':'')+(explain?explain+'\n\n———\n\n':'')+(_libBody||_wpFormat(tpl))+L('หมายเหตุ: เลือกความหนักที่ยังคุมท่าได้ ไม่ต้องฝืนจนหมดแรง · ถ้าทำได้ครบทุกเซ็ตคุมท่าดี 2 ครั้งติด ค่อยเพิ่มครั้ง/น้ำหนักเล็กน้อย','Note: pick a load you can control, no need to go to failure. If you hit all sets with good form twice, add reps/a little weight.');
  var note=coach?L('นี่คือร่างแผนสำหรับลูกเทรน ตรวจ/แก้ก่อนส่งได้ · IU MATE ไม่ส่งให้ลูกเทรนอัตโนมัติ และไม่เปลี่ยนแผนเดิมโดยไม่ยืนยัน','Draft for your client — review/edit before sending. IU MATE never auto-sends or overrides an active plan.'):L('แผนนี้เป็นแผนพื้นฐาน ปรับได้ตามความพร้อมของร่างกาย หากมีอาการเจ็บหรือโรคประจำตัว ควรปรึกษาผู้เชี่ยวชาญก่อนเริ่มฝึก','This is a basic plan — adjust to your readiness. If you have pain or a health condition, consult a professional first.');
@@ -1195,6 +1198,8 @@ function buildWorkoutPlan(message,inpOverride,limOverride){
  var _canSave=(!coach&&_LAST_WPLAN&&_LAST_WPLAN.struct&&_LAST_WPLAN.struct.length);
  var saveHint=_canSave?L('\n\nกด “บันทึกลงตารางฝึก” เพื่อใส่ลงตารางให้อัตโนมัติ แล้วเข้าไปปรับจำนวนครั้ง/เวลาต่อได้ในหน้าตารางฝึกครับ','\n\nTap “Save to my schedule” to add it automatically — then fine-tune reps/time in the Workout tab.'):'';
  var chips=[];
+ var _cl=[]; try{ _cl=(typeof coachClientsList==='function')?coachClientsList():[]; }catch(_e){}
+ if(coach&&_cl&&_cl.length&&_LAST_WPLAN&&_LAST_WPLAN.struct&&_LAST_WPLAN.struct.length){ try{window._LAST_COACH_WPLAN={cid:null,name:'',struct:_LAST_WPLAN.struct};}catch(_e){} chips.push({label:L('📅 เพิ่มลงตารางลูกเทรน','📅 Add to a client'),action:'coach_wplan_pick'}); }
  if(_canSave) chips.push({label:L('📅 บันทึกลงตารางฝึก','📅 Save to my schedule'),action:'wplan_save'});
  chips.push({label:L('🔄 สร้างตารางใหม่','🔄 Regenerate'),action:'workout_redraft'});
  chips.push({label:L('ไม่มีอุปกรณ์','No equipment'),action:'_chip',payload:{q:L('จัดตารางฝึกไม่มีอุปกรณ์','workout plan no equipment')}});
@@ -1830,6 +1835,8 @@ var ACTIONS = {
   find_trainer:function(){ try{ goTab('coachview'); }catch(e){} },
   workout_redraft:function(){ try{ startFlow('workout'); }catch(e){} },
   wplan_save:function(){ try{ var u=(fn('curUser')?window.curUser():null); var Sx=window.S; if(!u||!Sx||!_LAST_WPLAN||!(_LAST_WPLAN.struct&&_LAST_WPLAN.struct.length)){ appToast(L('ไม่มีแผนให้บันทึก','No plan to save')); return; } Sx.wplan=Sx.wplan||{}; Sx.wplan[u.id]=Sx.wplan[u.id]||{}; _LAST_WPLAN.struct.forEach(function(d){ var arr=[]; d.moves.forEach(function(m){ arr.push({n:m.n,eq:m.eq,s:'-×10×3'}); }); Sx.wplan[u.id][d.wd]=arr; }); if(fn('save')) window.save(); appToast(L('บันทึกลงตารางฝึกแล้ว 📅','Saved to your schedule 📅')); ST.isOpen=false; closeNow(); try{ goTab('workout'); }catch(e){} }catch(e){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); } },
+  flow_multi:function(p){ if(!ST.flow)return; ST.flow._msel=ST.flow._msel||{}; var k=(p&&p.v); if(k==null)return; if(ST.flow._msel[k])delete ST.flow._msel[k]; else ST.flow._msel[k]=1; var m=ST.messages[ST.flow.askIdx]; if(m&&m.reply){ m.reply.actions=_wdayMultiActions(); try{renderMessages();}catch(e){} } },
+  flow_multi_done:function(){ if(!ST.flow)return; var sel=Object.keys(ST.flow._msel||{}).map(Number).sort(function(a,b){return a-b;}); if(!sel.length){ appToast(L('เลือกวันอย่างน้อย 1 วัน หรือกด “ให้จัดวันให้”','Pick at least 1 day, or tap “Arrange for me”')); return; } ST.flow._msel=null; var slot=flowCurSlot(); if(!slot)return; var ab=_wdayAbbr(); var lbl=sel.map(function(i){var f=ab.filter(function(c){return c[1]===i;})[0];return f?f[0]:(''+i);}).join(' '); if(ST.flow.askIdx!=null&&ST.messages[ST.flow.askIdx]){ ST.messages[ST.flow.askIdx].picked=lbl; try{renderMessages();}catch(e){} } ST.flow.slots[slot.key]=sel; ST.flow.askIdx=null; flowNext(); },
   flow_pick:function(p){ if(p&&p.v!=null) flowAnswer(p.v); },
   flow_other:function(){ _flowOtherPrompt(); },
   flow_cancel:function(){ cancelFlow(); },
@@ -2051,11 +2058,13 @@ function moveCatalog(){
 function groupMatch(g, key){ return (g||'').indexOf(key)>=0; }
 function shuffleArr(a){ a=a.slice(); for(var i=a.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; } return a; }
 function movesForGroup(key, equip, used){
-  return shuffleArr(moveCatalog().filter(function(m){
+  var _p=shuffleArr(moveCatalog().filter(function(m){
     if(!groupMatch(m.group,key)) return false;
     if(equip==='home' && !(m.eq==='บอดี้เวท'||m.eq==='ยางยืด')) return false;
     if(used[m.nameEn]) return false; return true;
   }));
+  if(equip==='gym'&&typeof _eqRank==='function')_p.sort(function(a,b){return _eqRank(b.eq,'gym')-_eqRank(a.eq,'gym');});
+  return _p;
 }
 var DAYTMPL={ push:[['อก',2],['ไหล่',1],['แขน',1]], pull:[['หลัง',2],['แขน',1]], legs:[['ขา',3],['ท้อง',1]],
   upper:[['อก',1],['หลัง',1],['ไหล่',1],['แขน',1]], lower:[['ขา',2],['ท้อง',2]], full:[['ขา',1],['อก',1],['หลัง',1],['ท้อง',1]] };
@@ -2120,7 +2129,7 @@ var FLOWS = {
       { key:'goal', type:'choice', q:L('เป้าหมายหลักคืออะไรครับ?','What is your main goal?'), choices:[[L('ลดไขมัน','Fat loss'),'fat_loss'],[L('เพิ่มกล้าม','Build muscle'),'muscle_gain'],[L('สุขภาพ/ฟิตทั่วไป','General fitness'),'general_fitness']], other:true },
       { key:'days', type:'choice', q:L('อยากฝึกกี่วันต่อสัปดาห์?','How many days per week?'), choices:[[L('2 วัน','2 days'),2],[L('3 วัน','3 days'),3],[L('4 วัน','4 days'),4],[L('5 วัน','5 days'),5]], other:true },
       { key:'split', type:'choice', q:L('อยากได้รูปแบบแบ่งวันแบบไหนครับ?','Which split would you like?'), choices:[[L('ให้ IU MATE เลือกให้เหมาะ','Let IU MATE choose'),'auto'],[L('Full Body (เล่นทั้งตัว)','Full Body'),'full'],[L('Upper / Lower (บน-ล่าง)','Upper / Lower'),'ul'],[L('Push / Pull / Legs','Push / Pull / Legs'),'ppl']] },
-      { key:'wdays', type:'choice', q:L('สะดวกฝึกวันไหนบ้างครับ? (เลือกวันหรือให้จัดให้)','Which days can you train? (pick, or let me arrange)'), choices:[[L('ให้จัดวันให้อัตโนมัติ','Arrange for me'),'auto']], other:true },
+      { key:'wdays', type:'choice', multi:true, q:L('สะดวกฝึกวันไหนบ้างครับ? แตะเลือกได้หลายวัน','Which days can you train? Tap to pick several') },
       { key:'equip', type:'choice', q:L('มีอุปกรณ์แบบไหนครับ?','What equipment do you have?'), choices:[[L('ไม่มี / บอดี้เวท','None / bodyweight'),'none'],[L('ดัมเบล','Dumbbell'),'dumbbell'],[L('ฟิตเนส / ยิม','Full gym'),'full_gym']], other:true }
     ],
     complete: function(sl){ var days=(+sl.days||3); var split=(['full','ul','ppl'].indexOf(sl.split)>=0?sl.split:_autoSplit(days)); var inp={goal:(['fat_loss','muscle_gain','general_fitness'].indexOf(sl.goal)>=0?sl.goal:'general_fitness'),level:'beginner',daysPerWeek:days,sessionDurationMinutes:30,split:split,wdays:(sl.wdays&&sl.wdays!=='auto'?_parseWdays(sl.wdays,days):'auto'),equipment:(sl.equip==='none'?['none','bodyweight']:(['dumbbell','full_gym','bodyweight'].indexOf(sl.equip)>=0?[sl.equip]:['bodyweight'].concat(sl.equip?[sl.equip]:[])))}; try{return buildWorkoutPlan('',inp,'none');}catch(e){return null;} }
@@ -2174,7 +2183,10 @@ function flowNext(){
   ST.flow.cur=slot.key; askSlot(slot);
 }
 function slotChoices(slot){ return slot.choices || (slot.choicesFn?slot.choicesFn():[]); }
+function _wdayAbbr(){ return (window.LANG==='en')?[['Mon',0],['Tue',1],['Wed',2],['Thu',3],['Fri',4],['Sat',5],['Sun',6]]:[['จ',0],['อ',1],['พ',2],['พฤ',3],['ศ',4],['ส',5],['อา',6]]; }
+function _wdayMultiActions(){ var sel=(ST.flow&&ST.flow._msel)||{}; var acts=_wdayAbbr().map(function(c){ return {label:(sel[c[1]]?'✓ ':'')+c[0],action:'flow_multi',payload:{v:c[1]}}; }); acts.push({label:L('📅 ให้จัดวันให้','📅 Arrange for me'),action:'flow_pick',payload:{v:'auto'}}); var n=Object.keys(sel).length; acts.push({label:L('ยืนยัน'+(n?' ('+n+' วัน)':''),'Confirm'+(n?' ('+n+')':'')),action:'flow_multi_done'}); acts.push({label:L('ยกเลิก','Cancel'),action:'flow_cancel'}); return acts; }
 function askSlot(slot){
+  if(slot.multi){ if(ST.flow)ST.flow._msel={}; pushReply({ title:null, message:slot.q+L(' (แตะวันที่ต้องการ แล้วกดยืนยัน)',' (tap days, then Confirm)'), actions:_wdayMultiActions() }); if(ST.flow)ST.flow.askIdx=ST.messages.length-1; return; }
   var acts=[];
   if(slot.type==='choice') acts=slotChoices(slot).map(function(c){ return {label:c[0],action:'flow_pick',payload:{v:c[1]}}; });
   if(slot.other) acts.push({label:L('อื่น ๆ (พิมพ์เอง)','Other (type it)'),action:'flow_other'});
