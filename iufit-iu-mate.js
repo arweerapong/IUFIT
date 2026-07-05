@@ -1641,9 +1641,12 @@ function buildLibraryRecommend(opts){opts=opts||{};
     actions:[{label:L('สร้างจากของที่มี','From my ingredients'),action:'open_ingredient_picker'},{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] };
 }
 function buildFoodSearch(message){
+  var acts=[{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'},{label:L('สร้างเมนูจากของที่มี','Make from ingredients'),action:'open_ingredient_picker'}];
+  var extra='';
+  if(!_iuHasAI()){ extra='\n\n'+L('หาเมนูที่ต้องการไม่เจอในคลัง? เปิด AI (Gemini) ให้ช่วยสร้างเมนูใหม่ + คำนวณโภชนาการที่ไม่มีในคลังได้ — ตั้งค่าฟรีใน 1 นาที','Cant find your menu in the library? Turn on AI (Gemini) to generate new recipes with nutrition — free 1-min setup.'); acts.push({label:L('⚡ เปิด AI (ใส่ API key)','⚡ Enable AI (API key)'),action:'open_ai_setup'}); }
   return { title:L('ค้นหาเมนู','Search menus'),
-    message:L('เปิดหน้าอาหารแล้วพิมพ์ชื่อเมนูในช่องค้นหาได้เลย คลังมีกว่า 4,500 เมนูพร้อมค่าโภชนาการ','Open Food and type a menu name in search — the library has 4,500+ menus with nutrition.'),
-    actions:[{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'},{label:L('สร้างเมนูจากของที่มี','Make from ingredients'),action:'open_ingredient_picker'}] };
+    message:L('เปิดหน้าอาหารแล้วพิมพ์ชื่อเมนูในช่องค้นหาได้เลย คลังมีกว่า 4,500 เมนูพร้อมค่าโภชนาการ','Open Food and type a menu name in search — the library has 4,500+ menus with nutrition.')+extra,
+    actions:acts };
 }
 function buildResult(){
   var r=resultCtx();
@@ -1879,6 +1882,8 @@ function quickChips(){
   ];
   return rankChips(list);
 }
+function _iuHasAI(){ try{ var st=S(); return !!(st&&st.aiKey&&(''+st.aiKey).trim()); }catch(e){ return false; } }
+function _lineWelcome(){ return { message:L('🆕 บันทึกอาหาร/ท่าฝึกผ่าน LINE ได้แล้ว! พิมพ์บอกในไลน์ IUFIT เช่น "มื้อเช้า ไข่ต้ม 2 ฟอง" หรือ "วิ่ง 30 นาที" เดี๋ยวเข้าแอปให้อัตโนมัติ','🆕 You can now log meals & workouts via LINE! Just type in the IUFIT LINE chat (e.g. "breakfast 2 boiled eggs") and it syncs to the app.'), actions:[{label:L('เชื่อม LINE เลย','Connect LINE'),action:'open_line_log'}] }; }
 function greeting(){
   return role()==='coach'
     ? L('สวัสดีโค้ช วันนี้ให้ IU Mate ช่วยสรุปลูกเทรน การบ้าน หรือกลุ่มไหนดี?','Hi Coach! Want IU Mate to summarize clients, homework, or a group today?')
@@ -2076,6 +2081,8 @@ var ACTIONS = {
   go_groups:function(){ goTab('cgroups'); },
   go_missions:function(){ goTab('chmis'); },
   go_settings:function(){ goTab('more'); },
+  open_line_log:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuLineLogMenu')) window.iuLineLogMenu(); }catch(e){} },
+  open_ai_setup:function(){ ST.isOpen=false; closeNow(); try{ if(fn('aiSetup')) window.aiSetup(); }catch(e){} },
   open_share:function(){ ST.isOpen=false; closeNow(); try{ if(fn('shareApp')) window.shareApp(); }catch(e){} },
   open_pricing:function(){ ST.isOpen=false; closeNow(); try{ if(fn('pricingPage')) window.pricingPage(); }catch(e){} },
   open_referral:function(){ ST.isOpen=false; closeNow(); try{ if(fn('referralPage')) window.referralPage(); }catch(e){} },
@@ -2165,7 +2172,7 @@ function renderPicker(){
     '<input class="search" placeholder="'+esc(L('ค้นหาวัตถุดิบ...','Search ingredient...'))+'" value="'+esc(ST.pickerQuery||'')+'" oninput="IUMate._pq(this.value)">'+
     '<div class="iu-mate-grp-chips">'+ingGroupsForPicker().map(function(g){ return '<button class="iu-mate-grp-chip'+(grp===g[0]?' on':'')+'" onclick="IUMate._pg(\''+g[0]+'\')">'+esc(g[1])+'</button>'; }).join('')+'</div>'+
     '<div class="iu-mate-selected">'+ST.pickerSel.map(function(i){ return '<span class="iu-mate-selected-pill" onclick="IUMate._ptoggle(\''+i.id+'\')">'+esc(tFoodName(i.name))+' ✕</span>'; }).join('')+'</div>'+
-    '<div class="iu-mate-ing-list">'+ (list.length?list.map(function(i){ return '<div class="iu-mate-ing-item'+(selIds[i.id]?' on':'')+'" onclick="IUMate._ptoggle(\''+i.id+'\')"><span class="cb">'+(selIds[i.id]?checkIcon():'')+'</span><span class="nm">'+esc(tFoodName(i.name))+'</span><span class="kc">'+i.kcal+' kcal/100g</span></div>'; }).join('') : '<div class="sub">'+esc(L('ไม่พบวัตถุดิบ','No ingredient found'))+'</div>') +'</div>'+
+    '<div class="iu-mate-ing-list">'+ (list.length?list.map(function(i){ return '<div class="iu-mate-ing-item'+(selIds[i.id]?' on':'')+'" onclick="IUMate._ptoggle(\''+i.id+'\')"><span class="cb">'+(selIds[i.id]?checkIcon():'')+'</span><span class="nm">'+esc(tFoodName(i.name))+'</span><span class="kc">'+i.kcal+' kcal/100g</span></div>'; }).join('') : '<div class="sub">'+esc(L('ไม่พบวัตถุดิบ','No ingredient found'))+'</div>'+(_iuHasAI()?'':'<div class="sub" style="margin-top:6px">'+esc(L('ไม่มีในคลัง? เปิด AI ช่วยสร้างเมนูจากของนอกคลังได้ ','Not in the library? Enable AI to build menus from other items '))+'<a onclick="IUMate.act(\'open_ai_setup\',-1,-1)" style="color:#0a84ff;font-weight:800;cursor:pointer">'+esc(L('เปิด AI','Enable AI'))+'</a></div>')) +'</div>'+
     '<button class="go" '+(ST.pickerSel.length?'':'disabled')+' onclick="IUMate._pgo()">'+esc(L('ให้ IU Mate จัดเมนู','Build menus'))+(ST.pickerSel.length?' ('+ST.pickerSel.length+')':'')+'</button>';
   host.innerHTML=h;
 }
@@ -2554,7 +2561,7 @@ var IUMate = {
   open:function(mode){ if(!appReady()){ appToast(L('เข้าสู่ระบบก่อนใช้ IU Mate','Sign in to use IU Mate')); return; }
     ST.isOpen=true; ST.mode=mode||'global'; try{document.body.classList.add('iumate-open');}catch(_e){}
     if(!hasConsent()){ ST.full=false; renderConsentScreen(); renderFab(); return; }
-    if(!ST.messages.length){ var _h=loadHist(); if(_h){ ST.messages=_h; } else { ST.messages.push({role:'botText',text:greeting()}); var _nz=proactiveNudge(); if(_nz){ ST.messages.push({role:'bot',reply:_nz,idx:ST.messages.length}); } } } ST._nudgeSeen=true;
+    if(!ST.messages.length){ var _h=loadHist(); if(_h){ ST.messages=_h; } else { ST.messages.push({role:'botText',text:greeting()}); try{ if(!localStorage.getItem('iufit_iumate_lineintro')){ ST.messages.push({role:'bot',reply:_lineWelcome(),idx:ST.messages.length}); localStorage.setItem('iufit_iumate_lineintro','1'); } }catch(_le){} var _nz=proactiveNudge(); if(_nz){ ST.messages.push({role:'bot',reply:_nz,idx:ST.messages.length}); } } } ST._nudgeSeen=true;
     renderSheet(); renderFab();
     setTimeout(function(){ var inp=document.getElementById('iuMateInput'); /* no autofocus to avoid keyboard jump on open */ }, 50);
   },
