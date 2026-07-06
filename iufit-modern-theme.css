@@ -792,3 +792,6 @@ html[data-theme="dark"] .w4b{background:#141f33;border-color:#2a3650}
 
 /* LINE icons (iuIcon default tier) */
 .iufit-line-icon{display:inline-block;vertical-align:-.18em;flex:none}
+
+/* v11.03 photo food icons — single sprite sheet (1 file), transparent float */
+.fimg{display:inline-block;flex:none;background-repeat:no-repeat;box-sizing:border-box;vertical-align:middle}
