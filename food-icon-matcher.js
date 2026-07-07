@@ -108,7 +108,7 @@
     { fam: 'fried_chicken', keys: ['ไก่ทอด', 'ไก่กรอบ'], icon: 'thai_fried_chicken', cat: 'thai_dish' },
     { fam: 'roast_chicken', keys: ['ไก่ย่าง', 'ไก่อบ'], icon: 'roast_chicken', cat: 'thai_dish' },
     { fam: 'moo_ping', keys: ['หมูปิ้ง', 'หมูสะเต๊ะ', 'หมูย่าง'], icon: 'moo_satay_with_peanut_sauce', cat: 'thai_dish' },
-    { fam: 'moo_krob', keys: ['หมูกรอบ', 'คะน้าหมูกรอบ'], icon: 'crispy_pork_with_morning_glory', cat: 'thai_dish' },
+    { fam: 'moo_krob', keys: ['หมูกรอบ', 'คะน้าหมูกรอบ'], icon: 'roasted_duck_rice', cat: 'thai_dish' },
     { fam: 'steak', keys: ['สเต๊ก', 'สเต็ก', 'สเตค'], icon: 'grilled_steak', prot: { salmon: 'salmon_steak', fish: 'white_fish_fillet', chicken: 'chicken_breast' }, cat: 'western' },
     { fam: 'grilled_fish', keys: ['ปลาเผา', 'ปลาย่าง', 'ปลานึ่ง', 'ปลาทอด', 'ปลาราดพริก', 'ปลากะพง', 'ปลาดุก', 'ปลาเก๋า', 'ปลาช่อน', 'ปลาสำลี', 'ปลานิล', 'ปลาทับทิม'], icon: 'white_fish_fillet', prot: { salmon: 'grilled_salmon_steak' }, cat: 'thai_dish' },
     { fam: 'sausage', keys: ['ไส้กรอกอีสาน', 'ไส้กรอก', 'ไส้อั่ว', 'แหนม'], icon: 'sai_krok_isan', cat: 'thai_dish' },
@@ -118,9 +118,10 @@
     { fam: 'mussel', keys: ['หอยแมลงภู่', 'หอยลาย', 'หอยแครง', 'หอยทอด', 'หอยนึ่ง', 'หอย'], icon: 'mussels', cat: 'seafood' },
     { fam: 'wrap', keys: ['แรป', 'แร็ป', 'แรปสลัด'], icon: 'veggie_wrap', cat: 'western' },
     // stir fry
-    { fam: 'stir_morning_glory', keys: ['ผัดผักบุ้ง', 'ผักบุ้งไฟแดง'], icon: 'crispy_pork_with_morning_glory', cat: 'thai_dish' },
+    { fam: 'stir_morning_glory', keys: ['ผัดผักบุ้ง', 'ผักบุ้งไฟแดง', 'ผักบุ้ง'], icon: 'morning_glory', cat: 'thai_dish' },
     { fam: 'stir_tofu', keys: ['ผัดเต้าหู้', 'เต้าหู้ผัด'], icon: 'stir_fried_tofu_with_vegetables', cat: 'thai_dish' },
     { fam: 'stir_black_pepper', keys: ['พริกไทยดำ', 'ผัดพริกไทยดำ'], icon: 'stir_fried_beef_black_pepper', cat: 'thai_dish' },
+    { fam: 'garlic_fry', keys: ['หมูทอดกระเทียม', 'หมูกระเทียม', 'ไก่ทอดกระเทียม', 'ไก่กระเทียม', 'กุ้งทอดกระเทียม', 'กุ้งกระเทียม', 'ปลาหมึกทอดกระเทียม', 'ปลาหมึกกระเทียม', 'กระเทียมพริกไทย'], icon: 'thai_fried_chicken', prot: { pork: 'pork_chop', chicken: 'thai_fried_chicken', shrimp: 'shrimp', squid: 'raw_squid', beef: 'stir_fried_beef_black_pepper', fish: 'white_fish_fillet' }, cat: 'thai_dish' },
     { fam: 'stir_shrimp', keys: ['ผัดกุ้ง', 'กุ้งผัด'], icon: 'stir_fried_shrimp_with_vegetables', cat: 'thai_dish' },
     { fam: 'stir_veg', keys: ['ผัดผัก', 'ผัดพริกแกง', 'ผัดเปรี้ยวหวาน', 'ผัดขิง', 'ผัดกระเทียม', 'ผัดน้ำมันหอย', 'คะน้า'], icon: 'mixed_vegetable_stir_fry', cat: 'thai_dish' },
     { fam: 'stir_generic', keys: ['ผัด'], icon: 'mixed_vegetable_stir_fry', cat: 'thai_dish' },
@@ -176,7 +177,7 @@
     ['ข้าวไรซ์เบอร์รี', 'red_rice_bowl'], ['ไรซ์เบอร์รี', 'red_rice_bowl'], ['ข้าวกล้อง', 'brown_rice_bowl'],
     ['ข้าวสวย', 'white_rice_bowl'], ['ข้าวสุก', 'white_rice_bowl'], ['ข้าวเปล่า', 'white_rice_bowl'], ['ข้าวขาว', 'white_rice_bowl'],
     ['ข้าวเหนียว', 'sticky_rice_basket'],
-    ['น้ำเต้าหู้', 'milk_glass'], ['โยเกิร์ต', 'plain_yogurt'], ['โยเกิ', 'plain_yogurt'],
+    ['กุ้งสด', 'shrimp'], ['กุ้งลวก', 'shrimp'], ['กุ้งต้ม', 'shrimp'], ['กุ้งขาว', 'shrimp'], ['กุ้งมังกร', 'shrimp'], ['กุ้ง', 'shrimp'], ['ปลาหมึกสด', 'raw_squid'], ['น้ำเต้าหู้', 'milk_glass'], ['โยเกิร์ต', 'plain_yogurt'], ['โยเกิ', 'plain_yogurt'],
     ['เต้าหู้ทอด', 'fried_tofu'], ['เต้าหู้', 'tofu'],
     ['อกไก่', 'chicken_breast'], ['สันในไก่', 'chicken_breast'], ['เนื้ออกไก่', 'chicken_breast'],
     ['บรอกโคลี', 'broccoli'], ['บล็อกโคลี', 'broccoli'], ['บล็อคโคลี', 'broccoli'], ['บรอคโคลี', 'broccoli'],
@@ -203,6 +204,7 @@
   var OVERRIDES = (root && root.IUFIT_FOOD_ICON_OVERRIDES) || {};
   // ไอคอน "เซ็ต/2 เมนูในกรอบเดียว" -> ชิ้นเดียวที่สะอาด (ห้ามมีรูป 2 เมนูหลุดออกไปเด็ดขาด)
   var SET_REMAP = {
+    crispy_pork_with_morning_glory: 'roasted_duck_rice',
     assorted_curry_bowls: 'red_curry_chicken', assorted_thai_curry_set: 'red_curry_chicken', assorted_noodle_bowls: 'noodle_soup_bowl',
     assorted_thai_soup_set: 'vegetable_soup', assorted_congee_set: 'rice_porridge', assorted_thai_salad_set: 'green_salad',
     assorted_thai_food_set: 'healthy_meal_plate', assorted_salad_set: 'green_salad', assorted_drink_and_fruit_set: 'fresh_fruit_bowl',
