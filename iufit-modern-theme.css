@@ -700,11 +700,11 @@ header{display:none!important}
 :root[data-theme="dark"]{
   --bg:#0e1626; --bg2:#101c30; --ink:#e7edf6; --ink2:#9db0ca;
   --coral2:#16304d; --mint2:#0f2e2b; --sun2:#33290f; --berry:#7c9dff; --berry2:#1c2748; --red:#f87171;
-  --card:#1a2436; --line:#2a3650; --navy:#dbe7fb; --deep:#9cc4ff; --glass:rgba(20,30,50,.78);
+  --card:#26334e; --line:#3b4d72; --navy:#dbe7fb; --deep:#9cc4ff; --glass:rgba(20,30,50,.78);
   --shadow-sm:0 10px 28px rgba(0,0,0,.38); --shadow-md:0 16px 42px rgba(0,0,0,.46); --shadow-lg:0 20px 56px rgba(0,0,0,.55);
-  --surface:#1a2436; --surface-soft:#22304a; --bg-soft:#16233a; --text-strong:#dbe7fb; --text-soft:#9db0ca;
+  --surface:#26334e; --surface-soft:#2f3e5c; --bg-soft:#16233a; --text-strong:#dbe7fb; --text-soft:#9db0ca;
   --success-soft:#0f2e2b; --warning-soft:#33290f; --danger:#f87171; --danger-soft:#3a1d1f; --purple:#a78bfa; --purple-soft:#2b2350;
-  --shadow-soft:0 12px 32px rgba(0,0,0,.42); --shadow-card:0 18px 48px rgba(0,0,0,.50); --soft:#22304a;
+  --shadow-soft:0 12px 32px rgba(0,0,0,.42); --shadow-card:0 18px 48px rgba(0,0,0,.50); --soft:#2f3e5c;
   --icon-color-default:#93a3ba; --icon-color-deep:#9cc4ff; --icon-color-muted:#7f8ea6;
   --icon-bg-blue:#16304d; --icon-bg-green:#0f2e2b; --icon-bg-orange:#33290f; --icon-bg-red:#3a1d1f;
 }
@@ -715,23 +715,23 @@ html[data-theme="dark"] .chip:not(.sel):not(.warn){background:rgba(26,36,54,.82)
 html[data-theme="dark"] .chip.warn{background:#3a1d1f;border-color:#7f1d1d;color:#fca5a5}
 html[data-theme="dark"] .btn:not(.pri):not(.mint):not(.sun):not(.ghost){background:var(--card);box-shadow:0 6px 16px rgba(0,0,0,.35)}
 html[data-theme="dark"] .btn.ghost{background:rgba(255,255,255,.04)}
-html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#141f33;color:var(--ink);border-color:#2a3650}
+html[data-theme="dark"] input,html[data-theme="dark"] select,html[data-theme="dark"] textarea{background:#1c2942;color:var(--ink);border-color:#3b4d72}
 html[data-theme="dark"] nav{background:rgba(15,23,40,.94);border-color:rgba(42,54,80,.9)}
 html[data-theme="dark"] nav button:not(.on){color:#8ea3c2}
 html[data-theme="dark"] .mwrap{background:rgba(0,0,0,.6)}
 body.iu-modal-open #coach-edit-fab,body.iu-modal-open #coach-back-fab{display:none!important}
 html[data-theme="dark"] .modal{background:linear-gradient(180deg,#182236,#111a2c);border-color:rgba(66,84,120,.55)}
 html[data-theme="dark"] .modal::before{background:#33456b}
-html[data-theme="dark"] .mclose{background:#22304a;border-color:#33456b;box-shadow:0 8px 18px rgba(0,0,0,.4)}
-html[data-theme="dark"] .seg{background:#141f33}
+html[data-theme="dark"] .mclose{background:#2f3e5c;border-color:#33456b;box-shadow:0 8px 18px rgba(0,0,0,.4)}
+html[data-theme="dark"] .seg{background:#1c2942}
 html[data-theme="dark"] table.nut td{border-bottom-color:#243149}
 html[data-theme="dark"] .inglist .it{border-bottom-color:#243149}
 html[data-theme="dark"] .trow{border-bottom-color:#243149}
-html[data-theme="dark"] .dot{border-color:#1a2436;box-shadow:0 0 0 1px #33456b}
-html[data-theme="dark"] .pslot .ps{background:#141f33;border-color:#3a4a6a}
+html[data-theme="dark"] .dot{border-color:#26334e;box-shadow:0 0 0 1px #33456b}
+html[data-theme="dark"] .pslot .ps{background:#1c2942;border-color:#3a4a6a}
 html[data-theme="dark"] .pslot .ps.has{background:#16304d;border-color:#0a84ff}
-html[data-theme="dark"] .mchart{border-bottom-color:#2a3650}
-html[data-theme="dark"] .kpi{background:linear-gradient(180deg,#1a2436,#16223a)}
+html[data-theme="dark"] .mchart{border-bottom-color:#3b4d72}
+html[data-theme="dark"] .kpi{background:linear-gradient(180deg,#26334e,#16223a)}
 html[data-theme="dark"] .profsel,html[data-theme="dark"] .profadd,html[data-theme="dark"] .treeclose,html[data-theme="dark"] .bell,html[data-theme="dark"] .mealrow,html[data-theme="dark"] .mpg:not(.on),html[data-theme="dark"] .dsel:not(.on),html[data-theme="dark"] .trchip:not(.on),html[data-theme="dark"] .owgoal:not(.sel){background:var(--card)}
 html[data-theme="dark"] .logli .logx,html[data-theme="dark"] .ingrow .x{background:#2a1a1d;border-color:#5f2a30}
 html[data-theme="dark"] .warnbox{background:#3a1d1f;border-color:#7f1d1d;color:#fca5a5}
@@ -741,19 +741,19 @@ html[data-theme="dark"] .tag{border-color:#2c3d63}
 html[data-theme="dark"] .tag:not(.age):not(.al){color:#a9c1ff}
 html[data-theme="dark"] .tag.age{color:#fbbf24}
 html[data-theme="dark"] .tag.al{background:#3a1d1f;color:#fca5a5;border-color:#7f1d1d}
-html[data-theme="dark"] .action-icon{background:linear-gradient(180deg,#1c2942,#141f33);border-color:#2a3650}
+html[data-theme="dark"] .action-icon{background:linear-gradient(180deg,#1c2942,#1c2942);border-color:#3b4d72}
 html[data-theme="dark"] .mchev{color:#7186a8}
 html[data-theme="dark"] .logll,html[data-theme="dark"] .loglist{background:var(--card)}
-html[data-theme="dark"] .planitem,html[data-theme="dark"] .planrow{border-color:#2a3650}
+html[data-theme="dark"] .planitem,html[data-theme="dark"] .planrow{border-color:#3b4d72}
 
 /* nav label fit — longer tab names (ตารางอาหาร/ตารางฝึก) v10.20 */
 nav button{white-space:nowrap;letter-spacing:-.1px}
 @media (max-width:400px){nav button{font-size:9px;letter-spacing:-.3px}}
 
-html[data-theme="dark"] .plancol{background:#141f33;border-color:#2a3650}
-html[data-theme="dark"] .card.flat{background:#141f33;border-color:#2a3650}
+html[data-theme="dark"] .plancol{background:#1c2942;border-color:#3b4d72}
+html[data-theme="dark"] .card.flat{background:#1c2942;border-color:#3b4d72}
 
-html[data-theme="dark"] .qbtn{background:linear-gradient(180deg,#1c2942,#141f33);border-color:#2a3650}
+html[data-theme="dark"] .qbtn{background:linear-gradient(180deg,#1c2942,#1c2942);border-color:#3b4d72}
 
 /* Today redesign (2026-07) */
 .qact3{grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0 4px}
@@ -765,10 +765,10 @@ html[data-theme="dark"] .qbtn{background:linear-gradient(180deg,#1c2942,#141f33)
 .mini-ov h3{font-size:14.5px}
 .sumpill{display:inline-flex;align-items:center;gap:6px;background:var(--surface-soft);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-size:11.5px;font-weight:700;color:var(--navy);white-space:nowrap}
 .tsx{flex:none;width:30px;height:30px;border-radius:8px;border:1px solid #f3c2c2;background:var(--card);color:var(--red);cursor:pointer;font-size:13px}
-html[data-theme="dark"] .sumpill{background:#141f33;border-color:#2a3650;color:var(--ink)}
+html[data-theme="dark"] .sumpill{background:#1c2942;border-color:#3b4d72;color:var(--ink)}
 html[data-theme="dark"] .tsx{background:#2a1a1d;border-color:#5f2a30}
 
-html[data-theme="dark"] .tlrow{border-bottom-color:#2a3650}
+html[data-theme="dark"] .tlrow{border-bottom-color:#3b4d72}
 html[data-theme="dark"] .qchv{color:#7186a8}
 
 /* ===== v17 Today redesign ===== */
@@ -787,11 +787,14 @@ html[data-theme="dark"] .qchv{color:#7186a8}
 .w4b.plus{background:#0a84ff;color:#fff;border-color:#0a84ff}
 .gambar .gi{display:flex;align-items:center;justify-content:center;gap:8px;text-align:left}
 .s-ic{width:32px;height:32px;border-radius:9px;background:#fff;flex:none;display:grid;place-items:center;box-shadow:0 4px 10px rgba(0,0,0,.28)}
-html[data-theme="dark"] .cta-btn,html[data-theme="dark"] .cta-btn.food,html[data-theme="dark"] .cta-btn.ex,html[data-theme="dark"] .cta-btn.body,html[data-theme="dark"] .cta-btn.wtr{background:linear-gradient(180deg,#1c2942,#141f33);border-color:#2a3650}
-html[data-theme="dark"] .w4b{background:#141f33;border-color:#2a3650}
+html[data-theme="dark"] .cta-btn,html[data-theme="dark"] .cta-btn.food,html[data-theme="dark"] .cta-btn.ex,html[data-theme="dark"] .cta-btn.body,html[data-theme="dark"] .cta-btn.wtr{background:linear-gradient(180deg,#1c2942,#1c2942);border-color:#3b4d72}
+html[data-theme="dark"] .w4b{background:#1c2942;border-color:#3b4d72}
 
 /* LINE icons (iuIcon default tier) */
 .iufit-line-icon{display:inline-block;vertical-align:-.18em;flex:none}
 
 /* v11.03 photo food icons — single sprite sheet (1 file), transparent float */
 .fimg{display:inline-block;flex:none;background-repeat:no-repeat;box-sizing:border-box;vertical-align:middle}
+
+html[data-theme="dark"] .card{box-shadow:0 8px 24px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.05)}
+html[data-theme="dark"] .rcard,html[data-theme="dark"] .stat,html[data-theme="dark"] .tile{border:1px solid var(--line)}
