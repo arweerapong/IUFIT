@@ -1495,7 +1495,7 @@ function buildReply(intent, message, nlu){
     case 'cuisine_menu': return buildCuisineMenu(message);
     case 'food_swap': return buildSwapReply(message);
     case 'budget_menu': return buildBudgetMenu(message);
-    case 'food_recommend': return buildFoodRecommend(message);
+    case 'food_recommend': if(/ของว่าง|มื้อว่าง|กินเล่น|snack/.test(ql)) return buildSnackRecommend(message); return buildFoodRecommend(message);
     case 'food_search': return buildFoodSearch(message);
     case 'result_summary': return buildResult();
     case 'workout_recommend': return buildWorkout();
@@ -1559,6 +1559,7 @@ function tagMenu(r){
   var mealFit=['กลางวัน','เย็น'];
   if(/ไข่|ขนมปัง|โอ๊ต|นม|โยเกิร์ต|ซีเรียล|แซนวิช|ปั้น|ข้าวต้ม|โจ๊ก/.test(name)&&n.kcal&&n.kcal<=450) mealFit.push('เช้า');
   if(n.protein>=25&&n.carb>=40) mealFit.push('หลังออกกำลัง');
+  if(n.kcal&&n.kcal<=220) mealFit.push('ของว่าง');
   var method=''; ['ทอด','ผัด','ย่าง','ต้ม','นึ่ง','อบ','ปิ้ง','ตุ๋น'].forEach(function(m){ if(name.indexOf(m)>=0) method=m; });
   return { id:r.id, name:name, ic:r.ic, ings:r.ings, nutrition:n, tags:tags, goalFit:goalFit, mealFit:mealFit, cuisine:cuisine, budget:budget, method:method };
 }
@@ -1619,6 +1620,69 @@ function buildBudgetMenu(message){
     recipes:recs.slice(0,3),
     actions:[{label:L('สร้างจากของที่มี','From my ingredients'),action:'open_ingredient_picker'},{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] };
 }
+/* ---- time+meal aware snack recommender (added v11.09) ---- */
+function _snackTimeCtx(message){
+  var t=(''+message).toLowerCase();
+  if(/ก่อนนอน|ก่อนเข้านอน|ก่อนเข้าน|ดึก|before ?bed|bedtime|late ?night/.test(t)) return 'ก่อนนอน';
+  if(/หลังออกกำลัง|หลังเล่น|หลังฟิต|หลังวิ่ง|post.?workout|after ?workout/.test(t)) return 'หลังออกกำลัง';
+  if(/ก่อนออกกำลัง|ก่อนเล่น|ก่อนฟิต|ก่อนวิ่ง|pre.?workout|before ?workout/.test(t)) return 'ก่อนออกกำลัง';
+  if(/บ่าย|afternoon/.test(t)) return 'บ่าย';
+  if(/เย็น|ค่ำ|หัวค่ำ|evening/.test(t)) return 'เย็น';
+  if(/ตอนเช้า|มื้อเช้า|ตอนสาย|morning/.test(t)) return 'เช้า';
+  if(/เที่ยง|กลางวัน|noon|lunch/.test(t)) return 'บ่าย';
+  var h=new Date().getHours();
+  if(h>=21||h<5) return 'ก่อนนอน';
+  if(h>=17) return 'เย็น';
+  if(h>=13) return 'บ่าย';
+  if(h>=5&&h<11) return 'เช้า';
+  return 'บ่าย';
+}
+var _SNACK_PROF={
+ 'บ่าย':{cap:250,lab:['ตอนบ่าย','the afternoon'],
+   why:['ของว่างบ่ายควรมีโปรตีนหรือไฟเบอร์พอให้อิ่มถึงมื้อเย็น แต่ไม่หนักเกินไป','An afternoon snack should have some protein or fiber to keep you full until dinner, but stay light.'],
+   prefer:/นม|โยเกิร์ต|ถั่ว|ไข่|ผลไม้|กราโนล่า|แซนวิช|เวย์|สลัด|อกไก่/,avoid:/ทอด|เค้ก|โดนัท|น้ำอัดลม|กะทิ/,
+   items:[['กรีกโยเกิร์ต + ผลไม้','Greek yogurt + fruit',150],['ไข่ต้ม 1–2 ฟอง','1–2 boiled eggs',140],['ถั่วอัลมอนด์ 1 กำมือ','a handful of almonds',160],['นมโปรตีน/นมถั่วเหลืองไม่หวาน','protein or unsweetened soy milk',120],['แซนวิชอกไก่ชิ้นเล็ก','a small chicken-breast sandwich',210]]},
+ 'เย็น':{cap:150,lab:['ตอนเย็น','the evening'],
+   why:['ตอนเย็นเลือกของว่างเบา ๆ ย่อยง่าย ไม่ให้หนักท้องก่อนมื้อเย็นหรือก่อนพักผ่อน','In the evening pick something light and easy to digest so it wont weigh you down before dinner or rest.'],
+   prefer:/ผลไม้|โยเกิร์ต|นม|ผัก|ต้ม|ไข่ต้ม|ฝรั่ง|แอปเปิล|สลัด/,avoid:/ทอด|มัน|เค้ก|ข้าว|เส้น|กะทิ|ผัด|ย่าง/,
+   items:[['ผลไม้สด เช่น แอปเปิล/ฝรั่ง/ส้ม','fresh fruit (apple/guava/orange)',80],['โยเกิร์ตไขมันต่ำ','low-fat yogurt',100],['ผักสด/แครอทแท่ง','fresh veggie sticks',60],['นมอุ่นไขมันต่ำ','warm low-fat milk',100],['ไข่ต้ม 1 ฟอง','1 boiled egg',70]]},
+ 'ก่อนนอน':{cap:120,lab:['ก่อนนอน','before bed'],
+   why:['ก่อนนอนเลือกเบามาก โปรตีนที่ย่อยง่ายช่วยได้ เลี่ยงคาเฟอีน น้ำตาล และของทอด','Before bed keep it very light — a little easy-to-digest protein helps; avoid caffeine, sugar and fried food.'],
+   prefer:/นม|โยเกิร์ต|กล้วย|ไข่ต้ม|อัลมอนด์|คาโมมายล์/,avoid:/กาแฟ|ชาเขียว|มัทฉะ|ทอด|เค้ก|ช็อกโก|น้ำอัดลม|เผ็ด/,
+   items:[['นมอุ่น/นมถั่วเหลืองไม่หวาน','warm milk or unsweetened soy milk',90],['กรีกโยเกิร์ต','Greek yogurt',90],['กล้วยครึ่งลูก','half a banana',50],['อัลมอนด์ 8–10 เม็ด','8–10 almonds',70],['ชาคาโมมายล์ (ไม่มีคาเฟอีน)','chamomile tea (caffeine-free)',5]]},
+ 'เช้า':{cap:300,lab:['ตอนเช้า','the morning'],
+   why:['ของว่างเช้าเน้นให้พลังงาน โปรตีนคู่กับคาร์บเชิงซ้อน','A morning snack should energize you — protein plus some complex carbs.'],
+   prefer:/ไข่|โอ๊ต|นม|โยเกิร์ต|ขนมปัง|กล้วย|ซีเรียล|กราโนล่า/,avoid:/ทอด|น้ำอัดลม|เค้ก/,
+   items:[['ข้าวโอ๊ต + กล้วย','oatmeal + banana',250],['ไข่ต้ม + ขนมปังโฮลวีต','boiled egg + whole-wheat toast',220],['กรีกโยเกิร์ต + กราโนล่า','Greek yogurt + granola',230],['นม + กล้วย','milk + banana',180]]},
+ 'ก่อนออกกำลัง':{cap:250,lab:['ก่อนออกกำลังกาย','before your workout'],
+   why:['ก่อนออกกำลังเน้นคาร์บย่อยง่ายให้พลังงาน เลี่ยงไขมันและไฟเบอร์สูงที่ทำให้จุก (กินก่อน ~45–60 นาที)','Before training, focus on easy carbs for energy; avoid high fat/fiber that can upset your stomach (eat ~45–60 min before).'],
+   prefer:/กล้วย|ข้าว|โอ๊ต|ขนมปัง|น้ำผลไม้|ผลไม้/,avoid:/ทอด|มัน|กะทิ|ครีม|ชีส/,
+   items:[['กล้วย 1 ลูก','1 banana',90],['ข้าวโอ๊ต','a bowl of oatmeal',180],['ขนมปังโฮลวีต + น้ำผึ้งนิดหน่อย','whole-wheat toast + a little honey',160],['น้ำผลไม้/สมูทตี้บาง ๆ','light juice or smoothie',150]]},
+ 'หลังออกกำลัง':{cap:350,lab:['หลังออกกำลังกาย','after your workout'],
+   why:['หลังออกกำลังเน้นโปรตีนคู่คาร์บช่วยฟื้นและซ่อมกล้ามเนื้อ (ภายใน ~1–2 ชม.)','After training, pair protein with carbs to recover and repair muscle (within ~1–2 hrs).'],
+   prefer:/เวย์|ไข่|นม|อกไก่|ข้าว|กล้วย|โยเกิร์ต|ปลา|ทูน่า/,avoid:/ทอด|เค้ก|น้ำอัดลม/,
+   items:[['เวย์โปรตีน + กล้วย','whey protein + banana',220],['อกไก่ + ข้าว','chicken breast + rice',320],['ไข่ต้ม 2 ฟอง + นม','2 boiled eggs + milk',250],['กรีกโยเกิร์ต + ผลไม้','Greek yogurt + fruit',180]]}
+};
+function buildSnackRecommend(message){
+  var ctx=_snackTimeCtx(message), p=_SNACK_PROF[ctx]||_SNACK_PROF['บ่าย'];
+  var items=p.items.map(function(it,i){ return (i+1)+'. '+L(it[0],it[1])+' (~'+it[2]+' kcal)'; }).join('\n');
+  var msg=L(p.why[0],p.why[1])+'\n\n'+L('ของว่างที่เหมาะ:','Good picks:')+'\n'+items;
+  var recs=[];
+  try{ if(ingDbOk()){
+    var lp=menuList().filter(function(m){ var n=m.nutrition; var nm=m.name||''; return n.kcal>=30&&n.kcal<=p.cap&&p.prefer.test(nm)&&!p.avoid.test(nm); });
+    lp.forEach(function(m){ m._ss=(Math.abs(m.nutrition.kcal-(p.cap*0.6))*-1)+Math.random()*20; });
+    lp.sort(function(a,b){ return b._ss-a._ss; });
+    recs=lp.slice(0,2).map(menuToCard);
+  } }catch(e){}
+  var r={ _intent:'snack_recommend',
+    title:L('ของว่าง'+p.lab[0],'Snack for '+p.lab[1]),
+    message:msg,
+    disclaimer:L('แคลเป็นค่าประมาณ ปรับตามปริมาณจริง และดูแคลที่เหลือของวันด้วยครับ','Calories are estimates — adjust to your portion and your remaining daily calories.'),
+    actions:[{label:L('🍎 เมนูของว่างในคลัง','🍎 Snack menus in library'),action:'recommend_library'},{label:L('บันทึกอาหาร','Log food'),action:'go_food'}] };
+  if(recs.length){ r.recipes=recs; r.message+='\n\n'+L('เมนูเบา ๆ จากคลังที่เข้ากับตอนนี้:','Light menus from the library that fit right now:'); }
+  return r;
+}
+
 function buildFoodRecommend(message){
   if(!ingDbOk()) return cantCalcReply();
   return { title:L('อยากได้เมนูแบบไหนดี?','How would you like menus?'),
