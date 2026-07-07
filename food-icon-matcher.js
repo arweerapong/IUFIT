@@ -173,6 +173,33 @@
   var FRUIT_EXCLUDE = ['มันฝรั่ง', 'หน่อไม้ฝรั่ง', 'เม็ดมะม่วง', 'นึ่งมะนาว', 'น้ำมะนาว', 'ยำ', 'ตำ', 'ผัด', 'ทอด', 'แกง', 'พริก', 'อบไก่', 'สตูว์'];
 
   var OVERRIDES = (root && root.IUFIT_FOOD_ICON_OVERRIDES) || {};
+  // ไอคอน "เซ็ต/หลายชิ้นในกรอบเดียว" -> ชิ้นเดียวที่สะอาด (กัน 2 รูปในอันเดียว)
+  var SET_REMAP = {
+    assorted_curry_bowls: 'red_curry_chicken', assorted_thai_curry_set: 'red_curry_chicken', assorted_noodle_bowls: 'noodle_soup_bowl',
+    assorted_thai_soup_set: 'vegetable_soup', assorted_congee_set: 'rice_porridge', assorted_thai_salad_set: 'green_salad',
+    assorted_thai_food_set: 'healthy_meal_plate', assorted_salad_set: 'green_salad', assorted_drink_and_fruit_set: 'fresh_fruit_bowl',
+    rice_and_curry_set: 'roasted_duck_rice', fish_meal_set: 'grilled_salmon_steak', fish_and_shrimp_bowl_set: 'shrimp_salad_bowl',
+    breakfast_cereal_set: 'oatmeal', waffle_and_cereal_set: 'waffle_plate', mixed_thai_snack_set: 'curry_puff',
+    mixed_fried_snacks_set: 'curry_puff', thai_salad_set: 'spicy_seafood_salad', grilled_chicken_and_fruit_set: 'roast_chicken',
+    ham_sausage_and_cheese_set: 'grilled_sausage', scrambled_egg_and_omelette_set: 'thai_omelette',
+    thai_dessert_and_meal_set: 'bua_loy', thai_dessert_and_drink_set: 'thai_milk_tea', thai_coconut_dessert_set: 'bua_loy',
+    mango_sticky_rice: 'mango', grilled_salmon_set: 'grilled_salmon_steak', shrimp_tempura_seafood_set: 'shrimp',
+    dim_sum_and_meatballs_set: 'shrimp_dim_sum', roti_and_crepe_set: 'thai_omelette', thai_street_food_set: 'curry_puff',
+    small_thai_condiment_set: 'thai_chili_paste', spicy_thai_relish_set: 'thai_chili_paste', grilled_squid_and_fried_chicken_set: 'thai_fried_chicken',
+    honey_tea_snack_set: 'black_tea', coffee_jam_peanut_butter_set: 'cafe_latte', soda_and_snack_set: 'sparkling_water_can',
+    granola_bar_and_drink: 'oatmeal', protein_bar_and_milk: 'chocolate_protein_shake', water_bottle_and_juice_box: 'drinking_water',
+    cashew_and_pineapple_set: 'pineapple', coconut_and_dragon_fruit_set: 'coconut', tropical_fruit_pair: 'mango',
+    juice_pair: 'fresh_orange_juice', smoothie_pair: 'green_detox_smoothie', dessert_cupcake_set: 'chocolate_cake_slice',
+    thai_meal_set_with_green_drink: 'healthy_meal_plate', bao_and_coffee_set: 'cafe_latte', dip_and_sauce_set: 'thai_chili_paste',
+    steamed_bun_and_fruit_bowl: 'fresh_fruit_bowl', wrap_and_quesadilla_set: 'veggie_wrap', meat_and_wrap_set: 'veggie_wrap',
+    roast_chicken_and_wrap_set: 'roast_chicken', sushi_and_ramen_set: 'sushi', mac_and_cheese_lasagna_set: 'spaghetti_bolognese',
+    stew_and_beans_set: 'vegetable_soup', salad_and_spinach_set: 'green_salad', chickpeas_beans_and_kale_set: 'green_salad',
+    bean_and_bell_pepper_set: 'mixed_vegetable_stir_fry', vegetable_soup_set: 'vegetable_soup', cauliflower_and_mushroom_set: 'mixed_vegetable_stir_fry',
+    cucumber_and_bamboo_shoot_set: 'mixed_vegetable_stir_fry', egg_noodle_and_glass_noodle_bundle: 'noodle_soup_bowl',
+    grass_jelly_and_longan_drinks: 'thai_milk_tea', foi_thong_and_thong_yip_set: 'bua_loy', thong_yod_and_saku_set: 'bua_loy',
+    banana_snack_and_coconut_sweet_set: 'bua_loy', taco_and_thai_custard_set: 'taco', thai_layer_cake_set: 'bua_loy',
+    thai_dessert_and_meal: 'bua_loy', jackfruit_and_mangosteen: 'longan'
+  };
 
   function pickFruit(n) { for (var i = 0; i < FRUIT_MAP.length; i++) if (n.indexOf(FRUIT_MAP[i][0]) > -1) return FRUIT_MAP[i][1]; return 'apple'; }
   function hasFruit(n) {
@@ -207,6 +234,7 @@
     return 'thai_milk_tea';
   }
   function res(iconKey, confidence, matchType, reason, alternatives) {
+    if (SET_REMAP[iconKey]) iconKey = SET_REMAP[iconKey];
     return { iconKey: iconKey || 'healthy_meal_plate', confidence: +confidence.toFixed(2), matchType: matchType, reason: reason, alternatives: alternatives || [], review: confidence < 0.55 };
   }
 
