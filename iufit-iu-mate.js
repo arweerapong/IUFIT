@@ -2187,6 +2187,7 @@ function showConfirm(opts){
 /* ============================ actions ============================ */
 function appToast(m){ try{ if(fn('toast')) window.toast(m); else console.log('[IUMate]',m); }catch(e){} }
 function goTab(t){ ST.isOpen=false; closeNow(); try{ if(fn('go')) window.go(t); }catch(e){} }
+function _featTour(name){ ST.isOpen=false; closeNow(); try{ if(fn('iuFeatureTour')){ window.iuFeatureTour(name); } else if(fn('iuTour')){ window.iuTour(true); } }catch(e){} }
 function _iuTourAt(sigTest){
   ST.isOpen=false; closeNow();
   if(!fn('iuTour')){ try{ if(fn('go')) window.go('today'); }catch(e){} return; }
@@ -2219,19 +2220,19 @@ var ACTIONS = {
   open_referral:function(){ ST.isOpen=false; closeNow(); try{ if(fn('referralPage')) window.referralPage(); }catch(e){} },
   open_tour:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTour')) window.iuTour(true); }catch(e){} },
   tour_full:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTour')) window.iuTour(true); }catch(e){} },
-  tour_food_log:function(){ _iuTourAt(_tsel('logForm')); },
-  tour_workout_log:function(){ _iuTourAt(_tsel('exForm')); },
-  tour_workout_plan:function(){ _iuTourAt(_ttab('workout')); },
-  tour_body_log:function(){ _iuTourAt(_tsel('bodyForm')); },
-  tour_water:function(){ _iuTourAt(_tsel('addWater')); },
-  tour_result_card:function(){ _iuTourAt(_tsel('openResultCard')); },
-  tour_meal_plan:function(){ _iuTourAt(_ttab('food')); },
+  tour_food_log:function(){ _featTour('food_log'); },
+  tour_workout_log:function(){ _featTour('workout_log'); },
+  tour_workout_plan:function(){ _featTour('workout_plan'); },
+  tour_body_log:function(){ _featTour('body_log'); },
+  tour_water:function(){ _featTour('water'); },
+  tour_result_card:function(){ _featTour('result_card'); },
+  tour_meal_plan:function(){ _featTour('meal_plan'); },
   tour_coach_full:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTour')) window.iuTour(true); }catch(e){} },
-  tour_coach_home:function(){ _iuTourAt(_ttab('coach')); },
-  tour_coach_clients:function(){ _iuTourAt(_ttab('cclients')); },
-  tour_coach_homework:function(){ _iuTourAt(_ttab('chwk')); },
-  tour_coach_groups:function(){ _iuTourAt(_ttab('cgroups')); },
-  tour_coach_qr:function(){ _iuTourAt(_tsel('coachShareQR')); },
+  tour_coach_home:function(){ _featTour('coach_home'); },
+  tour_coach_clients:function(){ _featTour('coach_clients'); },
+  tour_coach_homework:function(){ _featTour('coach_homework'); },
+  tour_coach_groups:function(){ _featTour('coach_groups'); },
+  tour_coach_qr:function(){ _featTour('coach_qr'); },
   open_result_card:function(){ ST.isOpen=false; closeNow(); try{ if(fn('openResultCard')) window.openResultCard(); else if(fn('go')) window.go('body'); }catch(e){} },
   log_workout:function(){ ST.isOpen=false; closeNow(); try{ if(fn('exForm')) window.exForm(); else if(fn('go')) window.go('workout'); }catch(e){} },
   log_weight:function(){ ST.isOpen=false; closeNow(); try{ if(fn('bodyForm')) window.bodyForm(); else if(fn('go')) window.go('today'); }catch(e){} },
