@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
 <title>เปิด IUFIT</title>
 <style>
 *{box-sizing:border-box}
@@ -16,6 +18,8 @@ p{color:#6B7890;font-size:14px;line-height:1.6;margin:4px 0 18px}
 .btn.ghost{background:#eef2f7;color:#0A84FF}
 .btn.dark{background:#0b2a5b;color:#fff}
 .hint{font-size:12px;color:#8492ad;margin-top:14px;line-height:1.6}
+.steps{text-align:left;font-size:13px;color:#33475f;line-height:1.7;margin:8px 0 0}
+.steps b{color:#0A84FF}
 </style>
 </head>
 <body>
@@ -27,18 +31,29 @@ p{color:#6B7890;font-size:14px;line-height:1.6;margin:4px 0 18px}
 </div>
 <script>
 /* ===== ตั้งค่า ===== */
-var APP_URL='https://iufit.com';                 // เว็บ/PWA
-var ANDROID_PKG='com.iufit.twa';                 // package ของ TWA
-var PLAY_URL='';                                 // <-- ใส่ลิงก์ Play Store เมื่อแอปขึ้นสโตร์แล้ว (เว้นว่าง = ยังไม่ขึ้น)
+var APP_URL='https://iufit.com';
+var ANDROID_PKG='com.iufit.twa';
+var PLAY_URL='';   /* ใส่ลิงก์ Play Store เมื่อแอปขึ้นสโตร์แล้ว (เว้นว่าง = ยังไม่ขึ้น) */
 /* ================= */
 var ua=navigator.userAgent||'';
+var isLine=/Line\//i.test(ua);
 var isAndroid=/Android/i.test(ua);
-var isIOS=/iPhone|iPad|iPod/i.test(ua);
+var isIOS=/iPhone|iPad|iPod/i.test(ua)||(/Macintosh/.test(ua)&&'ontouchend' in document);
+var isStandalone=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
+var escaped=/openExternalBrowser=1/i.test(location.search)||/[?&]extb=1/i.test(location.search);
 var msg=document.getElementById('msg'),btns=document.getElementById('btns'),hint=document.getElementById('hint');
-function b(cls,txt,href,onclick){var a=document.createElement('a');a.className='btn '+cls;a.textContent=txt;if(href)a.href=href;if(onclick)a.onclick=onclick;btns.appendChild(a);return a;}
+function b(cls,txt,href,onclick){var a=document.createElement('a');a.className='btn '+cls;a.innerHTML=txt;if(href)a.href=href;if(onclick)a.onclick=onclick;btns.appendChild(a);return a;}
 
-if(isAndroid){
-  // มีแอป → เปิดแอป (intent) · ไม่มี → Play Store (ถ้าตั้งค่าแล้ว) มิฉะนั้น → เว็บ
+/* ขั้นที่ 1: ถ้าเปิดใน in-app browser ของ LINE -> บังคับเด้งออกเบราว์เซอร์จริงก่อน */
+if(isLine && !escaped){
+  msg.textContent='กำลังเปิดในเบราว์เซอร์…';
+  var self=location.origin+location.pathname+(location.search?location.search+'&':'?')+'openExternalBrowser=1';
+  setTimeout(function(){location.href=self;},120);
+  b('pri','แตะเพื่อเปิด IUFIT',self);
+  hint.innerHTML='ถ้าไม่เด้งออกเอง แตะปุ่มด้านบน หรือแตะเมนูมุมขวาบน แล้วเลือก <b>เปิดในเบราว์เซอร์อื่น</b>';
+}
+/* ขั้นที่ 2: อยู่ในเบราว์เซอร์จริงแล้ว -> เปิดแอปตามระบบ */
+else if(isAndroid){
   var fallback=PLAY_URL||APP_URL;
   var intent='intent://iufit.com/#Intent;scheme=https;package='+ANDROID_PKG+';S.browser_fallback_url='+encodeURIComponent(fallback)+';end';
   msg.textContent='กำลังเปิดแอป IUFIT…';
@@ -46,13 +61,17 @@ if(isAndroid){
   b('pri','เปิดแอป IUFIT',null,function(){location.href=intent;return false;});
   if(PLAY_URL)b('dark','ดาวน์โหลดจาก Play Store',PLAY_URL);
   b('ghost','เปิดบนเว็บแทน',APP_URL);
-  hint.innerHTML='ถ้ายังไม่เปิด แตะปุ่มด้านบน · ถ้าเปิดในเบราว์เซอร์ของ LINE ให้เลือก “เปิดในเบราว์เซอร์อื่น” ก่อน';
-}else if(isIOS){
-  msg.textContent='เปิด IUFIT บน iPhone/iPad';
-  b('pri','เปิด IUFIT',APP_URL);
-  hint.innerHTML='iOS ใช้ผ่านเว็บ (PWA) — เปิดใน Safari แล้วกด แชร์ → “เพิ่มไปยังหน้าจอโฮม” เพื่อใช้เหมือนแอป';
-}else{
-  // desktop / อื่น ๆ
+  hint.innerHTML='ถ้ายังไม่เปิด แตะปุ่มด้านบน (ต้องติดตั้งแอป IUFIT ไว้ก่อน)';
+}
+else if(isIOS){
+  if(isStandalone){ location.href=APP_URL; }
+  else {
+    msg.innerHTML='เปิด IUFIT บน iPhone/iPad';
+    b('pri','เปิด IUFIT เลย',APP_URL);
+    hint.innerHTML='<div class="steps">📱 <b>อยากให้เปิดเต็มจอเหมือนแอป?</b> iOS ทำผ่านการเพิ่มไอคอนลงหน้าจอ (ทำครั้งเดียว):<br>1. แตะปุ่ม <b>แชร์</b> ด้านล่าง Safari<br>2. เลือก <b>เพิ่มลงในหน้าจอโฮม</b><br>3. ครั้งต่อไปเปิดจาก <b>ไอคอน IUFIT</b> บนหน้าจอ = เต็มจอเหมือนแอป<br><br><span style="color:#b06">หมายเหตุ: iOS ไม่อนุญาตให้ลิงก์เปิด PWA ที่ติดตั้งแล้วโดยตรง จึงต้องเปิดจากไอคอนหน้าจอ</span></div>';
+  }
+}
+else{
   msg.textContent='กำลังเปิด IUFIT…';
   setTimeout(function(){location.href=APP_URL;},400);
   b('pri','เปิด IUFIT',APP_URL);
