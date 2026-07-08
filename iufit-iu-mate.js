@@ -787,6 +787,22 @@ var KNOWLEDGE = [
     title:L('ดูทัวร์แนะนำการใช้งาน','Take the app tour'),
     answer:L('ผมพาทัวร์ทีละปุ่มได้เลย หรือดูศูนย์ช่วยเหลือในตั้งค่า มีคำถามอะไรถามผมได้ทุกเมื่อครับ','I can walk you through button by button, or see the Help Center in Settings — ask me anytime!'),
     actions:[{label:L('เริ่มทัวร์','Start tour'),action:'open_tour'}] },
+  { id:'coach_overview', cat:'app_help', kw:['สอนใช้ฝั่งโค้ช','ฟีเจอร์โค้ช','โหมดโค้ช','สอนโค้ช','สอนใช้โค้ช','เมนูโค้ช','coach features','coach mode','coach overview'],
+    title:L('ภาพรวมโหมดโค้ช (ทุกแท็บ)','Coach mode overview'),
+    answer:L('โหมดโค้ชมี 4 แท็บหลัก:\n🏠 โฮม — แดชบอร์ด, แชร์ QR รับลูกเทรน, สร้างภารกิจ, สลับโหมดส่วนตัว↔โค้ช\n👥 ลูกเทรน — ส่งแผนอาหาร/ฝึกรายคน, เปิดคอร์ส PT (นับครั้ง), ติดตามแต่ละคน\n📥 การบ้าน — ลูกเทรนส่งการบ้าน (อาหาร/ฝึก/ร่างกาย/น้ำ) มาที่นี่ ตรวจ+ให้ฟีดแบ็ก\n🏷️ กลุ่ม — สร้างกลุ่ม เชิญด้วย QR/รหัส จัดชาเลนจ์+ลีดเดอร์บอร์ด\n💡 กดปุ่มด้านล่างให้ผมพาทัวร์โหมดโค้ชได้เลย','Coach mode has 4 tabs: 🏠 Home (dashboard, share QR, missions, switch mode), 👥 Clients (send plans, PT courses, track each), 📥 Homework (review & feedback), 🏷️ Groups (create, invite, challenges).'),
+    actions:[{label:L('เปิดโหมดโค้ช','Open Coach'),action:'go_coach'}] },
+  { id:'how_to_coach_clients', cat:'app_help', kw:['สอนใช้แท็บลูกเทรน','วิธีใช้แท็บลูกเทรน','ดูลูกเทรนรายคน','ส่งแผนให้ลูกเทรน','แท็บลูกเทรน','clients tab'],
+    title:L('วิธีใช้แท็บลูกเทรน','Using the Clients tab'),
+    answer:L('แท็บ "ลูกเทรน" (โหมดโค้ช): แตะชื่อลูกเทรนเพื่อดูข้อมูล/เป้าหมาย/ประวัติ · ส่งแผนอาหารหรือตารางฝึกรายคน · เปิดคอร์ส PT แบบนับครั้ง · ติดตามความคืบหน้าแต่ละคน\n💡 กดปุ่มพาทัวร์เพื่อไฮไลต์บนจอจริง','Clients tab: tap a client to view info/goals/history, send meal or workout plans, open a PT session course, track progress.'),
+    actions:[{label:L('เปิดแท็บลูกเทรน','Open Clients'),action:'go_clients'}] },
+  { id:'how_to_coach_homework', cat:'app_help', kw:['สอนใช้แท็บการบ้าน','วิธีตรวจการบ้าน','ตรวจการบ้านลูกเทรน','แท็บการบ้าน','ให้ฟีดแบ็กการบ้าน','homework tab'],
+    title:L('วิธีตรวจการบ้าน (แท็บการบ้าน)','Reviewing homework'),
+    answer:L('แท็บ "การบ้าน" (โหมดโค้ช): ลูกเทรนส่งการบ้านรายวัน (อาหาร/ฝึก/ร่างกาย/น้ำ) เข้ามาที่นี่ · แตะเพื่อดู แล้วให้ฟีดแบ็กกลับ · บันทึกเข้าประวัติลูกเทรนอัตโนมัติ\n💡 กดปุ่มพาทัวร์เพื่อดูบนจอจริง','Homework tab: clients send daily homework (food/workout/body/water) — tap to review and reply with feedback.'),
+    actions:[{label:L('เปิดแท็บการบ้าน','Open Homework'),action:'go_homework'}] },
+  { id:'how_to_coach_invite', cat:'app_help', kw:['เชิญลูกเทรน','รับลูกเทรน','แชร์ qr โค้ช','เพิ่มลูกเทรน','สอนเพิ่มลูกเทรน','qr โค้ช','invite client','coach qr'],
+    title:L('เชิญ/รับลูกเทรน (แชร์ QR)','Invite clients (share QR)'),
+    answer:L('รับลูกเทรนใหม่ (โหมดโค้ช → แท็บโฮม): กด "แชร์ QR" เพื่อได้ QR/ลิงก์/รหัสโค้ช ส่งให้ลูกเทรน · ลูกเทรนสแกน QR แล้วยืนยันเข้าร่วม (ใช้ที่นั่งของคุณ ไม่ต้องซื้อแพ็กเอง)\n💡 กดปุ่มพาทัวร์เพื่อไฮไลต์ปุ่มแชร์ QR','Get new clients (Coach → Home): tap "Share QR" to get your QR/link/code; the client scans and joins using your seat.'),
+    actions:[{label:L('เปิดโหมดโค้ช','Open Coach'),action:'go_coach'}] },
   { id:'coach_send_plan', cat:'app_help', kw:['ส่งแผน','ส่งตาราง','send plan','assign plan'],
     title:L('โค้ช: ส่งแผนให้ลูกเทรน','Coach: send a plan'),
     answer:L('โค้ชเปิดแท็บลูกเทรน เลือกลูกเทรน ตั้งแผนอาหาร/ท่าฝึก/เป้าหมาย แล้วกดส่งแผน (ลูกเทรนต้องสแกน QR โค้ชก่อน)','Coaches open Clients, pick a client, set meal/workout/goal, then send (client must scan your Coach QR first).'),
@@ -1898,11 +1914,15 @@ function buildCoachGroup(){
   if(c.sentToday) msg+='\n'+L('วันนี้ส่งแผนไปแล้ว '+c.sentToday+' รายการ','Sent '+c.sentToday+' plans today.');
   return { title:L('สรุปกลุ่ม','Group summary'), message:msg, actions:[{label:L('เปิดหน้ากลุ่ม','Open Groups'),action:'go_groups'},{label:L('สร้างภารกิจกลุ่ม','New mission'),action:'go_missions'}] };
 }
+var TOUR_ACT={how_to_log_food:'tour_food_log',how_to_meal_plan:'tour_meal_plan',how_to_menu_library:'tour_meal_plan',how_to_food_library:'tour_meal_plan',how_to_make_recipe:'tour_meal_plan',how_to_log_workout:'tour_workout_plan',how_to_log_water:'tour_water',how_to_log_body:'tour_body_log',how_to_log_weight:'tour_body_log',how_to_result_card:'tour_result_card',how_to_share_result:'tour_result_card',create_result_card:'tour_result_card',how_to_overview:'tour_full',app_overview:'tour_full',how_to_tour:'tour_full',coach_send_plan:'tour_coach_clients',coach_course:'tour_coach_clients',coach_groups:'tour_coach_groups',coach_profile:'tour_coach_home',coach_overview:'tour_coach_full',how_to_coach_clients:'tour_coach_clients',how_to_coach_homework:'tour_coach_homework',how_to_coach_invite:'tour_coach_qr'};
 function buildKnowledge(message){
   var hits=searchKnowledge(message);
   if(!hits.length) return buildFallback(message);
   var top=hits[0];
-  return { title:top.title, message:top.answer, actions:(top.actions||[]).slice(), more:hits.slice(1).map(function(h){return {title:h.title,answer:h.answer};}) };
+  var acts=(top.actions||[]).slice();
+  var ta=TOUR_ACT[top.id];
+  if(ta && (typeof window==='undefined'||true)) acts.unshift({label:L('▶️ พาทำทีละขั้น (tutorial)','▶️ Walk me through'),action:ta});
+  return { title:top.title, message:top.answer, actions:acts, more:hits.slice(1).map(function(h){return {title:h.title,answer:h.answer};}) };
 }
 function buildShareText(){
   var r=resultCtx(); var t=todayCtx();
@@ -2138,6 +2158,20 @@ function showConfirm(opts){
 /* ============================ actions ============================ */
 function appToast(m){ try{ if(fn('toast')) window.toast(m); else console.log('[IUMate]',m); }catch(e){} }
 function goTab(t){ ST.isOpen=false; closeNow(); try{ if(fn('go')) window.go(t); }catch(e){} }
+function _iuTourAt(sigTest){
+  ST.isOpen=false; closeNow();
+  if(!fn('iuTour')){ try{ if(fn('go')) window.go('today'); }catch(e){} return; }
+  try{ window.iuTour(true); }catch(e){ return; }
+  setTimeout(function(){ try{
+    var arr=window._tourArr||[], idx=-1;
+    for(var i=0;i<arr.length;i++){ if(sigTest(arr[i])){ idx=i; break; } }
+    if(idx<0) return;
+    if(typeof window._tourGo==='function'){ window._tourI=idx-1; window._tourGo(1); }
+    else if(typeof window._tourRender==='function'){ window._tourI=idx; window._tourRender(); }
+  }catch(e){} }, 80);
+}
+function _tsel(x){ return function(st){ return ((st&&st.sel)||'').indexOf(x)>-1; }; }
+function _ttab(t){ return function(st){ return st&&st.tab===t; }; }
 var ACTIONS = {
   go_today:function(){ goTab('today'); },
   go_food:function(){ goTab('food'); },
@@ -2155,6 +2189,20 @@ var ACTIONS = {
   open_pricing:function(){ ST.isOpen=false; closeNow(); try{ if(fn('pricingPage')) window.pricingPage(); }catch(e){} },
   open_referral:function(){ ST.isOpen=false; closeNow(); try{ if(fn('referralPage')) window.referralPage(); }catch(e){} },
   open_tour:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTour')) window.iuTour(true); }catch(e){} },
+  tour_full:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTour')) window.iuTour(true); }catch(e){} },
+  tour_food_log:function(){ _iuTourAt(_tsel('logForm')); },
+  tour_workout_log:function(){ _iuTourAt(_tsel('exForm')); },
+  tour_workout_plan:function(){ _iuTourAt(_ttab('workout')); },
+  tour_body_log:function(){ _iuTourAt(_tsel('bodyForm')); },
+  tour_water:function(){ _iuTourAt(_tsel('addWater')); },
+  tour_result_card:function(){ _iuTourAt(_tsel('openResultCard')); },
+  tour_meal_plan:function(){ _iuTourAt(_ttab('food')); },
+  tour_coach_full:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTour')) window.iuTour(true); }catch(e){} },
+  tour_coach_home:function(){ _iuTourAt(_ttab('coach')); },
+  tour_coach_clients:function(){ _iuTourAt(_ttab('cclients')); },
+  tour_coach_homework:function(){ _iuTourAt(_ttab('chwk')); },
+  tour_coach_groups:function(){ _iuTourAt(_ttab('cgroups')); },
+  tour_coach_qr:function(){ _iuTourAt(_tsel('coachShareQR')); },
   open_result_card:function(){ ST.isOpen=false; closeNow(); try{ if(fn('openResultCard')) window.openResultCard(); else if(fn('go')) window.go('body'); }catch(e){} },
   log_workout:function(){ ST.isOpen=false; closeNow(); try{ if(fn('exForm')) window.exForm(); else if(fn('go')) window.go('workout'); }catch(e){} },
   log_weight:function(){ ST.isOpen=false; closeNow(); try{ if(fn('bodyForm')) window.bodyForm(); else if(fn('go')) window.go('today'); }catch(e){} },
