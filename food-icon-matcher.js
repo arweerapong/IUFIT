@@ -107,6 +107,7 @@
     // grilled / fried protein dishes
     { fam: 'fried_chicken', keys: ['ไก่ทอด', 'ไก่กรอบ'], icon: 'thai_fried_chicken', cat: 'thai_dish' },
     { fam: 'roast_chicken', keys: ['ไก่ย่าง', 'ไก่อบ'], icon: 'roast_chicken', cat: 'thai_dish' },
+    { fam: 'pork_neck', keys: ['สันคอหมูย่าง', 'คอหมูย่าง', 'สันคอหมู'], icon: 'raw_pork_belly', cat: 'thai_dish' },
     { fam: 'moo_ping', keys: ['หมูปิ้ง', 'หมูสะเต๊ะ', 'หมูย่าง'], icon: 'moo_satay_with_peanut_sauce', cat: 'thai_dish' },
     { fam: 'moo_krob', keys: ['หมูกรอบ', 'คะน้าหมูกรอบ'], icon: 'roasted_duck_rice', cat: 'thai_dish' },
     { fam: 'steak', keys: ['สเต๊ก', 'สเต็ก', 'สเตค'], icon: 'grilled_steak', prot: { salmon: 'salmon_steak', fish: 'white_fish_fillet', chicken: 'chicken_breast' }, cat: 'western' },
@@ -205,6 +206,7 @@
   var OVERRIDES = (root && root.IUFIT_FOOD_ICON_OVERRIDES) || {};
   // ไอคอน "เซ็ต/2 เมนูในกรอบเดียว" -> ชิ้นเดียวที่สะอาด (ห้ามมีรูป 2 เมนูหลุดออกไปเด็ดขาด)
   var SET_REMAP = {
+    meatball_skewers_small: 'meatball_skewers', meatball_and_spicy_salad_set: 'meatball_skewers', dim_sum_and_meatballs_set: 'meatball_skewers',
     crispy_pork_with_morning_glory: 'roasted_duck_rice',
     assorted_curry_bowls: 'red_curry_chicken', assorted_thai_curry_set: 'red_curry_chicken', assorted_noodle_bowls: 'noodle_soup_bowl',
     assorted_thai_soup_set: 'vegetable_soup', assorted_congee_set: 'rice_porridge', assorted_thai_salad_set: 'green_salad',
