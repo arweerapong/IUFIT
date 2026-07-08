@@ -478,6 +478,33 @@ var LEX2C={
   'มี':'HAVE','have':'HAVE',
   'คืออะไร':'QUESTION','ยังไง':'QUESTION','อย่างไร':'QUESTION','ทำไม':'QUESTION','ทำไง':'QUESTION','ดีไหม':'QUESTION','ไหม':'QUESTION','เท่าไหร่':'QUESTION','แค่ไหน':'QUESTION','อะไรดี':'QUESTION','ไรดี':'QUESTION','อะไร':'QUESTION','กี่':'QUESTION','ควร':'QUESTION','whatis':'QUESTION','why':'QUESTION','how':'QUESTION','shouldi':'QUESTION'
 };
+
+/* ===== English lexicon (near-AI EN NLU): merged into LEX2C (substring match, space-stripped) ===== */
+var LEX2C_EN={
+  'generate':'MAKE','giveme':['WANT','RECOMMEND'],'setup':['MAKE','PLAN'],'puttogether':['MAKE','PLAN'],
+  'gym':'WORKOUT','lift':'WORKOUT','lifting':'WORKOUT','cardio':'WORKOUT','strength':'WORKOUT','hiit':'WORKOUT',
+  'benchpress':'EXERCISE','bench':'EXERCISE','squat':'EXERCISE','deadlift':'EXERCISE','pushup':'EXERCISE','pullup':'EXERCISE','plank':'EXERCISE','lunge':'EXERCISE','curl':'EXERCISE','shoulderpress':'EXERCISE','legpress':'EXERCISE','bicep':'EXERCISE','tricep':'EXERCISE','abs':'EXERCISE',
+  'diet':'FOOD','nutrition':'FOOD','recipe':'FOOD','dish':'FOOD','calories':'CALORIE','kcals':'CALORIE',
+  'ingredients':'INGREDIENT','pantry':'INGREDIENT','leftover':'INGREDIENT','leftovers':'INGREDIENT',
+  'italian':'CUISINE','thaifood':'CUISINE','conveniencestore':'CUISINE',
+  'affordable':'BUDGET','lowcost':'BUDGET','onabudget':'BUDGET','cheapmeal':['BUDGET','FOOD'],
+  'trainee':'CLIENT','trainees':'CLIENT','clients':'CLIENT','myclient':'CLIENT','myclients':'CLIENT','students':'CLIENT','mytrainee':'CLIENT',
+  'calculate':'CALC','estimate':'CALC','maintenancecalories':['CALC','CALORIE'],'howmany':['CALC','QUESTION'],'howmuch':['CALC','QUESTION'],
+  'journal':'LOG','logmy':'LOG','trackmy':'LOG','recordmy':'LOG',
+  'switch':'SWAP','instead':'SWAP','swapout':'SWAP',
+  'results':'RESULT','stats':'RESULT','summary':'RESULT','summarize':'RESULT','myprogress':'RESULT','trackprogress':['RESULT','LOG'],
+  'gymnearme':['PLACE','WORKOUT'],'findgym':['PLACE','WORKOUT'],'closeby':'PLACE','aroundhere':'PLACE',
+  'suggestion':'RECOMMEND','ideas':'RECOMMEND','anyideas':'RECOMMEND','mealideas':['FOOD','RECOMMEND'],'whattoeat':['FOOD','RECOMMEND'],'shouldieat':['FOOD','RECOMMEND'],'whatshouldieat':['FOOD','RECOMMEND'],
+  'help':'HELP','howdoi':['HELP','QUESTION'],'howcani':['HELP','QUESTION'],'howto':['HELP','QUESTION'],'teachme':'HELP','showmehow':'HELP','guideme':'HELP','walkthrough':'HELP','walkme':'HELP','learnhow':'HELP','howdoiuse':['HELP','QUESTION'],'thisappdo':['HELP','QUESTION'],'usetheapp':'HELP','usethisapp':'HELP','whatcanthisapp':['HELP','QUESTION'],
+  'loseweight':'GOAL_LOSE','losefat':'GOAL_LOSE','weightloss':'GOAL_LOSE','slimdown':'GOAL_LOSE','getlean':'GOAL_LOSE','leanout':'GOAL_LOSE','cutweight':'GOAL_LOSE',
+  'gainmuscle':'GOAL_GAIN','buildmuscle':'GOAL_GAIN','gainweight':'GOAL_GAIN','bulking':'GOAL_GAIN','putonmuscle':'GOAL_GAIN','getbig':'GOAL_GAIN','muscles':'GOAL_GAIN',
+  'else':'MORE','different':'MORE','other':'MORE',
+  'need':'WANT','iwant':'WANT','canyou':'WANT','couldyou':'WANT','lookingfor':'WANT','helpme':['WANT','HELP'],
+  'igot':'HAVE','gotsome':'HAVE',
+  'whatcan':'QUESTION','whichone':'QUESTION','whatis':'QUESTION'
+};
+for(var _enk in LEX2C_EN){ if(!LEX2C[_enk]) LEX2C[_enk]=LEX2C_EN[_enk]; }
+
 var LEX_KEYS=Object.keys(LEX2C).sort(function(a,b){ return b.length-a.length; });
 /* false-friend guards: skip a lexicon hit when it is really part of another word */
 var LEX_SKIP={ 'ขอ':['ของ','ขอบ'], 'กิน':['กินไป','กินแล้ว','กินครบ','กินเกิน'], 'มี':['มีนา'], 'จัด':['จัดการ'] };
@@ -590,7 +617,7 @@ var INTENT_RULES={
   result_summary:{ any:['RESULT'], pairs:[['RESULT','WEIGHT',2],['RESULT','TODAY',1],['WEIGHT','QUESTION',2]] },
   workout_recommend:{ any:['WORKOUT','EXERCISE'], pairs:[['WORKOUT','RECOMMEND',2],['EXERCISE','RECOMMEND',2],['WORKOUT','TODAY',3],['EXERCISE','TODAY',3],['WORKOUT','QUESTION',1],['EXERCISE','QUESTION',1]], block:['MAKE','PLAN','LOG','SWAP','PLACE','CALC','CLIENT'] },
   workout_plan:{ any:['WORKOUT','SPLIT','DAYS'], pairs:[['MAKE','WORKOUT',4],['PLAN','WORKOUT',4],['MAKE','SPLIT',3],['PLAN','SPLIT',3],['DAYS','WORKOUT',3],['PLAN','DAYS',2],['SPLIT','DAYS',2],['WANT','WORKOUT',1]], block:['FOOD','MEAL','SWAP','LOG','PLACE'] },
-  exercise_alternative:{ any:[], pairs:[['SWAP','EXERCISE',4],['SWAP','WORKOUT',3],['EXERCISE','EQUIPMENT',2],['SWAP','EQUIPMENT',2]] },
+  exercise_alternative:{ any:[], pairs:[['SWAP','EXERCISE',6],['SWAP','WORKOUT',5],['EXERCISE','EQUIPMENT',3],['SWAP','EQUIPMENT',3]] },
   make_plan:{ any:['MAKE','PLAN'], pairs:[['MAKE','PLAN',1],['MAKE','GOAL_LOSE',3],['PLAN','GOAL_LOSE',3],['MAKE','GOAL_GAIN',3],['PLAN','GOAL_GAIN',3],['PLAN','CALORIE',2],['MAKE','WEIGHT',1]], block:['WORKOUT','FOOD','MEAL','CLIENT','SPLIT','RESULT'] },
   calc_plan:{ any:['CALC'], pairs:[['CALC','CALORIE',3],['CALC','PROTEIN',3],['CALC','WEIGHT',2],['CALC','QUESTION',1],['CALORIE','QUESTION',3],['PROTEIN','QUESTION',3],['CALORIE','GOAL_LOSE',1]] },
   log_food:{ any:['LOG'], pairs:[['LOG','FOOD',3],['LOG','MEAL',3],['LOG','CALORIE',2],['LOG','TODAY',1]], block:['WEIGHT','RESULT','WORKOUT','HELP'] },
@@ -617,6 +644,8 @@ function scoreIntentsV2(cc, ents, mode, tab){
     if(r.any){ for(i=0;i<r.any.length;i++){ if(has[r.any[i]]) sc+=C_WEIGHT[r.any[i]]||1; } }
     if(r.pairs){ for(i=0;i<r.pairs.length;i++){ var p=r.pairs[i]; if(has[p[0]]&&has[p[1]]) sc+=p[2]; } }
     if(sc>0 && r.block){ for(i=0;i<r.block.length;i++){ if(has[r.block[i]]){ sc=sc/2; break; } } }
+    if(has['HELP']){ if(intent==='app_help'){ sc+=5; } else if(intent!=='setup_help' && sc>0){ sc=sc/2; } }
+    if(has['CLIENT'] && intent.indexOf('coach')===0){ sc+=4; }
     if(sc>0 || intent==='ingredient_recipe_generate') sc+=_entBoost(intent,ents);
     if(sc>0){
       if((tab==='food') && intent.indexOf('food')>=0) sc+=1;
