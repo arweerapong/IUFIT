@@ -785,7 +785,10 @@ html[data-theme="dark"] .qchv{color:#7186a8}
 .wnum{font-size:12px;font-weight:800;color:#0a84ff;min-width:34px;text-align:center;font-variant-numeric:tabular-nums}
 .w4b{width:22px;height:22px;border-radius:7px;border:1px solid var(--line);background:var(--card);color:#0a84ff;font-size:14px;font-weight:800;display:grid;place-items:center;cursor:pointer}
 .w4b.plus{background:#0a84ff;color:#fff;border-color:#0a84ff}
-.gambar .gi{display:flex;align-items:center;justify-content:center;gap:8px;text-align:left}
+.gambar .gi{display:flex;align-items:center;justify-content:center;gap:7px;text-align:left;padding:0 7px;min-width:0}
+.gambar .gi>div{min-width:0}
+.gambar .gl{line-height:1.2}
+.gambar .gdiv{flex:none}
 .s-ic{width:32px;height:32px;border-radius:9px;background:#fff;flex:none;display:grid;place-items:center;box-shadow:0 4px 10px rgba(0,0,0,.28)}
 html[data-theme="dark"] .cta-btn,html[data-theme="dark"] .cta-btn.food,html[data-theme="dark"] .cta-btn.ex,html[data-theme="dark"] .cta-btn.body,html[data-theme="dark"] .cta-btn.wtr{background:linear-gradient(180deg,#1c2942,#1c2942);border-color:#3b4d72}
 html[data-theme="dark"] .w4b{background:#1c2942;border-color:#3b4d72}
@@ -798,5 +801,4 @@ html[data-theme="dark"] .w4b{background:#1c2942;border-color:#3b4d72}
 /* v11.18 exercise line icons (Tabler, inline svg, theme-adaptive color) */
 .exli{color:var(--ink)}.exli svg{display:block}
 
-html[data-theme="dark"] .card{box-shadow:0 8px 24px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.05)}
-html[data-theme="dark"] .rcard,html[data-theme="dark"] .stat,html[data-theme="dark"] .tile{border:1px solid var(--line)}
+html[data-theme="dark"] .card{box-shadow:0 8px 24px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.05
