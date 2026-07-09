@@ -12,7 +12,7 @@ var C=12,R=8;
 window.iuWorkoutIcon=function(name,size){var S=size||34;var key=_wkResolve(name);var idx=WK2IDX[key];
  if(idx==null)idx=(WK2IDX['other_strength']!=null?WK2IDX['other_strength']:0);
  var col=idx%C,row=Math.floor(idx/C);
- return '<span style="display:inline-block;width:'+S+'px;height:'+S+'px;background-image:url(./workout-sprite.png?v=1);background-size:'+(C*S)+'px '+(R*S)+'px;background-position:'+(-col*S)+'px '+(-row*S)+'px;background-repeat:no-repeat;vertical-align:middle;flex:none"></span>';};
+ return '<span style="display:inline-block;width:'+S+'px;height:'+S+'px;background-image:url(./workout-sprite.png?v=2);background-size:'+(C*S)+'px '+(R*S)+'px;background-position:'+(-col*S)+'px '+(-row*S)+'px;background-repeat:no-repeat;vertical-align:middle;flex:none"></span>';};
 window.iuWorkoutBaseKey=_wkResolve;
 try{window.iuExIcon=window.iuWorkoutIcon;}catch(e){}
 })();

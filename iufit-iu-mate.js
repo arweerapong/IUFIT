@@ -2371,11 +2371,13 @@ var ACTIONS = {
   add_generated_recipe_to_meal:function(p){ confirmAddRecipe(p&&p.recipeId); },
   save_generated_recipe:function(p){ confirmSaveRecipe(p&&p.recipeId); },
   show_privacy:function(){ try{ IUMate.showPrivacy(); }catch(e){} },
-  coach_menu_redraft:function(p){ if(p&&p.id) pushReply(buildCoachDayMenu(findClientById(p.id))); },
+  coach_menu_redraft:function(p){ if(p&&p.id) pushReply(buildCoachDayMenu(findClientById(p.id), p.dayIdxs)); },
   coach_workout_redraft:function(p){ if(p&&p.id) pushReply(buildCoachWorkout(findClientById(p.id), p.days, p.equip)); },
   coach_wplan_pick:function(){ var lc=window._LAST_COACH_WPLAN; if(!lc||!(lc.struct&&lc.struct.length)){ appToast(L('ยังไม่มีแผนให้ใส่','No plan yet')); return; } var chips=[]; try{ var cs=(typeof clientChoices==='function')?clientChoices():[]; (cs||[]).forEach(function(c){ chips.push({label:c[0],action:'coach_wplan_do',payload:{id:c[1]}}); }); }catch(x){} if(!chips.length&&lc.cid){ chips.push({label:(lc.name||L('ลูกเทรน','client')),action:'coach_wplan_do',payload:{id:lc.cid}}); } chips.push({label:L('ยกเลิก','Cancel'),action:'noop'}); pushReply({ title:L('ใส่แผนลงตารางลูกเทรนคนไหน?','Add plan to which client?'), message:L('เลือกลูกเทรนที่จะใส่แผนนี้ลงตารางฝึก · ระบบจะแทนที่ตารางเดิมของคนนั้น (เข้าไปปรับต่อได้ในหน้าลูกเทรน)','Pick a client — this replaces their current schedule (you can edit it in their page).'), actions:chips }); },
   coach_wplan_do:function(p){ var lc=window._LAST_COACH_WPLAN; var cid=p&&p.id; if(!lc||!cid){ appToast(L('ไม่สำเร็จ','Failed')); return; } try{ var Sx=window.S; Sx.wplan=Sx.wplan||{}; var day={}; lc.struct.forEach(function(d){ var arr=[]; d.moves.forEach(function(m){ arr.push({n:m.n,eq:m.eq,s:'-×10×3'}); }); day[d.wd]=arr; }); Sx.wplan[cid]=day; if(fn('save')) window.save(); }catch(x){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); return; } var nm=''; try{ var cu=(window.S.users||[]).filter(function(u){return u.id===cid;})[0]; nm=(cu&&cu.name)||''; }catch(x){} appToast(L('ใส่ลงตาราง '+nm+' แล้ว 📅','Added to '+nm+' 📅')); pushReply({ title:L('ใส่ลงตารางแล้ว ✓','Added to schedule ✓'), message:L('ใส่แผนลงตารางของ '+nm+' เรียบร้อย · จะส่งให้ลูกเทรนเลย หรือเข้าไปปรับก่อนก็ได้ครับ','Added to '+nm+"'s schedule. Send it now, or edit first in their page."), actions:[{label:L('📤 ส่งให้ลูกเทรนเลย','📤 Send to client'),action:'coach_wplan_send',payload:{id:cid}},{label:L('เปิดหน้าลูกเทรน','Open client'),action:'go_clients'}] }); },
   coach_wplan_send:function(p){ var cid=p&&p.id; if(cid&&fn('sendClientPlan')){ try{ window.sendClientPlan(cid); }catch(x){ appToast(L('ส่งไม่สำเร็จ','Send failed')); } } },
+  coach_mplan_save:function(p){ var cid=p&&p.id; var c=findClientById(cid); if(!c){ appToast(L('ไม่พบลูกเทรน','Client not found')); return; } var d=window._LAST_COACH_MPLAN; if(!d||d.cid!==cid||!d.days){ appToast(L('ร่างนี้เก่าแล้ว กดร่างใหม่ก่อนนะครับ','Draft is stale — redraft first')); return; } var Sx=window.S; if(!Sx){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); return; } var dayIdxs=Object.keys(d.days).map(Number); var conflict=dayIdxs.filter(function(di){ var dd=Sx.mplan&&Sx.mplan[cid]&&Sx.mplan[cid][di]; return dd&&['br','lu','di','sn'].some(function(mk){var v=dd[mk];return v&&(Array.isArray(v)?v.length:1);}); }); var _nm=(c.name||L('ลูกเทรน','client')); var _write=function(){ Sx.mplan=Sx.mplan||{}; Sx.mplan[cid]=Sx.mplan[cid]||{}; dayIdxs.forEach(function(di){ Sx.mplan[cid][di]=Sx.mplan[cid][di]||{}; ['br','lu','di','sn'].forEach(function(mk){ var arr=d.days[di][mk]; if(arr&&arr.length) Sx.mplan[cid][di][mk]=arr; }); }); if(fn('save')) window.save(); var dn=dayIdxs.map(function(i){return _WDNL()[i];}).join(', '); appToast(L('บันทึกลงแผน '+_nm+' แล้ว 📅','Saved to '+_nm+"'s plan 📅")); pushReply({ title:L('บันทึกลงแผนแล้ว ✓','Saved to plan ✓'), message:L('ใส่เมนูลงแผนวัน '+dn+' ของ '+_nm+' เรียบร้อย · จะส่งแผนทั้งหมด (อาหาร+ตารางฝึก+เป้าหมาย) ให้เลย หรือเข้าไปปรับก่อนก็ได้ครับ','Added menus to '+_nm+"'s plan ("+dn+'). Send the full plan (meals+workout+target) now, or edit first.'), actions:[{label:L('📤 ส่งแผนให้ '+_nm,'📤 Send to '+_nm),action:'coach_mplan_send',payload:{id:cid}},{label:L('เปิดหน้าลูกเทรน','Open client'),action:'go_clients'}] }); }; if(conflict.length){ var cn=conflict.map(function(i){return _WDNL()[i];}).join(', '); showConfirm({ title:L('ทับแผนเดิมของ '+_nm+'?','Overwrite '+_nm+"'s plan?"), body:L('วัน '+cn+' มีเมนูอยู่แล้ว จะถูกแทนที่ด้วยร่างใหม่','Day(s) '+cn+' already have menus — will be replaced'), yes:L('แทนที่','Replace'), onYes:_write }); } else _write(); },
+  coach_mplan_send:function(p){ var c=findClientById(p&&p.id); if(!c){ appToast(L('ไม่พบลูกเทรน','Client not found')); return; } var _nm=(c.name||L('ลูกเทรน','client')); if(!c.dev){ pushReply({ title:L('ยังส่งตรงไม่ได้','Can not send yet'), message:L(_nm+' ยังไม่ได้สแกน QR โค้ช — แผนถูกบันทึกไว้ฝั่งโค้ชแล้ว พอเขาสแกน QR ค่อยกดส่งจากหน้าลูกเทรนได้','\''+_nm+"' hasn't scanned your Coach QR — plan saved on your side; send once they link."), actions:[{label:L('เปิดหน้าลูกเทรน (แชร์ QR)','Open client (share QR)'),action:'go_clients'}] }); return; } if(fn('sendClientPlan')){ try{ window.sendClientPlan(c.id); }catch(e){ appToast(L('ส่งไม่สำเร็จ','Send failed')); } } },
   noop:function(){},
   coach_calc_pick:function(p){ var c=(typeof findClientById==='function')?findClientById(p&&p.id):null; if(!c){ appToast(L('ไม่พบลูกเทรน','Client not found')); return; } var prof=_clientCalcProfile(c); if(prof.w==null||prof.h==null||prof.age==null){ pushReply({ title:L('ข้อมูลลูกเทรนไม่ครบ','Client profile incomplete'), message:L('ยังขาด น้ำหนัก/ส่วนสูง/อายุ ของ '+(c.name||'ลูกเทรน')+' — ให้เขากรอกโปรไฟล์ให้ครบก่อนคำนวณครับ','Missing weight/height/age for '+(c.name||'this client')+' — ask them to complete their profile first.') }); return; } var rep; try{ rep=calcReply(prof); }catch(e){ appToast(L('คำนวณไม่สำเร็จ','Calc failed')); return; } rep.title=L('ค่าประมาณของ '+(c.name||'ลูกเทรน'),(c.name||'Client')+' — estimate'); var copyText=(rep.title||'')+'\n'+(rep.message||''); rep.actions=[{label:L('📤 ส่งเป้าหมายให้ '+(c.name||'ลูกเทรน'),'📤 Send target to '+(c.name||'client')),action:'coach_calc_send',payload:{id:c.id}},{label:L('📋 คัดลอก','📋 Copy'),action:'copy_text',payload:{text:copyText}},{label:L('เลือกคนอื่น','Another client'),action:'_chip',payload:{q:L('คำนวณแคลให้ลูกเทรน','calculate for a client')}}]; pushReply(rep); },
   coach_calc_send:function(p){ var c=(typeof findClientById==='function')?findClientById(p&&p.id):null; if(!c){ appToast(L('ไม่พบลูกเทรน','Client not found')); return; } var prof=_clientCalcProfile(c); if(prof.w==null||prof.h==null||prof.age==null){ appToast(L('ข้อมูลลูกเทรนไม่ครบ กรอกโปรไฟล์ก่อน','Client profile incomplete')); return; } if(!c.dev){ appToast(L('ลูกเทรนยังไม่ได้เชื่อม QR โค้ช จึงส่งตรงไม่ได้','Client hasn\'t linked your Coach QR yet')); return; } try{ var r=(typeof CALC!=='undefined'&&CALC.plan)?CALC.plan(prof):null; if(r){ var _k=Math.max(1200,Math.round((r.kcalLo+r.kcalHi)/2)); c.tgt={kcal:_k,prot:Math.round((r.pLo+r.pHi)/2),fat:Math.round(r.fat),carb:Math.round(r.carb)}; if(fn('save'))window.save(); } if(fn('sendClientPlan')){ window.sendClientPlan(c.id); } else { appToast(L('ตั้งเป้าหมายให้แล้ว','Target set')); } }catch(e){ appToast(L('ส่งไม่สำเร็จ','Send failed')); } },
@@ -2579,36 +2581,48 @@ function pickMealMenu(kcalTarget, mealName, goalLab, used, alUser){
   var p=list[0]; if(p) used[p.id]=1; return p;
 }
 function mealEmoji(m){ return m==='เช้า'?'🌅':m==='กลางวัน'?'☀️':m==='เย็น'?'🌙':'🍎'; }
-function buildCoachDayMenu(c){
+function buildCoachDayMenu(c, dayIdxs){
   if(!consentCoach()) return coachDeniedReply();
   if(!c) return { title:L('เลือกลูกเทรนก่อน','Pick a client first'), message:L('ยังไม่พบลูกเทรน','Client not found') };
   if(!ingDbOk()) return cantCalcReply();
+  dayIdxs=(dayIdxs&&dayIdxs.length)?dayIdxs:[(new Date().getDay()+6)%7];
   var tg=clientTarget(c);
-  var splits=[['เช้า',0.25],['กลางวัน',0.35],['เย็น',0.30],['ว่าง',0.10]];
-  var used={}, picks=[], tot={kcal:0,protein:0};
-  splits.forEach(function(sp){ var p=pickMealMenu(tg.kcal*sp[1], sp[0], tg.goalLab, used, c); if(p){ picks.push({meal:sp[0],m:p}); tot.kcal+=p.nutrition.kcal; tot.protein+=p.nutrition.protein; } });
-  var mealEN={'เช้า':'Breakfast','กลางวัน':'Lunch','เย็น':'Dinner','ว่าง':'Snack'};
-  var lines=picks.map(function(x){ return mealEmoji(x.meal)+' '+L(x.meal,mealEN[x.meal])+': '+tFoodName(x.m.name)+' ('+x.m.nutrition.kcal+' kcal · P'+x.m.nutrition.protein+')'; });
-  var head=L('แผนเมนู 1 วัน — '+(c.name||'ลูกเทรน'),'1-day menu — '+(c.name||'client'));
+  if(c.tgt&&+c.tgt.kcal>0){ tg.kcal=+c.tgt.kcal; if(+c.tgt.prot>0) tg.prot=+c.tgt.prot; }
+  var MK=[['br','เช้า','Breakfast',0.25],['lu','กลางวัน','Lunch',0.35],['di','เย็น','Dinner',0.30],['sn','ของว่าง','Snack',0.10]];
+  var used={}, draft={ cid:c.id, name:(c.name||''), ts:Date.now(), days:{} }, dayBlocks=[], multi=(dayIdxs.length>1);
+  dayIdxs.forEach(function(di){
+    var dm={br:[],lu:[],di:[],sn:[]}, dtot={kcal:0,prot:0}, lines=[];
+    MK.forEach(function(mkr){
+      var p=pickMealMenu(tg.kcal*mkr[3], mkr[1], tg.goalLab, used, c);
+      if(!p){ used={}; p=pickMealMenu(tg.kcal*mkr[3], mkr[1], tg.goalLab, used, c); }
+      if(p){ var k=Math.round(p.nutrition.kcal), pr=Math.round(p.nutrition.protein);
+        dm[mkr[0]]=[{rid:p.id,n:p.name,k:k,pr:pr}]; dtot.kcal+=k; dtot.prot+=pr;
+        lines.push(mealEmoji(mkr[1])+' '+L(mkr[1],mkr[2])+': '+tFoodName(p.name)+' ('+k+' kcal · P'+pr+')'); }
+    });
+    draft.days[di]=dm;
+    var dn=(_WDNL()[di]||('D'+(di+1)));
+    dayBlocks.push((multi?('📆 '+dn+' — '+L('รวม ~','~')+Math.round(dtot.kcal)+' kcal · P~'+Math.round(dtot.prot)+'\n'):'')+lines.join('\n'));
+  });
+  window._LAST_COACH_MPLAN=draft;
+  var nm=(c.name||L('ลูกเทรน','client'));
+  var head=L('แผนเมนู'+(multi?(' '+dayIdxs.length+' วัน'):' 1 วัน')+' — '+nm,(multi?(dayIdxs.length+'-day'):'1-day')+' menu — '+nm);
   var tline=L('เป้า ~'+tg.kcal+' kcal/วัน · โปรตีน ~'+tg.prot+' g ('+tg.goalLab+')','Target ~'+tg.kcal+' kcal/day · protein ~'+tg.prot+' g');
-  var sumline=L('รวม ~'+Math.round(tot.kcal)+' kcal · โปรตีน ~'+Math.round(tot.protein)+' g','Total ~'+Math.round(tot.kcal)+' kcal · protein ~'+Math.round(tot.protein)+' g');
-  var msg=tline+'\n\n'+lines.join('\n')+'\n\n'+sumline+_iuAllergyNote(c);
+  var msg=tline+'\n\n'+dayBlocks.join('\n\n')+_iuAllergyNote(c);
   var copyText=head+'\n'+msg;
-  ST.ctx={intent:'coach_menu', clientId:c.id};
-  return { title:head, message:msg,
-    disclaimer: tg.partial ? L('ข้อมูลลูกเทรนไม่ครบ ใช้ค่าประมาณ — โค้ชปรับก่อนส่งได้','Client profile incomplete — estimates; adjust before sending')
-                           : L('ค่าประมาณเพื่อช่วยร่าง โค้ชตรวจ/แก้ก่อนส่งให้ลูกเทรนได้','Estimates to help you draft — review/edit before sending'),
+  ST.ctx={intent:'coach_menu', clientId:c.id, dayIdxs:dayIdxs};
+  var disc=(tg.partial?L('ข้อมูลลูกเทรนไม่ครบ ใช้ค่าประมาณ — ปรับก่อนส่งได้','Client profile incomplete — estimates; adjust before sending'):L('ค่าประมาณเพื่อช่วยร่าง โค้ชตรวจ/แก้ก่อนส่งได้','Estimates to help you draft — review/edit before sending'))+(!c.dev?L('\n⚠️ '+nm+' ยังไม่ได้สแกน QR โค้ช — บันทึกลงแผนได้ แต่ยังส่งตรงถึงเครื่องเขาไม่ได้','\n⚠️ '+nm+" hasn't scanned your Coach QR — you can save but can't send yet"):'');
+  return { title:head, message:msg, disclaimer:disc,
     actions:[
-      {label:L('🔄 ร่างใหม่','🔄 Redraft'),action:'coach_menu_redraft',payload:{id:c.id}},
-      {label:L('📋 คัดลอกเป็นข้อความ','📋 Copy as text'),action:'copy_text',payload:{text:copyText}},
-      {label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}
+      {label:L('📅 บันทึกลงแผนให้ '+nm,'📅 Save to '+nm+"'s plan"),action:'coach_mplan_save',payload:{id:c.id}},
+      {label:L('🔄 ร่างใหม่','🔄 Redraft'),action:'coach_menu_redraft',payload:{id:c.id,dayIdxs:dayIdxs}},
+      {label:L('📋 คัดลอก','📋 Copy'),action:'copy_text',payload:{text:copyText}}
     ] };
 }
 function startCoachMenu(){
   if(!consentCoach()) return pushReply(coachDeniedReply());
   var cs=coachClientsList();
   if(!cs.length) return pushReply({ title:L('ยังไม่มีลูกเทรน','No clients yet'), message:L('ยังไม่มีลูกเทรน แชร์ QR โค้ชให้สแกนเข้ามาก่อนนะครับ','No clients yet — share your Coach QR.'), actions:[{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] });
-  if(cs.length===1) return pushReply(buildCoachDayMenu(cs[0]));
+  if(cs.length===1) return startFlow('coach_menu',{client:cs[0].id});
   startFlow('coach_menu');
 }
 /* ---- coach drafting tool: workout program from built-in WORKOUTS (+ user S.moves) ---- */
@@ -2712,9 +2726,12 @@ var FLOWS = {
     complete: function(sl){ return planFlowResult(sl); }
   },
   coach_menu: {
-    intro: L('จะร่างเมนูทั้งวันให้ลูกเทรนคนไหนดีครับ?','Which client should I draft a full-day menu for?'),
-    slots: [ { key:'client', type:'choice', q:L('เลือกลูกเทรน','Pick a client'), choicesFn:clientChoices } ],
-    complete: function(sl){ return buildCoachDayMenu(findClientById(sl.client)); }
+    intro: L('จะร่างเมนูให้ลูกเทรนคนไหนดีครับ?','Which client should I draft a menu for?'),
+    slots: [
+      { key:'client', type:'choice', q:L('เลือกลูกเทรน','Pick a client'), choicesFn:clientChoices },
+      { key:'dayScope', type:'choice', q:L('ร่างลงวันไหนครับ?','Which day(s)?'), choices:[[L('วันนี้','Today'),'today'],[L('พรุ่งนี้','Tomorrow'),'tomorrow'],[L('ทั้งสัปดาห์ (จ–อา)','Whole week'),'week']] }
+    ],
+    complete: function(sl){ var c=findClientById(sl.client); var _td=(new Date().getDay()+6)%7; var _days=(sl.dayScope==='week')?[0,1,2,3,4,5,6]:(sl.dayScope==='tomorrow')?[(_td+1)%7]:[_td]; return buildCoachDayMenu(c,_days); }
   },
   coach_workout: {
     intro: L('จะร่างโปรแกรมฝึกให้ลูกเทรนคนไหนดีครับ?','Which client should I draft a workout program for?'),

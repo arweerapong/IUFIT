@@ -34,6 +34,13 @@ a.blue{color:var(--blue);font-weight:700}
 .how b{color:var(--navy);font-size:13.5px}
 .how ol{margin:7px 0 0;padding-left:20px}
 .how li{font-size:12.5px;margin:4px 0;color:var(--ink)}
+.meta{margin:15px 0 0;text-align:left;border-top:1px solid var(--line);padding-top:6px}
+.mrow{display:flex;gap:8px;padding:7px 0;border-bottom:1px solid #f2f5fa;font-size:13px}
+.mrow:last-child{border-bottom:none}
+.mk{color:var(--muted);width:84px;flex:none}
+.mv{color:var(--ink);flex:1}
+.pfwrap{display:flex;gap:8px;overflow-x:auto;margin:14px 0 2px;padding-bottom:3px}
+.pf{width:132px;height:164px;object-fit:cover;border-radius:13px;flex:none;border:1px solid var(--line)}
 </style>
 </head>
 <body>
@@ -48,11 +55,21 @@ function qs(n){var m=new RegExp('[?&]'+n+'=([^&]+)').exec(location.search);retur
 function esc(s){return (''+(s||'')).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 var code=(qs('c')||'').toUpperCase().replace(/[^A-Z0-9\-]/g,'');
 var app=document.getElementById('app');
+function arr(v){ return Object.prototype.toString.call(v)==='[object Array]'?v:[]; }
 function render(d){
   var name=d.nm||d.from||'เทรนเนอร์';
   var joinURL='https://iufit.com?join='+encodeURIComponent(code);
   var ava=d.ph?('<img class="ava" src="'+esc(d.ph)+'" alt="">'):('<div class="ava-ph">'+esc((name||'?').slice(0,1))+'</div>');
-  var chips=(d.ex||'').split(/[,\/·]/).map(function(x){return x.trim();}).filter(Boolean).map(function(x){return '<span class="chip">'+esc(x)+'</span>';}).join('');
+  var specs=arr(d.specs).length?arr(d.specs):(d.ex||'').split(/[,\/·]/).map(function(x){return x.trim();}).filter(Boolean);
+  var chips=specs.map(function(x){return '<span class="chip">'+esc(x)+'</span>';}).join('');
+  // แถวรายละเอียด (marketplace) — แสดงเฉพาะที่มีข้อมูล
+  var meta='';
+  if(arr(d.prov).length) meta+='<div class="mrow"><span class="mk">📍 พื้นที่</span><span class="mv">'+esc(arr(d.prov).join(', '))+'</span></div>';
+  if(arr(d.fmt).length)  meta+='<div class="mrow"><span class="mk">🏃 รูปแบบ</span><span class="mv">'+esc(arr(d.fmt).join(', '))+'</span></div>';
+  if(d.certs)            meta+='<div class="mrow"><span class="mk">🎓 ใบเซอร์</span><span class="mv">'+esc(d.certs)+'</span></div>';
+  if(+d.price>0)         meta+='<div class="mrow"><span class="mk">💰 ราคา</span><span class="mv" style="font-weight:800;color:var(--navy)">฿'+esc(+d.price)+' / ครั้ง</span></div>';
+  // ผลงาน (result cards / before-after)
+  var port=arr(d.portfolio).map(function(p){var s=(p&&p.img)||p;return s?'<img class="pf" src="'+esc(s)+'" alt="">':'';}).join('');
   var h=''
    +'<div class="hero">'
    + ava
@@ -61,9 +78,13 @@ function render(d){
    +(chips?('<div class="chips">'+chips+'</div>'):'')
    +(d.yr?('<div class="yrs">ประสบการณ์ '+esc(d.yr)+' ปี</div>'):'')
    +(d.bio?('<div class="bio">'+esc(d.bio)+'</div>'):'')
+   +(meta?('<div class="meta">'+meta+'</div>'):'')
+   +(port?('<div class="pfwrap">'+port+'</div>'):'')
    +'<a class="btn pri" href="'+joinURL+'">เริ่มเทรนกับโค้ชนี้</a>'
    +(d.ct?('<a class="btn line" href="'+ctURL(d.ct)+'" target="_blank" rel="noopener">ติดต่อโค้ช · '+esc(d.ct)+'</a>'):'')
    +'<a class="btn ghost" href="https://iufit.com">เปิด / ดาวน์โหลดแอป IUFIT</a>'
+   // ── FUTURE (Phase 2): ส่วนจอง+ชำระเงินบนเว็บใส่ตรงนี้ได้เลย (Omise QR / booking) ──
+   // +'<a class="btn pri" href="/book.html?c='+code+'">จองคอร์ส & ชำระเงิน</a>'
    +'</div>'
    +'<div class="how"><b>เริ่มยังไง</b><ol>'
    +'<li>กด “เริ่มเทรนกับโค้ชนี้” — เปิดแอป IUFIT</li>'
