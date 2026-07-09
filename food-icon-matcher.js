@@ -293,7 +293,7 @@
     var nBase=_paren?norm(_raw.replace(/\([^)]*\)/g,' ')):n;
 
     if (menuId && OVERRIDES[menuId]) return res(OVERRIDES[menuId].icon_key || OVERRIDES[menuId], 1.0, 'override', 'manual override', []);
-    var HARDKW=[['แหนม','naem'],['ซอสหอยนางรม','oyster_sauce_bottle'],['น้ำจิ้มไก่','chili_sauce_bowl'],['น้ำจิ้มสุกี้','chili_sauce_bowl'],['ตับ','liver']];
+    var HARDKW=[['แหนม','naem'],['ซอสหอยนางรม','oyster_sauce_bottle'],['น้ำจิ้มไก่','chili_sauce_bowl'],['น้ำจิ้มสุกี้','chili_sauce_bowl'],['ตับ','liver'],['ซาลาเปา','baozi'],['ขนมจีบ','siu_mai'],['หมูกรอบ','crispy_pork'],['ขาหมู','pork_leg_rice']];
     for (var _h=0; _h<HARDKW.length; _h++) if (n.indexOf(HARDKW[_h][0])>-1) return res(HARDKW[_h][1], 0.95, 'hardkw', 'kw '+HARDKW[_h][0], []);
     if (_paren) { var _im = ingMatch(nBase); if (_im) return res(_im, 0.82, 'ingredient', 'วัตถุดิบ (มีสถานะปรุง)', []); }
 
