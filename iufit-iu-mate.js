@@ -1482,6 +1482,22 @@ function _libExplain(inp,bp){var ln=[];
  if(bp&&bp.bmi!=null)ln.push(L('จากข้อมูล BMI ประมาณ ','From your data, BMI ≈ ')+bp.bmi+L(' ผมเลี่ยงท่ากระแทกสูง/เสี่ยงให้แล้ว',' — high-impact/risky moves were filtered out.'));
  ln.push(L('ทุกท่ามีปุ่ม ▶ ดูคลิปสอนในหน้าท่าฝึก','Each move has a ▶ tutorial in the Workout tab.'));
  return ln.join('\n');}
+function _tplToStruct(tpl,inp){
+ try{
+  if(!tpl||!tpl.days||!tpl.days.length) return null;
+  var days=tpl.days.length;
+  var wdays=_parseWdays(inp&&inp.wdays,days);
+  var struct=[];
+  tpl.days.forEach(function(d,di){
+   var moves=(d.exercises||[]).map(function(ex){
+    var eq=/(\bDB\b|Dumbbell|ดัมเบล)/i.test(ex.name||'')?'ดัมเบล':'บอดี้เวท';
+    return {n:(ex.name||''),eq:eq};
+   }).filter(function(m){return m.n;});
+   if(moves.length) struct.push({wd:(wdays[di]!=null?wdays[di]:di),label:(d.focus||d.dayLabel||''),moves:moves});
+  });
+  return struct.length?{split:(tpl.id||'tpl'),days:days,struct:struct}:null;
+ }catch(e){ return null; }
+}
 function buildWorkoutPlan(message,inpOverride,limOverride){
  var coach=(role()==='coach');
  try{var S=window.S;
@@ -1514,6 +1530,7 @@ function buildWorkoutPlan(message,inpOverride,limOverride){
  var sel=selectWorkoutTemplateByBody({goal:inp.goal,level:inp.level,daysPerWeek:inp.daysPerWeek,equipment:inp.equipment,limitation:limitation,bodyProfile:bp,hasCoach:false,hasCoachWorkoutPlan:false});
  var tpl=getWorkoutTemplateById(sel.templateId)||WORKOUT_TEMPLATES[0];
  var _libBody=(sel.safetyLevel!=='caution'&&sel.safetyLevel!=='low_impact'&&limitation==='none')?(function(){try{return _libWorkoutPlan(inp);}catch(e){return null;}})():null;
+  try{ if(!_libBody){ _LAST_WPLAN=_tplToStruct(tpl,inp)||null; } }catch(_eT){}
  var explain=coach?'':(_libBody?_libExplain(inp,bp):_wpExplain(tpl,bp,inp,sel.safetyLevel));
  var msg=(_adNote?_adNote+'\n\n———\n\n':'')+(explain?explain+'\n\n———\n\n':'')+(_libBody||_wpFormat(tpl))+L('หมายเหตุ: เลือกความหนักที่ยังคุมท่าได้ ไม่ต้องฝืนจนหมดแรง · ถ้าทำได้ครบทุกเซ็ตคุมท่าดี 2 ครั้งติด ค่อยเพิ่มครั้ง/น้ำหนักเล็กน้อย','Note: pick a load you can control, no need to go to failure. If you hit all sets with good form twice, add reps/a little weight.');
  var note=coach?L('นี่คือร่างแผนสำหรับลูกเทรน ตรวจ/แก้ก่อนส่งได้ · IU MATE ไม่ส่งให้ลูกเทรนอัตโนมัติ และไม่เปลี่ยนแผนเดิมโดยไม่ยืนยัน','Draft for your client — review/edit before sending. IU MATE never auto-sends or overrides an active plan.'):L('แผนนี้เป็นแผนพื้นฐาน ปรับได้ตามความพร้อมของร่างกาย หากมีอาการเจ็บหรือโรคประจำตัว ควรปรึกษาผู้เชี่ยวชาญก่อนเริ่มฝึก','This is a basic plan — adjust to your readiness. If you have pain or a health condition, consult a professional first.');
@@ -1525,7 +1542,7 @@ function buildWorkoutPlan(message,inpOverride,limOverride){
  var chips=[];
  var _cl=[]; try{ _cl=(typeof coachClientsList==='function')?coachClientsList():[]; }catch(_e){}
  if(coach&&_cl&&_cl.length&&_LAST_WPLAN&&_LAST_WPLAN.struct&&_LAST_WPLAN.struct.length){ try{window._LAST_COACH_WPLAN={cid:null,name:'',struct:_LAST_WPLAN.struct};}catch(_e){} chips.push({label:L('📅 เพิ่มลงตารางลูกเทรน','📅 Add to a client'),action:'coach_wplan_pick'}); }
- if(_canSave) chips.push({label:L('📅 บันทึกลงตารางฝึก','📅 Save to my schedule'),action:'wplan_save',payload:{struct:_LAST_WPLAN.struct}});
+ if(_canSave) chips.push({label:L('📅 เพิ่มลงตารางสัปดาห์นี้','📅 Add to my week'),action:'wplan_save',payload:{struct:_LAST_WPLAN.struct}});
  chips.push({label:L('🔄 สร้างตารางใหม่','🔄 Regenerate'),action:'workout_redraft'});
  chips.push({label:L('ไม่มีอุปกรณ์','No equipment'),action:'_chip',payload:{q:L('จัดตารางฝึกไม่มีอุปกรณ์','workout plan no equipment')}});
  chips.push({label:L('ไปหน้าตารางฝึก','Open plan'),action:'go_workout'});
