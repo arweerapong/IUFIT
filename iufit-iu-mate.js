@@ -80,8 +80,16 @@ function calcReply(p){
     disclaimer:L('เป็นค่าประมาณเพื่อช่วยวางแผน ไม่ใช่คำตัดสินตายตัว — ปรับตามการตอบสนองจริงทุก 2-3 สัปดาห์ และไม่ใช่คำแนะนำทางการแพทย์','Estimates to help planning, not fixed rules — adjust to the real 2-3 week response. Not medical advice.'),
     actions:[{label:L('แก้ตัวเลข','Edit values'),action:'open_calc'},{label:L('ดูสรุปวันนี้','Today'),action:'today_summary'}] };
 }
+function _clientCalcProfile(c){ var w=(typeof latestClientW==='function')?latestClientW(c):(c.w0||c.w||null); var age=(typeof ageOf==='function')?ageOf(c):null; return { sex:c.sex||'m', w:w, h:c.h||null, age:age, act:c.act||1.375, goal:c.goal||'keep', bf:(c.bf!=null?c.bf:null) }; }
+function _coachCalcPicker(){
+  var cs=(typeof clientChoices==='function')?clientChoices():[];
+  if(!cs.length) return { title:L('ยังไม่มีลูกเทรน','No clients yet'), message:L('ยังไม่มีลูกเทรนให้เลือก · หรือพิมพ์ เพศ/น้ำหนัก/ส่วนสูง/อายุ มาให้ผมคำนวณแบบครั้งเดียวได้ครับ','No clients to pick — or type sex/weight/height/age for a one-off calc.'), actions:[{label:L('เปิดเครื่องคำนวณ','Open calculator'),action:'open_calc'}] };
+  var acts=cs.map(function(c){ return {label:c[0],action:'coach_calc_pick',payload:{id:c[1]}}; });
+  return { title:L('คำนวณให้ลูกเทรนคนไหน?','Calculate for which client?'), message:L('เลือกลูกเทรนที่จะคำนวณแคล/มาโครให้ · ผมใช้ เพศ/น้ำหนัก/ส่วนสูง/อายุ/เป้าหมาย จากโปรไฟล์ของเขา','Pick a client — I use their sex/weight/height/age/goal from their profile.'), actions:acts };
+}
 function buildCalcPlan(message){
   var p=parseProfileFromText(message);
+  if(role()==='coach'){ if(p.w!=null&&p.h!=null&&p.age!=null&&p.sex!=null) return calcReply(p); return _coachCalcPicker(); }
   if(role()!=='coach'){ var u=curUser()||{};
     if(p.sex==null&&u.sex) p.sex=u.sex;
     if(p.h==null&&u.h) p.h=u.h;
@@ -116,6 +124,13 @@ function openCalcForm(p){
     '</div>'+
     '<button class="go" style="margin-top:10px" onclick="IUMate._calc()">'+esc(L('คำนวณ','Calculate'))+'</button></div>';
   modalOpen(h);
+}
+function _calcSyncChips(){
+  var p=ST.calc||{}; var sexM=(p.sex!=='f'); var goal=p.goal||'lose';
+  var sM=document.getElementById('iuSexM'),sF=document.getElementById('iuSexF');
+  if(sM)sM.classList.toggle('on',sexM); if(sF)sF.classList.toggle('on',!sexM);
+  var gl=document.getElementById('iuGoalLose'),gk=document.getElementById('iuGoalKeep'),gg=document.getElementById('iuGoalGain');
+  if(gl)gl.classList.toggle('on',goal==='lose'); if(gk)gk.classList.toggle('on',goal==='keep'); if(gg)gg.classList.toggle('on',goal==='gain');
 }
 
 function fn(name){ return typeof window[name]==='function'; }
@@ -1371,7 +1386,11 @@ function _splitPattern(split,days){
   days=+days||3;
   if(split==='full'){ var a=[]; for(var i=0;i<days;i++)a.push(['Full Body','full']); return a; }
   if(split==='ul'){ var b=[],nm=['Upper A','Lower A','Upper B','Lower B','Upper C','Lower C']; for(var j=0;j<days;j++)b.push([nm[j]||(j%2?'Lower':'Upper'),(j%2?'lower':'upper')]); return b; }
-  if(split==='ppl'){ var seq=[['Push','push'],['Pull','pull'],['Legs','legs']],c=[]; for(var k=0;k<days;k++)c.push(seq[k%3]); return c; }
+  if(split==='ppl'){ var seq=[['Push','push'],['Pull','pull'],['Legs','legs']],c=[];
+    if(days===4){ c=[seq[0],seq[1],seq[2],['Upper','upper']]; }
+    else if(days===5){ c=[seq[0],seq[1],seq[2],['Upper','upper'],['Lower','lower']]; }
+    else { for(var k=0;k<days;k++)c.push(seq[k%3]); }
+    return c; }
   return SPLITS[days]||SPLITS[3]||[['Full Body','full']];
 }
 function _WDNL(){ return (window.LANG==='en')?['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday']:['จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์','อาทิตย์']; }
@@ -1459,6 +1478,34 @@ function _wAdaptText(ad,goal,forCoach,name,usedDays){
  }catch(e){ return ''; }
 }
 var _LAST_WPLAN=null;
+function _iuLastPerf(name){
+  try{
+    var u=_iuActiveUser(); if(!u) return null;
+    var Sx=window.S; if(!Sx||!Sx.ex) return null;
+    var nn=(''+name).toLowerCase().trim(); if(!nn) return null;
+    var best=null;
+    Sx.ex.forEach(function(x){
+      if(!x||x.user!==u.id) return;
+      if((x.ty||'weight')!=='weight') return;
+      if(!(+x.w>0)) return;
+      var xn=(''+(x.n||'')).toLowerCase().trim(); if(!xn) return;
+      if(xn!==nn){ if(xn.length<4||nn.length<4) return; if(xn.indexOf(nn)<0 && nn.indexOf(xn)<0) return; }
+      if(!best || (''+(x.date||''))>=(''+(best.date||''))) best=x;
+    });
+    return best;
+  }catch(e){ return null; }
+}
+function _iuPerfHint(name, goal){
+  try{
+    if(typeof role==='function' && role()==='coach') return '';
+    var p=_iuLastPerf(name); if(!p) return '';
+    var top=(goal==='lose'?15:12);
+    var r=+p.r||0, w=+p.w||0;
+    var base=L('ครั้งก่อน '+w+' กก.×'+r,'last '+w+'kg×'+r);
+    if(r>=top) return ' · '+base+' ▲ '+L('ครบช่วงแล้ว เพิ่ม ~2.5–5 กก. หรือ +1–2 ครั้ง','hit the range — add ~2.5–5 kg or +1–2 reps');
+    return ' · '+base;
+  }catch(e){ return ''; }
+}
 function _libWorkoutPlan(inp){
  if(!(window.IUFIT_WORKOUTS&&window.IUFIT_WORKOUTS.length))return null;
  var days=inp.daysPerWeek||3,goal=(inp.goal==='fat_loss'?'lose':inp.goal==='muscle_gain'?'gain':'general'),level=inp.level||'beginner';
@@ -1469,7 +1516,7 @@ function _libWorkoutPlan(inp){
  split.forEach(function(d,di){var used={},tmpl=DAYTMPL[d[1]]||DAYTMPL.full,moves=[];
   tmpl.forEach(function(gp){var pool=_safePool(gp[0],equip,used,level);for(var k=0;k<gp[1]&&k<pool.length;k++){used[pool[k].nameEn]=1;moves.push(pool[k]);}});
   if(goal==='lose'&&splitKey==='full'){var cp=_safePool('คาร์ดิโอ',equip,used,level);if(cp[0]){used[cp[0].nameEn]=1;moves.push(cp[0]);}}
-  var lines=moves.map(function(mv){return '• '+(window.LANG==='en'?mv.nameEn:(mv.nameTh||mv.nameEn))+' — '+setsReps(goal,mv.cardio);});
+  var lines=moves.map(function(mv){return '• '+(window.LANG==='en'?mv.nameEn:(mv.nameTh||mv.nameEn))+' — '+setsReps(goal,mv.cardio)+(mv.cardio?'':_iuPerfHint(mv.nameTh||mv.nameEn,goal));});
   var wd=(wdays[di]!=null?wdays[di]:null);
   var head='🗓️ '+(wd!=null?WDN[wd]:(L('วันที่ ','Day ')+(di+1)))+' — '+d[0];
   if(lines.length){dayTexts.push(head+'\n'+lines.join('\n'));
@@ -1529,7 +1576,12 @@ function buildWorkoutPlan(message,inpOverride,limOverride){
  }catch(eA){ _adNote=''; }
  var sel=selectWorkoutTemplateByBody({goal:inp.goal,level:inp.level,daysPerWeek:inp.daysPerWeek,equipment:inp.equipment,limitation:limitation,bodyProfile:bp,hasCoach:false,hasCoachWorkoutPlan:false});
  var tpl=getWorkoutTemplateById(sel.templateId)||WORKOUT_TEMPLATES[0];
- var _libBody=(sel.safetyLevel!=='caution'&&sel.safetyLevel!=='low_impact'&&limitation==='none')?(function(){try{return _libWorkoutPlan(inp);}catch(e){return null;}})():null;
+ var _tplDays=(tpl&&tpl.days&&tpl.days.length)||0;
+ var _wantDays=+inp.daysPerWeek||0;
+ var _explicitSplit=!!(inp.split&&['full','ul','ppl'].indexOf(inp.split)>=0);
+ var _dayMismatch=(_wantDays>0&&_tplDays>0&&_wantDays!==_tplDays);
+ var _allowLib=(sel.safetyLevel!=='caution'&&limitation==='none')&&(sel.safetyLevel!=='low_impact'||_explicitSplit||_dayMismatch);
+ var _libBody=_allowLib?(function(){try{return _libWorkoutPlan(inp);}catch(e){return null;}})():null;
   try{ if(!_libBody){ _LAST_WPLAN=_tplToStruct(tpl,inp)||null; } }catch(_eT){}
  var explain=coach?'':(_libBody?_libExplain(inp,bp):_wpExplain(tpl,bp,inp,sel.safetyLevel));
  var msg=(_adNote?_adNote+'\n\n———\n\n':'')+(explain?explain+'\n\n———\n\n':'')+(_libBody||_wpFormat(tpl))+L('หมายเหตุ: เลือกความหนักที่ยังคุมท่าได้ ไม่ต้องฝืนจนหมดแรง · ถ้าทำได้ครบทุกเซ็ตคุมท่าดี 2 ครั้งติด ค่อยเพิ่มครั้ง/น้ำหนักเล็กน้อย','Note: pick a load you can control, no need to go to failure. If you hit all sets with good form twice, add reps/a little weight.');
@@ -1640,19 +1692,59 @@ function menuToCard(m){
     tags:(m.tags||[]).concat(m.budget?[L('ประหยัด','Budget')]:[]).slice(0,4) };
   ST.recipeCache[rc.id]=rc; return rc;
 }
+function personalLede(){
+  try{
+    var t=todayCtx();
+    if(t&&!t.empty){
+      if(t.streak>=3) return '🔥 '+L('สตรีคต่อเนื่อง '+t.streak+' วันแล้ว! ','On a '+t.streak+'-day streak! ')+'\n\n';
+      if(t.targetProtein>0 && t.mealsLogged>0 && t.eatenProtein<t.targetProtein){ var pg=Math.round(t.targetProtein-t.eatenProtein); if(pg>=10) return '💪 '+L('วันนี้โปรตีนยังขาดอีก ~'+pg+' g','~'+pg+' g protein to go today')+'\n\n'; }
+      if(t.mealsLogged>0 && t.remaining>0) return '📊 '+L('วันนี้เหลืออีก ~'+t.remaining+' kcal','~'+t.remaining+' kcal left today')+'\n\n';
+      if(t.workoutsLogged>0) return '🏋️ '+L('วันนี้ออกกำลังไปแล้ว เยี่ยมมาก!','You already trained today — nice!')+'\n\n';
+    }
+    try{ var r=resultCtx(); if(r&&!r.empty&&r.weightChange!=null&&r.weightChange!==0) return (r.weightChange>0?'📈 ':'📉 ')+L('เดือนนี้น้ำหนัก '+(r.weightChange>0?'+':'')+r.weightChange+' กก.','Weight '+(r.weightChange>0?'+':'')+r.weightChange+' kg this month')+'\n\n'; }catch(e){}
+    return '';
+  }catch(e){ return ''; }
+}
+function _iuActiveUser(){ try{return (typeof curUser==='function')?curUser():((typeof window.user==='function')?window.user():null);}catch(e){return null;} }
+function _iuAllergyHits(m,u){
+  try{
+    if(typeof window.menuAllergyHits!=='function') return [];
+    var obj={n:(m&&(m.name||m.n))||'', ings:(m&&m.ings)||[]};
+    var hits=window.menuAllergyHits(obj,u)||[];
+    if((!obj.ings||!obj.ings.length) && m && m.ingredients && m.ingredients.length && window.ALLERGENS){
+      var uu=u||_iuActiveUser(); var keys=(uu&&uu.allergies)||[],cust=(uu&&uu.allergyCustom)||[];
+      if(keys.length||cust.length){
+        var txt=((m.name||'')+' '+m.ingredients.map(function(i){return i.name||'';}).join(' ')).toLowerCase();
+        keys.forEach(function(k){var a=window.ALLERGENS[k];if(!a)return;for(var i=0;i<a.kw.length;i++){if(txt.indexOf(a.kw[i])>=0){hits.push({key:k});break;}}});
+        cust.forEach(function(c){c=(''+c).trim().toLowerCase();if(c&&txt.indexOf(c)>=0)hits.push({key:'custom'});});
+      }
+    }
+    return hits;
+  }catch(e){ return []; }
+}
+function _iuAllergyBlocked(m,u){ return _iuAllergyHits(m,u).length>0; }
+function _iuAllergyNote(u){ try{ u=u||_iuActiveUser(); if(!u)return ''; if(!((u.allergies||[]).length||(u.allergyCustom||[]).length))return ''; return '\n\n'+L('🚫 กรองเมนูที่มีส่วนผสมที่แพ้ออกให้แล้ว · โปรดตรวจส่วนผสมเองทุกครั้งก่อนกิน (เป็นการช่วยเตือนเบื้องต้น)','🚫 Menus with your listed allergens are filtered out · always double-check ingredients yourself before eating (basic keyword warning).'); }catch(e){ return ''; } }
+function _iuRecentMenus(){ try{ return JSON.parse(localStorage.getItem('iufit_iu_recent_menu')||'[]'); }catch(e){ return []; } }
+function _iuPushRecentMenus(ids){ try{ var a=_iuRecentMenus(); (ids||[]).forEach(function(id){ if(id!=null){ var i=a.indexOf(id); if(i>=0)a.splice(i,1); a.unshift(id); } }); a=a.slice(0,24); localStorage.setItem('iufit_iu_recent_menu',JSON.stringify(a)); }catch(e){} }
 function recommendMenus(opts){
   opts=opts||{}; var goal=opts.goal||goalLabel(), meal=opts.meal||currentMeal();
   var remaining=opts.remaining||(todayCtx().remaining||600);
+  var _t0=todayCtx(); var _remP=(_t0&&!_t0.empty&&_t0.targetProtein)?Math.max(0,_t0.targetProtein-_t0.eatenProtein):0; var _recS=Object.create(null); _iuRecentMenus().forEach(function(id){_recS[id]=1;});
   var list=menuList().filter(function(m){ if(opts.cuisine&&m.cuisine!==opts.cuisine) return false; if(opts.budget&&!m.budget) return false; return true; });
+  list=list.filter(function(m){ return !_iuAllergyBlocked(m,opts.allergyUser); });
+  var _vary=list.length>2*(opts.n||5);
   list.forEach(function(m){ var sc=0;
     if(m.goalFit.indexOf(goal)>=0) sc+=3;
     if(m.mealFit.indexOf(meal)>=0) sc+=2;
     if(m.nutrition.kcal<=remaining) sc+=2; else sc-=3;
     if(m.nutrition.protein>=25) sc+=1;
+    if(_remP>=15){ if(m.nutrition.protein>=Math.min(_remP,25)) sc+=2; else if(m.nutrition.protein>=12) sc+=0.8; }
+    if(_vary && _recS[m.id]) sc-=2.5;
     sc+=Math.random()*0.6; m._sc=sc;
   });
   list.sort(function(a,b){ return b._sc-a._sc; });
-  return list.slice(0, opts.n||5).map(menuToCard);
+  var _out=list.slice(0, opts.n||5); try{ _iuPushRecentMenus(_out.slice(0,3).map(function(m){return m.id;})); }catch(e){}
+  return _out.map(menuToCard);
 }
 function buildCuisineMenu(message){
   if(!ingDbOk()) return cantCalcReply();
@@ -1665,7 +1757,7 @@ function buildCuisineMenu(message){
   var recs=recommendMenus({ cuisine:cz, goal:goalLabel(), meal:currentMeal(), n:4 });
   if(!recs.length) return buildLibraryRecommend();
   return { title:L('เมนู'+cz, _cuisineEn(cz)+' menus'),
-    message:L('เลือกเมนู'+cz+'ที่เข้ากับเป้าหมายและแคลที่เหลือให้ครับ','Picked '+_cuisineEn(cz)+' menus that fit your goal and remaining calories:'),
+    message:personalLede()+L('เลือกเมนู'+cz+'ที่เข้ากับเป้าหมายและแคลที่เหลือให้ครับ','Picked '+_cuisineEn(cz)+' menus that fit your goal and remaining calories:')+_iuAllergyNote(),
     recipes:recs.slice(0,3),
     actions:[{label:L('เมนูอื่น','Other menus'),action:'recommend_library'},{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] };
 }
@@ -1768,9 +1860,10 @@ function buildLibraryRecommend(opts){opts=opts||{};
   var _g=opts.goal||goalLabel(),_m=opts.meal||currentMeal();
   var recs=recommendMenus({ goal:_g, meal:_m, n:4 });
   if(!recs.length){ var picks=popularIngredients(),byGroup=groupBy(picks),pantry=[]; ['protein','carb','vegetable'].forEach(function(g){ (byGroup[g]||[]).slice(0,2).forEach(function(i){ pantry.push(i); }); }); recs=generateRecipes(pantry,{goal:_g,meal:_m}); }
+  recs=recs.filter(function(r){ return !_iuAllergyBlocked(r); });
   if(!recs.length) return buildKnowledge('');
   return { title:L('เมนู'+_m+'ที่แนะนำ','Recommended menus'),
-    message:L('จากคลังเมนู '+menuList().length.toLocaleString()+' รายการ ผมเลือกเมนู'+_m+'ที่เข้ากับเป้าหมาย "'+_g+'" ให้ครับ','From '+menuList().length.toLocaleString()+' menus, here are ones that fit your goal "'+_goalEn(_g)+'" and remaining calories:'),
+    message:personalLede()+L('จากคลังเมนู '+menuList().length.toLocaleString()+' รายการ ผมเลือกเมนู'+_m+'ที่เข้ากับเป้าหมาย "'+_g+'" ให้ครับ','From '+menuList().length.toLocaleString()+' menus, here are ones that fit your goal "'+_goalEn(_g)+'" and remaining calories:')+_iuAllergyNote(),
     recipes:recs.slice(0,3),
     actions:[{label:L('สร้างจากของที่มี','From my ingredients'),action:'open_ingredient_picker'},{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] };
 }
@@ -2002,10 +2095,15 @@ function buildRecipeReply(message){
 }
 function buildFallback(message){
   try{ var _kh=_scoreKnowledge(synNorm(message),false); if(_kh&&_kh.length) return buildKnowledge(message); }catch(e){}
-  return { title:null, message:L('ตอนนี้ IU Mate ยังตอบเรื่องนี้ไม่ได้โดยตรง แต่ช่วยได้เรื่อง: สรุปวันนี้ แนะนำเมนู ดูผลลัพธ์ วิธีใช้แอป และงานของโค้ช','I can\'t answer that directly yet, but I can help with: today summary, menu ideas, results, app help, and coach tasks.'),
-    actions: role()==='coach'
-      ? [{label:L('สรุปลูกเทรน','Clients'),action:'_chip',payload:{q:L('สรุปลูกเทรน','clients to follow up')}},{label:L('สรุปการบ้าน','Homework'),action:'_chip',payload:{q:L('สรุปการบ้าน','homework summary')}}]
-      : [{label:L('สรุปวันนี้','Today'),action:'_chip',payload:{q:L('สรุปวันนี้','today summary')}},{label:L('กินอะไรดี','What to eat'),action:'_chip',payload:{q:L('กินอะไรดี','what to eat')}}] };
+  var acts;
+  if(role()==='coach'){
+    acts=[{label:L('สรุปลูกเทรน','Clients'),action:'_chip',payload:{q:L('สรุปลูกเทรน','clients to follow up')}},{label:L('สรุปการบ้าน','Homework'),action:'_chip',payload:{q:L('สรุปการบ้าน','homework summary')}},{label:L('ร่างเมนูลูกเทรน','Draft client menu'),action:'_chip',payload:{q:L('ร่างเมนูให้ลูกเทรน','draft a client menu')}}];
+  } else {
+    acts=[{label:L('สรุปวันนี้','Today'),action:'_chip',payload:{q:L('สรุปวันนี้','today summary')}},{label:L('กินอะไรดี','What to eat'),action:'_chip',payload:{q:L('กินอะไรดี','what to eat')}},{label:L('จัดตารางฝึก','Workout'),action:'_chip',payload:{q:L('จัดตารางฝึกให้หน่อย','build a workout plan')}},{label:L('คำนวณแคล','Calorie calc'),action:'open_calc'}];
+  }
+  try{ if(typeof _iuHasAI==='function' && !_iuHasAI()){ acts.push({label:L('⚡ เปิด AI ช่วยตอบ','⚡ Enable AI'),action:'open_ai_setup'}); } }catch(e){}
+  return { title:null, message:L('ตอนนี้ IU Mate ยังตอบเรื่องนี้ไม่ได้ตรง ๆ ครับ ลองเลือกด้านล่าง หรือพิมพ์ให้เจาะจงขึ้นอีกนิด — ผมช่วยได้เรื่อง สรุปวันนี้ แนะนำเมนู จัดตารางฝึก คำนวณแคล/มาโคร ดูผลลัพธ์ และงานของโค้ช','I can\'t answer that directly yet — pick an option below or add a bit more detail. I can help with: today summary, menu ideas, workout plans, calorie/macro calc, results, and coach tasks.'),
+    actions: acts };
 }
 
 /* ============================ chips ============================ */
@@ -2279,14 +2377,17 @@ var ACTIONS = {
   coach_wplan_do:function(p){ var lc=window._LAST_COACH_WPLAN; var cid=p&&p.id; if(!lc||!cid){ appToast(L('ไม่สำเร็จ','Failed')); return; } try{ var Sx=window.S; Sx.wplan=Sx.wplan||{}; var day={}; lc.struct.forEach(function(d){ var arr=[]; d.moves.forEach(function(m){ arr.push({n:m.n,eq:m.eq,s:'-×10×3'}); }); day[d.wd]=arr; }); Sx.wplan[cid]=day; if(fn('save')) window.save(); }catch(x){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); return; } var nm=''; try{ var cu=(window.S.users||[]).filter(function(u){return u.id===cid;})[0]; nm=(cu&&cu.name)||''; }catch(x){} appToast(L('ใส่ลงตาราง '+nm+' แล้ว 📅','Added to '+nm+' 📅')); pushReply({ title:L('ใส่ลงตารางแล้ว ✓','Added to schedule ✓'), message:L('ใส่แผนลงตารางของ '+nm+' เรียบร้อย · จะส่งให้ลูกเทรนเลย หรือเข้าไปปรับก่อนก็ได้ครับ','Added to '+nm+"'s schedule. Send it now, or edit first in their page."), actions:[{label:L('📤 ส่งให้ลูกเทรนเลย','📤 Send to client'),action:'coach_wplan_send',payload:{id:cid}},{label:L('เปิดหน้าลูกเทรน','Open client'),action:'go_clients'}] }); },
   coach_wplan_send:function(p){ var cid=p&&p.id; if(cid&&fn('sendClientPlan')){ try{ window.sendClientPlan(cid); }catch(x){ appToast(L('ส่งไม่สำเร็จ','Send failed')); } } },
   noop:function(){},
+  coach_calc_pick:function(p){ var c=(typeof findClientById==='function')?findClientById(p&&p.id):null; if(!c){ appToast(L('ไม่พบลูกเทรน','Client not found')); return; } var prof=_clientCalcProfile(c); if(prof.w==null||prof.h==null||prof.age==null){ pushReply({ title:L('ข้อมูลลูกเทรนไม่ครบ','Client profile incomplete'), message:L('ยังขาด น้ำหนัก/ส่วนสูง/อายุ ของ '+(c.name||'ลูกเทรน')+' — ให้เขากรอกโปรไฟล์ให้ครบก่อนคำนวณครับ','Missing weight/height/age for '+(c.name||'this client')+' — ask them to complete their profile first.') }); return; } var rep; try{ rep=calcReply(prof); }catch(e){ appToast(L('คำนวณไม่สำเร็จ','Calc failed')); return; } rep.title=L('ค่าประมาณของ '+(c.name||'ลูกเทรน'),(c.name||'Client')+' — estimate'); var copyText=(rep.title||'')+'\n'+(rep.message||''); rep.actions=[{label:L('📤 ส่งเป้าหมายให้ '+(c.name||'ลูกเทรน'),'📤 Send target to '+(c.name||'client')),action:'coach_calc_send',payload:{id:c.id}},{label:L('📋 คัดลอก','📋 Copy'),action:'copy_text',payload:{text:copyText}},{label:L('เลือกคนอื่น','Another client'),action:'_chip',payload:{q:L('คำนวณแคลให้ลูกเทรน','calculate for a client')}}]; pushReply(rep); },
+  coach_calc_send:function(p){ var c=(typeof findClientById==='function')?findClientById(p&&p.id):null; if(!c){ appToast(L('ไม่พบลูกเทรน','Client not found')); return; } var prof=_clientCalcProfile(c); if(prof.w==null||prof.h==null||prof.age==null){ appToast(L('ข้อมูลลูกเทรนไม่ครบ กรอกโปรไฟล์ก่อน','Client profile incomplete')); return; } if(!c.dev){ appToast(L('ลูกเทรนยังไม่ได้เชื่อม QR โค้ช จึงส่งตรงไม่ได้','Client hasn\'t linked your Coach QR yet')); return; } try{ var r=(typeof CALC!=='undefined'&&CALC.plan)?CALC.plan(prof):null; if(r){ var _k=Math.max(1200,Math.round((r.kcalLo+r.kcalHi)/2)); c.tgt={kcal:_k,prot:Math.round((r.pLo+r.pHi)/2),fat:Math.round(r.fat),carb:Math.round(r.carb)}; if(fn('save'))window.save(); } if(fn('sendClientPlan')){ window.sendClientPlan(c.id); } else { appToast(L('ตั้งเป้าหมายให้แล้ว','Target set')); } }catch(e){ appToast(L('ส่งไม่สำเร็จ','Send failed')); } },
   find_trainer:function(){ try{ goTab('coachview'); }catch(e){} },
   workout_redraft:function(){ try{ startFlow('workout'); }catch(e){} },
-  wplan_save:function(p){ try{ var u=(fn('curUser')?window.curUser():null); var Sx=window.S; var _st=(p&&p.struct)||(_LAST_WPLAN&&_LAST_WPLAN.struct); if(!u||!Sx||!(_st&&_st.length)){ appToast(L('ไม่มีแผนให้บันทึก','No plan to save')); return; } Sx.wplan=Sx.wplan||{}; Sx.wplan[u.id]=Sx.wplan[u.id]||{}; _st.forEach(function(d){ var arr=[]; d.moves.forEach(function(m){ arr.push({n:m.n,eq:m.eq,s:'-×10×3'}); }); Sx.wplan[u.id][d.wd]=arr; }); if(fn('save')) window.save(); appToast(L('บันทึกลงตารางฝึกแล้ว 📅','Saved to your schedule 📅')); ST.isOpen=false; closeNow(); try{ goTab('workout'); }catch(e){} }catch(e){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); } },
+  wplan_save:function(p){ try{ var u=(typeof curUser==='function'?curUser():null); var Sx=window.S; var _st=(p&&p.struct)||(_LAST_WPLAN&&_LAST_WPLAN.struct); if(!u||!Sx||!(_st&&_st.length)){ appToast(L('ไม่มีแผนให้บันทึก','No plan to save')); return; } Sx.wplan=Sx.wplan||{}; Sx.wplan[u.id]=Sx.wplan[u.id]||{}; _st.forEach(function(d){ var arr=[]; d.moves.forEach(function(m){ arr.push({n:m.n,eq:m.eq,s:'-×10×3'}); }); Sx.wplan[u.id][d.wd]=arr; }); if(fn('save')) window.save(); appToast(L('บันทึกลงตารางฝึกแล้ว 📅','Saved to your schedule 📅')); ST.isOpen=false; closeNow(); try{ goTab('workout'); }catch(e){} }catch(e){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); } },
   flow_multi:function(p){ if(!ST.flow)return; ST.flow._msel=ST.flow._msel||{}; var k=(p&&p.v); if(k==null)return; if(ST.flow._msel[k])delete ST.flow._msel[k]; else ST.flow._msel[k]=1; var m=ST.messages[ST.flow.askIdx]; if(m&&m.reply){ m.reply.actions=_wdayMultiActions(); try{renderMessages();}catch(e){} } },
-  flow_multi_done:function(){ if(!ST.flow)return; var sel=Object.keys(ST.flow._msel||{}).map(Number).sort(function(a,b){return a-b;}); if(!sel.length){ appToast(L('เลือกวันอย่างน้อย 1 วัน หรือกด “ให้จัดวันให้”','Pick at least 1 day, or tap “Arrange for me”')); return; } ST.flow._msel=null; var slot=flowCurSlot(); if(!slot)return; var ab=_wdayAbbr(); var lbl=sel.map(function(i){var f=ab.filter(function(c){return c[1]===i;})[0];return f?f[0]:(''+i);}).join(' '); if(ST.flow.askIdx!=null&&ST.messages[ST.flow.askIdx]){ ST.messages[ST.flow.askIdx].picked=lbl; try{renderMessages();}catch(e){} } ST.flow.slots[slot.key]=sel; ST.flow.askIdx=null; flowNext(); },
+  flow_multi_done:function(){ if(!ST.flow)return; var sel=Object.keys(ST.flow._msel||{}).map(Number).sort(function(a,b){return a-b;}); if(!sel.length){ appToast(L('เลือกวันอย่างน้อย 1 วัน หรือกด “ให้จัดวันให้”','Pick at least 1 day, or tap “Arrange for me”')); return; } ST.flow._msel=null; var slot=flowCurSlot(); if(!slot)return; var ab=_wdayAbbr(); var lbl=sel.map(function(i){var f=ab.filter(function(c){return c[1]===i;})[0];return f?f[0]:(''+i);}).join(' '); if(ST.flow.askIdx!=null&&ST.messages[ST.flow.askIdx]){ ST.messages[ST.flow.askIdx].picked=lbl; try{renderMessages();}catch(e){} } ST.flow.slots[slot.key]=sel; ST.flow.askIdx=null; ST.flow.trail=ST.flow.trail||[]; ST.flow.trail.push(slot.key); flowNext(); },
   flow_pick:function(p){ if(p&&p.v!=null) flowAnswer(p.v); },
   flow_other:function(){ _flowOtherPrompt(); },
   flow_cancel:function(){ cancelFlow(); },
+  flow_back:function(){ flowBack(); },
   _chip:function(p){ if(p&&p.q) IUMate.chip(p.q); }
 };
 function runAction(name, payload){ var f=ACTIONS[name]; if(f){ f(payload); } else { /* unknown action: no-op */ } }
@@ -2470,9 +2571,9 @@ function clientTarget(c){
   var prot = w?Math.round(w*1.8):Math.round(kcal*0.3/4);
   return { kcal:kcal, prot:prot, goal:goal, goalLab:goalLabelOf(goal), w:w, h:h, partial:!(w&&h) };
 }
-function pickMealMenu(kcalTarget, mealName, goalLab, used){
-  var list=menuList().filter(function(m){ return !used[m.id] && m.mealFit && m.mealFit.indexOf(mealName)>=0; });
-  if(!list.length) list=menuList().filter(function(m){ return !used[m.id]; });
+function pickMealMenu(kcalTarget, mealName, goalLab, used, alUser){
+  var list=menuList().filter(function(m){ return !used[m.id] && !_iuAllergyHits(m,alUser).length && m.mealFit && m.mealFit.indexOf(mealName)>=0; });
+  if(!list.length) list=menuList().filter(function(m){ return !used[m.id] && !_iuAllergyHits(m,alUser).length; });
   list.forEach(function(m){ var sc=0; sc-=Math.abs(m.nutrition.kcal-kcalTarget)/50; if(m.goalFit&&m.goalFit.indexOf(goalLab)>=0) sc+=3; if(m.nutrition.protein>=20) sc+=1; sc+=Math.random()*0.8; m._ms=sc; });
   list.sort(function(a,b){ return b._ms-a._ms; });
   var p=list[0]; if(p) used[p.id]=1; return p;
@@ -2485,13 +2586,13 @@ function buildCoachDayMenu(c){
   var tg=clientTarget(c);
   var splits=[['เช้า',0.25],['กลางวัน',0.35],['เย็น',0.30],['ว่าง',0.10]];
   var used={}, picks=[], tot={kcal:0,protein:0};
-  splits.forEach(function(sp){ var p=pickMealMenu(tg.kcal*sp[1], sp[0], tg.goalLab, used); if(p){ picks.push({meal:sp[0],m:p}); tot.kcal+=p.nutrition.kcal; tot.protein+=p.nutrition.protein; } });
+  splits.forEach(function(sp){ var p=pickMealMenu(tg.kcal*sp[1], sp[0], tg.goalLab, used, c); if(p){ picks.push({meal:sp[0],m:p}); tot.kcal+=p.nutrition.kcal; tot.protein+=p.nutrition.protein; } });
   var mealEN={'เช้า':'Breakfast','กลางวัน':'Lunch','เย็น':'Dinner','ว่าง':'Snack'};
   var lines=picks.map(function(x){ return mealEmoji(x.meal)+' '+L(x.meal,mealEN[x.meal])+': '+tFoodName(x.m.name)+' ('+x.m.nutrition.kcal+' kcal · P'+x.m.nutrition.protein+')'; });
   var head=L('แผนเมนู 1 วัน — '+(c.name||'ลูกเทรน'),'1-day menu — '+(c.name||'client'));
   var tline=L('เป้า ~'+tg.kcal+' kcal/วัน · โปรตีน ~'+tg.prot+' g ('+tg.goalLab+')','Target ~'+tg.kcal+' kcal/day · protein ~'+tg.prot+' g');
   var sumline=L('รวม ~'+Math.round(tot.kcal)+' kcal · โปรตีน ~'+Math.round(tot.protein)+' g','Total ~'+Math.round(tot.kcal)+' kcal · protein ~'+Math.round(tot.protein)+' g');
-  var msg=tline+'\n\n'+lines.join('\n')+'\n\n'+sumline;
+  var msg=tline+'\n\n'+lines.join('\n')+'\n\n'+sumline+_iuAllergyNote(c);
   var copyText=head+'\n'+msg;
   ST.ctx={intent:'coach_menu', clientId:c.id};
   return { title:head, message:msg,
@@ -2633,7 +2734,7 @@ function planFlowResult(sl){
 }
 function startFlow(id, seed){
   var def=FLOWS[id]; if(!def) return;
-  ST.flow={ id:id, slots:{}, cur:null };
+  ST.flow={ id:id, slots:{}, cur:null, trail:[] };
   if(seed){ for(var k in seed){ if(seed[k]!=null) ST.flow.slots[k]=seed[k]; } }
   if(def.prefill) def.prefill(ST.flow.slots);
   if(def.intro) pushBotText(def.intro);
@@ -2647,23 +2748,26 @@ function flowNext(){
 }
 function slotChoices(slot){ return slot.choices || (slot.choicesFn?slot.choicesFn():[]); }
 function _wdayAbbr(){ return (window.LANG==='en')?[['Mon',0],['Tue',1],['Wed',2],['Thu',3],['Fri',4],['Sat',5],['Sun',6]]:[['จ',0],['อ',1],['พ',2],['พฤ',3],['ศ',4],['ส',5],['อา',6]]; }
-function _wdayMultiActions(){ var sel=(ST.flow&&ST.flow._msel)||{}; var acts=_wdayAbbr().map(function(c){ return {label:c[0],on:!!sel[c[1]],action:'flow_multi',payload:{v:c[1]}}; }); acts.push({label:L('📅 ให้จัดวันให้','📅 Arrange for me'),action:'flow_pick',payload:{v:'auto'}}); var n=Object.keys(sel).length; acts.push({label:L('ยืนยัน'+(n?' ('+n+' วัน)':''),'Confirm'+(n?' ('+n+')':'')),action:'flow_multi_done'}); acts.push({label:L('ยกเลิก','Cancel'),action:'flow_cancel'}); return acts; }
+function _wdayMultiActions(){ var sel=(ST.flow&&ST.flow._msel)||{}; var acts=_wdayAbbr().map(function(c){ return {label:c[0],on:!!sel[c[1]],action:'flow_multi',payload:{v:c[1]}}; }); acts.push({label:L('📅 ให้จัดวันให้','📅 Arrange for me'),action:'flow_pick',payload:{v:'auto'}}); var n=Object.keys(sel).length; acts.push({label:L('ยืนยัน'+(n?' ('+n+' วัน)':''),'Confirm'+(n?' ('+n+')':'')),action:'flow_multi_done'}); if(ST.flow && (ST.flow.trail||[]).length) acts.push({label:L('‹ ย้อนกลับ','‹ Back'),action:'flow_back'}); acts.push({label:L('ยกเลิก','Cancel'),action:'flow_cancel'}); return acts; }
 function askSlot(slot){
   if(slot.multi){ if(ST.flow)ST.flow._msel={}; pushReply({ title:null, message:slot.q+L(' (แตะวันที่ต้องการ แล้วกดยืนยัน)',' (tap days, then Confirm)'), actions:_wdayMultiActions() }); if(ST.flow)ST.flow.askIdx=ST.messages.length-1; return; }
   var acts=[];
   if(slot.type==='choice') acts=slotChoices(slot).map(function(c){ return {label:c[0],action:'flow_pick',payload:{v:c[1]}}; });
   if(slot.other) acts.push({label:L('อื่น ๆ (พิมพ์เอง)','Other (type it)'),action:'flow_other'});
+  if(ST.flow && (ST.flow.trail||[]).length) acts.push({label:L('‹ ย้อนกลับ','‹ Back'),action:'flow_back'});
   acts.push({label:L('ยกเลิก','Cancel'),action:'flow_cancel'});
   pushReply({ title:null, message:slot.q+(slot.type==='num'?L(' (พิมพ์ตัวเลข)',' (type a number)'):(slot.other?L(' (แตะเลือก หรือพิมพ์เอง)',' (tap one, or type your own)'):'')), actions:acts });
   if(ST.flow) ST.flow.askIdx=ST.messages.length-1;
 }
 function flowCurSlot(){ if(!ST.flow) return null; var def=FLOWS[ST.flow.id],r=null; def.slots.forEach(function(s){ if(s.key===ST.flow.cur) r=s; }); return r; }
-function flowAnswer(v){ if(!ST.flow) return; var slot=flowCurSlot(); if(!slot) return; if(ST.flow.askIdx!=null && ST.messages[ST.flow.askIdx]){ ST.messages[ST.flow.askIdx].picked=v; renderMessages(); } ST.flow.slots[slot.key]=v; ST.flow.askIdx=null; flowNext(); }
+function flowAnswer(v){ if(!ST.flow) return; var slot=flowCurSlot(); if(!slot) return; if(ST.flow.askIdx!=null && ST.messages[ST.flow.askIdx]){ ST.messages[ST.flow.askIdx].picked=v; renderMessages(); } ST.flow.slots[slot.key]=v; ST.flow.askIdx=null; ST.flow.trail=ST.flow.trail||[]; ST.flow.trail.push(slot.key); flowNext(); }
 function cancelFlow(){ ST.flow=null; pushBotText(L('ยกเลิกแล้วครับ ถามอย่างอื่นได้เลย','Cancelled — ask me anything else')); }
+function flowBack(){ if(!ST.flow) return; var tr=ST.flow.trail||[]; if(!tr.length){ pushBotText(L('นี่เป็นขั้นแรกแล้วครับ ถ้าจะเริ่มใหม่พิมพ์ “ยกเลิก”','This is the first step — type “cancel” to start over')); return; } var prev=tr.pop(); delete ST.flow.slots[prev]; if(ST.flow.askIdx!=null && ST.messages[ST.flow.askIdx] && ST.messages[ST.flow.askIdx].reply){ ST.messages[ST.flow.askIdx].reply.actions=[]; try{renderMessages();}catch(e){} } ST.flow._msel=null; ST.flow.cur=null; ST.flow.askIdx=null; flowNext(); }
 function flowInput(text){
   var slot=flowCurSlot(); if(!slot){ ST.flow=null; handleMessage(text); return; }
   var t=norm(text);
   if(/^(ยกเลิก|เลิก|cancel|stop|หยุด)/.test(t)){ cancelFlow(); return; }
+  if(/^(ย้อนกลับ|ย้อน|กลับไป|back|previous|prev)\s*$/i.test(t)){ flowBack(); return; }
   if(slot.type==='choice'){
     var m=null; slotChoices(slot).forEach(function(c){ var nc=norm(c[0]); if(nc===t || (''+c[1])===text.trim() || t.indexOf(nc)>=0 || (t.length>=2 && nc.indexOf(t)>=0)) m=c[1]; });
     if(m==null){ if(/ชาย|ผู้ชาย|\bmale\b/.test(t))m='m'; else if(/หญิง|ผู้หญิง|female/.test(t))m='f'; else if(/ลด/.test(t))m='lose'; else if(/เพิ่ม|กล้าม|bulk/.test(t))m='gain'; else if(/รักษา|คงน้ำหนัก|maintain/.test(t))m='keep'; else if(/ปานกลาง|moderate/.test(t))m=1.55; else if(/หนัก|hard/.test(t))m=1.725; else if(/เบา|light/.test(t))m=1.375; else if(/แทบไม่|นั่ง|sedentary/.test(t))m=1.2; }
@@ -2761,8 +2865,8 @@ var IUMate = {
   _rvDismiss:function(){ _reviewDismiss(); },
   _amt:function(idx,dir){ previewAmt(idx,dir); },
   _previewAdd:function(rid){ modalClose(); confirmAddRecipe(rid); },
-  _sex:function(x){ readCalcInputs(); ST.calc.sex=x; openCalcForm(ST.calc); },
-  _goal:function(x){ readCalcInputs(); ST.calc.goal=x; openCalcForm(ST.calc); },
+  _sex:function(x){ readCalcInputs(); ST.calc.sex=x; _calcSyncChips(); },
+  _goal:function(x){ readCalcInputs(); ST.calc.goal=x; _calcSyncChips(); },
   _calc:function(){ readCalcInputs(); var p=ST.calc||{}; if(p.w==null||p.h==null||p.age==null||p.sex==null){ appToast(L('กรอกเพศ อายุ ส่วนสูง น้ำหนักให้ครบก่อนครับ','Please fill sex, age, height and weight')); return; } if(!(p.age>=10&&p.age<=100)||!(p.h>=120&&p.h<=220)||!(p.w>=30&&p.w<=250)){ appToast(L('ตรวจค่าอีกครั้ง: อายุ 10–100 ปี · สูง 120–220 ซม. · หนัก 30–250 กก.','Check values: age 10–100 · height 120–220 cm · weight 30–250 kg')); return; } modalClose(); if(!ST.isOpen) IUMate.open('global'); pushReply(calcReply(p)); },
   acceptConsent:function(){ ST.flow=null; ST.ctx=null; var coachData=true; var cb=document.getElementById('iuMateCoachConsent'); if(cb) coachData=!!cb.checked; saveConsent(coachData); var kh=document.getElementById('iuMateKeepHist'); setKeepHist(!!(kh&&kh.checked)); ST.messages=[]; ST.messages.push({role:'botText',text:greeting()}); ST.isOpen=true; ST._nudgeSeen=true; ST._skipAnim=true; renderSheet(); renderFab(); },
   declineConsent:function(){ closeNow(); },
