@@ -9,16 +9,17 @@
 @media (max-width:390px){.iu-mate-nudge{right:14px;bottom:calc(150px + env(safe-area-inset-bottom));max-width:220px}}
 @media (min-width:768px){.iu-mate-nudge{bottom:98px;right:28px}}
 @keyframes iuNudgeIn{from{opacity:0;transform:translateY(8px) scale(.94)}to{opacity:1;transform:none}}
-.iu-mate-nudge .iu-nudge-bubble{position:relative;display:flex;align-items:flex-start;gap:6px;background:linear-gradient(122deg,#0A84FF,#005CFF);color:#fff;border-radius:16px;border-bottom-right-radius:7px;padding:10px 8px 10px 12px;box-shadow:0 12px 28px rgba(7,30,74,.26);max-width:252px}
-.iu-mate-nudge .iu-nudge-body{display:flex;align-items:center;gap:8px;flex:1;min-width:0;cursor:pointer;text-align:left}
-.iu-mate-nudge .iu-nudge-body .ico{font-size:17px;flex:none;line-height:1}
+.iu-mate-nudge .iu-nudge-bubble{position:relative;background:linear-gradient(122deg,#0A84FF,#005CFF);color:#fff;border-radius:16px;border-bottom-right-radius:7px;padding:11px 12px 9px;box-shadow:0 14px 30px rgba(7,30,74,.28);max-width:256px}
+.iu-mate-nudge .iu-nudge-top{display:flex;align-items:center;gap:9px}
+.iu-mate-nudge .iu-nudge-orb{flex:none;width:26px;height:26px;border-radius:8px;background:rgba(255,255,255,.18);display:grid;place-items:center}
+.iu-mate-nudge .iu-nudge-orb svg{width:15px;height:15px;display:block;fill:#fff}
+.iu-mate-nudge .iu-nudge-body{flex:1;min-width:0;cursor:pointer;text-align:left}
 .iu-mate-nudge .iu-nudge-body .lbl{font-weight:800;font-size:12.5px;line-height:1.35}
-.iu-mate-nudge .iu-nudge-x{flex:none;width:22px;height:22px;padding:0;border:0;border-radius:999px;background:rgba(255,255,255,.2);color:#fff;cursor:pointer;display:grid;place-items:center}
+.iu-mate-nudge .iu-nudge-x{flex:none;width:22px;height:22px;padding:0;border:0;border-radius:999px;background:rgba(255,255,255,.2);color:#fff;cursor:pointer;display:grid;place-items:center;align-self:flex-start}
 .iu-mate-nudge .iu-nudge-x svg{width:13px;height:13px;display:block}
 .iu-mate-nudge .iu-nudge-x:hover{background:rgba(255,255,255,.32)}
+.iu-mate-nudge .iu-nudge-foot{margin-top:8px;padding-top:6px;border-top:1px solid rgba(255,255,255,.2);font-size:10px;line-height:1.3;color:rgba(255,255,255,.82)}
 .iu-mate-nudge .iu-nudge-tail{width:0;height:0;margin:-1px 20px 0 0;border-top:9px solid #0b62ff;border-left:9px solid transparent}
-.iu-mate-nudge .iu-nudge-note{margin:5px 4px 0;font-size:10px;color:var(--iu-muted);text-align:right;line-height:1.3}
-@media (prefers-color-scheme:dark){.iu-mate-nudge .iu-nudge-note{color:#9fb0c8}}
 
 /* ---------- Floating button (IU Mate orb) ---------- */
 .iu-mate-fab{

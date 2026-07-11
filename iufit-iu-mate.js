@@ -2151,11 +2151,14 @@ function injectEntryPoints(){
     if(nudge.getAttribute('data-tab')!==tab){
       nudge.setAttribute('data-tab',tab);
       nudge.innerHTML='<div class="iu-nudge-bubble">'+
-          '<div class="iu-nudge-body" role="button" tabindex="0"><span class="ico">'+cfg.icon+'</span><span class="lbl">'+esc(cfg.label)+'</span></div>'+
-          '<button type="button" class="iu-nudge-x" aria-label="'+esc(L('ปิด','Close'))+'">'+_nudgeX()+'</button>'+
+          '<div class="iu-nudge-top">'+
+            '<span class="iu-nudge-orb">'+sparkInline()+'</span>'+
+            '<div class="iu-nudge-body" role="button" tabindex="0"><span class="lbl">'+esc(cfg.label)+'</span></div>'+
+            '<button type="button" class="iu-nudge-x" aria-label="'+esc(L('ปิด','Close'))+'">'+_nudgeX()+'</button>'+
+          '</div>'+
+          '<div class="iu-nudge-foot">'+esc(L('* ปิดคำแนะนำนี้ได้ในหน้าตั้งค่า','* Turn off these tips in Settings'))+'</div>'+
         '</div>'+
-        '<div class="iu-nudge-tail"></div>'+
-        '<div class="iu-nudge-note">'+esc(L('ปิดการแนะนำของ IU Mate ได้ในหน้าตั้งค่า','Turn off IU Mate tips in Settings'))+'</div>';
+        '<div class="iu-nudge-tail"></div>';
       var body=nudge.querySelector('.iu-nudge-body');
       var openIt=function(){ dismissNudge(); IUMate.open(tab); if(hasConsent()){ setTimeout(function(){ IUMate.chip(cfg.q); },260); } };
       body.addEventListener('click',openIt);
@@ -2927,6 +2930,8 @@ var IUMate = {
     wrap.querySelector('.yes').onclick=function(){ wrap.remove(); revokeConsent(); setKeepHist(false); appToast(L('เพิกถอนความยินยอมแล้ว','Consent withdrawn')); closeNow(); };
   },
   _sync:function(){ try{ renderFab(); }catch(e){} try{ injectEntryPoints(); }catch(e){} },
+  cardsOn:function(){ return cardsEnabled(); },
+  setCards:function(on){ var s=settings(); s.cards=!!on; saveSettings(s); if(!on){ dismissNudge(); } else { try{ localStorage.removeItem(NUDGE_KEY); injectEntryPoints(); }catch(e){} } },
   _nlu:function(m){ try{ return detectIntentEx(m); }catch(e){ return {intent:'error',error:''+e}; } },
   _fu:function(m){ try{ return resolveFollowup(m); }catch(e){ return null; } },
   _state:ST
