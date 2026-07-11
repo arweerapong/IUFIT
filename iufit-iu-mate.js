@@ -2128,20 +2128,40 @@ function greeting(){
 
 /* ============================ rendering ============================ */
 function root(){ var r=document.getElementById('iuMateRoot'); if(!r){ r=document.createElement('div'); r.id='iuMateRoot'; document.body.appendChild(r); } return r; }
+/* ---- IU Mate tips: floating bubble above the fab (dismiss = back tomorrow) [v866] ---- */
+var NUDGE_KEY='iufit_iu_mate_nudge_dismiss';
+function cardsEnabled(){ var s=settings(); return s.cards!==false; }
+function nudgeDismissedToday(){ try{ return localStorage.getItem(NUDGE_KEY)===todayDate(); }catch(e){ return false; } }
+function dismissNudge(){ try{ localStorage.setItem(NUDGE_KEY, todayDate()); }catch(e){} var n=document.getElementById('iuMateNudge'); if(n) n.remove(); }
+function _nudgeX(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>'; }
 function injectEntryPoints(){
   try{
-    if(!appReady()){ var e0=document.getElementById('iuMateEntry'); if(e0)e0.remove(); return; }
-    var tab=window.TAB||''; var view=document.getElementById('view'); if(!view) return;
-    var old=document.getElementById('iuMateEntry'); if(old) old.remove();
+    var legacy=document.getElementById('iuMateEntry'); if(legacy) legacy.remove();
+    var nudge=document.getElementById('iuMateNudge');
+    var fab=document.getElementById('iuMateFab');
+    var block = !appReady() || !cardsEnabled() || nudgeDismissedToday() || ST.isOpen || (fab && fab.hidden);
+    if(block){ if(nudge) nudge.remove(); return; }
+    var tab=window.TAB||'';
     var cfg=null;
-    if(tab==='food') cfg={icon:'🧺',label:L('สร้างเมนูจากวัตถุดิบกับ IU Mate','Build a menu from ingredients with IU Mate'),q:L('สร้างเมนูจากของที่มี','make a menu from my ingredients')};
+    if(tab==='food') cfg={icon:'🧺',label:L('สร้างเมนูจากวัตถุดิบที่มีกับ IU Mate','Build a menu from your ingredients with IU Mate'),q:L('สร้างเมนูจากของที่มี','make a menu from my ingredients')};
     else if(tab==='coach') cfg={icon:'📊',label:L('สรุปลูกเทรนวันนี้ ด้วย IU Mate','Clients overview with IU Mate'),q:L('สรุปลูกเทรน','clients overview')};
     else if(tab==='body') cfg={icon:'✨',label:L('อธิบายผลลัพธ์ของฉัน ด้วย IU Mate','Explain my results with IU Mate'),q:L('ดูความคืบหน้า','my progress')};
-    if(!cfg) return;
-    var b=document.createElement('button'); b.id='iuMateEntry'; b.className='iu-mate-entry'; b.type='button';
-    b.innerHTML='<span class="ico">'+cfg.icon+'</span><span class="lbl">'+esc(cfg.label)+'</span><span class="go">'+botAvatar()+'</span>';
-    b.addEventListener('click',function(){ IUMate.open(tab); if(hasConsent()){ setTimeout(function(){ IUMate.chip(cfg.q); },260); } });
-    view.insertBefore(b, view.firstChild);
+    if(!cfg){ if(nudge) nudge.remove(); return; }
+    if(!nudge){ nudge=document.createElement('div'); nudge.id='iuMateNudge'; nudge.className='iu-mate-nudge'; document.body.appendChild(nudge); }
+    if(nudge.getAttribute('data-tab')!==tab){
+      nudge.setAttribute('data-tab',tab);
+      nudge.innerHTML='<div class="iu-nudge-bubble">'+
+          '<div class="iu-nudge-body" role="button" tabindex="0"><span class="ico">'+cfg.icon+'</span><span class="lbl">'+esc(cfg.label)+'</span></div>'+
+          '<button type="button" class="iu-nudge-x" aria-label="'+esc(L('ปิด','Close'))+'">'+_nudgeX()+'</button>'+
+        '</div>'+
+        '<div class="iu-nudge-tail"></div>'+
+        '<div class="iu-nudge-note">'+esc(L('ปิดการแนะนำของ IU Mate ได้ในหน้าตั้งค่า','Turn off IU Mate tips in Settings'))+'</div>';
+      var body=nudge.querySelector('.iu-nudge-body');
+      var openIt=function(){ dismissNudge(); IUMate.open(tab); if(hasConsent()){ setTimeout(function(){ IUMate.chip(cfg.q); },260); } };
+      body.addEventListener('click',openIt);
+      body.addEventListener('keydown',function(ev){ if(ev.key==='Enter'||ev.key===' '){ ev.preventDefault(); openIt(); } });
+      nudge.querySelector('.iu-nudge-x').addEventListener('click',function(ev){ ev.stopPropagation(); dismissNudge(); });
+    }
   }catch(e){}
 }
 function renderFab(){
@@ -2893,10 +2913,13 @@ var IUMate = {
     wrap.innerHTML='<div class="iu-mate-confirm"><div class="ci">'+checkIcon()+'</div><h4>'+esc(L('ความเป็นส่วนตัว','Privacy'))+'</h4>'+
       '<p>'+esc(L('IU Mate ทำงานในเครื่อง บทสนทนาไม่ถูกส่งออกนอกเครื่อง และอ่านข้อมูลในแอปเพื่อช่วยสรุปเท่านั้น ประวัติแชทจะถูกเก็บไว้ในเครื่องเฉพาะเมื่อคุณเปิด “เก็บประวัติแชท”','IU Mate runs on-device. Conversations never leave your device, and it only reads your in-app data to help summarize. Chat history is kept on this device only while “Keep chat history” is on.'))+'</p>'+
       '<label style="display:flex;gap:9px;align-items:center;margin:4px 2px 10px;font-size:13px;color:#28364f;cursor:pointer;text-align:left"><input type="checkbox" id="iuMateKeepHistTgl"'+(kh?' checked':'')+' style="width:18px;height:18px;flex:none">'+esc(L('เก็บประวัติแชทไว้ในเครื่องนี้','Keep chat history on this device'))+'</label>'+
+      '<label style="display:flex;gap:9px;align-items:center;margin:4px 2px 10px;font-size:13px;color:#28364f;cursor:pointer;text-align:left"><input type="checkbox" id="iuMateCardsTgl"'+(cardsEnabled()?' checked':'')+' style="width:18px;height:18px;flex:none">'+esc(L('แสดงการ์ดแนะนำ IU Mate ตามแต่ละหน้า','Show IU Mate tip cards on each page'))+'</label>'+
       '<button type="button" class="iu-mate-act" id="iuMateClearHist" style="width:100%;margin:0 0 10px'+(kh?'':';display:none')+'">'+esc(L('ล้างประวัติแชท','Clear chat history'))+'</button>'+
       '<div class="row"><button class="no">'+esc(L('ปิด','Close'))+'</button><button class="yes">'+esc(L('เพิกถอนความยินยอม','Withdraw consent'))+'</button></div></div>';
     document.body.appendChild(wrap);
     var tgl=wrap.querySelector('#iuMateKeepHistTgl'), clr=wrap.querySelector('#iuMateClearHist');
+    var cardTgl=wrap.querySelector('#iuMateCardsTgl');
+    if(cardTgl) cardTgl.onchange=function(){ var s=settings(); s.cards=!!cardTgl.checked; saveSettings(s); if(!s.cards){ dismissNudge(); } else { try{ localStorage.removeItem(NUDGE_KEY); injectEntryPoints(); }catch(e){} } appToast(s.cards?L('เปิดการ์ดแนะนำแล้ว','Tip cards on'):L('ปิดการ์ดแนะนำแล้ว','Tip cards off')); };
     if(tgl) tgl.onchange=function(){ var on=!!tgl.checked; setKeepHist(on); if(on){ try{ saveHist(); }catch(e){} } if(clr) clr.style.display=on?'':'none'; appToast(on?L('จะเก็บประวัติแชทไว้ในเครื่อง','Chat history will be kept on this device'):L('ปิดแล้ว · ลบประวัติที่เก็บไว้แล้ว','Turned off · saved history deleted')); try{ if(ST.isOpen&&hasConsent()){ ST._skipAnim=true; renderSheet(); } }catch(e){} };
     if(clr) clr.onclick=function(){ clearHist(); ST.messages=[]; if(ST.isOpen&&hasConsent()){ ST.messages.push({role:'botText',text:greeting()}); ST._skipAnim=true; renderSheet(); } appToast(L('ล้างประวัติแชทแล้ว','Chat history cleared')); wrap.remove(); };
     wrap.querySelector('.no').onclick=function(){ wrap.remove(); };
