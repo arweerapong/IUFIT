@@ -1610,6 +1610,7 @@ function buildReply(intent, message, nlu){
   if(isMedical(message)) return { title:L('เรื่องนี้ควรปรึกษาผู้เชี่ยวชาญ','Please consult a professional'),
     message:L('เรื่องนี้ควรปรึกษาแพทย์หรือผู้เชี่ยวชาญโดยตรงนะครับ IU Mate ช่วยเรื่องการบันทึกอาหาร การฝึก และการติดตามผลทั่วไปได้','This is best discussed with a doctor or specialist. IU Mate can help with logging food, training and general tracking.') };
   var ql=(''+message).toLowerCase();
+  if(/แนะนำ|ขอเมนู|กินอะไรดี|กินไรดี|เมนูแนะนำ/.test(message) && /มื้อ|เมนู|อาหาร|กลางวัน|เช้า|เย็น|ค่ำ|ว่าง|กิน/.test(message) && !/ฝึก|ออกกำลัง|เวท|กล้าม|คาร์ดิโอ|workout/.test(message)) return _recoStart(message);
   var _q=(nlu && nlu.question) || /ยังไง|ยังงัย|อย่างไร|คืออะไร|แค่ไหน|เท่าไห|เท่าไร|ทำไม|ทำไง|ดูอะไร|how |what |why /.test(ql);
   if(_q && intent!=='ingredient_recipe_generate' && intent!=='today_summary' && intent!=='calc_plan' && intent!=='food_swap' && intent!=='budget_menu' && intent!=='cuisine_menu' && intent!=='result_summary' && intent!=='workout_recommend'){ var _kh=searchKnowledge(message); if(_kh.length) return buildKnowledge(message); }
   switch(intent){
@@ -2344,7 +2345,33 @@ function _iuTourAt(sigTest){
 }
 function _tsel(x){ return function(st){ return ((st&&st.sel)||'').indexOf(x)>-1; }; }
 function _ttab(t){ return function(st){ return st&&st.tab===t; }; }
+function _mealNameR(mk){return ({br:L('มื้อเช้า','breakfast'),lu:L('มื้อกลางวัน','lunch'),di:L('มื้อเย็น','dinner'),sn:L('มื้อว่าง','a snack')})[mk]||L('มื้อนี้','this meal');}
+function _recoStart(message){
+  var mk='lu';message=''+(message||'');
+  if(/เช้า|breakfast/.test(message))mk='br';else if(/เย็น|ค่ำ|ดินเนอร์|dinner/.test(message))mk='di';else if(/ว่าง|snack/.test(message))mk='sn';
+  var prot=[['🐔 '+L('ไก่','Chicken'),'chicken'],['🐷 '+L('หมู','Pork'),'pork'],['🥩 '+L('เนื้อ','Beef'),'beef'],['🐟 '+L('ปลา','Fish'),'fish'],['🦐 '+L('กุ้ง','Shrimp'),'shrimp'],['🥚 '+L('ไข่','Egg'),'egg'],['🥦 '+L('เจ/ผัก','Veggie'),'veg'],['🎲 '+L('อะไรก็ได้','Any'),'any']];
+  return { title:L('แนะนำ'+_mealNameR(mk)+'ให้ครับ 🍽️',"Let me suggest "+_mealNameR(mk)+' 🍽️'),
+    message:L('อยากได้โปรตีนอะไรดีครับ? แตะเลือกได้เลย','Which protein would you like? Tap one.'),
+    actions: prot.map(function(x){return {label:x[0],action:'reco_p',payload:{p:x[1],mk:mk}};}), _intent:'meal_reco' };
+}
+function _recoShow(protein,method,mk,offset){
+  offset=offset||0;var pp=(protein==='any')?'':protein,mm=(method==='any')?'':method;
+  var res=(typeof window.iuMealReco==='function')?window.iuMealReco(pp,mm,mk,offset):{items:[],total:0,perMeal:0};
+  if(!res.items.length){ pushReply({ title:L('ยังไม่เจอเมนูที่ตรงเป๊ะ','No exact match'), message:L('ลองเปลี่ยนโปรตีนหรือวิธีทำดูไหมครับ','Try another protein or method.'), actions:[{label:L('เริ่มใหม่','Start over'),action:'reco_restart'}] }); return; }
+  var msg=res.items.map(function(it,i){return (offset+i+1)+'. '+it.n+'\n   '+it.cal+' kcal · P '+it.p+' · F '+it.f+' · C '+it.c+' g';}).join('\n\n');
+  var head=(res.perMeal?L('เป้าหมายมื้อนี้ ~'+res.perMeal+' kcal\n','Target ~'+res.perMeal+' kcal\n'):'');
+  var acts=res.items.map(function(it){return {label:('➕ '+it.n).slice(0,38),action:'reco_add',payload:{rid:it.rid,mk:mk}};});
+  if(offset+3<res.total) acts.push({label:L('🔄 ขอตัวเลือกเพิ่ม','🔄 More options'),action:'reco_more',payload:{p:protein,m:method,mk:mk,offset:offset+3}});
+  acts.push({label:L('↺ เริ่มใหม่','↺ Start over'),action:'reco_restart'});
+  pushReply({ title:L('แนะนำ 3 เมนู 🍱','3 suggestions 🍱'), message:head+msg, actions:acts, disclaimer:L('โภชนาการเป็นค่าประมาณต่อ 1 จาน','Nutrition is an estimate per serving'), _intent:'meal_reco' });
+}
+function _recoRestart(){ pushReply(_recoStart('แนะนำมื้อ')); }
 var ACTIONS = {
+  reco_p:function(p){ if(!p)return; var meth=[['🍲 '+L('ต้ม','Boil'),'boil'],['🍳 '+L('ผัด','Stir-fry'),'stir'],['🥘 '+L('แกง','Curry'),'curry'],['🍤 '+L('ทอด','Fried'),'fry'],['🔥 '+L('ย่าง','Grilled'),'grill'],['🥗 '+L('ยำ','Spicy salad'),'yum'],['🎲 '+L('แบบไหนก็ได้','Any'),'any']]; pushReply({ title:L('วิธีทำแบบไหนดีครับ?','Cooking method?'), message:L('แตะเลือกวิธีทำที่อยากกิน','Tap a cooking style'), actions: meth.map(function(x){return {label:x[0],action:'reco_m',payload:{p:p.p,m:x[1],mk:p.mk}};}), _intent:'meal_reco' }); },
+  reco_m:function(p){ if(!p)return; _recoShow(p.p,p.m,p.mk,0); },
+  reco_more:function(p){ if(!p)return; _recoShow(p.p,p.m,p.mk,(p.offset||0)); },
+  reco_add:function(p){ if(!p)return; try{ if(typeof window.aiMealLog==='function') window.aiMealLog(p.rid,p.mk); else if(typeof window.recipeDetail==='function') window.recipeDetail(p.rid); }catch(e){} },
+  reco_restart:function(){ _recoRestart(); },
   go_today:function(){ goTab('today'); },
   go_food:function(){ goTab('food'); },
   go_workout:function(){ goTab('workout'); },
