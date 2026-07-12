@@ -107,7 +107,7 @@ function openCalcForm(p){
   function inp(id,ph,val){ return '<input class="search" id="'+id+'" inputmode="numeric" placeholder="'+esc(ph)+'" value="'+(val!=null?val:'')+'" style="margin-bottom:8px">'; }
   var acts=ACT_OPTS.map(function(a){ var sel=(p.act?Math.abs(p.act-a[0])<0.01:a[0]===1.375); return '<option value="'+a[0]+'"'+(sel?' selected':'')+'>'+esc(a[1])+'</option>'; }).join('');
   var goal=p.goal||'lose';
-  var h='<div class="iu-mate-ip"><h3>'+esc(L('เครื่องคำนวณแคลอรี','Calorie calculator'))+'</h3>'+
+  var h='<div class="iu-mate-ip"><div style="display:flex;align-items:center;justify-content:space-between;gap:8px"><h3 style="margin:0">'+esc(L('เครื่องคำนวณแคลอรี','Calorie calculator'))+'</h3><button aria-label="close" onclick="var m=document.getElementById(\'iuMateSimpleModal\');if(m)m.remove();" style="flex:none;width:30px;height:30px;border-radius:50%;border:none;background:#eef2f8;color:#5b6b85;font-size:16px;line-height:1;cursor:pointer">✕</button></div>'+
     '<div class="sub">'+esc(L('กรอกข้อมูลเพื่อประมาณแคลและมาโคร (ค่าประมาณเพื่อวางแผน)','Enter details to estimate calories & macros (planning estimate)'))+'</div>'+
     '<div class="iu-mate-grp-chips">'+
       '<button class="iu-mate-grp-chip'+(sexM?' on':'')+'" id="iuSexM" onclick="IUMate._sex(\'m\')">'+esc(L('ชาย','Male'))+'</button>'+
