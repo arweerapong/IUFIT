@@ -2672,7 +2672,6 @@ function startCoachMenu(){
   if(!consentCoach()) return pushReply(coachDeniedReply());
   var cs=coachClientsList();
   if(!cs.length) return pushReply({ title:L('ยังไม่มีลูกเทรน','No clients yet'), message:L('ยังไม่มีลูกเทรน แชร์ QR โค้ชให้สแกนเข้ามาก่อนนะครับ','No clients yet — share your Coach QR.'), actions:[{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] });
-  if(cs.length===1) return startFlow('coach_menu',{client:cs[0].id});
   startFlow('coach_menu');
 }
 /* ---- coach drafting tool: workout program from built-in WORKOUTS (+ user S.moves) ---- */
@@ -2740,7 +2739,7 @@ function startCoachWorkout(){
   if(!consentCoach()) return pushReply(coachDeniedReply());
   var cs=coachClientsList();
   if(!cs.length) return pushReply({ title:L('ยังไม่มีลูกเทรน','No clients yet'), message:L('ยังไม่มีลูกเทรน แชร์ QR โค้ชให้สแกนเข้ามาก่อนนะครับ','No clients yet — share your Coach QR.'), actions:[{label:L('เปิดหน้าลูกเทรน','Open Clients'),action:'go_clients'}] });
-  startFlow('coach_workout', cs.length===1?{client:cs[0].id}:null);
+  startFlow('coach_workout');
 }
 var FLOWS = {
   menu: {
