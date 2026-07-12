@@ -2140,7 +2140,7 @@ function injectEntryPoints(){
     var legacy=document.getElementById('iuMateEntry'); if(legacy) legacy.remove();
     var nudge=document.getElementById('iuMateNudge');
     var fab=document.getElementById('iuMateFab');
-    var block = !appReady() || !cardsEnabled() || nudgeDismissedToday() || ST.isOpen || (fab && fab.hidden);
+    var block = !appReady() || !cardsEnabled() || nudgeDismissedToday() || ST.isOpen || (fab && fab.hidden) || (document.body && (document.body.classList.contains('iu-modal-open') || document.body.classList.contains('iu-noapp')));
     if(block){ if(nudge) nudge.remove(); return; }
     var tab=window.TAB||'';
     var cfg=null;
@@ -2976,3 +2976,4 @@ function boot(){
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
 })();
+                                                                                                            
