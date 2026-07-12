@@ -179,6 +179,7 @@ header h1 small{
   border-radius:999px;
   padding:6px 12px;
   color:var(--ink);
+  font-family:var(--font-ui);
   font-size:13px;
   font-weight:600;
   cursor:pointer;
