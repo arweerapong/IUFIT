@@ -2956,6 +2956,7 @@ var IUMate = {
     wrap.querySelector('.yes').onclick=function(){ wrap.remove(); revokeConsent(); setKeepHist(false); appToast(L('เพิกถอนความยินยอมแล้ว','Consent withdrawn')); closeNow(); };
   },
   _sync:function(){ try{ renderFab(); }catch(e){} try{ injectEntryPoints(); }catch(e){} },
+  _syncNudge:function(){ try{ injectEntryPoints(); }catch(e){} },
   cardsOn:function(){ return cardsEnabled(); },
   setCards:function(on){ var s=settings(); s.cards=!!on; saveSettings(s); if(!on){ dismissNudge(); } else { try{ localStorage.removeItem(NUDGE_KEY); injectEntryPoints(); }catch(e){} } },
   _nlu:function(m){ try{ return detectIntentEx(m); }catch(e){ return {intent:'error',error:''+e}; } },
@@ -2966,7 +2967,7 @@ window.IUMate = IUMate;
 
 /* ============================ boot ============================ */
 function fabModalOpen(){var a=document.getElementById('mwrap'),b=document.getElementById('mwrap2');return !!((a&&a.classList.contains('show'))||(b&&b.classList.contains('show')));}
-function setupFabModalWatch(){['mwrap','mwrap2'].forEach(function(id){var el=document.getElementById(id);if(!el||el.__iuObs)return;el.__iuObs=1;try{new MutationObserver(function(){var f=document.getElementById('iuMateFab');if(!f)return;if(fabModalOpen())f.classList.add('fab-hide');else f.classList.remove('fab-hide');}).observe(el,{attributes:true,attributeFilter:['class']});}catch(e){}});}
+function setupFabModalWatch(){['mwrap','mwrap2'].forEach(function(id){var el=document.getElementById(id);if(!el||el.__iuObs)return;el.__iuObs=1;try{new MutationObserver(function(){var f=document.getElementById('iuMateFab');if(!f)return;if(fabModalOpen())f.classList.add('fab-hide');else f.classList.remove('fab-hide');try{injectEntryPoints();}catch(e){}}).observe(el,{attributes:true,attributeFilter:['class']});}catch(e){}});}
 function boot(){
   renderFab(); try{ setupFabModalWatch(); }catch(e){}
   try{(function(){var lastY=0,ticking=false;function onS(){var y=window.scrollY||document.documentElement.scrollTop||0;var f=document.getElementById('iuMateFab');if(f){if(y>lastY+6&&y>90)f.classList.add('fab-hide');else if(y<lastY-6&&!fabModalOpen())f.classList.remove('fab-hide');}lastY=y;ticking=false;clearTimeout(window._iuFabIdle);window._iuFabIdle=setTimeout(function(){var ff=document.getElementById('iuMateFab');if(ff&&!fabModalOpen())ff.classList.remove('fab-hide');},700);}window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(onS);ticking=true;}},{passive:true});})();}catch(e){}
