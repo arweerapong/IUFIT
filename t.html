@@ -79,7 +79,8 @@ function render(d){
   var specs=arr(d.specs).length?arr(d.specs):(d.ex||'').split(/[,\/·]/).map(function(x){return x.trim();}).filter(Boolean);
   var chips=specs.map(function(x){return '<span class="chip">'+esc(x)+'</span>';}).join('');
   var subtitle=specs.length?specs.join(' · '):(d.ex||'เทรนเนอร์ / โค้ชออนไลน์');
-  // rating (reviews)
+  // rating (reviews) — computed live from review nodes (stored rating/rc are owner-only under Phase C)
+  try{var _rv=d.reviews||{},_s=0,_n=0;for(var _k in _rv){var _v=_rv[_k];if(_v&&+_v.r){_s+=+_v.r;_n++;}}d.rating=_n?Math.round(_s/_n*10)/10:0;d.rc=_n;}catch(_e){}
   var rating=(+d.rc>0)?('<div class="rating">'+IC.star+' '+esc(d.rating||'-')+' <span class="rc">('+esc(d.rc)+' รีวิว)</span></div>'):'';
   // detail rows
   var meta='';
@@ -88,6 +89,16 @@ function render(d){
   if(d.certs)            meta+='<div class="mrow"><span class="mk">'+IC.cert+'ใบเซอร์</span><span class="mv">'+esc(d.certs)+'</span></div>';
   if(+d.price>0)         meta+='<div class="mrow"><span class="mk">'+IC.coin+'ราคา</span><span class="mv price">฿'+esc(+d.price)+' / ครั้ง</span></div>';
   var port=arr(d.portfolio).map(function(p){var s=(p&&p.img)||p;return s?'<img class="pf" src="'+esc(s)+'" alt="">':'';}).join('');
+  function csStars(n){n=n||5;var s='';for(var i=0;i<5;i++)s+=(i<n?'★':'☆');return s;}
+  var CATTH={fat_loss:'ลดไขมัน',muscle_gain:'สร้างกล้าม',recomp:'ปรับสัดส่วน',general:'สุขภาพทั่วไป'};
+  var CATBG={fat_loss:['#fbe7de','#993c1d'],muscle_gain:['#e1f0e6','#0f6e56'],recomp:['#e6f1fb','#0c447c'],general:['#f1efe8','#444441']};
+  var csm=d.cases||{};var cids=Object.keys(csm).sort(function(a,b){return (csm[b].publishedAt||0)-(csm[a].publishedAt||0);});
+  var cases=cids.length?('<div class="card"><div class="sect">'+IC.list+'เคสผลงาน</div>'+cids.map(function(id){var c=csm[id];var cb=CATBG[c.category]||CATBG.general;
+    var tiles=arr(c.metrics).map(function(m){var g=(m.key==='fat'||m.key==='waist')?(m.change<0):(c.category==='muscle_gain'?(m.change>0):(m.key==='weight'?m.change<0:m.change>0));return '<div style="flex:1;background:'+(g?'#eaf6f0':'#f4f8fe')+';border-radius:10px;padding:8px 6px;text-align:center"><div style="font-size:9.5px;color:'+(g?'#5a8a76':'#7a8aa6')+'">'+esc(m.label)+'</div><div style="font-size:16px;font-weight:800;color:'+(g?'#0f6e56':'#002766')+'">'+(m.change>0?'+':'')+esc(m.change)+'<span style="font-size:9px;font-weight:400"> '+esc(m.unit)+'</span></div><div style="font-size:8.5px;color:#9aa7bf">'+esc(m.before)+' → '+esc(m.after)+'</div></div>';}).join('');
+    var adh=(c.adherence!=null&&c.adherence!=='')?('<div style="font-size:11px;color:#3a4660;margin-top:9px">ทำตามแผน <b style="color:#12A868">'+esc(c.adherence)+'%</b> · สตรีค '+esc(c.streak||0)+' วัน</div>'):'';
+    var rev=(c.review&&c.review.t)?('<div style="margin-top:10px;background:#f7faff;border-left:2.5px solid #0a84ff;border-radius:0 10px 10px 0;padding:9px 11px"><div style="font-size:11.5px;color:#26354f;font-style:italic">“'+esc(c.review.t)+'”</div><div style="font-size:9.5px;color:#f5b301;margin-top:4px">'+csStars(c.review.stars)+' <span style="color:#9aa7bf">— ลูกเทรน (ยินยอมให้แสดง)</span></div></div>'):'';
+    return '<div style="border:1px solid #e6edf6;border-radius:14px;padding:13px;margin-top:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;font-weight:700;background:'+cb[0]+';color:'+cb[1]+';border-radius:99px;padding:3px 10px">'+esc(CATTH[c.category]||'')+'</span><span style="font-size:10px;color:#12A868;font-weight:700">✓ ข้อมูลจาก IUFIT</span></div><div style="font-size:15px;font-weight:800;color:#002766;margin-top:8px">'+esc(c.title)+'</div><div style="font-size:11px;color:#7a8aa6;margin-top:2px">'+esc(c.durationWeeks)+' สัปดาห์</div><div style="display:flex;gap:7px;margin-top:11px">'+tiles+'</div>'+adh+rev+'<div style="font-size:9px;color:#9aa7bf;margin-top:9px">ผลลัพธ์เฉพาะบุคคล ไม่ใช่การรับประกันว่าผู้อื่นจะได้ผลเหมือนกัน</div></div>';
+  }).join('')+'</div>'):'';
   var h=''
    +'<div class="card hero">'+ava
      +'<h1 class="name">'+esc(name)+'</h1>'
@@ -99,6 +110,7 @@ function render(d){
    +(d.bio?('<div class="card"><div class="sect">'+IC.about+'แนะนำตัว</div><div class="bio">'+esc(d.bio)+'</div></div>'):'')
    +(meta?('<div class="card"><div class="sect">'+IC.list+'รายละเอียด</div>'+meta+'</div>'):'')
    +(port?('<div class="card"><div class="sect">'+IC.list+'ผลงาน</div><div class="pfwrap">'+port+'</div></div>'):'')
+   +cases
    +'<a class="btn pri" href="'+joinURL+'">'+IC.send+'เริ่มเทรนกับโค้ชนี้</a>'
    +(d.ct?('<a class="btn line" href="'+ctURL(d.ct)+'" target="_blank" rel="noopener">'+IC.chat+'ติดต่อโค้ช · '+esc(d.ct)+'</a>'):'')
    +'<a class="btn ghost" href="https://iufit.com">'+IC.dl+'เปิด / ดาวน์โหลดแอป IUFIT</a>'
