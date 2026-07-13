@@ -387,7 +387,7 @@ nav button:not(.on):active{background:var(--surface-soft)}
   border-bottom:none;
   border-radius:30px 30px 0 0;
   box-shadow:0 -24px 80px rgba(0,39,102,.28);
-  animation:up .22s ease;
+  animation:up .28s cubic-bezier(.22,1,.36,1);will-change:transform,opacity;
 }
 .modal::before{content:"";position:absolute;top:9px;left:50%;width:48px;height:5px;border-radius:999px;background:#d4e1f1;transform:translateX(-50%)}
 .modal h2{font-family:var(--font-display);font-size:20px;font-weight:850;letter-spacing:-.02em;margin:4px 42px 14px 2px;color:var(--navy)}
@@ -639,7 +639,7 @@ header{display:none!important}
 .owdot{width:34px;height:5px;border-radius:3px;background:#e3ecf7;transition:.25s}
 .owdot.on{background:var(--brand-gradient,#0a84ff)}
 .ow-step{display:none}
-.ow-step.on{display:block;animation:up .25s ease}
+.ow-step.on{display:block;animation:up .28s cubic-bezier(.22,1,.36,1)}
 .owgoals{display:flex;flex-direction:column;gap:10px;margin-top:6px}
 .owgoal{display:flex;align-items:center;gap:12px;padding:15px 14px;border:1.5px solid var(--border);border-radius:16px;cursor:pointer;background:#fff;transition:.16s}
 .owgoal .owg-ic{font-size:24px;flex:none;line-height:1}
