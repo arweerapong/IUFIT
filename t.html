@@ -99,6 +99,15 @@ function render(d){
     var rev=(c.review&&c.review.t)?('<div style="margin-top:10px;background:#f7faff;border-left:2.5px solid #0a84ff;border-radius:0 10px 10px 0;padding:9px 11px"><div style="font-size:11.5px;color:#26354f;font-style:italic">“'+esc(c.review.t)+'”</div><div style="font-size:9.5px;color:#f5b301;margin-top:4px">'+csStars(c.review.stars)+' <span style="color:#9aa7bf">— ลูกเทรน (ยินยอมให้แสดง)</span></div></div>'):'';
     return '<div style="border:1px solid #e6edf6;border-radius:14px;padding:13px;margin-top:10px"><div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:11px;font-weight:700;background:'+cb[0]+';color:'+cb[1]+';border-radius:99px;padding:3px 10px">'+esc(CATTH[c.category]||'')+'</span><span style="font-size:10px;color:#12A868;font-weight:700">✓ ข้อมูลจาก IUFIT</span></div><div style="font-size:15px;font-weight:800;color:#002766;margin-top:8px">'+esc(c.title)+'</div><div style="font-size:11px;color:#7a8aa6;margin-top:2px">'+esc(c.durationWeeks)+' สัปดาห์</div><div style="display:flex;gap:7px;margin-top:11px">'+tiles+'</div>'+adh+rev+'<div style="font-size:9px;color:#9aa7bf;margin-top:9px">ผลลัพธ์เฉพาะบุคคล ไม่ใช่การรับประกันว่าผู้อื่นจะได้ผลเหมือนกัน</div></div>';
   }).join('')+'</div>'):'';
+  function CT_URL(t,v){v=(''+(v||'')).trim();if(t==='phone')return 'tel:'+v.replace(/[^0-9+]/g,'');if(/^https?:\/\//i.test(v))return v;var u=v.replace(/^@/,'');if(t==='line')return 'https://line.me/ti/p/@'+u;if(t==='ig')return 'https://instagram.com/'+u;if(t==='tiktok')return 'https://tiktok.com/@'+u;if(t==='fb')return 'https://facebook.com/'+u;return 'https://'+v;}
+  function CT_ICON(t){var v='<svg viewBox="0 0 24 24" width="30" height="30" style="flex:none">';
+   if(t==='line')return v+'<rect width="24" height="24" rx="6" fill="#06C755"/><text x="12" y="15.4" text-anchor="middle" font-size="7.6" font-weight="800" fill="#fff" font-family="Arial">LINE</text></svg>';
+   if(t==='ig')return v+'<defs><linearGradient id="tig" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#feda75"/><stop offset=".45" stop-color="#d62976"/><stop offset="1" stop-color="#4f5bd5"/></linearGradient></defs><rect width="24" height="24" rx="6" fill="url(#tig)"/><rect x="6.2" y="6.2" width="11.6" height="11.6" rx="3.6" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="12" cy="12" r="2.9" fill="none" stroke="#fff" stroke-width="1.5"/><circle cx="16" cy="8" r="1" fill="#fff"/></svg>';
+   if(t==='fb')return v+'<rect width="24" height="24" rx="6" fill="#1877F2"/><path d="M14.5 12.2h1.8l.35-2.3h-2.15V8.4c0-.66.22-1.1 1.16-1.1H16.8V5.2c-.62-.08-1.3-.13-2-.13-2.02 0-3.4 1.23-3.4 3.44v1.36H9.2v2.3h2.2V19h2.3v-6.8z" fill="#fff"/></svg>';
+   if(t==='tiktok')return v+'<rect width="24" height="24" rx="6" fill="#000"/><path d="M16.7 7.3c-.92-.6-1.5-1.55-1.62-2.72h-2.2v9.28c0 1.06-.86 1.92-1.92 1.92s-1.92-.86-1.92-1.92.86-1.92 1.92-1.92c.22 0 .43.04.63.1V9.55a4.3 4.3 0 0 0-.63-.05 4.24 4.24 0 1 0 4.24 4.24V9.3a5.28 5.28 0 0 0 3.06.98V8.06c-.55 0-1.07-.13-1.54-.36z" fill="#fff"/></svg>';
+   if(t==='phone')return v+'<rect width="24" height="24" rx="6" fill="#0a84ff"/><path d="M8.2 6.4c.32 0 .58.2.68.5l.72 2.05c.1.3.02.63-.22.83l-1 .87c.72 1.4 1.86 2.54 3.26 3.26l.87-1c.2-.24.53-.32.83-.22l2.05.72c.3.1.5.36.5.68v1.98c0 .5-.42.9-.92.86C10.9 18.7 5.3 13.1 5 7.36c-.03-.5.37-.92.87-.92z" fill="#fff"/></svg>';
+   return v+'<rect width="24" height="24" rx="6" fill="#8a99b3"/><circle cx="12" cy="12" r="6" fill="none" stroke="#fff" stroke-width="1.4"/><path d="M6 12h12M12 6c2.2 2.6 2.2 9.4 0 12M12 6c-2.2 2.6-2.2 9.4 0 12" fill="none" stroke="#fff" stroke-width="1.2"/></svg>';}
+  var contacts=arr(d.contacts).length?('<div class="card"><div class="sect">'+IC.chat+'ช่องทางติดต่อ</div><div style="display:flex;flex-direction:column;gap:11px">'+arr(d.contacts).map(function(c){return '<a href="'+esc(CT_URL(c.t,c.v))+'" target="_blank" rel="noopener" style="display:flex;align-items:center;gap:11px;text-decoration:none"><span style="display:inline-flex">'+CT_ICON(c.t)+'</span><span style="font-size:14px;font-weight:700;color:#12305f">'+esc(c.v)+'</span></a>';}).join('')+'</div></div>'):'';
   var h=''
    +'<div class="card hero">'+ava
      +'<h1 class="name">'+esc(name)+'</h1>'
@@ -111,8 +120,9 @@ function render(d){
    +(meta?('<div class="card"><div class="sect">'+IC.list+'รายละเอียด</div>'+meta+'</div>'):'')
    +(port?('<div class="card"><div class="sect">'+IC.list+'ผลงาน</div><div class="pfwrap">'+port+'</div></div>'):'')
    +cases
+   +contacts
    +'<a class="btn pri" href="'+joinURL+'">'+IC.send+'เริ่มเทรนกับโค้ชนี้</a>'
-   +(d.ct?('<a class="btn line" href="'+ctURL(d.ct)+'" target="_blank" rel="noopener">'+IC.chat+'ติดต่อโค้ช · '+esc(d.ct)+'</a>'):'')
+   +((!arr(d.contacts).length&&d.ct)?('<a class="btn line" href="'+ctURL(d.ct)+'" target="_blank" rel="noopener">'+IC.chat+'ติดต่อโค้ช · '+esc(d.ct)+'</a>'):'')
    +'<a class="btn ghost" href="https://iufit.com">'+IC.dl+'เปิด / ดาวน์โหลดแอป IUFIT</a>'
    +'<div class="card how"><div class="sect">'+IC.rocket+'เริ่มยังไง</div><ol>'
    +'<li>กด “เริ่มเทรนกับโค้ชนี้” — เปิดแอป IUFIT</li>'
