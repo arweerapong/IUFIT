@@ -2421,8 +2421,8 @@ var ACTIONS = {
   open_share:function(){ ST.isOpen=false; closeNow(); try{ if(fn('shareApp')) window.shareApp(); }catch(e){} },
   open_pricing:function(){ ST.isOpen=false; closeNow(); try{ if(fn('pricingPage')) window.pricingPage(); }catch(e){} },
   open_referral:function(){ ST.isOpen=false; closeNow(); try{ if(fn('referralPage')) window.referralPage(); }catch(e){} },
-  open_tour:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTour')) window.iuTour(true); }catch(e){} },
-  tour_full:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTour')) window.iuTour(true); }catch(e){} },
+  open_tour:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTourReplay')) window.iuTourReplay(); else if(fn('iuTour')) window.iuTour(true); }catch(e){} },
+  tour_full:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTourReplay')) window.iuTourReplay(); else if(fn('iuTour')) window.iuTour(true); }catch(e){} },
   tour_food_log:function(){ _featTour('food_log'); },
   tour_workout_log:function(){ _featTour('workout_log'); },
   tour_workout_plan:function(){ _featTour('workout_plan'); },
@@ -2430,7 +2430,7 @@ var ACTIONS = {
   tour_water:function(){ _featTour('water'); },
   tour_result_card:function(){ _featTour('result_card'); },
   tour_meal_plan:function(){ _featTour('meal_plan'); },
-  tour_coach_full:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTour')) window.iuTour(true); }catch(e){} },
+  tour_coach_full:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTour')) window.iuTour(true,'coach'); }catch(e){} },
   tour_coach_home:function(){ _featTour('coach_home'); },
   tour_coach_clients:function(){ _featTour('coach_clients'); },
   tour_coach_homework:function(){ _featTour('coach_homework'); },
@@ -3011,4 +3011,5 @@ function boot(){
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
 })();
+
 
