@@ -2171,7 +2171,7 @@ function injectEntryPoints(){
 function renderFab(){
   var fab=document.getElementById('iuMateFab');
   if(!fab){ fab=document.createElement('button'); fab.id='iuMateFab'; fab.className='iu-mate-fab'; fab.type='button'; fab.setAttribute('aria-label',L('เปิด IU Mate','Open IU Mate'));
-    fab.innerHTML='<img src="assets/iu-mate/06-iu-mate-face-happy.webp" alt="IU MATE" style="width:100%;height:100%;object-fit:contain;display:block;padding:3px;box-sizing:border-box">';
+    fab.innerHTML='<img src="assets/iu-mate/06-iu-mate-face-happy.webp" alt="IU MATE" style="width:100%;height:100%;object-fit:contain;display:block;padding:3px;box-sizing:border-box" onerror="this.style.display=&quot;none&quot;;var b=this.parentNode;if(b){b.style.background=&quot;linear-gradient(135deg,#20D5FF,#0A84FF)&quot;;b.style.borderRadius=&quot;50%&quot;}">';
     fab.addEventListener('click',function(){ IUMate.open('global'); });
     document.body.appendChild(fab);
   }
