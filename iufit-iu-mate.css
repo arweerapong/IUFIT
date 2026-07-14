@@ -25,7 +25,7 @@
 .iu-mate-fab{
   position:fixed;right:max(18px,env(safe-area-inset-right));bottom:calc(88px + env(safe-area-inset-bottom));z-index:1200;
   display:grid;place-items:center;width:56px;height:56px;padding:0;border:0;
-  border-radius:999px;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;
+  border-radius:999px;background:radial-gradient(circle at 50% 38%,#eff6ff 0%,#d4e8ff 100%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.72);cursor:pointer;-webkit-tap-highlight-color:transparent;
   filter:drop-shadow(0 10px 22px rgba(7,30,74,.20));
   transform:translateY(0);transition:transform .18s ease,opacity .18s ease,filter .18s ease;
 }
@@ -40,7 +40,7 @@
 .iu-mate-fab.has-unread::after{content:"";position:absolute;top:3px;right:3px;width:13px;height:13px;border-radius:999px;background:#E5484D;border:2px solid #fff;box-shadow:0 2px 6px rgba(7,30,74,.25)}
 .iu-mate-fab.is-loading::before{content:"";position:absolute;inset:-3px;border-radius:999px;border:2.6px solid transparent;border-top-color:var(--iu-blue);animation:iu-fab-spin .8s linear infinite}
 @keyframes iu-fab-spin{to{transform:rotate(360deg)}}
-@media (max-width:390px){.iu-mate-fab{width:68px;height:68px;right:14px}}
+@media (max-width:390px){.iu-mate-fab{width:78px;height:78px;right:14px}}
 @media (min-width:768px){.iu-mate-fab{bottom:28px;right:28px}}
 
 /* ---------- Backdrop + sheet ---------- */
@@ -64,7 +64,7 @@
 /* ---------- Header ---------- */
 .iu-mate-header{padding:10px 14px 12px;display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--iu-border)}
 .iu-mate-close{width:34px;height:34px;border:0;border-radius:50%;background:#eef3fb;color:#48597a;font-size:18px;cursor:pointer;flex:none}
-.iu-mate-avatar{width:42px;height:42px;flex:none;display:grid;place-items:center}
+.iu-mate-avatar{width:52px;height:52px;flex:none;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle at 50% 40%,#eff6ff,#d4e8ff)}
 .iu-mate-avatar svg{width:100%;height:100%}
 .iu-mate-title{flex:1;min-width:0;line-height:1.15}
 .iu-mate-title strong{display:block;font-size:16px;color:var(--iu-navy);font-weight:850}
@@ -86,7 +86,7 @@
 .iu-mate-bubble.user{margin-left:auto;color:#fff;background:linear-gradient(135deg,#0A84FF,#003C8F);border-bottom-right-radius:7px}
 .iu-mate-bubble.bot{margin-right:auto;color:var(--iu-text);background:#fff;border:1px solid var(--iu-border);border-bottom-left-radius:7px;box-shadow:0 8px 22px rgba(13,54,110,.07)}
 .iu-mate-row-bot{display:flex;gap:8px;align-items:flex-end;margin:8px 0}
-.iu-mate-row-bot .mini{width:28px;height:28px;flex:none;display:grid;place-items:center}
+.iu-mate-row-bot .mini{width:34px;height:34px;flex:none;display:grid;place-items:center;border-radius:50%;background:radial-gradient(circle at 50% 40%,#eff6ff,#d4e8ff)}
 .iu-mate-row-bot .mini svg{width:100%;height:100%}
 .iu-mate-row-bot .iu-mate-bubble{margin:0}
 .iu-mate-typing{display:inline-flex;gap:4px;padding:4px 2px}
@@ -203,5 +203,6 @@ html[data-theme="dark"] .iu-mate-amt-row{border-bottom-color:#243149}
 html[data-theme="dark"] .iu-mate-amt-row button{background:#22304a}
 html[data-theme="dark"] .iu-mate-ip input.search{background:#141f33;color:var(--iu-text)}
 body.iumate-open #coach-edit-fab,body.iumate-open #coach-back-fab{display:none!important}
+
 
 
