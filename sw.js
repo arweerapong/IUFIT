@@ -1,7 +1,7 @@
 /* เวลาอัปเดตแอป ให้เปลี่ยนเลขเวอร์ชัน v157 -> v158 ...
    HTML = network-first (ออนไลน์ได้ตัวล่าสุดเสมอ, ออฟไลน์ใช้ cache สำรอง)
    asset = cache-first (เร็ว) */
-const CACHE='iufit-v977-coachpub';
+const CACHE='iufit-v981-webpushnode';
 const FILES=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./iufit-modern-theme.css','./food-db.js','./resultcard.html','./iufit-iu-mate.css','./iufit-iu-mate.js','./iufit-icons.js','./iufit-workout-icons.js','./iufit-master-icons.js','./food-icon-normalizer.js','./food-icon-matcher.js','./food-icon-menu-mapping.js'];
 /* resilient install: a single missing/404 file must NOT block the whole update */
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>Promise.allSettled(FILES.map(function(f){return c.add(f)}))));self.skipWaiting()});
@@ -23,16 +23,22 @@ self.addEventListener('fetch',e=>{
  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(n=>{
   if(n&&n.ok&&sameOrigin){const cl=n.clone();caches.open(CACHE).then(c=>c.put(e.request,cl))}
   return n}).catch(()=>caches.match('./index.html'))));
+});
 
-
-
-
-
-
-
-
-
-
+self.addEventListener('push',function(e){
+ var d={}; try{ d=e.data?e.data.json():{}; }catch(_){ try{ d={body:e.data.text()}; }catch(__){ d={}; } }
+ var title=d.title||'IUFIT \ud83d\udcaa';
+ var opts={ body:(d.body||''), icon:(d.icon||'./icon-192.png'), badge:'./icon-192.png', tag:(d.tag||'iufit'), renotify:true, data:{url:(d.url||'/')} };
+ e.waitUntil(self.registration.showNotification(title,opts));
+});
+self.addEventListener('notificationclick',function(e){
+ e.notification.close();
+ var target=(e.notification.data&&e.notification.data.url)||'/';
+ e.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(function(cl){
+  for(var i=0;i<cl.length;i++){ if(cl[i].url.indexOf(self.location.origin)>=0){ try{cl[i].focus();}catch(_){}; try{ if(target&&target!=='/'&&'navigate' in cl[i]) cl[i].navigate(target); }catch(_){}; return; } }
+  if(clients.openWindow) return clients.openWindow(target);
+ }));
+});
 
 
 
