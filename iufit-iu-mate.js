@@ -193,16 +193,16 @@ function consentBodyHtml(coach){
   function pt(ic,th,en){ return '<div style="display:flex;gap:10px;align-items:flex-start;margin:11px 0"><span style="font-size:19px;flex:none;line-height:1.2">'+ic+'</span><div style="font-size:13.5px;line-height:1.55;color:#28364f">'+esc(L(th,en))+'</div></div>'; }
   return '<div class="iu-mate-card"><div class="ttl">'+sparkInline()+esc(L('ยินดีต้อนรับสู่ IU Mate','Welcome to IU Mate'))+'</div>'+
     '<div class="msg" style="margin-bottom:4px">'+esc(L('ก่อนเริ่ม ขออธิบายเรื่องข้อมูลสั้น ๆ ครับ','Before we start, a quick note about your data:'))+'</div>'+
-    pt('🔒','ทำงานในเครื่อง 100% — บทสนทนาไม่ถูกส่งออกนอกเครื่อง จะเก็บไว้ในเครื่องเฉพาะเมื่อคุณเปิด “เก็บประวัติแชท”','100% on-device — conversations never leave your device, and are kept locally only if you turn on “Keep chat history”')+
-    pt('📊','IU Mate อ่านข้อมูลในแอปของคุณ (เป้าหมาย อาหาร การฝึก ผลลัพธ์) เพื่อช่วยสรุปและแนะนำเท่านั้น','IU Mate reads your in-app data (goals, food, workouts, results) only to summarize and suggest')+
-    pt('🩺','คำแนะนำเป็นข้อมูลทั่วไป ไม่ใช่คำวินิจฉัยหรือคำแนะนำทางการแพทย์','Guidance is general info — not a medical diagnosis or advice')+
+    pt(_li('<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8.5 10.5v-3a3.5 3.5 0 0 1 7 0v3"/>',18),'ทำงานในเครื่อง 100% — บทสนทนาไม่ถูกส่งออกนอกเครื่อง จะเก็บไว้ในเครื่องเฉพาะเมื่อคุณเปิด “เก็บประวัติแชท”','100% on-device — conversations never leave your device, and are kept locally only if you turn on “Keep chat history”')+
+    pt(_li('<path d="M4 4v16h16"/><path d="M8.5 16v-5M12.5 16V8M16.5 16v-3"/>',18),'IU Mate อ่านข้อมูลในแอปของคุณ (เป้าหมาย อาหาร การฝึก ผลลัพธ์) เพื่อช่วยสรุปและแนะนำเท่านั้น','IU Mate reads your in-app data (goals, food, workouts, results) only to summarize and suggest')+
+    pt(_li('<path d="M12 20.5S3.5 15.6 3.5 9.9A4.7 4.7 0 0 1 12 7a4.7 4.7 0 0 1 8.5 2.9c0 5.7-8.5 10.6-8.5 10.6z"/><path d="M6 12h2.5L10 9.8l2.5 4.4 1.5-2.2H18"/>',18),'คำแนะนำเป็นข้อมูลทั่วไป ไม่ใช่คำวินิจฉัยหรือคำแนะนำทางการแพทย์','Guidance is general info — not a medical diagnosis or advice')+
     (coach?('<label style="display:flex;gap:9px;align-items:center;margin:14px 0 2px;font-size:13px;color:#28364f;cursor:pointer"><input type="checkbox" id="iuMateCoachConsent" checked style="width:18px;height:18px;flex:none">'+esc(L('อนุญาตให้ IU Mate ใช้ข้อมูลลูกเทรน/กลุ่มในเครื่องเพื่อช่วยสรุป','Let IU Mate use local client/group data to help summarize'))+'</label>'):'')+
     '<label style="display:flex;gap:9px;align-items:center;margin:12px 0 2px;font-size:13px;color:#28364f;cursor:pointer"><input type="checkbox" id="iuMateKeepHist" style="width:18px;height:18px;flex:none">'+esc(L('เก็บประวัติแชทไว้ในเครื่องนี้ (ปิดอยู่ = ไม่บันทึก ประวัติหายเมื่อปิดแชท)','Keep chat history on this device (off = nothing saved, cleared when chat closes)'))+'</label>'+
     '<div class="iu-mate-actions" style="margin-top:16px">'+
       '<button class="iu-mate-act" onclick="IUMate.declineConsent()">'+esc(L('ไม่ใช่ตอนนี้','Not now'))+'</button>'+
       '<button class="iu-mate-act primary" onclick="IUMate.acceptConsent()">'+esc(L('ยอมรับและเริ่มใช้','Accept & start'))+'</button>'+
     '</div>'+
-    '<div class="disc">'+esc(L('ยกเลิกความยินยอมได้ทุกเมื่อจากปุ่ม 🔒 ด้านบนของหน้าต่าง IU Mate','You can withdraw consent anytime via the 🔒 button at the top of IU Mate'))+'</div>'+
+    '<div class="disc">'+esc(L('ยกเลิกความยินยอมได้ทุกเมื่อจากปุ่มรูปแม่กุญแจด้านบนของหน้าต่าง IU Mate','You can withdraw consent anytime via the padlock button at the top of IU Mate'))+'</div>'+
   '</div>';
 }
 function renderConsentScreen(){
@@ -226,6 +226,40 @@ function botAvatar(){ return '<img src="assets/iu-mate/06-iu-mate-face-happy.web
 function fabOrb(){ return '<svg width="56" height="56" viewBox="0 0 56 56" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="IU MATE tinted 56px"> <defs> <linearGradient id="gBlue" x1="15.75" y1="8.75" x2="40.25" y2="47.25" gradientUnits="userSpaceOnUse"> <stop offset="0" stop-color="#20D5FF"/> <stop offset="0.52" stop-color="#0A84FF"/> <stop offset="1" stop-color="#005CFF"/> </linearGradient> </defs> <circle cx="28.0" cy="28.0" r="25.90" fill="none" stroke="#D8EBFF" stroke-width="1.22"/> <circle cx="28.0" cy="28.0" r="24.50" fill="#EEF6FF" stroke="#7EB9FF" stroke-width="1.75"/> <g transform="translate(0.00 0.00) scale(0.87500)"> <circle cx="32" cy="11.6" r="4" fill="url(#gBlue)"/> <circle cx="13.8" cy="29.3" r="3.8" fill="url(#gBlue)"/> <circle cx="50.2" cy="29.3" r="3.8" fill="url(#gBlue)"/> <rect x="17.8" y="19.6" width="28.4" height="17.4" rx="8" fill="#071E4A"/> <path d="M23.7 26.6C23.7 25.1 24.9 23.9 26.4 23.9C27.9 23.9 29.1 25.1 29.1 26.6" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M34.9 26.6C34.9 25.1 36.1 23.9 37.6 23.9C39.1 23.9 40.3 25.1 40.3 26.6" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M28.4 31C29.2 31.8 30.4 32.3 32 32.3C33.6 32.3 34.8 31.8 35.6 31" stroke="#0A84FF" stroke-width="2.2" stroke-linecap="round"/> <path d="M32 50.2L25.7 46.45C24 45.44 22.95 43.63 22.95 41.66C22.95 38.53 25.5 35.98 28.64 35.98C30.16 35.98 31.54 36.52 32.55 37.52C33.56 36.52 34.94 35.98 36.46 35.98C39.6 35.98 42.15 38.53 42.15 41.66C42.15 43.63 41.1 45.44 39.4 46.45L32 50.2Z" fill="#0A84FF"/> <path d="M27.85 42.5H30.05L31.3 39.9L33.1 44.4L34.55 41.55H37.25" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/> </g> </svg>'; }
 function sendIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12l16-7-7 16-2.5-6.5L4 12z"/></svg>'; }
 function checkIcon(){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>'; }
+/* line icons (stroke=currentColor, inline size) — used for chips/buttons instead of emoji */
+function _li(p,s){ s=s||15; return '<svg viewBox="0 0 24 24" width="'+s+'" height="'+s+'" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px">'+p+'</svg>'; }
+var LIC={
+  basket:_li('<path d="M5.2 9.5L8.5 4.5M18.8 9.5L15.5 4.5M3.5 9.5h17l-1.7 8.6a2 2 0 0 1-2 1.6H7.2a2 2 0 0 1-2-1.6L3.5 9.5z"/><path d="M9 13v3.5M12 13v3.5M15 13v3.5"/>'),
+  utensils:_li('<path d="M5 3.5v5a2.5 2.5 0 0 0 5 0v-5M7.5 3.5v17"/><path d="M17.5 3.5c1.4 0 2.5 1.8 2.5 4s-1.1 4-2.5 4-2.5-1.8-2.5-4 1.1-4 2.5-4zM17.5 11.5v9"/>'),
+  dumbbell:_li('<path d="M6.5 7.5v9M17.5 7.5v9M3.5 9.5v5M20.5 9.5v5M6.5 12h11M2 12h1.5M20.5 12H22"/>'),
+  activity:_li('<path d="M3.5 12h4l2.5-6 4 12 2.5-6h4"/>'),
+  target:_li('<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>'),
+  calculator:_li('<rect x="5" y="3.5" width="14" height="17" rx="2"/><path d="M8.5 7.5h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 15.7h.01M12 15.7h.01M15.5 15.7h.01"/>'),
+  chart:_li('<path d="M4 4v16h16"/><path d="M8.5 16v-5M12.5 16V8M16.5 16v-3"/>'),
+  trend:_li('<path d="M3.5 17l5.5-5.5 3.5 3.5 7.5-7.5"/><path d="M15 7.5h5v5"/>'),
+  note:_li('<rect x="4.5" y="3.5" width="15" height="17" rx="2"/><path d="M8.5 8.5h7M8.5 12h7M8.5 15.5h4"/>'),
+  pencil:_li('<path d="M4 20l1-4L16.3 4.7a2 2 0 0 1 2.9 0l.1.1a2 2 0 0 1 0 2.9L8 19l-4 1z"/><path d="M14.5 6.5l3 3"/>'),
+  calendar:_li('<rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/>'),
+  refresh:_li('<path d="M20.5 4.5v5h-5"/><path d="M20.2 12a8.2 8.2 0 1 1-2.4-5.8l2.7 2.5"/>'),
+  star:_li('<path d="M12 3.8l2.5 5.1 5.6.8-4 4 .9 5.6-5-2.7-5 2.7.9-5.6-4-4 5.6-.8L12 3.8z"/>'),
+  play:_li('<path d="M8 5.3v13.4L19 12 8 5.3z"/>'),
+  users:_li('<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3 2.8-4.7 5.5-4.7s4.9 1.7 5.5 4.7"/><path d="M15.5 5.6a3.2 3.2 0 0 1 0 5.8M17.5 14.9c1.7.8 2.8 2.3 3.2 4.6"/>'),
+  userCheck:_li('<circle cx="9" cy="8.5" r="3.2"/><path d="M3.5 19.5c.6-3 2.8-4.7 5.5-4.7 1.1 0 2.1.3 3 .8"/><path d="M15 17.5l2 2 3.5-3.5"/>'),
+  inbox:_li('<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M3.5 13.5H9l1.4 2.3h3.2l1.4-2.3h5.5"/>'),
+  tag:_li('<path d="M3.5 11.5v-7a1 1 0 0 1 1-1h7l9 9-8 8-9-9z"/><path d="M8 8h.01"/>'),
+  bell:_li('<path d="M18 10a6 6 0 1 0-12 0c0 5.5-2.3 6.5-2.3 6.5h16.6S18 15.5 18 10"/><path d="M10.2 19.5a2 2 0 0 0 3.6 0"/>'),
+  chat:_li('<path d="M20.5 11.7a8.2 8.2 0 0 1-8.3 8.1c-1.5 0-3-.4-4.2-1L3.5 20l1.3-4.4a8.2 8.2 0 1 1 15.7-3.9z"/>'),
+  coin:_li('<circle cx="12" cy="12" r="8.5"/><path d="M12 7v10M14.8 9.2c-.6-.8-1.6-1.2-2.8-1.2-1.7 0-3 .9-3 2s1 1.7 3 1.9c2 .2 3 .9 3 2.1s-1.3 2-3 2c-1.2 0-2.2-.4-2.8-1.2"/>'),
+  help:_li('<circle cx="12" cy="12" r="8.5"/><path d="M9.5 9.3a2.6 2.6 0 0 1 5.1.8c0 1.7-2.6 2.1-2.6 3.4M12 16.8h.01"/>'),
+  pin:_li('<path d="M12 21s-7-5.8-7-11a7 7 0 0 1 14 0c0 5.2-7 11-7 11z"/><circle cx="12" cy="10" r="2.5"/>'),
+  lock:_li('<rect x="5" y="10.5" width="14" height="10" rx="2"/><path d="M8.5 10.5v-3a3.5 3.5 0 0 1 7 0v3"/>',16),
+  pulse:_li('<path d="M12 20.5S3.5 15.6 3.5 9.9A4.7 4.7 0 0 1 12 7a4.7 4.7 0 0 1 8.5 2.9c0 5.7-8.5 10.6-8.5 10.6z"/><path d="M6 12h2.5L10 9.8l2.5 4.4 1.5-2.2H18"/>'),
+  zap:_li('<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>'),
+  plus:_li('<path d="M12 5.5v13M5.5 12h13"/>'),
+  copy:_li('<rect x="8.5" y="8.5" width="12" height="12" rx="2"/><path d="M5.5 15.5h-1a1 1 0 0 1-1-1v-10a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>'),
+  send:_li('<path d="M4 12l16-7-7 16-2.5-6.5L4 12z"/>'),
+  apple:_li('<path d="M12 8c1-1.5 2.6-2.3 4.2-2 2.5.4 4 3 3.3 6.2-.8 3.7-3.2 6.8-5.4 6.8-.7 0-1.4-.3-2.1-.3s-1.4.3-2.1.3c-2.2 0-4.6-3.1-5.4-6.8C3.8 9 5.3 6.4 7.8 6c1.6-.3 3.2.5 4.2 2z"/><path d="M12 8c0-2 1-3.5 2.5-4.5"/>')
+};
 
 /* ============================ ingredient model (mapped from real ING DB) ============================ */
 var GROUP_MAP = {
@@ -263,7 +297,7 @@ function swapsBlock(rc){
   try{ var picks=(rc.ingredients||[]).filter(function(i){ return i.group==='protein'||i.group==='carb'; }).slice(0,2);
     var lines=picks.map(function(i){ var sw=swapsFor(i,2); if(!sw.length) return ''; return esc(tFoodName(i.name))+' → '+sw.map(function(x){ return esc(tFoodName(x._b)); }).join(', '); }).filter(Boolean);
     if(!lines.length) return '';
-    return '<div class="iu-mate-fit" style="border-top:1px dashed var(--iu-border);padding-top:8px;margin-top:8px">🔄 '+esc(L('เปลี่ยนวัตถุดิบได้','Swap options'))+': '+lines.join(' · ')+'</div>';
+    return '<div class="iu-mate-fit" style="border-top:1px dashed var(--iu-border);padding-top:8px;margin-top:8px">'+LIC.refresh+' '+esc(L('เปลี่ยนวัตถุดิบได้','Swap options'))+': '+lines.join(' · ')+'</div>';
   }catch(e){ return ''; }
 }
 /* schema guard: true only if IUFIT_ING exists and items expose numeric v=[kcal,prot,fat,carb,...] */
@@ -678,15 +712,15 @@ var _Q_RE=/คืออะไร|คือไร|ยังไง|อย่าง
 var _REC_RE=/อะไรดี|ไรดี|อันไหนดี|ตัวไหนดี|เมนูไหนดี|แบบไหนดี|ท่าไหนดี/;
 /* ---- clarify options (chips send a canonical query through the normal pipeline) ---- */
 var CLARIFY_OPT={
-  workout_plan:{label:L('🏋️ จัดตารางฝึก','🏋️ Build a workout plan'),q:L('จัดตารางฝึกให้หน่อย','build a workout plan')},
-  workout_recommend:{label:L('💪 แนะนำท่าออกกำลัง','💪 Workout ideas'),q:L('แนะนำท่าออกกำลังกายหน่อย','recommend a workout')},
-  food_recommend:{label:L('🍽️ แนะนำเมนู','🍽️ Menu ideas'),q:L('แนะนำเมนูหน่อย','recommend menu')},
-  make_plan:{label:L('🎯 วางแผนแคล/มาโคร','🎯 Plan my calories'),q:L('ช่วยวางแผนแคลให้หน่อย','help me plan for me')},
-  calc_plan:{label:L('🧮 คำนวณ TDEE','🧮 Calculate TDEE'),q:L('คำนวณแคลที่ควรกิน','tdee')},
-  today_summary:{label:L('📊 สรุปวันนี้','📊 Today summary'),q:L('สรุปวันนี้ให้หน่อย','summary today')},
-  result_summary:{label:L('📈 ดูผลลัพธ์','📈 My results'),q:L('ขอดูผลลัพธ์','my result')},
-  ingredient_recipe_generate:{label:L('🧺 จัดเมนูจากของที่มี','🧺 Cook from my fridge'),q:L('จัดเมนูจากของที่มี','recipe from what i have')},
-  log_food:{label:L('📝 วิธีบันทึกอาหาร','📝 How to log food'),q:L('บันทึกอาหารยังไง','how to log food')}
+  workout_plan:{label:L('จัดตารางฝึก','Build a workout plan'),icon:LIC.dumbbell,q:L('จัดตารางฝึกให้หน่อย','build a workout plan')},
+  workout_recommend:{label:L('แนะนำท่าออกกำลัง','Workout ideas'),icon:LIC.activity,q:L('แนะนำท่าออกกำลังกายหน่อย','recommend a workout')},
+  food_recommend:{label:L('แนะนำเมนู','Menu ideas'),icon:LIC.utensils,q:L('แนะนำเมนูหน่อย','recommend menu')},
+  make_plan:{label:L('วางแผนแคล/มาโคร','Plan my calories'),icon:LIC.target,q:L('ช่วยวางแผนแคลให้หน่อย','help me plan for me')},
+  calc_plan:{label:L('คำนวณ TDEE','Calculate TDEE'),icon:LIC.calculator,q:L('คำนวณแคลที่ควรกิน','tdee')},
+  today_summary:{label:L('สรุปวันนี้','Today summary'),icon:LIC.chart,q:L('สรุปวันนี้ให้หน่อย','summary today')},
+  result_summary:{label:L('ดูผลลัพธ์','My results'),icon:LIC.trend,q:L('ขอดูผลลัพธ์','my result')},
+  ingredient_recipe_generate:{label:L('จัดเมนูจากของที่มี','Cook from my fridge'),icon:LIC.basket,q:L('จัดเมนูจากของที่มี','recipe from what i have')},
+  log_food:{label:L('วิธีบันทึกอาหาร','How to log food'),icon:LIC.note,q:L('บันทึกอาหารยังไง','how to log food')}
 };
 function _defaultClarify(first){
   var base=['workout_plan','food_recommend','calc_plan','today_summary'];
@@ -695,8 +729,8 @@ function _defaultClarify(first){
   return out.slice(0,4);
 }
 function buildClarifyReply(list){
-  var acts=[]; (list||[]).forEach(function(k){ var o=CLARIFY_OPT[k]; if(o) acts.push({label:o.label,action:'_chip',payload:{q:o.q}}); });
-  if(!acts.length){ _defaultClarify(null).forEach(function(k){ var o=CLARIFY_OPT[k]; if(o) acts.push({label:o.label,action:'_chip',payload:{q:o.q}}); }); }
+  var acts=[]; (list||[]).forEach(function(k){ var o=CLARIFY_OPT[k]; if(o) acts.push({label:o.label,icon:o.icon,action:'_chip',payload:{q:o.q}}); });
+  if(!acts.length){ _defaultClarify(null).forEach(function(k){ var o=CLARIFY_OPT[k]; if(o) acts.push({label:o.label,icon:o.icon,action:'_chip',payload:{q:o.q}}); }); }
   return { title:L('ให้ช่วยเรื่องไหนดีครับ?','What can I help with?'),
     message:L('ผมยังไม่แน่ใจว่าหมายถึงเรื่องไหน แตะเลือกด้านล่าง หรือพิมพ์รายละเอียดเพิ่มอีกนิดได้เลยครับ','I am not quite sure what you meant — tap an option below, or add a little more detail.'),
     actions:acts, _intent:'clarify' };
@@ -781,23 +815,23 @@ var KNOWLEDGE = [
     actions:[{label:L('เปิดวันนี้','Open Today'),action:'go_today'},{label:L('เปิดอาหาร','Open Food'),action:'go_food'},{label:L('เปิดท่าฝึก','Open Workout'),action:'go_workout'},{label:L('เปิดผลลัพธ์','Open Results'),action:'go_result'},{label:L('เปิดโค้ช','Open Coach'),action:'go_coach'}] },
   { id:'how_to_log_water', cat:'app_help', kw:['ดื่มน้ำ','บันทึกน้ำดื่ม','น้ำดื่ม','เพิ่มน้ำ','water','drink water','hydration'],
     title:L('วิธีบันทึกน้ำดื่ม','How to log water'),
-    answer:L('บันทึกน้ำดื่ม:\n1) เปิดหน้า "วันนี้"\n2) ที่การ์ดน้ำดื่ม กดปุ่ม + ทุกครั้งที่ดื่ม 1 แก้ว\n3) เป้าหมาย 8–10 แก้ว/วัน (หลอดจะเต็มขึ้นเรื่อย ๆ)','On Today there\'s a water card — tap + for each glass (goal 8–10/day).'),
+    answer:L('บันทึกน้ำดื่มง่ายมากครับ:\n1) เปิดหน้า "วันนี้" (แท็บแรกที่แถบล่าง)\n2) เลื่อนหาการ์ดน้ำดื่ม (รูปแก้วน้ำเรียงกัน)\n3) แตะแก้ว/ปุ่ม + ทุกครั้งที่ดื่ม 1 แก้ว (กดซ้ำเพื่อลดได้ · 1 แก้ว ≈ 250 มล.)\n4) ดื่มให้ถึงเป้า 8–10 แก้ว/วัน — หลอดจะค่อย ๆ เต็มให้เห็นเองครับ','Logging water is easy:\n1) Open "Today" (first tab at the bottom).\n2) Find the water card (a row of glasses).\n3) Tap a glass / the + button for each glass you drink (tap again to remove · 1 glass ≈ 250 ml).\n4) Aim for 8–10 glasses/day — the bar fills up as you go.'),
     actions:[{label:L('ไปหน้าวันนี้','Open Today'),action:'go_today'}] },
   { id:'how_to_log_body', cat:'app_help', kw:['น้ำหนัก','สัดส่วน','บันทึกร่างกาย','วัดรอบ','body','weight','measurement'],
     title:L('วิธีบันทึกน้ำหนัก/สัดส่วน','How to log weight & measurements'),
-    answer:L('บันทึกน้ำหนัก/สัดส่วน:\n1) เปิดหน้า "วันนี้" กดทางลัด "บันทึกร่างกาย"\n2) ใส่น้ำหนัก / รอบเอว / % ไขมัน\n3) กดบันทึก แล้วดูกราฟความก้าวหน้าที่หน้า "ผลลัพธ์"\n💡 แก้ไขรายการเดิมได้จากประวัติในหน้าผลลัพธ์','On the Today page, tap the Log body shortcut to enter weight/waist/body fat, then view your progress charts on Results (edit past entries from the Results history).'),
+    answer:L('บันทึกน้ำหนัก/สัดส่วน:\n1) เปิดหน้า "วันนี้" แล้วกดทางลัด "บันทึกร่างกาย"\n2) ใส่น้ำหนัก / รอบเอว / % ไขมัน (มีเท่าไหนใส่เท่านั้น ไม่ต้องครบทุกช่อง)\n3) กดบันทึก — กราฟที่หน้า "ผลลัพธ์" จะอัปเดตให้อัตโนมัติ\n4) อยากแก้รายการเดิม เข้าไปแก้จากประวัติในหน้าผลลัพธ์ได้\n💡 ชั่งเวลาเดิมทุกวัน (เช่นตื่นนอน ก่อนกินอะไร) จะเทียบแนวโน้มได้แม่นสุดครับ','Log weight & measurements:\n1) Open "Today" and tap the "Log body" shortcut.\n2) Enter weight / waist / body fat % (fill only what you have).\n3) Save — the charts on "Results" update automatically.\n4) Edit past entries anytime from the history on Results.\nTip: weigh at the same time each day (e.g. right after waking) for the truest trend.'),
     actions:[{label:L('ไปหน้าวันนี้','Open Today'),action:'go_today'}] },
   { id:'how_to_result_card', cat:'app_help', kw:['การ์ดผลลัพธ์','สร้างการ์ด','แชร์ผล','การ์ดแชร์','ผลลัพธ์','ดูผลลัพธ์','ดูกราฟ','กราฟ','ความคืบหน้า','result card','make card','share progress','progress card','view results'],
     title:L('วิธีสร้างการ์ดผลลัพธ์','How to make a result card'),
-    answer:L('หน้า "ผลลัพธ์" ดูความก้าวหน้า + สร้างการ์ดแชร์:\n1) เปิดแท็บ "ผลลัพธ์" เห็นกราฟน้ำหนัก/รอบเอว/% ไขมัน ตามช่วงเวลา\n2) กด "สร้างการ์ด" เพื่อได้รูปสรุปสวย ๆ\n3) กดแชร์ลงโซเชียลหรือส่งให้โค้ช/เพื่อน\n💡 บันทึกน้ำหนัก/สัดส่วนที่หน้า "วันนี้" กราฟจะอัปเดตให้เอง','On Results, tap make a card to get a shareable progress image.'),
+    answer:L('หน้า "ผลลัพธ์" ดูความก้าวหน้า + สร้างการ์ดแชร์:\n1) เปิดแท็บ "ผลลัพธ์" — เห็นกราฟน้ำหนัก/รอบเอว/% ไขมัน เลือกช่วงเวลาที่อยากดูได้\n2) กด "สร้างการ์ด" แล้วเลือกวันและเทมเพลตการ์ดที่ชอบ\n3) ใส่รูป/ข้อมูลที่อยากโชว์ ระบบจัดรูปสรุปสวย ๆ ให้\n4) กดบันทึกรูป แล้วแชร์ลงโซเชียลหรือส่งให้โค้ช/เพื่อนได้เลย\n💡 บันทึกน้ำหนัก/สัดส่วนที่หน้า "วันนี้" กราฟจะอัปเดตให้เองครับ','See progress + make a share card on "Results":\n1) Open the "Results" tab — weight/waist/body-fat charts over any period.\n2) Tap "Create card", then pick a date and a template you like.\n3) Add the photo/data you want to show — it builds a neat summary image.\n4) Save the image and share it to social or send it to your coach/friends.\nTip: log weight/measurements on "Today" and the charts update automatically.'),
     actions:[{label:L('เปิดผลลัพธ์','Open Results'),action:'go_result'}] },
   { id:'how_to_meal_plan', cat:'app_help', kw:['ตารางอาหาร','วางแผนอาหาร','แผนมื้อ','meal plan','food plan','plan meals','meals','use meal plan','food schedule'],
     title:L('วิธีวางแผนอาหาร','How to plan meals'),
     answer:L('วางแผนมื้อล่วงหน้า — แท็บ "อาหาร" มี 2 มุมมองด้านบน: 📅 "ตารางอาหาร" (แผนรายมื้อ) และ 📚 "คลังเมนู" (4,500+ เมนู)\nวิธีวางแผน:\n1) แตะแท็บ "อาหาร" → เลือกมุมมอง "ตารางอาหาร"\n2) เลือกวัน — แต่ละมื้อ (เช้า/กลางวัน/เย็น/ว่าง) มีปุ่ม "＋ เพิ่ม" อยู่ทางขวาของชื่อมื้อ กดเพื่อเลือกเมนูจากคลัง\n3) เมนูที่เลือกจะเรียงเป็นบรรทัด โชว์ แคล/โปรตีน/ไขมัน/คาร์บ — แตะชื่อเมนูเพื่อดูโภชนาการ+วิธีทำ · แตะกากบาทเพื่อลบ\n4) อยากบันทึกว่ากินจริง: ติ๊กช่องหน้ารายการที่กิน แล้วกด "บันทึกลงวันนี้" (ติ๊กเฉพาะที่ทำได้ ไม่ต้องครบก็ได้)\n💡 อยากให้ผมจัดเมนูให้เลย พิมพ์ "จัดแผนอาหารลดไขมัน/เพิ่มกล้ามให้หน่อย"','Plan meals ahead — the "Food" tab has 2 views: "Meal plan" and "Menu library" (4,500+). 1) Food → "Meal plan". 2) Pick a day — each meal (breakfast/lunch/dinner/snack) has a "＋ Add" button to the right of its name; tap it to pick menus. 3) Chosen items list line by line with cal/protein/fat/carb — tap a name for nutrition + how-to, tap the ✕ to remove. 4) To log what you actually ate: tick the boxes next to those items, then tap "Log today" (tick only what you managed — no need for all).'),
-    actions:[{label:L('เปิดอาหาร','Open Food'),action:'go_food'},{label:L('✏️ สอนบันทึกอาหารด้วย','Teach logging too'),action:'_chip',payload:{q:L('สอนบันทึกอาหาร','how to log food')}}] },
+    actions:[{label:L('เปิดอาหาร','Open Food'),action:'go_food'},{label:L('สอนบันทึกอาหารด้วย','Teach logging too'),icon:LIC.pencil,action:'_chip',payload:{q:L('สอนบันทึกอาหาร','how to log food')}}] },
   { id:'how_to_menu_library', cat:'app_help', kw:['คลังเมนู','เมนูทั้งหมด','ค้นเมนู','เพิ่มเมนู','เพิ่มวัตถุดิบ','ai เมนู','menu library','add menu','add ingredient'],
     title:L('คลังเมนู & เพิ่มเมนูเอง','Menu library & adding menus'),
-    answer:L('คลังเมนู & เพิ่มเมนูเอง:\n1) แตะแท็บ "อาหาร" → เลือก "คลังเมนู"\n2) ค้นจากเมนู/วัตถุดิบกว่า 4,500 รายการ (พิมพ์ชื่อ)\n3) แตะเมนูเพื่อดูแคล/โปรตีน แล้วกดเพิ่มเข้ามื้อ\n4) ไม่มีเมนูที่ต้องการ? กด "เพิ่มเมนูเอง" กรอกค่าโภชนาการ หรือให้ AI ช่วยแจกแจงวัตถุดิบ+โภชนาการ','Pick "Menu library" in Food — browse 4,500+ menus & ingredients, or add your own / let AI break them down.'),
+    answer:L('คลังเมนู & เพิ่มเมนูเอง:\n1) แตะแท็บ "อาหาร" → เลือกมุมมอง "คลังเมนู"\n2) พิมพ์ชื่อในช่องค้นหา — มีเมนู/วัตถุดิบกว่า 4,500 รายการพร้อมค่าโภชนาการ\n3) แตะเมนูเพื่อดูแคล/โปรตีน แล้วกดเพิ่มเข้ามื้อที่ต้องการ\n4) ไม่มีเมนูที่ตามหา? กด "เพิ่มเมนูเอง" ตั้งชื่อ + กรอกค่าโภชนาการ หรือให้ AI ช่วยแจกแจงวัตถุดิบ+โภชนาการให้\n💡 อยากให้ผมจัดเมนูจากวัตถุดิบที่มีในตู้เย็น พิมพ์ "สร้างเมนูจากของที่มี" ได้เลยครับ','Menu library & custom menus:\n1) Tap the "Food" tab → pick the "Menu library" view.\n2) Type a name in search — 4,500+ menus & ingredients with nutrition.\n3) Tap a menu to see calories/protein, then add it to a meal.\n4) Can\'t find it? Tap "Add my own menu" to name it + enter nutrition, or let AI break down the ingredients + nutrition for you.\nTip: I can also build menus from what\'s in your fridge — just say "make a menu from my ingredients".'),
     actions:[{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] },
   { id:'how_to_missions', cat:'app_help', kw:['ภารกิจ','mission','challenge','ตราสะสม','badge','collection','พิเศษ','special','กรอบ','frame','ความสำเร็จ','milestone','คะแนน','points','fit points','ลีดเดอร์บอร์ด','leaderboard'],
     title:L('ความสำเร็จ · ภารกิจ · คะแนน FIT','Milestones, missions & FIT Points'),
@@ -849,7 +883,7 @@ var KNOWLEDGE = [
     actions:[{label:L('เปิดโหมดโค้ช','Open Coach'),action:'go_coach'}] },
   { id:'coach_send_plan', cat:'app_help', kw:['ส่งแผน','ส่งตาราง','send plan','assign plan'],
     title:L('โค้ช: ส่งแผนให้ลูกเทรน','Coach: send a plan'),
-    answer:L('โค้ชเปิดแท็บลูกเทรน เลือกลูกเทรน ตั้งแผนอาหาร/ท่าฝึก/เป้าหมาย แล้วกดส่งแผน (ลูกเทรนต้องสแกน QR โค้ชก่อน)','Coaches open Clients, pick a client, set meal/workout/goal, then send (client must scan your Coach QR first).'),
+    answer:L('ส่งแผนให้ลูกเทรน (โหมดโค้ช):\n1) เปิดแท็บ "ลูกเทรน" แล้วแตะชื่อคนที่ต้องการ\n2) ตั้งแผนในหน้าของเขา — แผนอาหาร / ตารางฝึก / เป้าหมาย (แคล-มาโคร)\n3) ตรวจให้เรียบร้อยแล้วกดส่งแผน — ลูกเทรนจะได้รับและเปิดดูที่แท็บโค้ชของเขา\n💡 ลูกเทรนต้องสแกน QR โค้ชของคุณก่อน ถึงจะส่งถึงเครื่องเขาได้ · ให้ผมช่วยร่างก่อนก็ได้ พิมพ์ "ร่างเมนูให้ลูกเทรน" หรือ "ร่างโปรแกรมฝึก"','Send a plan to a client (coach mode):\n1) Open the "Clients" tab and tap the client\'s name.\n2) Set up their plan — meals / workout schedule / targets (cal & macros).\n3) Review, then send — the client receives it in their Coach tab.\nNote: the client must scan your Coach QR first. I can draft it for you too — say "draft a client menu" or "draft a workout".'),
     actions:[{label:L('เปิดลูกเทรน','Open Clients'),action:'go_clients'}] },
   { id:'coach_course', cat:'app_help', kw:['คอร์ส','นับครั้ง','คอร์สเทรน','session pack','course','count sessions','กี่ครั้ง'],
     title:L('โค้ช: คอร์สนับครั้ง','Coach: training course'),
@@ -866,7 +900,7 @@ var KNOWLEDGE = [
   { id:'how_to_log_food', cat:'app_help', kw:['บันทึกอาหาร','เพิ่มอาหาร','ลงอาหาร','จดอาหาร','บันทึกมื้อ','สอนบันทึกอาหาร','จำนวนจาน','ปรับปริมาณ','กี่จาน','ปรับจาน','ครึ่งจาน','จานใหญ่','ปริมาณที่กิน','log food','add food','food log','record food','portion','servings'],
     title:L('วิธีบันทึกอาหาร','How to log food'),
     answer:L('บันทึกอาหารที่กินไปแล้ว (อยู่แท็บ "วันนี้"):\n1) ที่มื้อที่ต้องการ (เช้า/กลางวัน/เย็น/ว่าง) กดปุ่ม "+ บันทึก"\n2) หาเมนูได้ 3 ทาง:\n   • ค้นจาก "คลังเมนู" แล้วแตะเมนู = เพิ่มเข้ารายการทันที\n   • กรอกวัตถุดิบ + กรัม เอง แล้วกดปุ่ม ➕\n   • กดปุ่ม ✨ ให้ AI แตกวัตถุดิบ+โภชนาการให้\n3) ปรับปริมาณที่กิน 2 แบบ:\n   • ตามจาน → เลือก "ครึ่งจาน / จานใหญ่ / จำนวนชิ้น"\n   • ตามวัตถุดิบ → แตะรายการที่เพิ่ม แล้วแก้กรัมของวัตถุดิบนั้น\n4) ครบแล้วกด "บันทึก" — แคล/โปรตีนรวมเข้ามื้อ และแถบเทียบเป้าด้านบนอัปเดตเอง','Log food you ate (Today tab): 1) On a meal tap "+ Log". 2) Find it: search "Menu library" (tap to add), or type ingredients+grams and tap ➕, or tap ✨ for AI. 3) Adjust amount 2 ways — by plate ("half/large/pieces") or by ingredient (tap an added item to edit grams). 4) Tap "Save".'),
-    actions:[{label:L('เปิดวันนี้','Open Today'),action:'go_today'},{label:L('📋 สอนใช้ตารางอาหารด้วย','Teach meal plan too'),action:'_chip',payload:{q:L('สอนใช้ตารางอาหาร','how to use meal plan')}}] },
+    actions:[{label:L('เปิดวันนี้','Open Today'),action:'go_today'},{label:L('สอนใช้ตารางอาหารด้วย','Teach meal plan too'),icon:LIC.note,action:'_chip',payload:{q:L('สอนใช้ตารางอาหาร','how to use meal plan')}}] },
   { id:'how_to_join_group', cat:'app_help', kw:['เข้ากลุ่ม','qr','สแกน','join group','scan'],
     title:L('วิธีเข้าเป็นลูกเทรน','How to join a coach'),
     answer:L('เข้าเป็นลูกเทรนของโค้ช:\n1) ขอ QR โค้ด จากโค้ชของคุณ\n2) แตะแท็บ "โค้ช" แล้วสแกน QR (อ่าน QR จากรูปในเครื่องก็ได้)\n3) หน้าคำเชิญจะโชว์โปรไฟล์โค้ช (ชื่อ/รูป/ความเชี่ยวชาญ) — ติ๊กยินยอมให้โค้ชดูข้อมูลสุขภาพ\n4) กดยืนยันเข้าร่วม จากนั้นรับแผนและส่งการบ้านได้','Scanning your coach QR shows an invite screen with the coach profile (name/photo/expertise); tick consent to let the coach view your health data, then confirm — after that you can receive plans and send homework.'),
@@ -878,7 +912,7 @@ var KNOWLEDGE = [
   { id:'how_to_workout_plan', cat:'app_help', kw:['ตารางฝึก','ตารางท่าฝึก','ดูตารางฝึก','คลังท่า','จัดตารางฝึก','ทำตารางฝึก','วางแผนฝึก','สอนตารางฝึก','สอนใช้ตารางฝึก','workout schedule','workout plan'],
     title:L('วิธีใช้ตารางฝึก','How to use the workout plan'),
     answer:L('แท็บ "ท่าฝึก" มี 2 ส่วนด้านบน: 📋 "ตารางฝึก" (แผนรายวัน) และ 📚 "คลังท่า"\nจัดตาราง + เพิ่มท่า:\n1) เข้า "ตารางฝึก" — ชื่อวันตัวใหญ่อยู่ด้านบน มีปุ่ม "＋ เพิ่มท่า" อยู่ทางขวาของชื่อวัน\n2) กด "＋ เพิ่มท่า" → คลังท่าเด้งขึ้น พิมพ์ที่ช่อง "ค้นหาท่า..." หรือเลือกตามหมวด · ไม่มีก็ "เพิ่มด่วน" ได้\n3) ที่แต่ละท่า: แตะ ✏️ แก้ "น้ำหนัก × ครั้ง × เซ็ต" · แตะ ▶ ดูวิดีโอสอน · แตะกากบาทเพื่อลบ\n4) ติ๊กช่องหน้าท่าที่เล่นจริง แล้วกด "บันทึกลงวันนี้" ด้านล่างการ์ด — เฉพาะท่าที่ติ๊กจะเข้าหน้าวันนี้ (แก้ น้ำหนัก/ครั้ง/เซ็ต ได้ที่หน้าแรก)','The "Workout" tab has 2 parts: "Schedule" (daily plan) and "Move library". 1) Open "Schedule" — the day name is large at the top with a "＋ Add move" button to its right. 2) Tap it → the library opens; search or pick a category (or quick-add). 3) Per move: tap ✏️ to edit weight × reps × sets, ▶ for a video, ✕ to remove. 4) Tick the boxes next to the moves you actually did, then tap "Log today" below the card — only ticked moves are logged (edit weight/reps/sets on the home page).'),
-    actions:[{label:L('เปิดตารางฝึก','Open Workout'),action:'go_workout'},{label:L('🗓️ จัดตารางฝึกให้เลย','Build my plan'),action:'_chip',payload:{q:L('จัดตารางฝึกให้หน่อย','build a workout plan')}}] },
+    actions:[{label:L('เปิดตารางฝึก','Open Workout'),action:'go_workout'},{label:L('จัดตารางฝึกให้เลย','Build my plan'),icon:LIC.calendar,action:'_chip',payload:{q:L('จัดตารางฝึกให้หน่อย','build a workout plan')}}] },
   { id:'how_to_formcheck', cat:'app_help', kw:['เช็กฟอร์ม','ส่งคลิป','อัดวิดีโอ','คลิปท่า','ฟอร์ม','form check','check form','send clip','video form'],
     title:L('ส่งคลิปให้โค้ชเช็กฟอร์ม','Send a clip for form check'),
     answer:L('ส่งคลิปหรือรูปท่าฝึกให้โค้ชทางแชทได้เลย — เปิดแชทกับโค้ช แล้วกดปุ่มรูปข้างช่องพิมพ์ โค้ชเปิดดูแล้วให้ฟีดแบ็กกลับได้ (คลิปลบอัตโนมัติใน 24 ชม.)','Send a clip or photo of your form to your coach in chat — open the coach chat and tap the image button next to the input; your coach views it and replies with feedback (clips auto-delete in 24h).'),
@@ -912,11 +946,11 @@ var KNOWLEDGE = [
     title:L('สร้างการ์ดผลลัพธ์','Create a result card'),
     answer:L('กดปุ่มด้านล่างเพื่อเปิดตัวสร้างการ์ดผลลัพธ์ได้เลย เลือกแบบการ์ด ใส่รูป/ข้อมูล แล้วบันทึกหรือแชร์','Tap below to open the result card builder — pick a template, add photo/data, then save or share.'),
     actions:[{label:L('สร้างการ์ดผลลัพธ์','Create result card'),action:'open_result_card'},{label:L('เปิดผลลัพธ์','Open Results'),action:'go_result'}] },
-  { id:'how_to_make_recipe', cat:'app_help', kw:['สร้างเมนูเอง','เพิ่มเมนู','custom recipe','create menu'], title:L('สร้างเมนูเอง','Create your own menu'), answer:L('หน้าอาหาร > เพิ่มเมนู ใส่ชื่อและวัตถุดิบจากคลัง ระบบคำนวณแคลให้ หรือให้ IU Mate สร้างจากวัตถุดิบที่มีก็ได้','On Food > add menu, enter a name and pick ingredients — calories are auto-calculated. Or let IU Mate build one from your ingredients.'), actions:[{label:L('สร้างจากของที่มี','From ingredients'),action:'open_ingredient_picker'}] },
-  { id:'how_to_food_library', cat:'app_help', kw:['คลังเมนู','ค้นเมนู','food library','search menu'], title:L('ใช้คลังเมนู','Using the food library'), answer:L('หน้าอาหาร แตะช่องค้นหาแล้วพิมพ์ชื่อเมนู คลังมี 4,500+ เมนูพร้อมค่าโภชนาการ เลือกแล้วกดบันทึกลงมื้อ','On Food, tap search and type a menu name — 4,500+ menus with nutrition. Pick one and save it to a meal.'), actions:[{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] },
-  { id:'how_to_see_plan', cat:'app_help', kw:['ดูแผน','แผนจากโค้ช','my plan','coach plan'], title:L('ดูแผนจากโค้ช','See your coach plan'), answer:L('เมื่อโค้ชส่งแผนจะมีแจ้งเตือน เปิดหน้าโค้ชเพื่อดูแผนอาหาร/ฝึก/เป้าหมาย และทำตามได้เลย','When your coach sends a plan you get a notification — open the Coach page to view meal/workout/goal plans and follow them.'), actions:[{label:L('เปิดหน้าโค้ช','Open Coach'),action:'go_coach'}] },
-  { id:'how_to_submit_hw', cat:'app_help', kw:['ส่งการบ้าน','submit homework','send homework'], title:L('ส่งการบ้านให้โค้ช','Send homework to coach'), answer:L('บันทึกอาหาร/การฝึก/สัดส่วนตามปกติ ระบบจะส่งให้โค้ชเห็นในแท็บการบ้านของโค้ชอัตโนมัติ','Just log your food/workout/measurements as usual — it shows up in your coach Homework tab automatically.') },
-  { id:'iu_mate_privacy', cat:'app_help', kw:['ความเป็นส่วนตัว','privacy','เก็บข้อมูล','ข้อมูลปลอดภัย'], title:L('ความเป็นส่วนตัวของ IU Mate','IU Mate privacy'), answer:L('IU Mate ทำงานในเครื่อง บทสนทนาไม่ถูกบันทึกหรือส่งออกนอกเครื่อง และอ่านข้อมูลในแอปเพื่อช่วยสรุปเท่านั้น เพิกถอนความยินยอมได้ที่ปุ่ม 🔒','IU Mate runs on-device — conversations are not saved or sent, and it only reads in-app data to summarize. Withdraw consent via the 🔒 button.'), actions:[{label:L('ดูความเป็นส่วนตัว','View privacy'),action:'show_privacy'}] },
+  { id:'how_to_make_recipe', cat:'app_help', kw:['สร้างเมนูเอง','เพิ่มเมนู','custom recipe','create menu'], title:L('สร้างเมนูเอง','Create your own menu'), answer:L('สร้างเมนูของตัวเอง:\n1) แตะแท็บ "อาหาร" → "คลังเมนู"\n2) กด "เพิ่มเมนูเอง" แล้วตั้งชื่อเมนู\n3) ใส่วัตถุดิบ + จำนวนกรัมจากคลัง — ระบบคำนวณแคล/มาโครให้อัตโนมัติ\n4) กดบันทึก เมนูจะอยู่ในคลังให้เลือกลงมื้อได้ตลอด\n💡 หรือบอกผมว่ามีวัตถุดิบอะไรอยู่บ้าง เดี๋ยวผมจัดเมนูให้เลยครับ','Create your own menu:\n1) Tap the "Food" tab → "Menu library".\n2) Tap "Add my own menu" and name it.\n3) Add ingredients + grams from the library — calories/macros are calculated automatically.\n4) Save — it stays in your library to add to any meal.\nTip: or tell me what ingredients you have and I\'ll build menus for you.'), actions:[{label:L('สร้างจากของที่มี','From ingredients'),icon:LIC.basket,action:'open_ingredient_picker'}] },
+  { id:'how_to_food_library', cat:'app_help', kw:['คลังเมนู','ค้นเมนู','food library','search menu'], title:L('ใช้คลังเมนู','Using the food library'), answer:L('ใช้คลังเมนู:\n1) แตะแท็บ "อาหาร" → เลือกมุมมอง "คลังเมนู"\n2) แตะช่องค้นหาแล้วพิมพ์ชื่อเมนูหรือวัตถุดิบ (มี 4,500+ รายการ)\n3) แตะเมนูเพื่อดูแคล/โปรตีน/ไขมัน/คาร์บ\n4) กดเพิ่มเข้ามื้อ หรือบันทึกลงวันนี้ได้เลยครับ','Using the menu library:\n1) Tap the "Food" tab → pick the "Menu library" view.\n2) Tap search and type a menu or ingredient name (4,500+ items).\n3) Tap a menu to see cal/protein/fat/carb.\n4) Add it to a meal or log it to today right away.'), actions:[{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'}] },
+  { id:'how_to_see_plan', cat:'app_help', kw:['ดูแผน','แผนจากโค้ช','my plan','coach plan'], title:L('ดูแผนจากโค้ช','See your coach plan'), answer:L('ดูแผนที่โค้ชส่งมา:\n1) เมื่อโค้ชส่งแผน จะมีแจ้งเตือนในแอป\n2) แตะแท็บ "โค้ช" — แผนอาหาร / ตารางฝึก / เป้าหมายที่โค้ชส่งจะอยู่ที่นี่\n3) ทำตามแผนแล้วบันทึกอาหาร/การฝึกตามปกติ — ระบบจะส่งเป็นการบ้านให้โค้ชเห็นความคืบหน้าของคุณเองครับ','See the plan your coach sent:\n1) You get an in-app notification when a plan arrives.\n2) Tap the "Coach" tab — meal / workout / goal plans from your coach live here.\n3) Follow the plan and log food/workouts as usual — it\'s sent to your coach as homework automatically.'), actions:[{label:L('เปิดหน้าโค้ช','Open Coach'),action:'go_coach'}] },
+  { id:'how_to_submit_hw', cat:'app_help', kw:['ส่งการบ้าน','submit homework','send homework'], title:L('ส่งการบ้านให้โค้ช','Send homework to coach'), answer:L('ส่งการบ้านให้โค้ช — ไม่ต้องส่งเองเลยครับ:\n1) บันทึกอาหาร / การฝึก / น้ำหนัก-สัดส่วน / น้ำดื่ม ตามปกติในแอป\n2) ทุกรายการจะไปโผล่ที่แท็บ "การบ้าน" ฝั่งโค้ชโดยอัตโนมัติ\n3) โค้ชตรวจแล้วส่งฟีดแบ็กกลับมาให้คุณ\n💡 แค่บันทึกครบทุกวัน = ส่งการบ้านเรียบร้อยแล้ว','Sending homework — nothing extra to do:\n1) Log your food / workouts / weight & measurements / water as usual.\n2) Everything shows up automatically in your coach\'s "Homework" tab.\n3) Your coach reviews it and sends feedback back.\nTip: logging every day = homework done.') },
+  { id:'iu_mate_privacy', cat:'app_help', kw:['ความเป็นส่วนตัว','privacy','เก็บข้อมูล','ข้อมูลปลอดภัย'], title:L('ความเป็นส่วนตัวของ IU Mate','IU Mate privacy'), answer:L('IU Mate ทำงานในเครื่อง บทสนทนาไม่ถูกบันทึกหรือส่งออกนอกเครื่อง และอ่านข้อมูลในแอปเพื่อช่วยสรุปเท่านั้น เพิกถอนความยินยอมได้ที่ปุ่มรูปแม่กุญแจด้านบนของหน้าต่างนี้','IU Mate runs on-device — conversations are not saved or sent, and it only reads in-app data to summarize. Withdraw consent via the padlock button at the top of this window.'), actions:[{label:L('ดูความเป็นส่วนตัว','View privacy'),action:'show_privacy'}] },
   { id:'calorie_control', cat:'nutrition', kw:['คุมแคล','พลังงาน','calorie','deficit'], title:L('หลักการคุมแคลอรี','Calorie control basics'), answer:L('ลดไขมัน = ใช้พลังงานมากกว่ากินเล็กน้อยอย่างสม่ำเสมอ เน้นโปรตีนพอ ผักเยอะ คุมของทอด/น้ำตาล ไม่ต้องอดจนทรมาน','Fat loss = a small consistent calorie deficit. Keep protein adequate, veg high, limit fried food/sugar — no need to starve.'), actions:[{label:L('ดูสรุปวันนี้','Today summary'),action:'today_summary'}] },
   { id:'carb_timing', cat:'nutrition', kw:['คาร์บตอนไหน','กินคาร์บ','carb timing','คาร์บ'], title:L('คาร์บควรกินตอนไหน','When to eat carbs'), answer:L('กระจายคาร์บได้ทั้งวัน แต่ช่วงก่อน/หลังออกกำลังกายจะใช้พลังงานดี เลือกคาร์บเชิงซ้อน เช่น ข้าวกล้อง มันหวาน โอ๊ต','Spread carbs through the day, but around workouts they are used well. Prefer complex carbs like brown rice, sweet potato, oats.') },
   { id:'healthy_fat', cat:'nutrition', kw:['ไขมันดี','healthy fat','ไขมัน'], title:L('ไขมันดีคืออะไร','What are healthy fats'), answer:L('ไขมันดีมาจากอะโวคาโด ถั่ว งา ปลา น้ำมันมะกอก ช่วยฮอร์โมนและความอิ่ม กินพอดี ไม่ต้องกลัวไขมัน แต่คุมปริมาณ','Healthy fats come from avocado, nuts, seeds, fish, olive oil — good for hormones and satiety. Do not fear fat, just watch portions.') },
@@ -930,13 +964,13 @@ var KNOWLEDGE = [
   { id:'weight_stall', cat:'coach', kw:['น้ำหนักไม่ลง','ตันน้ำหนัก','weight stall','plateau'], title:L('ลูกเทรนน้ำหนักไม่ลงดูอะไร','Client weight not dropping'), answer:L('เช็กความสม่ำเสมอของการบันทึก ปริมาณจริงที่กิน การนอน ความเครียด และน้ำ บางครั้งรอบเอวลดแม้น้ำหนักนิ่ง ใช้หลายตัวชี้วัด','Check logging consistency, true intake, sleep, stress and water. Sometimes waist drops even when weight stalls — use multiple metrics.') },
   { id:'quiet_group', cat:'coach', kw:['กลุ่มเงียบ','กระตุ้นกลุ่ม','quiet group','group engagement'], title:L('กลุ่มเงียบควรทำอะไร','Re-engaging a quiet group'), answer:L('ตั้งภารกิจกลุ่มสั้น ๆ ที่ทำง่าย ชวนแชร์ผลรายสัปดาห์ หรือถามคำถามเปิดในแชทกลุ่ม สร้างจังหวะให้คนกลับมามีส่วนร่วม','Set a short easy group mission, invite weekly result sharing, or ask an open question in group chat to bring people back.'), actions:[{label:L('สร้างภารกิจกลุ่ม','New mission'),action:'go_missions'}] },
   { id:'when_followup', cat:'coach', kw:['ติดตามเมื่อไร','ควรทักเมื่อไหร่','when to follow up'], title:L('ควรติดตามลูกเทรนเมื่อไร','When to follow up'), answer:L('ทักเมื่อขาดบันทึก 2-3 วัน หรือมีการบ้านค้าง ใช้ข้อความสั้น ให้กำลังใจ และถามแบบตอบง่าย อย่ารอจนหลุดแผนไปไกล','Reach out after 2-3 missed log days or pending homework. Keep it short, encouraging and easy to answer — do not wait until they have fully dropped off.'), actions:[{label:L('สร้างข้อความติดตาม','Draft follow-up'),action:'create_followup_message'}] },
-   { id:'how_to_log_water', cat:'app_help', kw:['บันทึกน้ำดื่ม','ดื่มน้ำ','เพิ่มน้ำ','log water','track water','add water'], title:L('วิธีบันทึกน้ำดื่ม','How to log water'), answer:L('หน้าวันนี้มีแก้วน้ำ แตะเพื่อเพิ่ม/ลดทีละแก้ว (1 แก้ว = 250 มล. เป้า 10 แก้ว/วัน)','On Today there are water glasses — tap to add or remove one glass (1 glass = 250 ml, goal 10/day).'), actions:[{label:L('เปิดหน้าวันนี้','Open Today'),action:'go_today'}] },
-   { id:'how_to_log_weight', cat:'app_help', kw:['บันทึกน้ำหนัก','ลงน้ำหนัก','วัดสัดส่วน','รอบเอว','log weight','body measurement'], title:L('วิธีบันทึกน้ำหนัก/สัดส่วน','How to log weight'), answer:L('หน้าแรก (วันนี้) กดทางลัด บันทึกร่างกาย ใส่น้ำหนัก รอบเอว หรือ % ไขมัน แล้วดูกราฟความคืบหน้าในหน้าผลลัพธ์','On the Today page, tap the Log body shortcut to add weight, waist or body fat, then see your progress chart on Results.'), actions:[{label:L('ไปหน้าวันนี้','Open Today'),action:'go_today'}] },
-   { id:'how_to_share_result', cat:'app_help', kw:['แชร์ผลลัพธ์','การ์ดผลลัพธ์','result card','share progress'], title:L('วิธีสร้างการ์ดผลลัพธ์','Make a result card'), answer:L('หน้าผลลัพธ์มีปุ่มสร้างการ์ด เลือกวันและเทมเพลต แล้วบันทึกรูปไปแชร์ได้เลย','On Results, tap create card, pick a date and template, then save the image to share.'), actions:[{label:L('สร้างการ์ดผลลัพธ์','Create result card'),action:'open_result_card'}] },
+   { id:'how_to_log_water', cat:'app_help', kw:['บันทึกน้ำดื่ม','ดื่มน้ำ','เพิ่มน้ำ','log water','track water','add water'], title:L('วิธีบันทึกน้ำดื่ม','How to log water'), answer:L('บันทึกน้ำดื่ม:\n1) เปิดหน้า "วันนี้"\n2) ที่การ์ดน้ำดื่ม แตะแก้วเพื่อเพิ่ม/ลดทีละแก้ว (1 แก้ว = 250 มล.)\n3) ดื่มให้ถึงเป้า 8–10 แก้ว/วัน หลอดจะเต็มขึ้นเรื่อย ๆ ครับ','Log water:\n1) Open "Today".\n2) On the water card, tap a glass to add or remove one (1 glass = 250 ml).\n3) Aim for 8–10 glasses/day — the bar fills as you go.'), actions:[{label:L('เปิดหน้าวันนี้','Open Today'),action:'go_today'}] },
+   { id:'how_to_log_weight', cat:'app_help', kw:['บันทึกน้ำหนัก','ลงน้ำหนัก','วัดสัดส่วน','รอบเอว','log weight','body measurement'], title:L('วิธีบันทึกน้ำหนัก/สัดส่วน','How to log weight'), answer:L('บันทึกน้ำหนัก/สัดส่วน:\n1) เปิดหน้าแรก "วันนี้" กดทางลัด "บันทึกร่างกาย"\n2) ใส่น้ำหนัก รอบเอว หรือ % ไขมัน (ใส่เท่าที่มีได้)\n3) กดบันทึก แล้วดูกราฟความคืบหน้าที่หน้า "ผลลัพธ์"\n💡 ชั่งเวลาเดิมทุกวันจะเห็นแนวโน้มแม่นสุดครับ','Log weight & measurements:\n1) On "Today", tap the "Log body" shortcut.\n2) Enter weight, waist or body fat % (only what you have).\n3) Save, then see your progress charts on "Results".\nTip: weigh at the same time daily for the truest trend.'), actions:[{label:L('ไปหน้าวันนี้','Open Today'),action:'go_today'}] },
+   { id:'how_to_share_result', cat:'app_help', kw:['แชร์ผลลัพธ์','การ์ดผลลัพธ์','result card','share progress'], title:L('วิธีสร้างการ์ดผลลัพธ์','Make a result card'), answer:L('สร้างการ์ดผลลัพธ์ไว้อวดความคืบหน้า:\n1) เปิดแท็บ "ผลลัพธ์" แล้วกดปุ่ม "สร้างการ์ด"\n2) เลือกวันที่และเทมเพลตการ์ดที่ชอบ\n3) ใส่รูป/ข้อมูลที่อยากโชว์\n4) บันทึกรูปแล้วแชร์ลงโซเชียล หรือส่งให้โค้ช/เพื่อนได้เลยครับ','Make a result card to show off your progress:\n1) Open the "Results" tab and tap "Create card".\n2) Pick a date and a template you like.\n3) Add the photo/data you want to show.\n4) Save the image and share it to social or send it to your coach/friends.'), actions:[{label:L('สร้างการ์ดผลลัพธ์','Create result card'),action:'open_result_card'}] },
    { id:'change_language', cat:'app_help', kw:['เปลี่ยนภาษา','ภาษาอังกฤษ','english','switch language'], title:L('เปลี่ยนภาษา','Change language'), answer:L('ไปที่ตั้งค่า แล้วเลือกภาษาไทยหรืออังกฤษ ทั้งแอปจะเปลี่ยนตาม','Go to Settings and choose Thai or English — the whole app switches.') },
    { id:'install_app', cat:'app_help', kw:['ติดตั้งแอป','ลงหน้าจอ','add to home','install','ออฟไลน์','offline'], title:L('ติดตั้งลงหน้าจอ','Install to home screen'), answer:L('เปิดเมนูเบราว์เซอร์แล้วเลือกเพิ่มลงหน้าจอหลัก จะใช้แบบเต็มจอและออฟไลน์ได้','Open the browser menu and choose Add to Home Screen — it runs full-screen and works offline.') },
    { id:'backup_restore', cat:'app_help', kw:['สำรองข้อมูล','กู้คืน','backup','restore','ย้ายเครื่อง'], title:L('สำรอง/กู้คืนข้อมูล','Backup and restore'), answer:L('ในตั้งค่ามีสำรองข้อมูลในเครื่องอัตโนมัติรายวัน และเมื่อยืนยันอีเมลจะสำรอง/กู้คืนบนคลาวด์อัตโนมัติ เพื่อย้ายเครื่องได้','Settings has automatic daily local backup, plus email cloud backup/restore so you can move devices.') },
-   { id:'set_goal', cat:'app_help', kw:['ตั้งเป้าหมาย','เปลี่ยนเป้า','set goal','change goal'], title:L('ตั้ง/เปลี่ยนเป้าหมาย','Set or change goal'), answer:L('แก้เป้าหมาย (ลดไขมัน คงไว้ หรือเพิ่มกล้าม) ในโปรไฟล์ แอปจะปรับเป้าแคลและมาโครให้อัตโนมัติ','Change your goal (fat loss, maintain, or muscle gain) in your profile — calorie and macro targets update automatically.'), actions:[{label:L('คำนวณแคล/มาโคร','Calorie & macros'),action:'open_calc'}] },
+   { id:'set_goal', cat:'app_help', kw:['ตั้งเป้าหมาย','เปลี่ยนเป้า','set goal','change goal'], title:L('ตั้ง/เปลี่ยนเป้าหมาย','Set or change goal'), answer:L('เปลี่ยนเป้าหมาย:\n1) ไปที่ ตั้งค่า → โปรไฟล์ของฉัน\n2) เลือกเป้าหมายใหม่ — ลดไขมัน / รักษาน้ำหนัก / เพิ่มกล้าม\n3) บันทึก — เป้าแคลและมาโครทั้งแอปจะปรับให้อัตโนมัติครับ\n💡 อยากรู้ตัวเลขก่อน กดคำนวณแคล/มาโครด้านล่างได้เลย','Change your goal:\n1) Go to Settings → My profile.\n2) Pick a new goal — fat loss / maintain / muscle gain.\n3) Save — calorie and macro targets across the app update automatically.\nTip: tap Calorie & macros below to see your numbers first.'), actions:[{label:L('คำนวณแคล/มาโคร','Calorie & macros'),action:'open_calc'}] },
    { id:'about_iu_mate', cat:'app_help', kw:['iu mate คือ','คุณคือใคร','ผู้ช่วยคือ','who are you','what can you do','ช่วยอะไรได้'], title:L('IU Mate ช่วยอะไรได้บ้าง','What IU Mate can do'), answer:L('ผมเป็นผู้ช่วยในแอป ช่วยสรุปวันนี้ แนะนำเมนู คำนวณแคล/มาโคร หาสถานที่ออกกำลังกาย ดูผลลัพธ์ และพาใช้งานแอปได้เร็วขึ้น','I am your in-app helper — I summarize your day, suggest menus, calculate calories/macros, find places to work out, review results, and help you use the app faster.') },
    { id:'carbs_basic', cat:'nutrition', kw:['คาร์บ','กินคาร์บ','แป้ง','carbs','carbohydrate'], title:L('คาร์โบไฮเดรตควรกินยังไง','Carbs basics'), answer:L('คาร์บเป็นพลังงานหลัก เน้นเชิงซ้อน เช่น ข้าวกล้อง ธัญพืช ผลไม้ ผัก ปรับปริมาณตามกิจกรรมและเป้าหมาย','Carbs are your main energy. Favor complex sources like brown rice, grains, fruit and veg, and adjust the amount to your activity and goal.'), actions:[{label:L('แนะนำเมนู','Menu ideas'),action:'food_recommend'}] },
    { id:'fat_basic', cat:'nutrition', kw:['ไขมันดี','กินไขมัน','fat','healthy fat'], title:L('ไขมันดีคืออะไร','Healthy fats'), answer:L('ไขมันดีจากปลา ถั่ว อะโวคาโด น้ำมันมะกอก จำเป็นต่อฮอร์โมนและการดูดซึม ราว 20-30% ของพลังงานต่อวัน','Healthy fats from fish, nuts, avocado and olive oil support hormones and absorption — about 20-30% of daily energy.') },
@@ -981,7 +1015,7 @@ var KNOWLEDGE = [
   { id:'bro_split', cat:'workout', kw:['bro split','โบรสปลิต','โบรสปลิท','วันละส่วน','เล่นวันละกล้าม','อกวันจันทร์'],
     title:L('Bro split — วันละส่วน','Bro split'),
     answer:L('เหมาะกับ: สายเพาะกาย/คนที่ชอบปั๊มทีละกล้าม ฝึกได้ 5 วัน/สัปดาห์สม่ำเสมอ เช่น จ=อก อ=หลัง พ=ไหล่ พฤ=แขน ศ=ขา\nข้อดี: โฟกัสสุดทางทีละส่วน · ความล้ารวมต่อวันต่ำ · สนุก เห็นปั๊มชัด\nข้อเสีย: แต่ละกล้ามถูกฝึกแค่ 1 ครั้ง/สัปดาห์ — งานวิจัยส่วนใหญ่ชี้ว่า 2 ครั้ง/สัปดาห์โตดีกว่าสำหรับคนทั่วไป · พลาดวันเดียว = ส่วนนั้นหายทั้งสัปดาห์ · ไม่แนะนำมือใหม่ (เริ่มจาก Full Body หรือ Upper/Lower ก่อนดีกว่า) · ตอนนี้ตัวจัดตารางของผมรองรับ Full Body / Upper-Lower / PPL ถ้าอยากลอง bro split แนะนำให้เทรนเนอร์ช่วยจัดครับ','Best for: bodybuilding-style lifters who reliably train 5 days/week, e.g. Mon=chest, Tue=back, Wed=shoulders, Thu=arms, Fri=legs\nPros: maximum focus per part · low daily fatigue · fun, big pump\nCons: each muscle only 1×/week — research favors 2×/week for most people · miss a day and that part is skipped all week · not recommended for beginners (start Full Body or Upper/Lower). My generator covers Full Body / Upper-Lower / PPL — for a bro split, a trainer can build it for you.'),
-    actions:[{label:L('🤝 หาเทรนเนอร์','🤝 Find a trainer'),action:'find_trainer'}] },
+    actions:[{label:L('หาเทรนเนอร์','Find a trainer'),icon:LIC.userCheck,action:'find_trainer'}] },
   { id:'reps_goal', cat:'workout', kw:['กี่เซ็ตกี่ครั้ง','reps','เซ็ต','ครั้ง','strength hypertrophy'], title:L('เซ็ตและครั้งตามเป้าหมาย','Reps and sets by goal'), answer:L('แรง 3-6 ครั้งหนัก กล้ามโต 8-12 ครั้ง ความทน 15 ครั้งขึ้นไป พัก 1-3 นาที สิ่งสำคัญสุดคือเพิ่มน้ำหนักหรือจำนวนขึ้นเรื่อย ๆ','Strength 3-6 heavy reps, muscle growth 8-12 reps, endurance 15+ reps, rest 1-3 minutes. The key is progressively adding weight or reps over time.') },
   { id:'train_sick_injured', cat:'workout', kw:['ป่วยเล่นได้ไหม','บาดเจ็บ','เป็นหวัด','train sick','injured'], title:L('ป่วยหรือบาดเจ็บควรเล่นไหม','Training while sick or injured'), answer:L('เป็นหวัดเล็กน้อยแบบเหนือคอเล่นเบา ๆ ได้ แต่ถ้ามีไข้หรือปวดเมื่อยทั้งตัวให้พัก ส่วนบาดเจ็บให้เลี่ยงท่าที่เจ็บแล้วเล่นส่วนอื่นแทน ถ้าเจ็บมากควรปรึกษาแพทย์','Mild above-the-neck cold — light training is okay. Fever or body aches — rest. For an injury, avoid the painful movement and train other areas. See a doctor if pain is significant.') },
   { id:'return_after_break', cat:'workout', kw:['กลับมาเล่น','หยุดนาน','เริ่มใหม่','comeback','detrain'], title:L('กลับมาเล่นหลังหยุดนาน','Returning after a break'), answer:L('หยุดนานกล้ามหายไปบ้างแต่จะกลับมาไวกว่าตอนเริ่มใหม่ เพราะ muscle memory เริ่มที่ 50-70% ของน้ำหนักเดิมแล้วค่อยเพิ่ม อย่าหักโหมในวันแรก','After a long break you lose some muscle but regain it faster thanks to muscle memory. Start around 50-70% of your old weights and build up — do not go all-out on day one.'), actions:[{label:L('เปิดท่าฝึก','Open Workout'),action:'go_workout'}] },
@@ -1030,8 +1064,8 @@ function wplanQuotaUse(){
 }
 function wplanQuotaReply(q){
   var coach=(role()==='coach');
-  var acts=[{label:L('⭐ อัปเกรดแพ็กเกจ','⭐ Upgrade plan'),action:'open_pricing'}];
-  if(!coach) acts.push({label:L('🤝 หาเทรนเนอร์ดูแลเฉพาะตัว','🤝 Find a trainer'),action:'find_trainer'});
+  var acts=[{label:L('อัปเกรดแพ็กเกจ','Upgrade plan'),icon:LIC.star,action:'open_pricing'}];
+  if(!coach) acts.push({label:L('หาเทรนเนอร์ดูแลเฉพาะตัว','Find a trainer'),icon:LIC.userCheck,action:'find_trainer'});
   return { title:L('ครบโควต้าจัดตารางของเดือนนี้แล้ว','Monthly plan quota reached'),
     message:L('แพ็กปัจจุบันสร้างตารางฝึกได้ '+q.lim+' ครั้ง/เดือน และเดือนนี้ใช้ครบแล้วครับ โควต้าจะรีเซ็ตต้นเดือนหน้า\n\nระหว่างนี้ยังถามความรู้การฝึก (เช่น PPL คืออะไร) ขอท่าแทน หรือปรึกษาเรื่องอาหารได้ไม่จำกัด · ถ้าอยากได้แผนเฉพาะตัวที่ปรับตามผลจริง เทรนเนอร์ช่วยดูแลต่อเนื่องได้ครับ','Your current plan allows '+q.lim+' generated programs/month and this month\'s quota is used up — it resets next month.\n\nYou can still ask training questions, get move alternatives and nutrition tips, unlimited. For a plan tailored and adjusted to your real results, a trainer can help.'),
     disclaimer:disclaimer(), actions:acts };
@@ -1593,9 +1627,9 @@ function buildWorkoutPlan(message,inpOverride,limOverride){
  var saveHint=_canSave?L('\n\nกด “บันทึกลงตารางฝึก” เพื่อใส่ลงตารางให้อัตโนมัติ แล้วเข้าไปปรับจำนวนครั้ง/เวลาต่อได้ในหน้าตารางฝึกครับ','\n\nTap “Save to my schedule” to add it automatically — then fine-tune reps/time in the Workout tab.'):'';
  var chips=[];
  var _cl=[]; try{ _cl=(typeof coachClientsList==='function')?coachClientsList():[]; }catch(_e){}
- if(coach&&_cl&&_cl.length&&_LAST_WPLAN&&_LAST_WPLAN.struct&&_LAST_WPLAN.struct.length){ try{window._LAST_COACH_WPLAN={cid:null,name:'',struct:_LAST_WPLAN.struct};}catch(_e){} chips.push({label:L('📅 เพิ่มลงตารางลูกเทรน','📅 Add to a client'),action:'coach_wplan_pick'}); }
- if(_canSave) chips.push({label:L('📅 เพิ่มลงตารางสัปดาห์นี้','📅 Add to my week'),action:'wplan_save',payload:{struct:_LAST_WPLAN.struct}});
- chips.push({label:L('🔄 สร้างตารางใหม่','🔄 Regenerate'),action:'workout_redraft'});
+ if(coach&&_cl&&_cl.length&&_LAST_WPLAN&&_LAST_WPLAN.struct&&_LAST_WPLAN.struct.length){ try{window._LAST_COACH_WPLAN={cid:null,name:'',struct:_LAST_WPLAN.struct};}catch(_e){} chips.push({label:L('เพิ่มลงตารางลูกเทรน','Add to a client'),icon:LIC.calendar,action:'coach_wplan_pick'}); }
+ if(_canSave) chips.push({label:L('เพิ่มลงตารางสัปดาห์นี้','Add to my week'),icon:LIC.calendar,action:'wplan_save',payload:{struct:_LAST_WPLAN.struct}});
+ chips.push({label:L('สร้างตารางใหม่','Regenerate'),icon:LIC.refresh,action:'workout_redraft'});
  chips.push({label:L('ไม่มีอุปกรณ์','No equipment'),action:'_chip',payload:{q:L('จัดตารางฝึกไม่มีอุปกรณ์','workout plan no equipment')}});
  chips.push({label:L('ไปหน้าตารางฝึก','Open plan'),action:'go_workout'});
  return {title:L('ตารางฝึกแนะนำ','Recommended plan'),message:msg,disclaimer:note+quotaLine+saveHint,actions:chips};}
@@ -1841,7 +1875,7 @@ function buildSnackRecommend(message){
     title:L('ของว่าง'+p.lab[0],'Snack for '+p.lab[1]),
     message:msg,
     disclaimer:L('แคลเป็นค่าประมาณ ปรับตามปริมาณจริง และดูแคลที่เหลือของวันด้วยครับ','Calories are estimates — adjust to your portion and your remaining daily calories.'),
-    actions:[{label:L('🍎 เมนูของว่างในคลัง','🍎 Snack menus in library'),action:'recommend_library'},{label:L('บันทึกอาหาร','Log food'),action:'go_food'}] };
+    actions:[{label:L('เมนูของว่างในคลัง','Snack menus in library'),icon:LIC.apple,action:'recommend_library'},{label:L('บันทึกอาหาร','Log food'),action:'go_food'}] };
   if(recs.length){ r.recipes=recs; r.message+='\n\n'+L('เมนูเบา ๆ จากคลังที่เข้ากับตอนนี้:','Light menus from the library that fit right now:'); }
   return r;
 }
@@ -1851,8 +1885,8 @@ function buildFoodRecommend(message){
   return { title:L('อยากได้เมนูแบบไหนดี?','How would you like menus?'),
     message:L('เลือกได้เลยครับ — จะให้จัดจากวัตถุดิบที่คุณมี หรือเลือกจากคลังเมนูสำเร็จก็ได้','Pick one — build from ingredients you have, or choose from the ready menu library:'),
     actions:[
-      {label:L('🧺 สร้างจากวัตถุดิบที่มี','🧺 From my ingredients'),action:'open_ingredient_picker'},
-      {label:L('📋 ใช้เมนูจากคลัง','📋 From the menu library'),action:'recommend_library'}
+      {label:L('สร้างจากวัตถุดิบที่มี','From my ingredients'),icon:LIC.basket,action:'open_ingredient_picker'},
+      {label:L('ใช้เมนูจากคลัง','From the menu library'),icon:LIC.note,action:'recommend_library'}
     ] };
 }
 function _menuSeed(text){var t=(''+text).toLowerCase();var sd={};if(/มื้อเช้า|ตอนเช้า|breakfast/.test(t))sd.meal='เช้า';else if(/กลางวัน|เที่ยง|lunch/.test(t))sd.meal='กลางวัน';else if(/มื้อเย็น|ตอนเย็น|ค่ำ|dinner/.test(t))sd.meal='เย็น';if(/ลดไขมัน|ลดน้ำหนัก|แคลต่ำ|fat ?loss|low.?cal/.test(t))sd.goal='ลดไขมัน';else if(/เพิ่มกล้าม|โปรตีนสูง|muscle|high.?protein/.test(t))sd.goal='เพิ่มกล้าม';return sd;}
@@ -1871,7 +1905,7 @@ function buildLibraryRecommend(opts){opts=opts||{};
 function buildFoodSearch(message){
   var acts=[{label:L('เปิดหน้าอาหาร','Open Food'),action:'go_food'},{label:L('สร้างเมนูจากของที่มี','Make from ingredients'),action:'open_ingredient_picker'}];
   var extra='';
-  if(!_iuHasAI()){ extra='\n\n'+L('หาเมนูที่ต้องการไม่เจอในคลัง? เปิด AI (Gemini) ให้ช่วยสร้างเมนูใหม่ + คำนวณโภชนาการที่ไม่มีในคลังได้ — ตั้งค่าฟรีใน 1 นาที','Cant find your menu in the library? Turn on AI (Gemini) to generate new recipes with nutrition — free 1-min setup.'); acts.push({label:L('⚡ เปิด AI (ใส่ API key)','⚡ Enable AI (API key)'),action:'open_ai_setup'}); }
+  if(!_iuHasAI()){ extra='\n\n'+L('หาเมนูที่ต้องการไม่เจอในคลัง? เปิด AI (Gemini) ให้ช่วยสร้างเมนูใหม่ + คำนวณโภชนาการที่ไม่มีในคลังได้ — ตั้งค่าฟรีใน 1 นาที','Cant find your menu in the library? Turn on AI (Gemini) to generate new recipes with nutrition — free 1-min setup.'); acts.push({label:L('เปิด AI (ใส่ API key)','Enable AI (API key)'),icon:LIC.zap,action:'open_ai_setup'}); }
   return { title:L('ค้นหาเมนู','Search menus'),
     message:L('เปิดหน้าอาหารแล้วพิมพ์ชื่อเมนูในช่องค้นหาได้เลย คลังมีกว่า 4,500 เมนูพร้อมค่าโภชนาการ','Open Food and type a menu name in search — the library has 4,500+ menus with nutrition.')+extra,
     actions:acts };
@@ -2065,7 +2099,7 @@ function buildKnowledge(message){
   var top=hits[0];
   var acts=(top.actions||[]).slice();
   var ta=TOUR_ACT[top.id];
-  if(ta && (typeof window==='undefined'||true)) acts.unshift({label:L('▶️ พาทำทีละขั้น (tutorial)','▶️ Walk me through'),action:ta});
+  if(ta && (typeof window==='undefined'||true)) acts.unshift({label:L('พาทำทีละขั้น (tutorial)','Walk me through'),icon:LIC.play,action:ta});
   return { title:top.title, message:top.answer, actions:acts, more:hits.slice(1).map(function(h){return {title:h.title,answer:h.answer};}) };
 }
 function buildShareText(){
@@ -2102,7 +2136,7 @@ function buildFallback(message){
   } else {
     acts=[{label:L('สรุปวันนี้','Today'),action:'_chip',payload:{q:L('สรุปวันนี้','today summary')}},{label:L('กินอะไรดี','What to eat'),action:'_chip',payload:{q:L('กินอะไรดี','what to eat')}},{label:L('จัดตารางฝึก','Workout'),action:'_chip',payload:{q:L('จัดตารางฝึกให้หน่อย','build a workout plan')}},{label:L('คำนวณแคล','Calorie calc'),action:'open_calc'}];
   }
-  try{ if(typeof _iuHasAI==='function' && !_iuHasAI()){ acts.push({label:L('⚡ เปิด AI ช่วยตอบ','⚡ Enable AI'),action:'open_ai_setup'}); } }catch(e){}
+  try{ if(typeof _iuHasAI==='function' && !_iuHasAI()){ acts.push({label:L('เปิด AI ช่วยตอบ','Enable AI'),icon:LIC.zap,action:'open_ai_setup'}); } }catch(e){}
   return { title:null, message:L('ตอนนี้ IU Mate ยังตอบเรื่องนี้ไม่ได้ตรง ๆ ครับ ลองเลือกด้านล่าง หรือพิมพ์ให้เจาะจงขึ้นอีกนิด — ผมช่วยได้เรื่อง สรุปวันนี้ แนะนำเมนู จัดตารางฝึก คำนวณแคล/มาโคร ดูผลลัพธ์ และงานของโค้ช','I can\'t answer that directly yet — pick an option below or add a bit more detail. I can help with: today summary, menu ideas, workout plans, calorie/macro calc, results, and coach tasks.'),
     actions: acts };
 }
@@ -2111,11 +2145,11 @@ function buildFallback(message){
 function rankChips(list){ try{ return list.slice().sort(function(a,b){ return statCount('chip:'+b[0]) - statCount('chip:'+a[0]); }); }catch(e){ return list; } }
 function quickChips(){
   var list=(role()==='coach')?[
-    [L('สรุปลูกเทรน','Clients to follow'),'👥'],[L('สรุปการบ้าน','Homework'),'📥'],[L('เขียน feedback','Write feedback'),'✍️'],
-    [L('ร่างเมนูให้ลูกเทรน','Draft a client menu'),'🍽️'],[L('ร่างโปรแกรมฝึก','Draft a workout'),'🏋️'],[L('สรุปกลุ่ม','Groups'),'🏷️'],[L('คนที่ต้องติดตาม','Who to follow up'),'🔔'],[L('ข้อความสำเร็จรูป','Message templates'),'💬']
+    [L('สรุปลูกเทรน','Clients to follow'),LIC.users],[L('สรุปการบ้าน','Homework'),LIC.inbox],[L('เขียน feedback','Write feedback'),LIC.pencil],
+    [L('ร่างเมนูให้ลูกเทรน','Draft a client menu'),LIC.utensils],[L('ร่างโปรแกรมฝึก','Draft a workout'),LIC.dumbbell],[L('สรุปกลุ่ม','Groups'),LIC.tag],[L('คนที่ต้องติดตาม','Who to follow up'),LIC.bell],[L('ข้อความสำเร็จรูป','Message templates'),LIC.chat]
   ]:[
-    [L('สรุปวันนี้','Today summary'),'📊'],[L('กินอะไรดี','What to eat'),'🍽️'],[L('สร้างเมนูจากของที่มี','Make from ingredients'),'🧺'],[L('เมนูประหยัด','Budget menu'),'💰'],
-    [L('จัดแผนให้ฉัน','Build my plan'),'🎯'],[L('จัดตารางฝึกให้หน่อย','Build a workout'),'🗓️'],[L('คำนวณแคล/มาโคร','Calorie & macros'),'🧮'],[L('ดูความคืบหน้า','My progress'),'📈'],[L('วิธีใช้แอป','How to use'),'❓'],[L('หาที่ออกกำลังกาย','Find a place'),'📍']
+    [L('สรุปวันนี้','Today summary'),LIC.chart],[L('กินอะไรดี','What to eat'),LIC.utensils],[L('สร้างเมนูจากของที่มี','Make from ingredients'),LIC.basket],[L('เมนูประหยัด','Budget menu'),LIC.coin],
+    [L('จัดแผนให้ฉัน','Build my plan'),LIC.target],[L('จัดตารางฝึกให้หน่อย','Build a workout'),LIC.calendar],[L('คำนวณแคล/มาโคร','Calorie & macros'),LIC.calculator],[L('ดูความคืบหน้า','My progress'),LIC.trend],[L('วิธีใช้แอป','How to use'),LIC.help],[L('หาที่ออกกำลังกาย','Find a place'),LIC.pin]
   ];
   return rankChips(list);
 }
@@ -2144,9 +2178,9 @@ function injectEntryPoints(){
     if(block){ if(nudge) nudge.remove(); return; }
     var tab=window.TAB||'';
     var cfg=null;
-    if(tab==='food') cfg={icon:'🧺',label:L('สร้างเมนูจากวัตถุดิบที่มีกับ IU Mate','Build a menu from your ingredients with IU Mate'),q:L('สร้างเมนูจากของที่มี','make a menu from my ingredients')};
-    else if(tab==='coach') cfg={icon:'📊',label:L('สรุปลูกเทรนวันนี้ ด้วย IU Mate','Clients overview with IU Mate'),q:L('สรุปลูกเทรน','clients overview')};
-    else if(tab==='body') cfg={icon:'✨',label:L('อธิบายผลลัพธ์ของฉัน ด้วย IU Mate','Explain my results with IU Mate'),q:L('ดูความคืบหน้า','my progress')};
+    if(tab==='food') cfg={icon:LIC.basket,label:L('สร้างเมนูจากวัตถุดิบที่มีกับ IU Mate','Build a menu from your ingredients with IU Mate'),q:L('สร้างเมนูจากของที่มี','make a menu from my ingredients')};
+    else if(tab==='coach') cfg={icon:LIC.chart,label:L('สรุปลูกเทรนวันนี้ ด้วย IU Mate','Clients overview with IU Mate'),q:L('สรุปลูกเทรน','clients overview')};
+    else if(tab==='body') cfg={icon:LIC.trend,label:L('อธิบายผลลัพธ์ของฉัน ด้วย IU Mate','Explain my results with IU Mate'),q:L('ดูความคืบหน้า','my progress')};
     if(!cfg){ if(nudge) nudge.remove(); return; }
     if(!nudge){ nudge=document.createElement('div'); nudge.id='iuMateNudge'; nudge.className='iu-mate-nudge'; document.body.appendChild(nudge); }
     if(nudge.getAttribute('data-tab')!==tab){
@@ -2226,7 +2260,7 @@ function _actionsHtml(rep,idx,m){
     return h+'</div>';
   }
   return '<div class="iu-mate-actions">'+acts.map(function(a,ai){
-    return '<button class="iu-mate-act'+(a.on?' sel':'')+'" onclick="IUMate.act(\''+a.action+'\','+idx+','+ai+')">'+(a.on?'✓ ':'')+esc(a.label)+'</button>';
+    return '<button class="iu-mate-act'+(a.on?' sel':'')+'" onclick="IUMate.act(\''+a.action+'\','+idx+','+ai+')">'+(a.on?'✓ ':'')+(a.icon?a.icon+' ':'')+esc(a.label)+'</button>';
   }).join('')+'</div>';
 }
 function _flowOtherPrompt(){ var slot=flowCurSlot(); if(!slot) return; pushBotText(L('พิมพ์คำตอบของคุณได้เลยครับ','Type your own answer below')); setTimeout(function(){ var inp=document.getElementById('iuMateInput'); if(inp){ try{ inp.focus(); }catch(e){} } },60); }
@@ -2304,7 +2338,7 @@ function renderSheet(){
        '<div class="iu-mate-avatar">'+botAvatar()+'</div>'+
        '<div class="iu-mate-title"><strong>IU Mate</strong><small>'+esc(L('ผู้ช่วยส่วนตัวใน IUFIT','Your assistant in IUFIT'))+'</small></div>'+
        '<span class="iu-mate-local-badge">Local</span>'+
-       '<button class="iu-mate-expand" onclick="IUMate.close()" aria-label="minimize" title="'+L('ย่อหน้าต่าง','Minimize')+'">⌄</button>'+'<button class="iu-mate-expand" onclick="IUMate.showPrivacy()" aria-label="privacy" title="privacy" style="margin-right:1px">🔒</button>'+'<button class="iu-mate-expand" onclick="IUMate.toggleFull()" aria-label="expand">'+(ST.full?'▢':'⤢')+'</button>'+
+       '<button class="iu-mate-expand" onclick="IUMate.close()" aria-label="minimize" title="'+L('ย่อหน้าต่าง','Minimize')+'">⌄</button>'+'<button class="iu-mate-expand" onclick="IUMate.showPrivacy()" aria-label="privacy" title="privacy" style="margin-right:1px">'+LIC.lock+'</button>'+'<button class="iu-mate-expand" onclick="IUMate.toggleFull()" aria-label="expand">'+(ST.full?'▢':'⤢')+'</button>'+
      '</header>'+
      '<div class="iu-mate-chip-row">'+chips.map(function(c){ return '<button class="iu-mate-chip" onclick="IUMate.chip(this.dataset.q)" data-q="'+esc(c[0])+'"><span class="e">'+c[1]+'</span>'+esc(c[0])+'</button>'; }).join('')+'</div>'+
      '<div class="iu-mate-messages" id="iuMateMessages"></div>'+
@@ -2360,8 +2394,8 @@ function _recoShow(protein,method,mk,offset){
   if(!res.items.length){ pushReply({ title:L('ยังไม่เจอเมนูที่ตรงเป๊ะ','No exact match'), message:L('ลองเปลี่ยนโปรตีนหรือวิธีทำดูไหมครับ','Try another protein or method.'), actions:[{label:L('เริ่มใหม่','Start over'),action:'reco_restart'}] }); return; }
   var msg=res.items.map(function(it,i){return (offset+i+1)+'. '+it.n+'\n   '+it.cal+' kcal · P '+it.p+' · F '+it.f+' · C '+it.c+' g';}).join('\n\n');
   var head=(res.perMeal?L('เป้าหมายมื้อนี้ ~'+res.perMeal+' kcal\n','Target ~'+res.perMeal+' kcal\n'):'');
-  var acts=res.items.map(function(it){return {label:('➕ '+it.n).slice(0,38),action:'reco_add',payload:{rid:it.rid,mk:mk}};});
-  if(offset+3<res.total) acts.push({label:L('🔄 ขอตัวเลือกเพิ่ม','🔄 More options'),action:'reco_more',payload:{p:protein,m:method,mk:mk,offset:offset+3}});
+  var acts=res.items.map(function(it){return {label:(''+it.n).slice(0,36),icon:LIC.plus,action:'reco_add',payload:{rid:it.rid,mk:mk}};});
+  if(offset+3<res.total) acts.push({label:L('ขอตัวเลือกเพิ่ม','More options'),icon:LIC.refresh,action:'reco_more',payload:{p:protein,m:method,mk:mk,offset:offset+3}});
   acts.push({label:L('↺ เริ่มใหม่','↺ Start over'),action:'reco_restart'});
   pushReply({ title:L('แนะนำ 3 เมนู 🍱','3 suggestions 🍱'), message:head+msg, actions:acts, disclaimer:L('โภชนาการเป็นค่าประมาณต่อ 1 จาน','Nutrition is an estimate per serving'), _intent:'meal_reco' });
 }
@@ -2424,12 +2458,12 @@ var ACTIONS = {
   coach_menu_redraft:function(p){ if(p&&p.id) pushReply(buildCoachDayMenu(findClientById(p.id), p.dayIdxs)); },
   coach_workout_redraft:function(p){ if(p&&p.id) pushReply(buildCoachWorkout(findClientById(p.id), p.days, p.equip)); },
   coach_wplan_pick:function(){ var lc=window._LAST_COACH_WPLAN; if(!lc||!(lc.struct&&lc.struct.length)){ appToast(L('ยังไม่มีแผนให้ใส่','No plan yet')); return; } var chips=[]; try{ var cs=(typeof clientChoices==='function')?clientChoices():[]; (cs||[]).forEach(function(c){ chips.push({label:c[0],action:'coach_wplan_do',payload:{id:c[1]}}); }); }catch(x){} if(!chips.length&&lc.cid){ chips.push({label:(lc.name||L('ลูกเทรน','client')),action:'coach_wplan_do',payload:{id:lc.cid}}); } chips.push({label:L('ยกเลิก','Cancel'),action:'noop'}); pushReply({ title:L('ใส่แผนลงตารางลูกเทรนคนไหน?','Add plan to which client?'), message:L('เลือกลูกเทรนที่จะใส่แผนนี้ลงตารางฝึก · ระบบจะแทนที่ตารางเดิมของคนนั้น (เข้าไปปรับต่อได้ในหน้าลูกเทรน)','Pick a client — this replaces their current schedule (you can edit it in their page).'), actions:chips }); },
-  coach_wplan_do:function(p){ var lc=window._LAST_COACH_WPLAN; var cid=p&&p.id; if(!lc||!cid){ appToast(L('ไม่สำเร็จ','Failed')); return; } try{ var Sx=window.S; Sx.wplan=Sx.wplan||{}; var day={}; lc.struct.forEach(function(d){ var arr=[]; d.moves.forEach(function(m){ arr.push({n:m.n,eq:m.eq,s:'-×10×3'}); }); day[d.wd]=arr; }); Sx.wplan[cid]=day; if(fn('save')) window.save(); }catch(x){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); return; } var nm=''; try{ var cu=(window.S.users||[]).filter(function(u){return u.id===cid;})[0]; nm=(cu&&cu.name)||''; }catch(x){} appToast(L('ใส่ลงตาราง '+nm+' แล้ว 📅','Added to '+nm+' 📅')); pushReply({ title:L('ใส่ลงตารางแล้ว ✓','Added to schedule ✓'), message:L('ใส่แผนลงตารางของ '+nm+' เรียบร้อย · จะส่งให้ลูกเทรนเลย หรือเข้าไปปรับก่อนก็ได้ครับ','Added to '+nm+"'s schedule. Send it now, or edit first in their page."), actions:[{label:L('📤 ส่งให้ลูกเทรนเลย','📤 Send to client'),action:'coach_wplan_send',payload:{id:cid}},{label:L('เปิดหน้าลูกเทรน','Open client'),action:'go_clients'}] }); },
+  coach_wplan_do:function(p){ var lc=window._LAST_COACH_WPLAN; var cid=p&&p.id; if(!lc||!cid){ appToast(L('ไม่สำเร็จ','Failed')); return; } try{ var Sx=window.S; Sx.wplan=Sx.wplan||{}; var day={}; lc.struct.forEach(function(d){ var arr=[]; d.moves.forEach(function(m){ arr.push({n:m.n,eq:m.eq,s:'-×10×3'}); }); day[d.wd]=arr; }); Sx.wplan[cid]=day; if(fn('save')) window.save(); }catch(x){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); return; } var nm=''; try{ var cu=(window.S.users||[]).filter(function(u){return u.id===cid;})[0]; nm=(cu&&cu.name)||''; }catch(x){} appToast(L('ใส่ลงตาราง '+nm+' แล้ว 📅','Added to '+nm+' 📅')); pushReply({ title:L('ใส่ลงตารางแล้ว ✓','Added to schedule ✓'), message:L('ใส่แผนลงตารางของ '+nm+' เรียบร้อย · จะส่งให้ลูกเทรนเลย หรือเข้าไปปรับก่อนก็ได้ครับ','Added to '+nm+"'s schedule. Send it now, or edit first in their page."), actions:[{label:L('ส่งให้ลูกเทรนเลย','Send to client'),icon:LIC.send,action:'coach_wplan_send',payload:{id:cid}},{label:L('เปิดหน้าลูกเทรน','Open client'),action:'go_clients'}] }); },
   coach_wplan_send:function(p){ var cid=p&&p.id; if(cid&&fn('sendClientPlan')){ try{ window.sendClientPlan(cid); }catch(x){ appToast(L('ส่งไม่สำเร็จ','Send failed')); } } },
-  coach_mplan_save:function(p){ var cid=p&&p.id; var c=findClientById(cid); if(!c){ appToast(L('ไม่พบลูกเทรน','Client not found')); return; } var d=window._LAST_COACH_MPLAN; if(!d||d.cid!==cid||!d.days){ appToast(L('ร่างนี้เก่าแล้ว กดร่างใหม่ก่อนนะครับ','Draft is stale — redraft first')); return; } var Sx=window.S; if(!Sx){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); return; } var dayIdxs=Object.keys(d.days).map(Number); var conflict=dayIdxs.filter(function(di){ var dd=Sx.mplan&&Sx.mplan[cid]&&Sx.mplan[cid][di]; return dd&&['br','lu','di','sn'].some(function(mk){var v=dd[mk];return v&&(Array.isArray(v)?v.length:1);}); }); var _nm=(c.name||L('ลูกเทรน','client')); var _write=function(){ Sx.mplan=Sx.mplan||{}; Sx.mplan[cid]=Sx.mplan[cid]||{}; dayIdxs.forEach(function(di){ Sx.mplan[cid][di]=Sx.mplan[cid][di]||{}; ['br','lu','di','sn'].forEach(function(mk){ var arr=d.days[di][mk]; if(arr&&arr.length) Sx.mplan[cid][di][mk]=arr; }); }); if(fn('save')) window.save(); var dn=dayIdxs.map(function(i){return _WDNL()[i];}).join(', '); appToast(L('บันทึกลงแผน '+_nm+' แล้ว 📅','Saved to '+_nm+"'s plan 📅")); pushReply({ title:L('บันทึกลงแผนแล้ว ✓','Saved to plan ✓'), message:L('ใส่เมนูลงแผนวัน '+dn+' ของ '+_nm+' เรียบร้อย · จะส่งแผนทั้งหมด (อาหาร+ตารางฝึก+เป้าหมาย) ให้เลย หรือเข้าไปปรับก่อนก็ได้ครับ','Added menus to '+_nm+"'s plan ("+dn+'). Send the full plan (meals+workout+target) now, or edit first.'), actions:[{label:L('📤 ส่งแผนให้ '+_nm,'📤 Send to '+_nm),action:'coach_mplan_send',payload:{id:cid}},{label:L('เปิดหน้าลูกเทรน','Open client'),action:'go_clients'}] }); }; if(conflict.length){ var cn=conflict.map(function(i){return _WDNL()[i];}).join(', '); showConfirm({ title:L('ทับแผนเดิมของ '+_nm+'?','Overwrite '+_nm+"'s plan?"), body:L('วัน '+cn+' มีเมนูอยู่แล้ว จะถูกแทนที่ด้วยร่างใหม่','Day(s) '+cn+' already have menus — will be replaced'), yes:L('แทนที่','Replace'), onYes:_write }); } else _write(); },
+  coach_mplan_save:function(p){ var cid=p&&p.id; var c=findClientById(cid); if(!c){ appToast(L('ไม่พบลูกเทรน','Client not found')); return; } var d=window._LAST_COACH_MPLAN; if(!d||d.cid!==cid||!d.days){ appToast(L('ร่างนี้เก่าแล้ว กดร่างใหม่ก่อนนะครับ','Draft is stale — redraft first')); return; } var Sx=window.S; if(!Sx){ appToast(L('บันทึกไม่สำเร็จ','Could not save')); return; } var dayIdxs=Object.keys(d.days).map(Number); var conflict=dayIdxs.filter(function(di){ var dd=Sx.mplan&&Sx.mplan[cid]&&Sx.mplan[cid][di]; return dd&&['br','lu','di','sn'].some(function(mk){var v=dd[mk];return v&&(Array.isArray(v)?v.length:1);}); }); var _nm=(c.name||L('ลูกเทรน','client')); var _write=function(){ Sx.mplan=Sx.mplan||{}; Sx.mplan[cid]=Sx.mplan[cid]||{}; dayIdxs.forEach(function(di){ Sx.mplan[cid][di]=Sx.mplan[cid][di]||{}; ['br','lu','di','sn'].forEach(function(mk){ var arr=d.days[di][mk]; if(arr&&arr.length) Sx.mplan[cid][di][mk]=arr; }); }); if(fn('save')) window.save(); var dn=dayIdxs.map(function(i){return _WDNL()[i];}).join(', '); appToast(L('บันทึกลงแผน '+_nm+' แล้ว 📅','Saved to '+_nm+"'s plan 📅")); pushReply({ title:L('บันทึกลงแผนแล้ว ✓','Saved to plan ✓'), message:L('ใส่เมนูลงแผนวัน '+dn+' ของ '+_nm+' เรียบร้อย · จะส่งแผนทั้งหมด (อาหาร+ตารางฝึก+เป้าหมาย) ให้เลย หรือเข้าไปปรับก่อนก็ได้ครับ','Added menus to '+_nm+"'s plan ("+dn+'). Send the full plan (meals+workout+target) now, or edit first.'), actions:[{label:L('ส่งแผนให้ '+_nm,'Send to '+_nm),icon:LIC.send,action:'coach_mplan_send',payload:{id:cid}},{label:L('เปิดหน้าลูกเทรน','Open client'),action:'go_clients'}] }); }; if(conflict.length){ var cn=conflict.map(function(i){return _WDNL()[i];}).join(', '); showConfirm({ title:L('ทับแผนเดิมของ '+_nm+'?','Overwrite '+_nm+"'s plan?"), body:L('วัน '+cn+' มีเมนูอยู่แล้ว จะถูกแทนที่ด้วยร่างใหม่','Day(s) '+cn+' already have menus — will be replaced'), yes:L('แทนที่','Replace'), onYes:_write }); } else _write(); },
   coach_mplan_send:function(p){ var c=findClientById(p&&p.id); if(!c){ appToast(L('ไม่พบลูกเทรน','Client not found')); return; } var _nm=(c.name||L('ลูกเทรน','client')); if(!c.dev){ pushReply({ title:L('ยังส่งตรงไม่ได้','Can not send yet'), message:L(_nm+' ยังไม่ได้สแกน QR โค้ช — แผนถูกบันทึกไว้ฝั่งโค้ชแล้ว พอเขาสแกน QR ค่อยกดส่งจากหน้าลูกเทรนได้','\''+_nm+"' hasn't scanned your Coach QR — plan saved on your side; send once they link."), actions:[{label:L('เปิดหน้าลูกเทรน (แชร์ QR)','Open client (share QR)'),action:'go_clients'}] }); return; } if(fn('sendClientPlan')){ try{ window.sendClientPlan(c.id); }catch(e){ appToast(L('ส่งไม่สำเร็จ','Send failed')); } } },
   noop:function(){},
-  coach_calc_pick:function(p){ var c=(typeof findClientById==='function')?findClientById(p&&p.id):null; if(!c){ appToast(L('ไม่พบลูกเทรน','Client not found')); return; } var prof=_clientCalcProfile(c); if(prof.w==null||prof.h==null||prof.age==null){ pushReply({ title:L('ข้อมูลลูกเทรนไม่ครบ','Client profile incomplete'), message:L('ยังขาด น้ำหนัก/ส่วนสูง/อายุ ของ '+(c.name||'ลูกเทรน')+' — ให้เขากรอกโปรไฟล์ให้ครบก่อนคำนวณครับ','Missing weight/height/age for '+(c.name||'this client')+' — ask them to complete their profile first.') }); return; } var rep; try{ rep=calcReply(prof); }catch(e){ appToast(L('คำนวณไม่สำเร็จ','Calc failed')); return; } rep.title=L('ค่าประมาณของ '+(c.name||'ลูกเทรน'),(c.name||'Client')+' — estimate'); var copyText=(rep.title||'')+'\n'+(rep.message||''); rep.actions=[{label:L('📤 ส่งเป้าหมายให้ '+(c.name||'ลูกเทรน'),'📤 Send target to '+(c.name||'client')),action:'coach_calc_send',payload:{id:c.id}},{label:L('📋 คัดลอก','📋 Copy'),action:'copy_text',payload:{text:copyText}},{label:L('เลือกคนอื่น','Another client'),action:'_chip',payload:{q:L('คำนวณแคลให้ลูกเทรน','calculate for a client')}}]; pushReply(rep); },
+  coach_calc_pick:function(p){ var c=(typeof findClientById==='function')?findClientById(p&&p.id):null; if(!c){ appToast(L('ไม่พบลูกเทรน','Client not found')); return; } var prof=_clientCalcProfile(c); if(prof.w==null||prof.h==null||prof.age==null){ pushReply({ title:L('ข้อมูลลูกเทรนไม่ครบ','Client profile incomplete'), message:L('ยังขาด น้ำหนัก/ส่วนสูง/อายุ ของ '+(c.name||'ลูกเทรน')+' — ให้เขากรอกโปรไฟล์ให้ครบก่อนคำนวณครับ','Missing weight/height/age for '+(c.name||'this client')+' — ask them to complete their profile first.') }); return; } var rep; try{ rep=calcReply(prof); }catch(e){ appToast(L('คำนวณไม่สำเร็จ','Calc failed')); return; } rep.title=L('ค่าประมาณของ '+(c.name||'ลูกเทรน'),(c.name||'Client')+' — estimate'); var copyText=(rep.title||'')+'\n'+(rep.message||''); rep.actions=[{label:L('ส่งเป้าหมายให้ '+(c.name||'ลูกเทรน'),'Send target to '+(c.name||'client')),icon:LIC.send,action:'coach_calc_send',payload:{id:c.id}},{label:L('คัดลอก','Copy'),icon:LIC.copy,action:'copy_text',payload:{text:copyText}},{label:L('เลือกคนอื่น','Another client'),action:'_chip',payload:{q:L('คำนวณแคลให้ลูกเทรน','calculate for a client')}}]; pushReply(rep); },
   coach_calc_send:function(p){ var c=(typeof findClientById==='function')?findClientById(p&&p.id):null; if(!c){ appToast(L('ไม่พบลูกเทรน','Client not found')); return; } var prof=_clientCalcProfile(c); if(prof.w==null||prof.h==null||prof.age==null){ appToast(L('ข้อมูลลูกเทรนไม่ครบ กรอกโปรไฟล์ก่อน','Client profile incomplete')); return; } if(!c.dev){ appToast(L('ลูกเทรนยังไม่ได้เชื่อม QR โค้ช จึงส่งตรงไม่ได้','Client hasn\'t linked your Coach QR yet')); return; } try{ var r=(typeof CALC!=='undefined'&&CALC.plan)?CALC.plan(prof):null; if(r){ var _k=Math.max(1200,Math.round((r.kcalLo+r.kcalHi)/2)); c.tgt={kcal:_k,prot:Math.round((r.pLo+r.pHi)/2),fat:Math.round(r.fat),carb:Math.round(r.carb)}; if(fn('save'))window.save(); } if(fn('sendClientPlan')){ window.sendClientPlan(c.id); } else { appToast(L('ตั้งเป้าหมายให้แล้ว','Target set')); } }catch(e){ appToast(L('ส่งไม่สำเร็จ','Send failed')); } },
   find_trainer:function(){ try{ goTab('coachview'); }catch(e){} },
   workout_redraft:function(){ try{ startFlow('workout'); }catch(e){} },
@@ -2663,9 +2697,9 @@ function buildCoachDayMenu(c, dayIdxs){
   var disc=(tg.partial?L('ข้อมูลลูกเทรนไม่ครบ ใช้ค่าประมาณ — ปรับก่อนส่งได้','Client profile incomplete — estimates; adjust before sending'):L('ค่าประมาณเพื่อช่วยร่าง โค้ชตรวจ/แก้ก่อนส่งได้','Estimates to help you draft — review/edit before sending'))+(!c.dev?L('\n⚠️ '+nm+' ยังไม่ได้สแกน QR โค้ช — บันทึกลงแผนได้ แต่ยังส่งตรงถึงเครื่องเขาไม่ได้','\n⚠️ '+nm+" hasn't scanned your Coach QR — you can save but can't send yet"):'');
   return { title:head, message:msg, disclaimer:disc,
     actions:[
-      {label:L('📅 บันทึกลงแผนให้ '+nm,'📅 Save to '+nm+"'s plan"),action:'coach_mplan_save',payload:{id:c.id}},
-      {label:L('🔄 ร่างใหม่','🔄 Redraft'),action:'coach_menu_redraft',payload:{id:c.id,dayIdxs:dayIdxs}},
-      {label:L('📋 คัดลอก','📋 Copy'),action:'copy_text',payload:{text:copyText}}
+      {label:L('บันทึกลงแผนให้ '+nm,'Save to '+nm+"'s plan"),icon:LIC.calendar,action:'coach_mplan_save',payload:{id:c.id}},
+      {label:L('ร่างใหม่','Redraft'),icon:LIC.refresh,action:'coach_menu_redraft',payload:{id:c.id,dayIdxs:dayIdxs}},
+      {label:L('คัดลอก','Copy'),icon:LIC.copy,action:'copy_text',payload:{text:copyText}}
     ] };
 }
 function startCoachMenu(){
@@ -2730,8 +2764,8 @@ function buildCoachWorkout(c, days, equip){
   return { title:head, message:body,
     disclaimer:L('ค่าประมาณเพื่อช่วยร่าง โค้ชปรับท่า/เซ็ต/น้ำหนักก่อนส่งได้ · ⭐ = ท่าที่เพิ่มเอง','Estimates to help you draft — adjust moves/sets/load before sending · ⭐ = your custom move')+_cqL,
     actions:[
-      {label:L('🔄 ร่างใหม่','🔄 Redraft'),action:'coach_workout_redraft',payload:{id:c.id,days:days,equip:equip}},
-      {label:L('📅 ใส่ลงตารางลูกเทรน','📅 Add to client schedule'),action:'coach_wplan_pick'},
+      {label:L('ร่างใหม่','Redraft'),icon:LIC.refresh,action:'coach_workout_redraft',payload:{id:c.id,days:days,equip:equip}},
+      {label:L('ใส่ลงตารางลูกเทรน','Add to client schedule'),icon:LIC.calendar,action:'coach_wplan_pick'},
       {label:L('เปิดท่าฝึก','Open Workout'),action:'go_workout'}
     ] };
 }
@@ -2814,7 +2848,7 @@ function flowNext(){
 }
 function slotChoices(slot){ return slot.choices || (slot.choicesFn?slot.choicesFn():[]); }
 function _wdayAbbr(){ return (window.LANG==='en')?[['Mon',0],['Tue',1],['Wed',2],['Thu',3],['Fri',4],['Sat',5],['Sun',6]]:[['จ',0],['อ',1],['พ',2],['พฤ',3],['ศ',4],['ส',5],['อา',6]]; }
-function _wdayMultiActions(){ var sel=(ST.flow&&ST.flow._msel)||{}; var acts=_wdayAbbr().map(function(c){ return {label:c[0],on:!!sel[c[1]],action:'flow_multi',payload:{v:c[1]}}; }); acts.push({label:L('📅 ให้จัดวันให้','📅 Arrange for me'),action:'flow_pick',payload:{v:'auto'}}); var n=Object.keys(sel).length; acts.push({label:L('ยืนยัน'+(n?' ('+n+' วัน)':''),'Confirm'+(n?' ('+n+')':'')),action:'flow_multi_done'}); if(ST.flow && (ST.flow.trail||[]).length) acts.push({label:L('‹ ย้อนกลับ','‹ Back'),action:'flow_back'}); acts.push({label:L('ยกเลิก','Cancel'),action:'flow_cancel'}); return acts; }
+function _wdayMultiActions(){ var sel=(ST.flow&&ST.flow._msel)||{}; var acts=_wdayAbbr().map(function(c){ return {label:c[0],on:!!sel[c[1]],action:'flow_multi',payload:{v:c[1]}}; }); acts.push({label:L('ให้จัดวันให้','Arrange for me'),icon:LIC.calendar,action:'flow_pick',payload:{v:'auto'}}); var n=Object.keys(sel).length; acts.push({label:L('ยืนยัน'+(n?' ('+n+' วัน)':''),'Confirm'+(n?' ('+n+')':'')),action:'flow_multi_done'}); if(ST.flow && (ST.flow.trail||[]).length) acts.push({label:L('‹ ย้อนกลับ','‹ Back'),action:'flow_back'}); acts.push({label:L('ยกเลิก','Cancel'),action:'flow_cancel'}); return acts; }
 function askSlot(slot){
   if(slot.multi){ if(ST.flow)ST.flow._msel={}; pushReply({ title:null, message:slot.q+L(' (แตะวันที่ต้องการ แล้วกดยืนยัน)',' (tap days, then Confirm)'), actions:_wdayMultiActions() }); if(ST.flow)ST.flow.askIdx=ST.messages.length-1; return; }
   var acts=[];
@@ -2977,4 +3011,3 @@ function boot(){
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
 })();
-
