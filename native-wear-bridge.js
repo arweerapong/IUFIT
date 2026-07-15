@@ -1,80 +1,82 @@
-/* IUFIT native → web bridge (Capacitor · Health Connect via ubie-oss capacitor-health-connect@0.7.0)
- * ปลั๊กอินนี้รองรับ RecordType จำกัด: Steps, ActiveCaloriesBurned, HeartRateSeries, RestingHeartRate, Weight, BodyFat ...
- * ไม่รองรับ: HeartRate(ใช้ HeartRateSeries), Distance, TotalCaloriesBurned, SleepSession, ExerciseSession
- *   → อ่านได้: ก้าว + แคลอรี(active) + หัวใจ · ระยะทางประมาณจากก้าว · นอน/เวิร์กเอาต์ไม่มีในปลั๊กอินนี้
- * contract: wearIngest({date,steps,dist,kcalOut,actMin,hr:{rest,avg},sleep,workouts,src})
+/* IUFIT native → web bridge (Capacitor · Health Connect via @capgo/capacitor-health v8)
+ * รองรับครบ: steps, distance, calories, heartRate, sleep (+ workouts เพิ่มทีหลังได้)
+ * ทำงานเฉพาะในแอป native (Capacitor) · เบราว์เซอร์ข้าม
+ * contract: wearIngest({date,steps,dist,kcalOut,actMin,hr:{rest,avg},sleep:{min,score},workouts,src})
  */
 (function () {
   var Cap = window.Capacitor;
   var isNative = !!(Cap && Cap.isNativePlatform && Cap.isNativePlatform());
   if (!isNative) return;
-  var HC = (Cap.Plugins && (Cap.Plugins.HealthConnect || Cap.Plugins.CapacitorHealthConnect)) || null;
 
-  function ymd(dt){ dt = dt || new Date(); return dt.getFullYear()+'-'+('0'+(dt.getMonth()+1)).slice(-2)+'-'+('0'+dt.getDate()).slice(-2); }
-  function dayRange(dt){ var s=new Date(dt||Date.now()); s.setHours(0,0,0,0); var e=new Date(s); e.setDate(e.getDate()+1);
-    return { type:'between', startTime: s.toISOString(), endTime: e.toISOString() }; }
+  var P = (Cap.Plugins) || {};
+  var HC = null;
+  ['Health', 'CapacitorHealth', 'HealthPlugin'].forEach(function (n) {
+    if (!HC && P[n] && (P[n].requestAuthorization || P[n].readSamples)) HC = P[n];
+  });
+  if (!HC) { Object.keys(P).forEach(function (k) { if (!HC && P[k] && P[k].requestAuthorization && P[k].readSamples) HC = P[k]; }); }
 
-  // เฉพาะ type ที่ปลั๊กอินรองรับ + มี permission ใน AndroidManifest แล้ว (READ_STEPS/ACTIVE_CALORIES/HEART_RATE)
-  var READ = ['Steps', 'ActiveCaloriesBurned', 'HeartRateSeries'];
+  function ymd(dt) { dt = dt || new Date(); return dt.getFullYear() + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + dt.getDate()).slice(-2); }
+  function dayISO(dt) { var s = new Date(dt || Date.now()); s.setHours(0, 0, 0, 0); var e = new Date(s); e.setDate(e.getDate() + 1); return { start: s.toISOString(), end: e.toISOString() }; }
 
-  function num(v){ v = (v && (v.value!=null ? v.value : v)); v = parseFloat(v); return isNaN(v) ? 0 : v; }
-  function energyKcal(e){ if(e==null) return 0; var v=num(e); var u=((e&&e.unit)||'').toLowerCase();
-    if(u.indexOf('kilocal')>=0) return v; if(u==='calories') return v/1000; if(u==='joules') return v/4184; if(u==='kilojoules') return v/4.184; return v; }
+  var READ = ['steps', 'distance', 'calories', 'heartRate', 'sleep'];
 
-  async function ensurePerms(){
-    if(!HC) return false;
-    try{ var a = await HC.checkAvailability();
-      if(a && a.availability && a.availability!=='Available'){ console.warn('[wear] HC:', a.availability); return false; } }catch(e){}
-    try{ var chk = await HC.checkHealthPermissions({ read: READ, write: [] });
-      if(chk && chk.hasAllPermissions) return true; }catch(e){ console.warn('[wear] check err', e); }
-    try{ await HC.requestHealthPermissions({ read: READ, write: [] });
-      var chk2 = await HC.checkHealthPermissions({ read: READ, write: [] });
-      return !!(chk2 && chk2.hasAllPermissions);
-    }catch(e){ console.warn('[wear] perm error', e); return false; }
+  async function ensurePerms() {
+    if (!HC) return false;
+    try { var a = await HC.isAvailable(); if (a && a.available === false) { console.warn('[wear] HC unavailable:', a.reason); return false; } } catch (e) {}
+    try { await HC.requestAuthorization({ read: READ, write: [] }); return true; }
+    catch (e) { console.warn('[wear] auth err', e); return false; }
   }
 
-  async function readType(type, range){
-    try{ var r = await HC.readRecords({ type: type, timeRangeFilter: range });
-      return (r && r.records) || []; }catch(e){ return []; }
+  async function aggSum(type, r) {
+    try { var o = await HC.queryAggregated({ dataType: type, startDate: r.start, endDate: r.end, bucket: 'day', aggregation: 'sum' });
+      return ((o && o.samples) || []).reduce(function (a, x) { return a + (+x.value || 0); }, 0); } catch (e) { return 0; }
+  }
+  async function aggAvg(type, r) {
+    try { var o = await HC.queryAggregated({ dataType: type, startDate: r.start, endDate: r.end, bucket: 'day', aggregation: 'average' });
+      var s = (o && o.samples) || []; return s.length ? (s.reduce(function (a, x) { return a + (+x.value || 0); }, 0) / s.length) : 0; } catch (e) { return 0; }
+  }
+  async function sleepMin(r) {
+    try { var o = await HC.readSamples({ dataType: 'sleep', startDate: r.start, endDate: r.end });
+      return ((o && o.samples) || []).reduce(function (a, x) { return a + (+x.value || 0); }, 0); } catch (e) { return 0; }
   }
 
-  async function readHealth(dt){
-    if(!HC) return null;
-    var range = dayRange(dt);
-    var steps=0, kcalOut=0, hrSum=0, hrN=0, hrMin=999;
-    (await readType('Steps', range)).forEach(function(x){ steps += num(x.count); });
-    (await readType('ActiveCaloriesBurned', range)).forEach(function(x){ kcalOut += energyKcal(x.energy); });
-    (await readType('HeartRateSeries', range)).forEach(function(x){ (x.samples||[]).forEach(function(s){
-        var bpm = num(s.beatsPerMinute); if(bpm>0){ hrSum+=bpm; hrN++; if(bpm<hrMin) hrMin=bpm; } }); });
+  async function readHealth(dt) {
+    if (!HC) return null;
+    var r = dayISO(dt);
+    var steps = await aggSum('steps', r);
+    var distM = await aggSum('distance', r);
+    var kcal  = await aggSum('calories', r);
+    var hrAvg = await aggAvg('heartRate', r);
+    var slp   = await sleepMin(r);
     return {
       steps: Math.round(steps),
-      dist: Math.round(steps*0.000762*100)/100,          // ประมาณ กม. จากก้าว (ปลั๊กอินไม่มี Distance)
-      kcalOut: Math.round(kcalOut),
-      actMin: Math.round(kcalOut>0 ? kcalOut/6 : 0),
-      hr: hrN ? { avg: Math.round(hrSum/hrN), rest: (hrMin<999?hrMin:null) } : null,
-      sleep: null,      // ปลั๊กอินไม่มี SleepSession
-      workouts: []      // ปลั๊กอินไม่มี ExerciseSession
+      dist: Math.round(distM / 100) / 10,
+      kcalOut: Math.round(kcal),
+      actMin: Math.round(kcal > 0 ? kcal / 6 : 0),
+      hr: hrAvg > 0 ? { avg: Math.round(hrAvg), rest: null } : null,
+      sleep: slp > 0 ? { min: Math.round(slp), score: null } : null,
+      workouts: []
     };
   }
 
-  function push(dateStr, data, src){
+  function push(dateStr, data, src) {
     if (!data || typeof window.wearIngest !== 'function') return;
     window.wearIngest({ date: dateStr, steps: data.steps, dist: data.dist, kcalOut: data.kcalOut,
       actMin: data.actMin, hr: data.hr, sleep: data.sleep, workouts: data.workouts || [], src: src || 'healthconnect' });
   }
 
   var _busy = false;
-  async function syncToday(){
-    if(_busy || !HC) return; _busy = true;
-    try{ var okp = await ensurePerms(); if(okp){ var h = await readHealth(new Date()); if(h) push(ymd(), h, 'healthconnect'); } }
-    catch(e){ /* เงียบ ไม่ให้แอปพัง */ }
+  async function syncToday() {
+    if (_busy || !HC) return; _busy = true;
+    try { var okp = await ensurePerms(); if (okp) { var h = await readHealth(new Date()); if (h) push(ymd(), h, 'healthconnect'); } }
+    catch (e) {}
     _busy = false;
   }
 
-  window.addEventListener('load', function(){ setTimeout(syncToday, 1500); });
+  window.addEventListener('load', function () { setTimeout(syncToday, 1500); });
   document.addEventListener('visibilitychange', function () { if (!document.hidden) syncToday(); });
   window.addEventListener('iufitWear', function (ev) { try { push(ymd(), ev.detail, 'hband'); } catch (e) {} });
 
-  window.IUFIT_WEAR_BRIDGE = { syncToday: syncToday, readHealth: readHealth, version: 'hc-2' };
-  console.log('[wear] Health Connect bridge ready ·', HC ? 'plugin ok' : 'plugin NOT found');
+  window.IUFIT_WEAR_BRIDGE = { syncToday: syncToday, readHealth: readHealth, version: 'capgo-1' };
+  console.log('[wear] Health bridge (capgo) ready ·', HC ? 'plugin ok' : 'plugin NOT found');
 })();
