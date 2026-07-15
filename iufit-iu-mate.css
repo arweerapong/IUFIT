@@ -41,6 +41,7 @@
 .iu-mate-fab.is-loading::before{content:"";position:absolute;inset:-3px;border-radius:999px;border:2.6px solid transparent;border-top-color:var(--iu-blue);animation:iu-fab-spin .8s linear infinite}
 @keyframes iu-fab-spin{to{transform:rotate(360deg)}}
 @media (max-width:480px){.iu-mate-fab{width:70px;height:70px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom))}}
+@media (max-width:412px){.iu-mate-fab{width:80px;height:80px;right:15px;bottom:calc(88px + env(safe-area-inset-bottom))}}
 @media (min-width:768px){.iu-mate-fab{bottom:28px;right:28px}}
 
 /* ---------- Backdrop + sheet ---------- */
