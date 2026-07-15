@@ -1,0 +1,68 @@
+<!DOCTYPE html><html lang="th"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IUFIT — จัดการยิม</title>
+<style>
+:root{--navy:#002766;--blue:#0a84ff;--bg:#eef2f8;--card:#fff;--line:#dbe4f0;--ink:#0f172a;--mut:#64748b;--ok:#12a868;--crit:#d64545}
+*{box-sizing:border-box;font-family:'Segoe UI',Tahoma,system-ui,sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink)}
+header{background:linear-gradient(135deg,#0a84ff,#0068d8,#003c8f);color:#fff;padding:16px 20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+header h1{font-size:18px;margin:0}
+.wrap{max-width:820px;margin:0 auto;padding:18px 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin-bottom:14px;box-shadow:0 6px 20px rgba(8,20,45,.05)}
+.card h2{font-size:15px;margin:0 0 12px;color:var(--navy)}
+label{font-size:12px;color:var(--mut);display:block;margin:8px 0 3px}
+input{width:100%;padding:10px 11px;border:1px solid var(--line);border-radius:10px;font-size:14px;outline:none}
+input:focus{border-color:var(--blue)}
+.btn{padding:10px 16px;border:none;border-radius:10px;background:var(--blue);color:#fff;font-weight:700;font-size:13.5px;cursor:pointer}
+.btn.sm{padding:7px 12px;font-size:12.5px}.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn.del{background:#fff;color:var(--crit);border:1px solid var(--crit)}
+.row{display:flex;gap:8px;flex-wrap:wrap}.row>*{flex:1}
+.muted{color:var(--mut);font-size:12.5px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{text-align:left;padding:8px;border-bottom:1px solid #eef2f8}th{color:var(--mut);font-weight:700}
+.banner{padding:11px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;display:none}
+.banner.err{display:block;background:#fdecec;border:1px solid #f3c4c4;color:#a3232f}
+.banner.ok{display:block;background:#eafaf1;border:1px solid #bfe8d2;color:#0c7a4d}
+.pill{display:inline-block;padding:2px 9px;border-radius:20px;font-size:11px;font-weight:700}
+.pill.on{background:#eafaf1;color:#0c7a4d}.pill.off{background:#f1f5f9;color:#64748b}
+code{background:#f1f5f9;padding:1px 6px;border-radius:5px;font-size:12px}
+</style></head><body>
+<header><h1>🏢 IUFIT — จัดการยิม</h1><span class="muted" style="color:#cfe0ff;margin-left:auto">สำหรับเจ้าของยิม/ผู้ดูแล</span></header>
+<div class="wrap">
+<div class="banner" id="banner"></div>
+<div class="card" id="gate">
+  <h2>เข้าสู่ระบบยิม</h2>
+  <label>Gym ID (IUFIT ให้ไว้)</label><input id="gymId" placeholder="gxxxxxx">
+  <label>รหัสผู้ดูแลยิม (masterKey)</label><input id="masterKey" type="password" placeholder="GYM-xxxx-xxxx">
+  <div style="margin-top:10px"><button class="btn" onclick="go()">เข้าจัดการ</button></div>
+  <div class="muted" style="margin-top:8px">ยังไม่มีรหัส? ติดต่อ IUFIT เพื่อเปิดยิม</div>
+</div>
+<div id="panel" style="display:none">
+  <div class="card"><h2>🏢 ภาพรวมยิม</h2><div id="quota" class="muted"></div></div>
+  <div class="card"><h2>➕ สร้างรหัสเทรนเนอร์</h2>
+    <div class="row"><div><label>ชื่อเทรนเนอร์</label><input id="atName" placeholder="โค้ช..."></div>
+    <div><label>ลิมิตลูกเทรน</label><input id="atLimit" type="number" placeholder="10"></div></div>
+    <div style="margin-top:10px"><button class="btn" onclick="addTrainer()">สร้างรหัส</button></div>
+    <div class="muted" style="margin-top:5px">รหัสที่ได้ → ส่งให้เทรนเนอร์กรอกในแอป IUFIT</div>
+  </div>
+  <div class="card"><h2>👥 เทรนเนอร์ในยิม</h2><div id="trList"><span class="muted">…</span></div></div>
+  <div class="card"><h2>🔑 คีย์ AI ของยิม (ไม่บังคับ)</h2>
+    <input id="gymAiKey" type="password" placeholder="คีย์ Gemini ของยิม"><div style="margin-top:8px"><button class="btn ghost sm" onclick="setGymKey()">บันทึกคีย์</button></div>
+    <div class="muted" style="margin-top:4px">ตั้งแล้วลูกเทรนของยิมสแกนอาหารด้วย AI ได้ (ยิมออกค่า AI)</div>
+  </div>
+</div>
+</div>
+<script>
+var WK='https://iufit-gym.ar-weerapong.workers.dev';
+var GID='',MK='';
+function $(s){return document.querySelector(s);}
+function msg(t,type){var b=$('#banner');b.className='banner '+(type||'ok');b.textContent=t;if(!t)b.className='banner';}
+async function api(path,opt){opt=opt||{};opt.headers=Object.assign({'Content-Type':'application/json','x-gym-key':MK},opt.headers||{});var r=await fetch(WK+path,opt);var j={};try{j=await r.json();}catch(e){}if(!r.ok)throw new Error(j.err||('error '+r.status));return j;}
+async function go(){GID=$('#gymId').value.trim();MK=$('#masterKey').value.trim();if(!GID||!MK)return msg('กรอก Gym ID + รหัสผู้ดูแล','err');try{await load();$('#gate').style.display='none';$('#panel').style.display='block';msg('');try{localStorage.setItem('iufit_gym',JSON.stringify({GID:GID}));}catch(e){}}catch(e){msg('เข้าไม่ได้: '+e.message,'err');}}
+async function load(){var j=await api('/gym/trainers?gymId='+encodeURIComponent(GID));$('#quota').innerHTML='เทรนเนอร์: <b>'+j.used+' / '+j.trainerMax+'</b> · เพดานลูกเทรน/เทรนเนอร์: <b>'+j.clientCeiling+'</b>';window._ceil=j.clientCeiling;var tr=j.trainers||[];$('#trList').innerHTML=tr.length?'<table><tr><th>รหัส</th><th>ชื่อ</th><th>ลิมิตลูกเทรน</th><th>สถานะ</th><th></th></tr>'+tr.map(function(t){return '<tr><td><code>'+t.code+'</code></td><td>'+esc(t.name||'-')+'</td><td><input type="number" value="'+t.clientLimit+'" style="width:70px;padding:5px" onchange="setLimit(\''+t.code+'\',this.value)"></td><td><span class="pill '+(t.claimed?'on':'off')+'">'+(t.claimed?'ใช้แล้ว':'ว่าง')+'</span></td><td><button class="btn del sm" onclick="delTrainer(\''+t.code+'\')">ลบ</button></td></tr>';}).join('')+'</table>':'<span class="muted">ยังไม่มีรหัส — กดสร้างด้านบน</span>';}
+async function addTrainer(){var name=$('#atName').value.trim();var lim=+$('#atLimit').value||window._ceil||10;try{var j=await api('/gym/trainer/add',{method:'POST',body:JSON.stringify({gymId:GID,name:name,clientLimit:lim})});msg('สร้างรหัส '+j.trainerCode+' แล้ว — ส่งให้เทรนเนอร์','ok');$('#atName').value='';$('#atLimit').value='';load();}catch(e){msg(e.message,'err');}}
+async function setLimit(code,v){try{await api('/gym/trainer/limit',{method:'POST',body:JSON.stringify({gymId:GID,code:code,clientLimit:+v||1})});msg('ตั้งลิมิต '+code+' = '+v,'ok');}catch(e){msg(e.message,'err');load();}}
+async function delTrainer(code){if(!confirm('ลบรหัส '+code+'? เทรนเนอร์จะหลุดสิทธิ์ (ลูกเทรน/ประวัติไม่หาย)'))return;try{await api('/gym/trainer/del',{method:'POST',body:JSON.stringify({gymId:GID,code:code})});msg('ลบ '+code+' แล้ว','ok');load();}catch(e){msg(e.message,'err');}}
+async function setGymKey(){var k=$('#gymAiKey').value.trim();if(!k)return;try{await api('/gym/setkey',{method:'POST',body:JSON.stringify({gymId:GID,aiKey:k})});msg('บันทึกคีย์ AI แล้ว','ok');$('#gymAiKey').value='';}catch(e){msg(e.message,'err');}}
+function esc(s){return (''+(s==null?'':s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+try{var sv=JSON.parse(localStorage.getItem('iufit_gym')||'null');if(sv&&sv.GID)$('#gymId').value=sv.GID;}catch(e){}
+</script></body></html>
