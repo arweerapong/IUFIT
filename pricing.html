@@ -35,6 +35,10 @@
   <div class="psub" id="ad-e"></div>
 </div>
 
+<h2 class="sec-title" id="pp-t" style="margin-top:22px"></h2>
+<p class="sub" id="pp-s"></p>
+<div class="grid" id="ppgrid"></div>
+
 <div class="trust-row"><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><i id="tr-pay"></i></span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><i id="tr-pp"></i></span><span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg><i id="tr-ssl"></i></span></div>
 <div class="how">
   <h2 id="hw-t"></h2>
@@ -54,14 +58,14 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v107"></script>
+<script src="billing-common.js?v=v108"></script>
 <script>
 var B=window.IUFIT_BILLING, YR=false;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
 document.getElementById('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
 document.getElementById('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
 T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
-T('h-title','pricing_title');T('h-sub','pricing_sub');T('h-launch','launch');
+T('h-title','pricing_title');T('h-sub','pricing_sub');T('h-launch','launch');T('pp-t','personal_title');T('pp-s','personal_sub');
 T('t-mo','monthly');T('t-yr','yearly');
 T('ad-t','addon_title');T('ad-d','addon_desc');T('ad-p','addon_price');T('ad-e','addon_eg');
 T('hw-t','how_title');T('hw-1','how1');T('hw-2','how2');T('hw-3','how3');
@@ -77,7 +81,7 @@ function setCycle(yr){YR=yr;document.getElementById('t-mo').className=yr?'':'on'
 function draw(){
   var cur=B.currentPlanKey(),g=document.getElementById('grid'),h='';
   B.PLANS.forEach(function(p){
-    if(p.k==='free')return;
+    if(p.k==='free'||p.k==='personal_pro')return;
     var isCur=(cur===p.k);
     h+='<div class="card'+(p.hot?' hot':'')+(isCur?' cur':'')+'">';
     if(isCur)h+='<span class="badge cur">'+B.t('current_plan')+'</span>';
@@ -95,7 +99,8 @@ function draw(){
   });
   g.innerHTML=h;
 }
-draw();
+function drawPersonal(){var p=B.getPlan('personal_pro');if(!p)return;var cur=B.currentPlanKey(),isCur=(cur===p.k),h='<div class="card'+(isCur?' cur':'')+'">';if(isCur)h+='<span class="badge cur">'+B.t('current_plan')+'</span>';else if(p.badge)h+='<span class="badge">'+B.planBadge(p)+'</span>';h+='<div class="pname">'+p.name+'</div><div class="psub">'+B.planSub(p)+'</div><div class="price"><span class="now">฿'+B.fmt(p.mo)+'</span><span class="unit"> '+B.t('per_mo')+'</span></div><div class="feats">';B.planFeats(p).forEach(function(f){h+='✓ '+f+'<br>';});h+='</div>';if(B.IS_STORE)h+='<div class="psub" style="text-align:center;margin:0">'+B.t('manage_web')+'</div>';else h+='<a class="cta pri" href="billing.html?plan=personal_pro&cycle=mo&lang='+B.LANG+'">'+B.t('choose_plan')+'</a>';h+='</div>';var el=document.getElementById('ppgrid');if(el)el.innerHTML=h;}
+draw();drawPersonal();
 try{var _f=document.getElementById("foot");if(_f)_f.innerHTML=B.footerHtml();}catch(e){}
 </script>
 </body>

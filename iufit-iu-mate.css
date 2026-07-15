@@ -24,7 +24,7 @@
 /* ---------- Floating button (IU Mate orb) ---------- */
 .iu-mate-fab{
   position:fixed;right:max(18px,env(safe-area-inset-right));bottom:calc(88px + env(safe-area-inset-bottom));z-index:1200;
-  display:grid;place-items:center;width:56px;height:56px;padding:0;border:0;
+  display:grid;place-items:center;width:58px;height:58px;padding:0;border:0;
   border-radius:999px;background:transparent;cursor:pointer;-webkit-tap-highlight-color:transparent;
   filter:drop-shadow(0 0 4px rgba(32,213,255,.7)) drop-shadow(0 0 10px rgba(10,132,255,.45)) drop-shadow(0 6px 12px rgba(7,30,74,.22));
   transform:translateY(0);transition:transform .18s ease,opacity .18s ease,filter .18s ease;
@@ -40,7 +40,7 @@
 .iu-mate-fab.has-unread::after{content:"";position:absolute;top:3px;right:3px;width:13px;height:13px;border-radius:999px;background:#E5484D;border:2px solid #fff;box-shadow:0 2px 6px rgba(7,30,74,.25)}
 .iu-mate-fab.is-loading::before{content:"";position:absolute;inset:-3px;border-radius:999px;border:2.6px solid transparent;border-top-color:var(--iu-blue);animation:iu-fab-spin .8s linear infinite}
 @keyframes iu-fab-spin{to{transform:rotate(360deg)}}
-@media (max-width:390px){.iu-mate-fab{width:76px;height:76px;right:14px}}
+@media (max-width:480px){.iu-mate-fab{width:70px;height:70px;right:16px;bottom:calc(84px + env(safe-area-inset-bottom))}}
 @media (min-width:768px){.iu-mate-fab{bottom:28px;right:28px}}
 
 /* ---------- Backdrop + sheet ---------- */

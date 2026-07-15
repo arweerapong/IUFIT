@@ -62,6 +62,7 @@
     th:{
       nav_pricing:'ราคา',nav_billing:'สมัคร',nav_myplan:'แพ็กของฉัน',
       pricing_title:'แพ็กเทรนเนอร์',pricing_sub:'ดูแลลูกเทรนเป็นระบบ — ส่งแผน รับการบ้าน ติดตามผล และให้ IU MATE ช่วยลดงานทุกวัน',
+      personal_title:'สำหรับผู้ใช้ทั่วไป',personal_sub:'ไม่ใช่เทรนเนอร์? อัปเกรด Personal Pro รับ AI ช่วยส่วนตัว',
       trial_hero_t:'ทดลอง Trainer Pro ฟรี 30 วัน',trial_hero_m:'ไม่ต้องใส่บัตร · ยกเลิกได้ทุกเมื่อ · เริ่มใช้ได้ทันทีในแอป',trial_hero_cta:'เปิดแอปเพื่อทดลองฟรี →',
       trust_pay:'ชำระเงินปลอดภัย Omise',trust_pp:'รองรับ PromptPay',trust_ssl:'เข้ารหัส SSL',
       why_title:'ทำไมเทรนเนอร์เลือก IUFIT',why1_t:'ครบในแอปเดียว',why1_m:'ส่งแผนอาหาร/ฝึก รับ-ตรวจการบ้าน แชท และติดตามผลลูกเทรน',why2_t:'IU MATE ช่วยลดงาน',why2_m:'ร่างเมนู/โปรแกรมฝึก สรุปการบ้าน และคนที่ต้องตามให้',why3_t:'ลูกเทรนไม่ต้องจ่าย',why3_m:'เชิญด้วย QR เข้าใช้ผ่านที่นั่งของคุณ ไม่ต้องซื้อแพ็กเอง',
@@ -87,12 +88,12 @@
       res_failed_t:'ชำระเงินไม่สำเร็จ',res_failed_m:'ยังไม่มีการตัดเงิน · ลองใหม่อีกครั้ง หรือทักไลน์ให้เราช่วย',
       go_myplan:'ไปหน้าแพ็กของฉัน',retry:'ลองชำระอีกครั้ง',line_help:'ทักไลน์ขอความช่วยเหลือ',
       myplan_title:'แพ็กของฉัน',acct_hint:'เปิดหน้านี้บนอุปกรณ์เดียวกับที่ใช้แอป เพื่อดูสถานะแพ็กของคุณ',
-      cur_label:'แพ็กปัจจุบัน',trial_left:'ทดลองฟรี · เหลือ {d} วัน · ไม่ต้องใส่บัตร',expires_on:'หมดอายุ {date}',days_more:' · อีก {d} วัน',one_client:'ดูแลลูกเทรนได้ 1 คน',
+      cur_label:'แพ็กปัจจุบัน',trial_left:'ทดลองฟรี · เหลือ {d} วัน · ไม่ต้องใส่บัตร',expires_on:'หมดอายุ {date}',days_more:' · อีก {d} วัน',one_client:'ดูแลลูกเทรนได้ 3 คน',
       pill_trial:'TRIAL',pill_active:'ACTIVE',pill_free:'FREE',trial_name:'Trainer Pro (ทดลอง)',free_name:'Trainer Free',
       rem_trial_soon:'⚠️ ทดลองใกล้หมด',rem_trial:'⏳ แจ้งเตือนทดลองใช้งาน',rem_trial_m:'เหลืออีก {d} วัน · สมัครต่อเพื่อคงสิทธิ์ Trainer Pro และลูกเทรนทั้งหมด',
       rem_exp_t:'หมดช่วงทดลองแล้ว',rem_exp_m:'ตอนนี้เป็น Trainer Free · ข้อมูลอยู่ครบ · อัปเกรดเพื่อปลดล็อกลูกเทรนและฟีเจอร์ Pro กลับมา',
       rem_paid_t:'⏰ แพ็กใกล้หมดอายุ',rem_paid_m:'อีก {d} วัน ({date}) · ต่ออายุเพื่อคงลูกเทรนและฟีเจอร์ไว้',
-      know_title:'เมื่อสมาชิกหมดอายุ',know1:'เมื่อแพ็ก/ช่วงทดลองหมดอายุ <b>ข้อมูลไม่หาย</b> — กลับเป็น Trainer Free (ดูแลลูกเทรนได้ 1 คน)',know2:'ลูกเทรนที่เกินสิทธิ์จะถูกล็อกเป็น <b>อ่านอย่างเดียว</b> ชั่วคราว (ไม่ถูกลบ) — อัปเกรดเมื่อไรก็กลับมาใช้ได้ครบ',know3:'อัปเกรด/ต่ออายุได้ทุกเมื่อ แพ็กจะปลดล็อกในแอปอัตโนมัติ',
+      know_title:'เมื่อสมาชิกหมดอายุ',know1:'เมื่อแพ็ก/ช่วงทดลองหมดอายุ <b>ข้อมูลไม่หาย</b> — กลับเป็น Trainer Free (ดูแลลูกเทรนได้ 3 คน)',know2:'ลูกเทรนที่เกินสิทธิ์จะถูกล็อกเป็น <b>อ่านอย่างเดียว</b> ชั่วคราว (ไม่ถูกลบ) — อัปเกรดเมื่อไรก็กลับมาใช้ได้ครบ',know3:'อัปเกรด/ต่ออายุได้ทุกเมื่อ แพ็กจะปลดล็อกในแอปอัตโนมัติ',
       act_store_t:'จัดการแพ็กผ่านเว็บ/LINE',act_store_m:'เปิด iufit.com/billing.html ในเบราว์เซอร์ หรือทักไลน์เพื่อสมัคร/ต่ออายุ — แพ็กจะปลดล็อกในแอปอัตโนมัติ',
       act_sub_keep:'สมัครต่อ · คงสิทธิ์ Pro',act_see_all:'ดูแพ็กทั้งหมด',act_renew:'🔄 ต่ออายุแพ็กนี้',act_change:'เปลี่ยน/อัปเกรดแพ็ก',act_upgrade:'อัปเกรดเป็น Trainer Pro',
       nav_refund:'คืนเงิน',nav_contact:'ติดต่อ',
@@ -109,6 +110,7 @@
     en:{
       nav_pricing:'Pricing',nav_billing:'Subscribe',nav_myplan:'My plan',
       pricing_title:'Trainer plans',pricing_sub:'Coach clients systematically — send plans, collect homework, track results, and let IU MATE cut your daily work.',
+      personal_title:'For individuals',personal_sub:'Not a coach? Upgrade to Personal Pro for your own AI.',
       trial_hero_t:'Try Trainer Pro free · 30 days',trial_hero_m:'No card · cancel anytime · start instantly in the app',trial_hero_cta:'Open the app to start free →',
       trust_pay:'Secure payments by Omise',trust_pp:'PromptPay supported',trust_ssl:'SSL encrypted',
       why_title:'Why coaches choose IUFIT',why1_t:'All in one app',why1_m:'Send meal/workout plans, review homework, chat, and track clients',why2_t:'IU MATE cuts your work',why2_m:'Draft menus/programs, summarize homework and at-risk clients',why3_t:'Clients pay nothing',why3_m:'Invite by QR — they join on your seats, no purchase needed',
@@ -134,12 +136,12 @@
       res_failed_t:'Payment failed',res_failed_m:'No charge was made · try again, or chat on LINE for help.',
       go_myplan:'Go to My plan',retry:'Try paying again',line_help:'Chat on LINE for help',
       myplan_title:'My plan',acct_hint:'Open this page on the same device as the app to see your plan status.',
-      cur_label:'Current plan',trial_left:'Free trial · {d} days left · no card',expires_on:'Expires {date}',days_more:' · {d} days left',one_client:'1 client',
+      cur_label:'Current plan',trial_left:'Free trial · {d} days left · no card',expires_on:'Expires {date}',days_more:' · {d} days left',one_client:'3 clients',
       pill_trial:'TRIAL',pill_active:'ACTIVE',pill_free:'FREE',trial_name:'Trainer Pro (trial)',free_name:'Trainer Free',
       rem_trial_soon:'⚠️ Trial ending soon',rem_trial:'⏳ Trial reminder',rem_trial_m:'{d} days left · subscribe to keep Trainer Pro and all your clients.',
       rem_exp_t:'Trial ended',rem_exp_m:'You are now on Trainer Free · data is safe · upgrade to unlock clients and Pro features again.',
       rem_paid_t:'⏰ Plan expiring soon',rem_paid_m:'{d} days left ({date}) · renew to keep your clients and features.',
-      know_title:'When your membership expires',know1:'When your plan or trial expires <b>your data is safe</b> — you return to Trainer Free (1 client).',know2:'Clients over the limit become <b>read-only</b> temporarily (never deleted) — upgrade anytime to restore full access.',know3:'Upgrade/renew anytime; your plan unlocks in the app automatically.',
+      know_title:'When your membership expires',know1:'When your plan or trial expires <b>your data is safe</b> — you return to Trainer Free (3 clients).',know2:'Clients over the limit become <b>read-only</b> temporarily (never deleted) — upgrade anytime to restore full access.',know3:'Upgrade/renew anytime; your plan unlocks in the app automatically.',
       act_store_t:'Manage on web / LINE',act_store_m:'Open iufit.com/billing.html in a browser or chat on LINE to subscribe/renew — your plan unlocks in the app automatically.',
       act_sub_keep:'Subscribe · keep Pro',act_see_all:'See all plans',act_renew:'🔄 Renew this plan',act_change:'Change / upgrade plan',act_upgrade:'Upgrade to Trainer Pro',
       nav_refund:'Refunds',nav_contact:'Contact',
@@ -157,11 +159,13 @@
   function t(k){return (T[LANG]&&T[LANG][k])||T.th[k]||k;}
 
   var PLANS=[
-    {k:'free',name:'Free',sub:'ผู้ใช้ทั่วไป + เทรนเนอร์ลองระบบ',subEn:'General users & trial coaches',clients:1,mo:0,yr:0,
-     feats:['ลูกเทรน 1 คน','ส่งแผน / รับการบ้านแบบจำกัด','IU MATE Coach 20 ครั้ง/เดือน'],featsEn:['1 client','Limited plans & homework','IU MATE Coach 20/mo']},
-    {k:'starter',name:'Trainer Starter',sub:'เริ่มดูแลลูกเทรน 5 คนแบบเป็นระบบ',subEn:'Coach up to 5 clients',clients:5,mo:299,moWas:399,yr:2990,yrWas:3990,
-     feats:['ลูกเทรน 5 คน','ส่งแผนอาหาร / แผนฝึก','รับ-ตรวจการบ้าน','แชทกับลูกเทรน','ดู progress รายคน','IU MATE Coach 100 ครั้ง/เดือน','วิเคราะห์ย้อนหลัง 7 วัน'],
-     featsEn:['5 clients','Send meal & workout plans','Receive & review homework','Chat with clients','Per-client progress','IU MATE Coach 100/mo','7-day history']},
+    {k:'free',name:'Free',sub:'ผู้ใช้ทั่วไป + เทรนเนอร์ลองระบบ',subEn:'General users & trial coaches',clients:3,mo:0,yr:0,
+     feats:['ลูกเทรน 3 คน','ส่งแผน / รับการบ้านแบบจำกัด','IU MATE Coach 20 ครั้ง/เดือน'],featsEn:['3 clients','Limited plans & homework','IU MATE Coach 20/mo']},
+    {k:'personal_pro',name:'Personal Pro',sub:'สำหรับผู้ใช้ทั่วไป — AI ช่วยเต็มที่',subEn:'For individuals — full AI',badge:'Pro',badgeEn:'Pro',clients:0,mo:99,yr:990,
+     feats:['AI ถ่ายรูปอาหาร (5 ครั้ง/วัน)','AI แจกแจงเมนู (แตกวัตถุดิบ + โภชนาการ)','สถิติเชิงลึก + ประวัติย้อนหลังไม่จำกัด','Export / Backup ข้อมูล'],featsEn:['AI food photo (5/day)','AI menu breakdown','Deep stats + unlimited history','Export / Backup']},
+    {k:'starter',name:'Trainer Starter',sub:'เริ่มดูแลลูกเทรน 10 คนแบบเป็นระบบ',subEn:'Coach up to 10 clients',clients:10,mo:299,moWas:399,yr:2990,yrWas:3990,
+     feats:['ลูกเทรน 10 คน','ส่งแผนอาหาร / แผนฝึก','รับ-ตรวจการบ้าน','แชทกับลูกเทรน','ดู progress รายคน','IU MATE Coach 100 ครั้ง/เดือน','วิเคราะห์ย้อนหลัง 7 วัน','AI ถ่ายรูปอาหาร (5 ครั้ง/วัน)'],
+     featsEn:['10 clients','Send meal & workout plans','Receive & review homework','Chat with clients','Per-client progress','IU MATE Coach 100/mo','7-day history','AI food photo (5/day)']},
     {k:'pro',name:'Trainer Pro',sub:'สำหรับเทรนเนอร์ที่ใช้งานจริง',subEn:'For working coaches',hot:1,badge:'แนะนำ',badgeEn:'Recommended',clients:20,mo:599,moWas:899,yr:5990,yrWas:8990,
      feats:['ลูกเทรน 20 คน','ทุกอย่างใน Starter','กลุ่ม + ภารกิจ + leaderboard','สรุปลูกเทรนที่น่าห่วง','สรุปการบ้านหลายรายการ','IU MATE Coach 500 ครั้ง/เดือน','วิเคราะห์ย้อนหลัง 30–90 วัน','Progress report + share card'],
      featsEn:['20 clients','Everything in Starter','Groups + missions + leaderboard','At-risk client summary','Batch homework summary','IU MATE Coach 500/mo','30–90 day history','Progress report + share card']},
@@ -185,6 +189,7 @@
   function accountLabel(){var s=appState();return s.lineName||s.emailId||(s.users&&s.users[0]&&s.users[0].name)||'';}
   function currentPlanKey(){
     var s=appState();var m=s.mem;
+    if(s.lic&&s.lic.n&&s.lic.c)return 'personal_pro';
     if(m&&m.via==='seat')return 'free';
     if(m&&m.exp&&m.exp>=today()&&m.tier==='pro'){
       var seats=m.seats||0;
