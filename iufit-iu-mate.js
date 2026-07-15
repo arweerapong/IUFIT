@@ -2210,7 +2210,7 @@ function renderFab(){
     document.body.appendChild(fab);
   }
   var rdy=appReady();
-  var _nav=document.getElementById('nav');var _navEmpty=!_nav||!_nav.innerHTML.trim();fab.hidden = ST.isOpen || !rdy || !hasConsent() || _navEmpty || (document.body&&document.body.classList&&document.body.classList.contains('iu-noapp')) || fabModalOpen() || !!document.getElementById('rcOverlay') || !!document.getElementById('scan-ov');
+  var _nav=document.getElementById('nav');var _navEmpty=!_nav||!_nav.innerHTML.trim();fab.hidden = ST.isOpen || !rdy || _navEmpty || (document.body&&document.body.classList&&document.body.classList.contains('iu-noapp')) || fabModalOpen() || !!document.getElementById('rcOverlay') || !!document.getElementById('scan-ov');
   var dim = rdy && !hasConsent();
   fab.classList.toggle('is-dimmed', !!dim);
   fab.classList.toggle('is-loading', !!ST.busy);
