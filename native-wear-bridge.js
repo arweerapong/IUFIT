@@ -18,7 +18,7 @@
   function ymd(dt) { dt = dt || new Date(); return dt.getFullYear() + '-' + ('0' + (dt.getMonth() + 1)).slice(-2) + '-' + ('0' + dt.getDate()).slice(-2); }
   function dayISO(dt) { var s = new Date(dt || Date.now()); s.setHours(0, 0, 0, 0); var e = new Date(s); e.setDate(e.getDate() + 1); return { start: s.toISOString(), end: e.toISOString() }; }
 
-  var READ = ['steps', 'distance', 'calories', 'heartRate', 'sleep'];
+  var READ = ['steps', 'distance', 'calories', 'heartRate', 'sleep', 'workouts'];
 
   async function ensurePerms() {
     if (!HC) return false;
@@ -39,6 +39,12 @@
     try { var o = await HC.readSamples({ dataType: 'sleep', startDate: r.start, endDate: r.end });
       return ((o && o.samples) || []).reduce(function (a, x) { return a + (+x.value || 0); }, 0); } catch (e) { return 0; }
   }
+  async function readWk(r) {
+    try { var o = await HC.queryWorkouts({ startDate: r.start, endDate: r.end, limit: 50 });
+      return ((o && o.workouts) || []).map(function (w) {
+        return { type: String(w.workoutType || 'other'), min: Math.round((+w.duration || 0) / 60), kcal: Math.round(+w.totalEnergyBurned || 0), ts: new Date(w.startDate).getTime() };
+      }); } catch (e) { return []; }
+  }
 
   async function readHealth(dt) {
     if (!HC) return null;
@@ -48,6 +54,7 @@
     var kcal  = await aggSum('calories', r);
     var hrAvg = await aggAvg('heartRate', r);
     var slp   = await sleepMin(r);
+    var wk    = await readWk(r);
     return {
       steps: Math.round(steps),
       dist: Math.round(distM / 100) / 10,
@@ -55,7 +62,7 @@
       actMin: Math.round(kcal > 0 ? kcal / 6 : 0),
       hr: hrAvg > 0 ? { avg: Math.round(hrAvg), rest: null } : null,
       sleep: slp > 0 ? { min: Math.round(slp), score: null } : null,
-      workouts: []
+      workouts: wk
     };
   }
 
