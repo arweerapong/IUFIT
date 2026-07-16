@@ -23,8 +23,17 @@
   async function ensurePerms() {
     if (!HC) return false;
     try { var a = await HC.isAvailable(); if (a && a.available === false) { console.warn('[wear] HC unavailable:', a.reason); return false; } } catch (e) {}
-    try { await HC.requestAuthorization({ read: READ, write: [] }); return true; }
-    catch (e) { console.warn('[wear] auth err', e); return false; }
+    try {
+      var st = null;
+      try { st = await HC.checkAuthorization({ read: READ, write: [] }); } catch (e) {}
+      var have = (st && st.readAuthorized) || [];
+      var need = READ.filter(function (t) { return have.indexOf(t) < 0; });
+      // ขอสิทธิ์เฉพาะตอนที่ยังไม่ได้ครบ (Android จำกัดจำนวนครั้งที่ขอได้)
+      if (!st || need.length) { st = await HC.requestAuthorization({ read: READ, write: [] }); }
+      var ok = (st && st.readAuthorized) || [];
+      console.log('[wear] auth granted:', ok.join(',') || '(none)');
+      return ok.length > 0;
+    } catch (e) { console.warn('[wear] auth err', e); return false; }
   }
 
   async function aggSum(type, r) {
@@ -75,7 +84,7 @@
   var _busy = false;
   async function syncToday() {
     if (_busy || !HC) return; _busy = true;
-    try { var okp = await ensurePerms(); if (okp) { var h = await readHealth(new Date()); if (h) push(ymd(), h, 'healthconnect'); } }
+    try { var okp = await ensurePerms(); if (okp) { var h = await readHealth(new Date()); if (h) { console.log('[wear] read', JSON.stringify({ steps: h.steps, dist: h.dist, kcal: h.kcalOut, hr: h.hr, sleep: h.sleep, wk: (h.workouts || []).length })); push(ymd(), h, 'healthconnect'); } } }
     catch (e) {}
     _busy = false;
   }

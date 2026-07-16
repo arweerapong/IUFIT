@@ -865,6 +865,10 @@ var KNOWLEDGE = [
     title:L('ดูทัวร์แนะนำการใช้งาน','Take the app tour'),
     answer:L('ผมพาทัวร์ทีละปุ่มได้เลย หรือดูศูนย์ช่วยเหลือในตั้งค่า มีคำถามอะไรถามผมได้ทุกเมื่อครับ','I can walk you through button by button, or see the Help Center in Settings — ask me anytime!'),
     actions:[{label:L('เริ่มทัวร์','Start tour'),action:'open_tour'}] },
+  { id:'how_to_results', cat:'app_help', kw:['ผลลัพธ์','results','ดูความคืบหน้า','progress','แท็บสรุป','summary tab','แท็บนาฬิกา','watch tab','กราฟ','chart','สถิติ','stats','ก้าว','steps','แท็บร่างกาย','body tab','ดูสรุปเดือน'],
+    title:L('ดูผลลัพธ์ (ร่างกาย · สรุป · นาฬิกา)','View results (Body · Summary · Watch)'),
+    answer:L('หน้า "ผลลัพธ์" มี 3 แท็บให้ปัดสลับ: ร่างกาย (กราฟน้ำหนัก/สัดส่วน), สรุป (สถิติเดือน), และนาฬิกา (ก้าว/การนอน/หัวใจ) — ผมพาทัวร์ทีละปุ่มให้ได้เลย','The Results page has 3 swipeable tabs: Body (weight/measurement charts), Summary (monthly stats) and Watch (steps/sleep/heart rate). I can walk you through it button by button.'),
+    actions:[{label:L('พาทัวร์ผลลัพธ์','Walk me through'),action:'tour_results'}] },
   { id:'coach_overview', cat:'app_help', kw:['สอนใช้ฝั่งโค้ช','ฟีเจอร์โค้ช','โหมดโค้ช','สอนโค้ช','สอนใช้โค้ช','เมนูโค้ช','coach features','coach mode','coach overview'],
     title:L('ภาพรวมโหมดโค้ช (ทุกแท็บ)','Coach mode overview'),
     answer:L('โหมดโค้ชมี 4 แท็บหลัก:\n🏠 โฮม — แดชบอร์ด, แชร์ QR รับลูกเทรน, สร้างภารกิจ, สลับโหมดส่วนตัว↔โค้ช\n👥 ลูกเทรน — ส่งแผนอาหาร/ฝึกรายคน, เปิดคอร์ส PT (นับครั้ง), ติดตามแต่ละคน\n📥 การบ้าน — ลูกเทรนส่งการบ้าน (อาหาร/ฝึก/ร่างกาย/น้ำ) มาที่นี่ ตรวจ+ให้ฟีดแบ็ก\n🏷️ กลุ่ม — สร้างกลุ่ม เชิญด้วย QR/รหัส จัดชาเลนจ์+ลีดเดอร์บอร์ด\n💡 กดปุ่มด้านล่างให้ผมพาทัวร์โหมดโค้ชได้เลย','Coach mode has 4 tabs: 🏠 Home (dashboard, share QR, missions, switch mode), 👥 Clients (send plans, PT courses, track each), 📥 Homework (review & feedback), 🏷️ Groups (create, invite, challenges).'),
@@ -2429,6 +2433,9 @@ var ACTIONS = {
   tour_body_log:function(){ _featTour('body_log'); },
   tour_water:function(){ _featTour('water'); },
   tour_result_card:function(){ _featTour('result_card'); },
+  tour_results:function(){ _featTour('results'); },
+  tour_summary:function(){ _featTour('results'); },
+  tour_watch:function(){ _featTour('results'); },
   tour_meal_plan:function(){ _featTour('meal_plan'); },
   tour_coach_full:function(){ ST.isOpen=false; closeNow(); try{ if(fn('iuTour')) window.iuTour(true,'coach'); }catch(e){} },
   tour_coach_home:function(){ _featTour('coach_home'); },
@@ -3001,7 +3008,7 @@ window.IUMate = IUMate;
 
 /* ============================ boot ============================ */
 function fabModalOpen(){var a=document.getElementById('mwrap'),b=document.getElementById('mwrap2');return !!((a&&a.classList.contains('show'))||(b&&b.classList.contains('show')));}
-function setupFabModalWatch(){['mwrap','mwrap2'].forEach(function(id){var el=document.getElementById(id);if(!el||el.__iuObs)return;el.__iuObs=1;try{new MutationObserver(function(){var f=document.getElementById('iuMateFab');if(!f)return;if(fabModalOpen())f.classList.add('fab-hide');else f.classList.remove('fab-hide');try{injectEntryPoints();}catch(e){}}).observe(el,{attributes:true,attributeFilter:['class']});}catch(e){}});}
+function setupFabModalWatch(){['mwrap','mwrap2'].forEach(function(id){var el=document.getElementById(id);if(!el||el.__iuObs)return;el.__iuObs=1;try{new MutationObserver(function(){var f=document.getElementById('iuMateFab');if(!f)return;if(fabModalOpen())f.classList.add('fab-hide');else f.classList.remove('fab-hide');}).observe(el,{attributes:true,attributeFilter:['class']});}catch(e){}});}
 function boot(){
   renderFab(); try{ setupFabModalWatch(); }catch(e){}
   try{(function(){var lastY=0,ticking=false;function onS(){var y=window.scrollY||document.documentElement.scrollTop||0;var f=document.getElementById('iuMateFab');if(f){if(y>lastY+6&&y>90)f.classList.add('fab-hide');else if(y<lastY-6&&!fabModalOpen())f.classList.remove('fab-hide');}lastY=y;ticking=false;clearTimeout(window._iuFabIdle);window._iuFabIdle=setTimeout(function(){var ff=document.getElementById('iuMateFab');if(ff&&!fabModalOpen())ff.classList.remove('fab-hide');},700);}window.addEventListener('scroll',function(){if(!ticking){requestAnimationFrame(onS);ticking=true;}},{passive:true});})();}catch(e){}
@@ -3011,5 +3018,3 @@ function boot(){
 }
 if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot); else boot();
 })();
-
-
