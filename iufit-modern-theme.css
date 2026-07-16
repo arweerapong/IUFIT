@@ -374,7 +374,7 @@ nav button:not(.on):active{background:var(--surface-soft)}
 .nutrow{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:12.5px}.nutrow .nm{width:74px;flex:none;font-weight:750}.nutrow .bar{flex:1}.nutrow .vv{width:96px;flex:none;text-align:right;color:var(--ink2);font-size:11.5px}
 .rcard{display:flex;gap:12px;align-items:center;cursor:pointer}.rcard .ric{width:54px;height:54px}.rcard .ric svg{width:31px;height:31px}.rcard .nm{font-weight:850;font-size:14.5px;color:var(--navy)}
 .tag{display:inline-block;font-size:10.5px;background:var(--berry2);border:1px solid #d8e4ff;color:#3156b3;border-radius:999px;padding:2px 8px;margin:3px 4px 0 0;font-weight:650}.tag.age{background:var(--sun2);color:#a16207;border-color:#ffe1a3}.tag.al{background:#fff1f1;color:#dc2626;border-color:#fecaca}
-.mwrap{position:fixed;inset:0;background:rgba(5,20,45,.52);z-index:50;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.mwrap{position:fixed;inset:0;background:rgba(5,20,45,.52);z-index:10001;display:none;align-items:flex-end;justify-content:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .mwrap.show{display:flex}
 .modal{
   position:relative;
