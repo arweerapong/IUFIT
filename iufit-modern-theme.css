@@ -56,7 +56,8 @@
   --font-ui:'Inter','Kanit','Sarabun','Segoe UI',system-ui,-apple-system,BlinkMacSystemFont,sans-serif;
   --font-display:'Montserrat','Kanit','Sarabun','Segoe UI',system-ui,sans-serif;
 }
-*{scrollbar-width:thin;scrollbar-color:#b8cff2 transparent}
+*{scrollbar-width:none;-ms-overflow-style:none}
+*::-webkit-scrollbar{display:none;width:0;height:0}
 html{background:#f5f7fb;min-height:100%;}
 body{
   margin:0;
