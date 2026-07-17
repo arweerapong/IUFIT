@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IUFIT · Result Card Generator V2</title>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
+<style>
+*{box-sizing:border-box}
+:root{
+  --primary:#0A84FF;--cyan:#20D5FF;--navy:#071E4A;
+  --green:#12B76A;--orange:#FF9500;--purple:#7C4DFF;--red:#FF3B30;--bgpage:#EEF4FF;
+}
+body{margin:0;font-family:'Inter','Noto Sans Thai',sans-serif;background:linear-gradient(180deg,#EAF2FF,#F6F9FF);color:#0f2244;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1120px;margin:0 auto;padding:26px 20px 80px;display:grid;grid-template-columns:1fr 480px;gap:28px;align-items:start}
+@media(max-width:960px){.wrap{grid-template-columns:1fr}}
+h1{font-size:26px;margin:0 0 2px;font-weight:900}
+h1 span{color:var(--primary)}
+.sub{color:#6a7ba0;font-size:14px;margin:0 0 20px}
+.panel{background:#fff;border:1px solid #e3ecfb;border-radius:20px;padding:18px 18px 20px;box-shadow:0 12px 30px rgba(10,40,90,.05);margin-bottom:16px}
+.panel h3{font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:#8494b6;margin:0 0 12px;font-weight:800}
+.tplGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tplBtn{display:flex;align-items:center;gap:12px;border:1.5px solid #e3ecfb;background:#fbfdff;border-radius:14px;padding:12px 14px;cursor:pointer;font-family:inherit;text-align:left;transition:.15s}
+.tplBtn:hover{border-color:#bcd6ff}
+.tplBtn.on{border-color:var(--primary);background:#eef6ff;box-shadow:0 0 0 3px rgba(10,132,255,.12)}
+.tplBtn .e{font-size:24px;flex:none}
+.tplBtn .n{font-size:11px;color:#9aa8c6;font-weight:800}
+.tplBtn .lb{font-size:15px;font-weight:800;color:#0f2244}
+.seg{display:flex;background:#f0f5ff;border-radius:13px;padding:5px;gap:5px}
+.seg b{flex:1;text-align:center;padding:11px 6px;border-radius:9px;font-size:14px;font-weight:800;color:#6a7ba0;cursor:pointer;line-height:1.2;transition:.15s}
+.seg b small{display:block;font-size:11px;font-weight:600;color:#a7b4d0}
+.seg b.on{background:#fff;color:var(--primary);box-shadow:0 3px 10px rgba(10,40,90,.08)}
+.row{display:flex;gap:12px}.row>*{flex:1}
+label.fld{display:block;font-size:12px;color:#8494b6;font-weight:700;margin:14px 0 6px}
+input[type=date]{width:100%;border:1.5px solid #e3ecfb;border-radius:12px;padding:12px 14px;font-family:inherit;font-size:15px;color:#0f2244;background:#fbfdff}
+.previewWrap{position:sticky;top:16px}
+.stage{background:#0a1330;border-radius:22px;padding:18px;display:flex;align-items:flex-start;justify-content:center;overflow:hidden;box-shadow:0 20px 46px rgba(0,15,50,.30);margin:0 auto;max-width:100%}
+.scaler{transform-origin:top center;flex:none}
+.btns{display:flex;gap:12px;margin-top:16px}
+.btn{flex:1;border:none;border-radius:14px;padding:15px;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer}
+.btn.p{background:var(--primary);color:#fff}
+.btn.s{background:#eaf2ff;color:var(--primary)}
+.hint{font-size:12px;color:#8494b6;margin-top:12px;line-height:1.6}
+
+/* ============================ CARD ============================ */
+.card{position:relative;overflow:hidden;font-family:'Inter','Noto Sans Thai',sans-serif;flex:none;display:flex;flex-direction:column;border-radius:var(--r)}
+.card.f-story{--pad:70px;--gap:26px;--r:44px;--fs-logo:44px;--fs-hero:150px;--fs-unit:44px;--fs-lbl:26px;--visH:470px}
+.card.f-square{--pad:56px;--gap:18px;--r:40px;--fs-logo:37px;--fs-hero:118px;--fs-unit:35px;--fs-lbl:22px;--visH:250px}
+.card.t-white{--ink:#0A1F44;--mut:#7286a8;--line:rgba(10,40,90,.10);--glass:#F2F7FF;--panel:#F4F8FF;
+  background:linear-gradient(165deg,#FFFFFF 0%,#F3F8FF 55%,#E9F2FF 100%);color:var(--ink)}
+.card.t-dark{--ink:#EAF2FF;--mut:#93A6CC;--line:rgba(255,255,255,.12);--glass:rgba(255,255,255,.05);--panel:rgba(255,255,255,.05);
+  background:linear-gradient(165deg,#071122 0%,#0A1A34 55%,#0C2247 100%);color:var(--ink)}
+.glow{position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(640px 460px at 90% -4%,rgba(10,132,255,.14),transparent 60%),radial-gradient(560px 520px at -8% 104%,rgba(32,213,255,.12),transparent 60%)}
+.card.t-dark .glow{background:radial-gradient(640px 460px at 90% -4%,rgba(10,132,255,.30),transparent 60%),radial-gradient(560px 520px at -8% 104%,rgba(32,213,255,.18),transparent 60%)}
+.dots{position:absolute;inset:0;pointer-events:none;z-index:0;background-image:radial-gradient(rgba(10,60,140,.06) 2px,transparent 2px);background-size:30px 30px}
+.card.t-dark .dots{background-image:radial-gradient(rgba(255,255,255,.05) 2px,transparent 2px)}
+.inner{position:relative;z-index:2;flex:1 1 auto;display:grid;padding:var(--pad);gap:var(--gap);min-height:0;align-content:space-between}
+.inner>*{min-width:0;min-height:0}
+
+/* header */
+.hdr{display:flex;align-items:flex-start;justify-content:space-between}
+.logo{font-weight:900;font-style:italic;font-size:var(--fs-logo);line-height:1;letter-spacing:-.02em}
+.logo .iu{color:var(--ink)}.logo .fit{color:var(--primary)}
+.hdrR{text-align:right}
+.hdrR .d1{font-size:calc(var(--fs-lbl)*0.78);font-weight:800;color:var(--ink);letter-spacing:.04em}
+.hdrR .d2{font-size:calc(var(--fs-lbl)*0.66);font-weight:700;letter-spacing:.12em;color:var(--mut);text-transform:uppercase;margin-top:4px}
+
+/* hero */
+.hero{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+.hlbl{display:flex;align-items:center;gap:12px;margin-bottom:6px}
+.hlbl .hic{width:calc(var(--fs-lbl)*1.9);height:calc(var(--fs-lbl)*1.9);border-radius:13px;display:flex;align-items:center;justify-content:center;font-size:calc(var(--fs-lbl)*1.02);background:rgba(10,132,255,.12)}
+.hlbl .hnm{font-size:calc(var(--fs-lbl)*0.92);font-weight:800;letter-spacing:.14em;color:var(--primary);text-transform:uppercase}
+.hrow{display:flex;align-items:baseline;gap:12px}
+.hnum{font-size:var(--fs-hero);font-weight:900;color:var(--ink);line-height:.9;letter-spacing:-.03em;font-variant-numeric:tabular-nums}
+.hunit{font-size:var(--fs-unit);font-weight:800;color:var(--mut)}
+.dpill{display:inline-flex;align-items:baseline;gap:9px;background:var(--glass);border:1px solid var(--line);border-radius:999px;padding:11px 22px;margin-top:12px}
+.dpill .dv{font-weight:800;font-size:calc(var(--fs-unit)*0.58);white-space:nowrap}
+.dpill .dl{font-size:calc(var(--fs-lbl)*0.82);color:var(--mut);font-weight:600}
+.c-green .dv{color:var(--green)}.c-red .dv{color:var(--red)}.c-blue .dv{color:var(--primary)}.c-orange .dv{color:var(--orange)}.c-purple .dv{color:var(--purple)}
+
+/* chart */
+.chart{width:100%;height:var(--visH);display:flex;align-items:center}
+.chart svg{display:block;width:100%;height:100%}
+
+/* goal panel */
+.goal{display:flex;align-items:center;gap:28px;background:var(--panel);border:1px solid var(--line);border-radius:30px;padding:34px 36px}
+.ringBox{position:relative;width:calc(var(--fs-hero)*0.82);height:calc(var(--fs-hero)*0.82);flex:none}
+.ringBox svg{width:100%;height:100%;display:block}
+.ringPct{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:calc(var(--fs-hero)*0.26);font-weight:900;color:var(--ink)}
+.ringPct i{font-size:.5em;font-weight:800;color:var(--mut);font-style:normal}
+.goalT{flex:1;min-width:0}
+.goalT .gl{display:block;font-size:calc(var(--fs-lbl)*0.76);letter-spacing:.1em;color:var(--mut);font-weight:800;text-transform:uppercase}
+.goalT b{display:block;font-size:calc(var(--fs-lbl)*1.28);color:var(--primary);font-weight:800;margin-top:6px;line-height:1.2}
+.goalDiv{width:1px;align-self:stretch;background:var(--line);margin:8px 0}
+.goalR{display:flex;align-items:center;gap:14px;flex:none}
+.goalR .gf{font-size:calc(var(--fs-lbl)*1.8)}
+.goalR b{display:block;font-size:calc(var(--fs-lbl)*1.6);color:var(--ink);font-weight:900;line-height:1}
+.goalR b small{font-size:.56em;color:var(--mut);font-weight:800;margin-left:2px}
+.goalR span{display:block;font-size:calc(var(--fs-lbl)*0.76);color:var(--mut);font-weight:600;margin-top:3px}
+
+/* stat grid */
+.stats{display:grid;gap:14px}
+.stats.g2{grid-template-columns:1fr 1fr}
+.stats.g3{grid-template-columns:1fr 1fr 1fr}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:18px 18px}
+.stat .sh{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.stat .si{width:calc(var(--fs-lbl)*1.5);height:calc(var(--fs-lbl)*1.5);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:calc(var(--fs-lbl)*0.86)}
+.stat .sl{font-size:calc(var(--fs-lbl)*0.7);color:var(--mut);font-weight:700}
+.stat .sv{font-size:calc(var(--fs-lbl)*1.55);font-weight:900;color:var(--ink);line-height:1}
+.stat .sv small{font-size:.5em;color:var(--mut);font-weight:800;margin-left:3px}
+.si-green{background:rgba(18,183,106,.13)}.si-orange{background:rgba(255,149,0,.13)}.si-purple{background:rgba(124,77,255,.13)}.si-blue{background:rgba(10,132,255,.13)}.si-red{background:rgba(255,59,48,.13)}
+
+/* macro ring + legend */
+.macro{display:flex;align-items:center;gap:26px;background:var(--panel);border:1px solid var(--line);border-radius:26px;padding:24px 28px}
+.macroRing{position:relative;width:calc(var(--fs-hero)*0.98);height:calc(var(--fs-hero)*0.98);flex:none}
+.macroRing svg{width:100%;height:100%}
+.macroC{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.macroC b{font-size:calc(var(--fs-hero)*0.2);font-weight:900;color:var(--ink);line-height:1}
+.macroC span{font-size:calc(var(--fs-lbl)*0.66);color:var(--mut);font-weight:700}
+.leg{flex:1;display:flex;flex-direction:column;gap:12px}
+.legIt{display:flex;align-items:center;gap:11px;font-size:calc(var(--fs-lbl)*0.94);color:var(--ink);font-weight:600}
+.legIt i{width:15px;height:15px;border-radius:5px;flex:none}
+.legIt b{margin-left:auto;font-weight:900}
+
+/* health rings */
+.hrings{display:flex;align-items:center;gap:26px;background:var(--panel);border:1px solid var(--line);border-radius:26px;padding:22px 28px}
+.hringsBox{width:calc(var(--fs-hero)*1.05);height:calc(var(--fs-hero)*1.05);flex:none}
+.hringsBox svg{width:100%;height:100%}
+
+/* zones */
+.zones{display:flex;flex-direction:column;gap:12px;background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:22px 26px}
+.zrow{display:flex;align-items:center;gap:14px}
+.zrow .zl{width:34px;font-size:calc(var(--fs-lbl)*0.86);font-weight:800;color:var(--ink)}
+.zrow .zt{flex:1;height:14px;border-radius:99px;background:var(--line);overflow:hidden}
+.zrow .zt i{display:block;height:100%;border-radius:99px}
+.zrow .zp{width:52px;text-align:right;font-size:calc(var(--fs-lbl)*0.82);font-weight:800;color:var(--mut)}
+
+/* footer */
+.foot{display:flex;align-items:center;gap:18px;border-top:1px solid var(--line);padding-top:22px;margin-top:2px}
+.qr{width:calc(var(--fs-hero)*0.42);height:calc(var(--fs-hero)*0.42);flex:none;background:#fff;border-radius:14px;padding:7px;box-shadow:0 6px 18px rgba(7,30,74,.12)}
+.qr img{width:100%;height:100%;display:block;image-rendering:pixelated}
+.fmid{flex:1;min-width:0}
+.fmid b{display:block;font-size:calc(var(--fs-lbl)*1.05);color:var(--ink);font-weight:900;font-style:italic}
+.fmid span{display:block;font-size:calc(var(--fs-lbl)*0.62);letter-spacing:.09em;color:var(--mut);text-transform:uppercase;margin:3px 0 9px}
+.store{display:flex;gap:9px;flex-wrap:wrap}
+.stB{background:#0b1220;border-radius:9px;padding:5px 9px;display:inline-flex;align-items:center}
+.stB img{height:calc(var(--fs-lbl)*1.4);display:block}
+.stB b{font-size:calc(var(--fs-lbl)*0.78);color:#fff;font-weight:700;font-style:normal}
+.cardMate{position:absolute;right:calc(var(--pad)*0.2);bottom:calc(var(--pad)*0.9);height:27%;z-index:3;pointer-events:none}
+.card.f-square .cardMate{height:24%}
+.cardMate img{height:100%;width:auto;display:block;filter:drop-shadow(0 12px 26px rgba(10,40,90,.20))}
+
+/* celebration (achievement) */
+.celeb{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;position:relative;padding:6px 0}
+.confetti{position:absolute;top:0;left:0}
+.confetti i{position:absolute;display:block}
+.bigBadge{display:inline-flex;align-items:center;gap:12px;font-weight:900;border-radius:999px;padding:16px 34px;font-size:calc(var(--fs-lbl)*1.15)}
+.celMate{width:calc(var(--fs-hero)*1.7);height:calc(var(--fs-hero)*1.7);position:relative}
+.celMate img{width:100%;height:100%;object-fit:contain;display:block}
+.celHead{font-size:calc(var(--fs-hero)*0.46);font-weight:900;color:var(--ink);line-height:1.1;max-width:92%}
+.celSub{font-size:calc(var(--fs-lbl)*1.0);color:var(--mut);font-weight:600}
+.c-green.bg{background:rgba(18,183,106,.14);color:var(--green)}.c-orange.bg{background:rgba(255,149,0,.14);color:var(--orange)}.c-purple.bg{background:rgba(124,77,255,.14);color:var(--purple)}.c-blue.bg{background:rgba(10,132,255,.14);color:var(--primary)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <h1>IU<span>FIT</span> · Result Card Generator <span>V2</span></h1>
+    <p class="sub">การ์ดความสำเร็จพรีเมียม — สไตล์ Apple Minimal + Duolingo Emotion · Story / Square</p>
+    <div class="panel">
+      <h3>เทมเพลต · Template</h3>
+      <div class="tplGrid" id="tplGrid"></div>
+    </div>
+    <div class="panel">
+      <h3>ธีม · ขนาด · ภาษา</h3>
+      <label class="fld">ธีม (Theme)</label>
+      <div class="seg" id="themeSeg"><b class="on" data-v="white">☀️ White</b><b data-v="dark">🌙 Dark</b></div>
+      <label class="fld">ขนาด (Format)</label>
+      <div class="seg" id="fmtSeg"><b class="on" data-v="story">Story<small>1080×1920</small></b><b data-v="square">Square<small>1080×1080</small></b></div>
+      <label class="fld">ภาษา (Language)</label>
+      <div class="seg" id="langSeg"><b class="on" data-v="th">TH ไทย</b><b data-v="en">EN English</b></div>
+      <label class="fld">วันที่บนการ์ด</label>
+      <input type="date" id="dateInput">
+    </div>
+  </div>
+
+  <div class="previewWrap">
+    <div class="stage" id="stage"><div class="scaler" id="scaler"><div id="card" class="card"></div></div></div>
+    <div class="btns">
+      <button class="btn p" id="btnSave">⬇️ บันทึกรูป</button>
+      <button class="btn s" id="btnShare">↗️ แชร์</button>
+    </div>
+    <p class="hint">การ์ดสร้างที่ความละเอียดเต็ม 2× พร้อมแชร์ลง IG / Facebook / Threads Story หรือโพสต์จัตุรัสได้ทันที</p>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+var DLURL='https://iufit.com/open.html';
+
+/* ============================ CONSTANTS ============================ */
+var FORMATS={ story:{w:1080,h:1920}, square:{w:1080,h:1080} };
+var TH_MONTHS=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+var EN_MONTHS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+var BADGES={
+  BEST_WEEK:{emoji:'🔥',th:'สัปดาห์ที่ดีที่สุด',en:'BEST WEEK',color:'green'},
+  NEW_LOW:{emoji:'📉',th:'ต่ำสุดใหม่',en:'NEW LOW',color:'blue'},
+  GAIN_MODE:{emoji:'💪',th:'โหมดเพิ่มกล้าม',en:'GAIN MODE',color:'purple'},
+  PERFECT_WEEK:{emoji:'✅',th:'สัปดาห์สมบูรณ์แบบ',en:'PERFECT WEEK',color:'green'},
+  STREAK_30:{emoji:'🔥',th:'สตรีค 30 วัน',en:'30-DAY STREAK',color:'orange'},
+  PROTEIN_MASTER:{emoji:'🥩',th:'เจ้าแห่งโปรตีน',en:'PROTEIN MASTER',color:'purple'},
+  NEW_RECORD:{emoji:'🏆',th:'สถิติใหม่',en:'NEW RECORD',color:'purple'},
+  CARDIO_MASTER:{emoji:'❤️',th:'เจ้าแห่งคาร์ดิโอ',en:'CARDIO MASTER',color:'blue'},
+  HEALTHY_WEEK:{emoji:'💙',th:'สัปดาห์สุขภาพดี',en:'HEALTHY WEEK',color:'blue'},
+  LEGEND:{emoji:'👑',th:'ตำนาน',en:'LEGEND',color:'orange'}
+};
+
+var MOTIV=[
+  ['ทุกก้าวที่เหนื่อย คือก้าวที่ทำให้แข็งแรงขึ้น','Every step forward makes you stronger'],
+  ['วันนี้ดีกว่าเมื่อวาน แค่นี้ก็ชนะแล้ว','Better than yesterday — that’s a win'],
+  ['ความสม่ำเสมอชนะทุกอย่าง','Consistency beats everything'],
+  ['ค่อย ๆ ไป แต่ไม่เคยหยุด','Slow is fine — just never stop']
+];
+
+var STATE={
+  lang:'th', theme:'white', format:'story', tpl:'weight',
+  date:new Date().toISOString().slice(0,10),
+  motivIdx:0,
+  data:{
+    weight :{icon:'⚖️',name:{th:'น้ำหนัก',en:'WEIGHT'},badge:'BEST_WEEK',unit:'kg',start:66.5,current:61.0,goal:58.0,lastWeek:62.4,goodDir:'down',color:'primary'},
+    bodyfat:{icon:'📊',name:{th:'ไขมันในร่างกาย',en:'BODY FAT'},badge:'NEW_LOW',unit:'%',start:24.5,current:18.2,goal:15.0,lastWeek:20.3,goodDir:'down',color:'cyan'},
+    muscle :{icon:'💪',name:{th:'กล้ามเนื้อ',en:'MUSCLE'},badge:'GAIN_MODE',unit:'kg',start:26.1,current:29.4,goal:32.0,lastWeek:28.6,goodDir:'up',color:'purple'},
+    weekly :{icon:'📅',name:{th:'สัปดาห์นี้',en:'THIS WEEK'},badge:'PERFECT_WEEK',workouts:6,streak:14,avgMin:53,totalMin:320,avgCal:2850,avgSteps:9842},
+    monthly:{icon:'🗓️',name:{th:'เดือนนี้',en:'THIS MONTH'},badge:'STREAK_30',score:82,activeDays:24,longest:12,sessions:28,weightDown:4.2,totalSteps:82000},
+    nutrition:{icon:'🥗',name:{th:'โภชนาการ',en:'NUTRITION'},badge:'PROTEIN_MASTER',calories:1850,calGoal:2000,protein:142,carbs:180,fat:55,water:2.1},
+    workout:{icon:'🏋️',name:{th:'ออกกำลังกาย',en:'WORKOUT'},badge:'NEW_RECORD',sessions:18,volume:12450,totalMin:540,calories:4200,prVal:120},
+    cardio :{icon:'❤️',name:{th:'คาร์ดิโอ',en:'CARDIO'},badge:'CARDIO_MASTER',avgHR:142,minutes:186,calories:1680,dist:12.5,z1:15,z2:30,z3:30,z4:18,z5:7},
+    health :{icon:'💙',name:{th:'สุขภาพ',en:'HEALTH'},badge:'HEALTHY_WEEK',score:82,steps:8420,stepGoal:10000,sleepH:7.2,sleepGoal:8,restHR:58,hrv:68,source:'Health Connect'},
+    achievement:{badge:'NEW_RECORD',headTh:'สถิติใหม่!',headEn:'New Record!',subTh:'น้ำหนักต่ำสุดใหม่ 61.0 กก.',subEn:'New low — 61.0 kg',days:45,totalKg:8.5,streak:60}
+  }
+};
+
+var TEMPLATES=[
+  {id:'weight',n:'01',emoji:'⚖️',th:'น้ำหนัก',en:'Weight'},
+  {id:'bodyfat',n:'02',emoji:'📊',th:'ไขมันในร่างกาย',en:'Body Fat'},
+  {id:'muscle',n:'03',emoji:'💪',th:'กล้ามเนื้อ',en:'Muscle'},
+  {id:'weekly',n:'04',emoji:'📅',th:'รายสัปดาห์',en:'Weekly'},
+  {id:'monthly',n:'05',emoji:'🗓️',th:'รายเดือน',en:'Monthly'},
+  {id:'nutrition',n:'06',emoji:'🥗',th:'โภชนาการ',en:'Nutrition'},
+  {id:'workout',n:'07',emoji:'🏋️',th:'ออกกำลังกาย',en:'Workout'},
+  {id:'cardio',n:'08',emoji:'❤️',th:'คาร์ดิโอ',en:'Cardio'},
+  {id:'health',n:'09',emoji:'💙',th:'สุขภาพ',en:'Health'},
+  {id:'achievement',n:'10',emoji:'🏆',th:'ความสำเร็จ',en:'Achievement'}
+];
+
+/* ============================ HELPERS ============================ */
+function t(th,en){ return STATE.lang==='th'?th:en; }
+function esc(s){ return String(s==null?'':s).replace(/[&<>]/g,function(c){return c==='&'?'&amp;':c==='<'?'&lt;':'&gt;';}); }
+function nf(n){ return Number(n).toLocaleString('en-US'); }
+function seededRand(seed){ var x=Math.sin(seed*12.9898)*43758.5453; return x-Math.floor(x); }
+function fmtCE(iso){ var d=iso?new Date(iso+'T00:00:00'):new Date(); if(isNaN(d.getTime()))d=new Date(); var mo=STATE.lang==='th'?TH_MONTHS:EN_MONTHS; return d.getDate()+' '+mo[d.getMonth()]+' '+d.getFullYear(); }
+function rangeCE(days){ var end=STATE.date?new Date(STATE.date+'T00:00:00'):new Date(); if(isNaN(end.getTime()))end=new Date(); var s=new Date(end); s.setDate(end.getDate()-((days||7)-1)); var mo=STATE.lang==='th'?TH_MONTHS:EN_MONTHS; if(s.getMonth()===end.getMonth()) return s.getDate()+'–'+end.getDate()+' '+mo[end.getMonth()]+' '+end.getFullYear(); return s.getDate()+' '+mo[s.getMonth()]+' – '+end.getDate()+' '+mo[end.getMonth()]+' '+end.getFullYear(); }
+function dayLabels(n){ var end=STATE.date?new Date(STATE.date+'T00:00:00'):new Date(); if(isNaN(end.getTime()))end=new Date(); var mo=STATE.lang==='th'?TH_MONTHS:EN_MONTHS; var a=[]; for(var i=n-1;i>=0;i--){ var d=new Date(end); d.setDate(end.getDate()-i); a.push(d.getDate()+' '+mo[d.getMonth()]); } return a; }
+function genSeries(start,end,n){ n=n||8; var a=[]; for(var i=0;i<n;i++){ var p=i/(n-1); var base=start+(end-start)*p; var noise=Math.sin(i*12.9898+start*3.7)*Math.abs(end-start||1)*0.03; a.push(base+((i===0||i===n-1)?0:noise)); } a[0]=start; a[n-1]=end; return a; }
+function smoothPath(pts){ if(pts.length<2) return ''; var d='M'+pts[0][0].toFixed(1)+','+pts[0][1].toFixed(1); for(var i=0;i<pts.length-1;i++){ var p0=pts[i],p1=pts[i+1]; var cx=(p0[0]+p1[0])/2; d+=' C'+cx.toFixed(1)+','+p0[1].toFixed(1)+' '+cx.toFixed(1)+','+p1[1].toFixed(1)+' '+p1[0].toFixed(1)+','+p1[1].toFixed(1); } return d; }
+
+/* ============================ SVG BUILDERS ============================ */
+function areaChart(data,color,labels){
+  var w=680,h=300,padL=48,padR=22,padT=34,padB=labels?44:24;
+  var id='ac'+Math.floor(seededRand(data.length*7+1)*1e5);
+  var dmin=Math.min.apply(null,data),dmax=Math.max.apply(null,data);
+  if(dmin===dmax){dmin-=1;dmax+=1;}
+  var pd=(dmax-dmin)*0.18||1, min=dmin-pd, max=dmax+pd, range=max-min, n=data.length;
+  function X(i){return padL+(w-padL-padR)*(n===1?0:i/(n-1));}
+  function Y(v){return padT+(h-padT-padB)*(1-(v-min)/range);}
+  var pts=data.map(function(v,i){return [X(i),Y(v)];});
+  var grid='';
+  for(var g=0;g<=4;g++){ var gv=min+range*g/4, gy=Y(gv); grid+='<line x1="'+padL+'" y1="'+gy.toFixed(1)+'" x2="'+(w-padR)+'" y2="'+gy.toFixed(1)+'" stroke="var(--line)" stroke-width="1.5"/><text x="'+(padL-11)+'" y="'+(gy+6).toFixed(1)+'" font-size="18" fill="var(--mut)" text-anchor="end" font-weight="600" font-family="Inter,sans-serif">'+(Math.round(gv*10)/10)+'</text>'; }
+  var line=smoothPath(pts), last=pts[n-1], first=pts[0], baseY=Y(min);
+  var area=line+' L'+last[0].toFixed(1)+','+baseY.toFixed(1)+' L'+first[0].toFixed(1)+','+baseY.toFixed(1)+' Z';
+  var dots=''; pts.forEach(function(p,i){ if(i===n-1)return; dots+='<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="5.5" fill="#fff" stroke="'+color+'" stroke-width="3"/>'; });
+  var xl=''; if(labels){ labels.forEach(function(lb,i){ if(i>=n)return; xl+='<text x="'+pts[i][0].toFixed(1)+'" y="'+(h-14)+'" font-size="17" fill="var(--mut)" text-anchor="middle" font-weight="600" font-family="Inter,Noto Sans Thai,sans-serif">'+esc(lb)+'</text>'; }); }
+  return '<svg viewBox="0 0 '+w+' '+h+'" preserveAspectRatio="xMidYMid meet"><defs><linearGradient id="'+id+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="'+color+'" stop-opacity="0.28"/><stop offset="100%" stop-color="'+color+'" stop-opacity="0"/></linearGradient></defs>'+grid+'<path d="'+area+'" fill="url(#'+id+')"/><path d="'+line+'" fill="none" stroke="'+color+'" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>'+dots+'<circle cx="'+last[0].toFixed(1)+'" cy="'+last[1].toFixed(1)+'" r="15" fill="'+color+'" opacity="0.16"/><circle cx="'+last[0].toFixed(1)+'" cy="'+last[1].toFixed(1)+'" r="9" fill="#fff" stroke="'+color+'" stroke-width="5"/>'+xl+'</svg>';
+}
+function ringSVG(pct,color){ pct=Math.max(0,Math.min(100,pct)); var r=54,c=2*Math.PI*r,off=c*(1-pct/100); return '<svg viewBox="0 0 130 130"><circle cx="65" cy="65" r="'+r+'" fill="none" stroke="var(--line)" stroke-width="13"/><circle cx="65" cy="65" r="'+r+'" fill="none" stroke="'+color+'" stroke-width="13" stroke-linecap="round" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 65 65)"/></svg>'; }
+function macroRingSVG(segs){ var total=segs.reduce(function(s,x){return s+x.v;},0)||1,r=52,c=2*Math.PI*r,acc=0,out=''; segs.forEach(function(s){ var frac=s.v/total,len=c*frac,gap=c*0.012; out+='<circle cx="65" cy="65" r="'+r+'" fill="none" stroke="'+s.color+'" stroke-width="15" stroke-dasharray="'+Math.max(0,len-gap).toFixed(1)+' '+(c-Math.max(0,len-gap)).toFixed(1)+'" stroke-dashoffset="'+(-acc).toFixed(1)+'" transform="rotate(-90 65 65)" stroke-linecap="round"/>'; acc+=len; }); return '<svg viewBox="0 0 130 130">'+out+'</svg>'; }
+function healthRingsSVG(rings){ var out='',R=[54,40,26]; rings.forEach(function(rg,i){ var r=R[i],c=2*Math.PI*r,off=c*(1-Math.max(0,Math.min(1,rg.pct))); out+='<circle cx="65" cy="65" r="'+r+'" fill="none" stroke="var(--line)" stroke-width="11"/><circle cx="65" cy="65" r="'+r+'" fill="none" stroke="'+rg.color+'" stroke-width="11" stroke-linecap="round" stroke-dasharray="'+c.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 65 65)"/>'; }); return '<svg viewBox="0 0 130 130">'+out+'</svg>'; }
+function confetti(n){ var col=['var(--green)','var(--orange)','var(--purple)','var(--primary)','var(--cyan)'],out=''; for(var i=0;i<n;i++){ var s=i*97; out+='<i style="left:'+(seededRand(s)*100).toFixed(1)+'%;top:'+(seededRand(s+1)*70).toFixed(1)+'%;width:'+(6+seededRand(s+3)*10).toFixed(1)+'px;height:'+(6+seededRand(s+3)*10).toFixed(1)+'px;background:'+col[i%5]+';border-radius:'+((i%2)?'2px':'50%')+';transform:rotate('+(seededRand(s+2)*360).toFixed(0)+'deg)"></i>'; } return out; }
+
+/* ============================ COMPONENTS ============================ */
+function header(period,days){ return '<div class="hdr"><div class="logo"><span class="iu">IU</span><span class="fit">FIT</span></div><div class="hdrR"><div class="d1">'+esc(days?rangeCE(days):fmtCE(STATE.date))+'</div><div class="d2">'+esc(period)+'</div></div></div>'; }
+function heroBlock(o){
+  var dl = o.delta ? '<div class="dpill c-'+o.delta.color+'"><span class="dv">'+o.delta.arrow+' '+esc(o.delta.val)+'</span><span class="dl">'+esc(o.delta.cap)+'</span></div>' : '';
+  return '<div class="hero"><div class="hlbl"><span class="hic">'+o.icon+'</span><span class="hnm">'+esc(o.name)+'</span></div>'+
+    '<div class="hrow"><span class="hnum">'+esc(o.num)+'</span>'+(o.unit?'<span class="hunit">'+esc(o.unit)+'</span>':'')+'</div>'+dl+'</div>';
+}
+function goalPanel(pct,status,toGo,unit){
+  return '<div class="goal"><div class="ringBox">'+ringSVG(pct,'var(--primary)')+'<span class="ringPct">'+pct+'<i>%</i></span></div>'+
+    '<div class="goalT"><span class="gl">'+esc(t('ความคืบหน้าเป้าหมาย','GOAL PROGRESS'))+'</span><b>'+esc(status)+'</b></div>'+
+    '<div class="goalDiv"></div><div class="goalR"><span class="gf">🚩</span><div><b>'+esc(toGo)+' <small>'+esc(unit)+'</small></b><span>'+esc(t('ถึงเป้าหมาย','to go'))+'</span></div></div></div>';
+}
+function statGrid(items,cols){
+  return '<div class="stats g'+(cols||3)+'">'+items.map(function(s){
+    return '<div class="stat"><div class="sh"><span class="si si-'+s.color+'">'+s.emoji+'</span><span class="sl">'+esc(s.label)+'</span></div><div class="sv">'+esc(s.value)+(s.unit?'<small>'+esc(s.unit)+'</small>':'')+'</div></div>';
+  }).join('')+'</div>';
+}
+function footer(mate){
+  return '<div class="foot"><div class="qr"><img id="qrImg" alt="QR"></div>'+
+    '<div class="fmid"><b>IUFIT</b><span>YOUR JOURNEY, BETTER EVERY DAY</span>'+
+    '<div class="store"><span class="stB"><img src="./badge-appstore.svg" alt="App Store" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<b>App Store<\/b>\'"></span><span class="stB"><img src="./badge-googleplay.svg" alt="Google Play" onerror="this.style.display=\'none\';this.parentNode.innerHTML=\'<b>Google Play<\/b>\'"></span></div></div>'+
+    '</div>';
+}
+function goalStatus(p){ return p>=80?t('ทำได้ยอดเยี่ยม!','You’re crushing it!'):p>=50?t('ทำได้ดีมาก!','You’re doing great!'):p>=25?t('กำลังไปได้ดี!','On your way!'):t('เริ่มต้นได้ดี!','Great start!'); }
+
+/* ============================ TEMPLATE RENDERERS ============================ */
+function trendCard(d){
+  var change=(d.lastWeek!=null)?(d.current-d.lastWeek):(d.current-d.start);
+  var dir=change<0?'down':(change>0?'up':'flat');
+  var good=dir===d.goodDir, cc=dir==='flat'?'blue':(good?'green':'red');
+  var arrow=dir==='down'?'▼':(dir==='up'?'▲':'—'), us=(d.unit==='%')?'':' ';
+  var pct=Math.max(0,Math.min(100,Math.round(Math.abs(d.start-d.current)/Math.abs((d.start-d.goal)||1)*100)));
+  var toGo=Math.abs(d.current-d.goal).toFixed(1);
+  var series=genSeries(d.start,d.current,8);
+  return header('7-DAY PROGRESS',7)+
+    heroBlock({icon:d.icon,name:t(d.name.th,d.name.en),num:d.current.toFixed(1),unit:d.unit,delta:{arrow:arrow,val:Math.abs(change).toFixed(1)+us+d.unit,cap:t('จากสัปดาห์ที่แล้ว','from last week'),color:cc}})+
+    '<div class="chart">'+areaChart(series,'var(--'+d.color+')',dayLabels(8))+'</div>'+
+    goalPanel(pct,goalStatus(pct),toGo,d.unit)+
+    footer('thumbsup');
+}
+var RENDER={
+  weight:function(){return trendCard(STATE.data.weight);},
+  bodyfat:function(){return trendCard(STATE.data.bodyfat);},
+  muscle:function(){return trendCard(STATE.data.muscle);},
+  weekly:function(){ var d=STATE.data.weekly;
+    return header('WEEKLY REPORT',7)+
+      heroBlock({icon:d.icon,name:t(d.name.th,d.name.en),num:d.workouts,unit:t('ครั้ง','workouts'),delta:{arrow:'🔥',val:d.streak+t(' วัน',' days'),cap:t('สตรีคต่อเนื่อง','streak'),color:'orange'}})+
+      statGrid([
+        {emoji:'🔥',label:t('แคลอรี่/วัน','Cal/day'),value:nf(d.avgCal),color:'orange'},
+        {emoji:'⏱️',label:t('เฉลี่ย/ครั้ง','Avg/session'),value:d.avgMin,unit:t('น','m'),color:'blue'},
+        {emoji:'👣',label:t('ก้าว/วัน','Steps/day'),value:nf(d.avgSteps),color:'green'},
+        {emoji:'💪',label:t('เวลารวม','Total time'),value:d.totalMin,unit:t('น','m'),color:'purple'}
+      ],2)+footer(false);
+  },
+  monthly:function(){ var d=STATE.data.monthly;
+    return header('MONTHLY REPORT',30)+
+      heroBlock({icon:d.icon,name:t(d.name.th,d.name.en),num:d.score,unit:'/100',delta:{arrow:'📊',val:t('คะแนนสุขภาพ','Health score'),cap:t('เดือนนี้','this month'),color:'blue'}})+
+      statGrid([
+        {emoji:'📅',label:t('วันออกกำลัง','Active days'),value:d.activeDays,color:'blue'},
+        {emoji:'🔥',label:t('สตรีคยาวสุด','Longest streak'),value:d.longest,unit:t('วัน','d'),color:'orange'},
+        {emoji:'⚖️',label:t('น้ำหนักลด','Weight down'),value:d.weightDown,unit:'kg',color:'green'},
+        {emoji:'👣',label:t('ก้าวรวม','Total steps'),value:nf(d.totalSteps),color:'purple'}
+      ],2)+footer('thumbsup');
+  },
+  nutrition:function(){ var d=STATE.data.nutrition;
+    var segs=[{v:d.protein*4,color:'var(--purple)'},{v:d.carbs*4,color:'var(--primary)'},{v:d.fat*9,color:'var(--orange)'}];
+    var pct=Math.round(d.calories/(d.calGoal||1)*100);
+    return header('NUTRITION REPORT',0)+
+      heroBlock({icon:d.icon,name:t(d.name.th,d.name.en),num:nf(d.calories),unit:'kcal',delta:{arrow:'🎯',val:pct+'%',cap:t('ของเป้าหมาย','of goal'),color:'blue'}})+
+      '<div class="macro"><div class="macroRing">'+macroRingSVG(segs)+'<div class="macroC"><b>'+pct+'%</b><span>'+esc(t('เป้าหมาย','goal'))+'</span></div></div>'+
+      '<div class="leg"><div class="legIt"><i style="background:var(--purple)"></i>'+esc(t('โปรตีน','Protein'))+'<b>'+d.protein+'g</b></div>'+
+      '<div class="legIt"><i style="background:var(--primary)"></i>'+esc(t('คาร์บ','Carbs'))+'<b>'+d.carbs+'g</b></div>'+
+      '<div class="legIt"><i style="background:var(--orange)"></i>'+esc(t('ไขมัน','Fat'))+'<b>'+d.fat+'g</b></div>'+
+      '<div class="legIt"><i style="background:var(--cyan)"></i>'+esc(t('น้ำ','Water'))+'<b>'+d.water+'L</b></div></div></div>'+
+      footer(false);
+  },
+  workout:function(){ var d=STATE.data.workout;
+    return header('WORKOUT REPORT',7)+
+      heroBlock({icon:d.icon,name:t(d.name.th,d.name.en),num:nf(d.volume),unit:'kg',delta:{arrow:'🏆',val:'+'+d.prVal+' kg',cap:t('สถิติใหม่','new PR'),color:'purple'}})+
+      statGrid([
+        {emoji:'🏋️',label:t('เซสชัน','Sessions'),value:d.sessions,color:'blue'},
+        {emoji:'⏱️',label:t('เวลารวม','Total time'),value:d.totalMin,unit:t('น','m'),color:'purple'},
+        {emoji:'🔥',label:t('แคลอรี่','Calories'),value:nf(d.calories),color:'orange'}
+      ],3)+footer('thumbsup');
+  },
+  cardio:function(){ var d=STATE.data.cardio;
+    var zones=[['Z1',d.z1,'var(--primary)'],['Z2',d.z2,'var(--cyan)'],['Z3',d.z3,'var(--green)'],['Z4',d.z4,'var(--orange)'],['Z5',d.z5,'var(--red)']];
+    var zr=zones.map(function(z){return '<div class="zrow"><span class="zl">'+z[0]+'</span><span class="zt"><i style="width:'+z[1]+'%;background:'+z[2]+'"></i></span><span class="zp">'+z[1]+'%</span></div>';}).join('');
+    return header('CARDIO REPORT',7)+
+      heroBlock({icon:d.icon,name:t(d.name.th,d.name.en),num:d.avgHR,unit:'bpm',delta:{arrow:'❤️',val:d.minutes+t(' นาที',' min'),cap:t('เวลาคาร์ดิโอ','cardio time'),color:'red'}})+
+      '<div class="zones">'+zr+'</div>'+
+      statGrid([
+        {emoji:'🏃',label:t('ระยะทาง','Distance'),value:d.dist,unit:'km',color:'blue'},
+        {emoji:'🔥',label:t('แคลอรี่','Calories'),value:nf(d.calories),color:'orange'},
+        {emoji:'⏱️',label:t('เวลา','Time'),value:d.minutes,unit:t('น','m'),color:'purple'}
+      ],3)+footer(false);
+  },
+  health:function(){ var d=STATE.data.health;
+    var rings=[{pct:d.steps/(d.stepGoal||1),color:'var(--primary)'},{pct:d.sleepH/(d.sleepGoal||1),color:'var(--purple)'},{pct:d.restHR<=65?1:0.7,color:'var(--green)'}];
+    return header('HEALTH REPORT',7)+
+      heroBlock({icon:d.icon,name:t(d.name.th,d.name.en),num:d.score,unit:'/100',delta:{arrow:'💙',val:t('สุขภาพดี','Healthy'),cap:t('สัปดาห์นี้','this week'),color:'blue'}})+
+      '<div class="hrings"><div class="hringsBox">'+healthRingsSVG(rings)+'</div>'+
+      '<div class="leg"><div class="legIt"><i style="background:var(--primary)"></i>'+esc(t('ก้าวเดิน','Steps'))+'<b>'+nf(d.steps)+'</b></div>'+
+      '<div class="legIt"><i style="background:var(--purple)"></i>'+esc(t('การนอน','Sleep'))+'<b>'+d.sleepH+'h</b></div>'+
+      '<div class="legIt"><i style="background:var(--green)"></i>'+esc(t('ชีพจรพัก','Resting HR'))+'<b>'+d.restHR+' bpm</b></div>'+
+      '<div class="legIt"><i style="background:var(--cyan)"></i>'+'HRV'+'<b>'+d.hrv+' ms</b></div></div></div>'+
+      footer(false);
+  },
+  achievement:function(){ var d=STATE.data.achievement, b=BADGES[d.badge]||BADGES.NEW_RECORD;
+    return header('ACHIEVEMENT',0)+
+      '<div class="celeb"><div class="confetti">'+confetti(28)+'</div>'+
+      '<div class="bigBadge bg c-'+b.color+'">'+b.emoji+' '+esc(t(b.th,b.en))+'</div>'+
+      '<div class="celMate"><img src="./iu-mate/mate-cheering.webp" alt="IU Mate"></div>'+
+      '<div class="celHead">'+esc(t(d.headTh,d.headEn))+'</div>'+
+      '<div class="celSub">'+esc(t(d.subTh,d.subEn))+'</div></div>'+
+      statGrid([
+        {emoji:'📅',label:t('ระยะเวลา','Duration'),value:d.days,unit:t('วัน','d'),color:'blue'},
+        {emoji:'⚖️',label:t('เปลี่ยนแปลง','Change'),value:d.totalKg,unit:'kg',color:'green'},
+        {emoji:'🔥',label:t('สตรีค','Streak'),value:d.streak,unit:t('วัน','d'),color:'orange'}
+      ],3)+footer(false);
+  }
+};
+
+/* card grid layout per template */
+var LAYOUTS={
+  trend:{areas:'"header" "hero" "chart" "goal" "gap" "footer"',rows:'auto auto auto auto 1fr auto'},
+  chartStat:{areas:'"header" "hero" "viz" "stats" "footer"',rows:'auto auto 1fr auto auto'},
+  statOnly:{areas:'"header" "hero" "stats" "footer"',rows:'auto auto 1fr auto'},
+  celeb:{areas:'"header" "celeb" "stats" "footer"',rows:'auto 1fr auto auto'}
+};
+
+/* ============================ RENDER ============================ */
+function render(){
+  var card=document.getElementById('card'), fmt=FORMATS[STATE.format];
+  card.className='card t-'+STATE.theme+' f-'+STATE.format+' tpl-'+STATE.tpl;
+  card.style.width=fmt.w+'px'; card.style.height=fmt.h+'px';
+  var body=(RENDER[STATE.tpl]||RENDER.weight)();
+  var mate=(STATE.tpl==='achievement')?'':'<div class="cardMate"><img src="./iu-mate/mate-thumbsup.webp" alt="IU Mate"></div>';
+  card.innerHTML='<div class="glow"></div><div class="dots"></div><div class="inner">'+body+'</div>'+mate;
+  applyGrid();
+  refreshQR();
+  fitScale();
+}
+function applyGrid(){
+  var inner=document.querySelector('#card .inner');
+  var map={weight:'trend',bodyfat:'trend',muscle:'trend',nutrition:'chartStat',cardio:'chartStat',health:'chartStat',weekly:'statOnly',monthly:'statOnly',workout:'statOnly',achievement:'celeb'};
+  var L=LAYOUTS[map[STATE.tpl]||'trend'];
+  inner.style.gridTemplateAreas=L.areas;
+  inner.style.gridTemplateRows=L.rows;
+  /* assign grid-area to direct children by their role class */
+  var roles=[['.hdr','header'],['.hero','hero'],['.chart','chart'],['.goal','goal'],['.macro','viz'],['.hrings','viz'],['.zones','viz'],['.stats','stats'],['.foot','footer'],['.celeb','celeb']];
+  roles.forEach(function(r){ var el=inner.querySelector(r[0]); if(el) el.style.gridArea=r[1]; });
+  /* cardio/health have viz + stats both; chart tpl uses chart area */
+}
+function refreshQR(){
+  try{ var q=qrcode(0,'M'); q.addData(DLURL); q.make(); var img=document.getElementById('qrImg'); if(img) img.src=q.createDataURL(6,0); }catch(e){}
+}
+function fitScale(){
+  var stage=document.getElementById('stage'), scaler=document.getElementById('scaler'), fmt=FORMATS[STATE.format];
+  var wrap=stage.parentElement, pad=18;
+  var maxW=Math.max(220,(wrap.clientWidth||440)-pad*2), maxH=Math.min(window.innerHeight*0.8,780);
+  var scale=Math.min(maxW/fmt.w,maxH/fmt.h,1);
+  scaler.style.width=fmt.w+'px'; scaler.style.height=fmt.h+'px'; scaler.style.transform='scale('+scale+')';
+  stage.style.width=(Math.round(fmt.w*scale)+pad*2)+'px';
+  stage.style.height=(Math.round(fmt.h*scale)+pad*2)+'px';
+}
+
+/* ============================ EXPORT ============================ */
+async function capture(){
+  var card=document.getElementById('card'), fmt=FORMATS[STATE.format];
+  var host=document.createElement('div');
+  host.style.cssText='position:fixed;left:-99999px;top:0;';
+  var clone=card.cloneNode(true);
+  clone.style.transform='none'; clone.style.width=fmt.w+'px'; clone.style.height=fmt.h+'px';
+  host.appendChild(clone); document.body.appendChild(host);
+  var canvas;
+  try{ if(document.fonts&&document.fonts.ready){ try{await document.fonts.ready;}catch(e){} }
+    canvas=await html2canvas(clone,{scale:2,width:fmt.w,height:fmt.h,windowWidth:fmt.w,windowHeight:fmt.h,backgroundColor:null,useCORS:true,logging:false});
+  } finally { host.remove(); }
+  return canvas;
+}
+
+/* ============================ UI ============================ */
+function buildTplGrid(){
+  var g=document.getElementById('tplGrid');
+  g.innerHTML=TEMPLATES.map(function(tp){ return '<button type="button" class="tplBtn'+(tp.id===STATE.tpl?' on':'')+'" data-id="'+tp.id+'"><span class="e">'+tp.emoji+'</span><span><span class="n">'+tp.n+'</span><br><span class="lb">'+esc(t(tp.th,tp.en))+'</span></span></button>'; }).join('');
+  Array.prototype.forEach.call(g.querySelectorAll('.tplBtn'),function(b){ b.addEventListener('click',function(){ STATE.tpl=b.getAttribute('data-id'); Array.prototype.forEach.call(g.querySelectorAll('.tplBtn'),function(x){x.classList.toggle('on',x===b);}); render(); }); });
+}
+function bindSeg(id,fn){ var s=document.getElementById(id); Array.prototype.forEach.call(s.querySelectorAll('b'),function(b){ b.addEventListener('click',function(){ Array.prototype.forEach.call(s.querySelectorAll('b'),function(x){x.classList.toggle('on',x===b);}); fn(b.getAttribute('data-v')); }); }); }
+function initUI(){
+  buildTplGrid();
+  document.getElementById('dateInput').value=STATE.date;
+  document.getElementById('dateInput').addEventListener('input',function(){ STATE.date=this.value||STATE.date; render(); });
+  bindSeg('themeSeg',function(v){STATE.theme=v;render();});
+  bindSeg('fmtSeg',function(v){STATE.format=v;render();});
+  bindSeg('langSeg',function(v){STATE.lang=v;buildTplGrid();document.getElementById('btnSave').textContent=t('⬇️ บันทึกรูป','⬇️ Save');document.getElementById('btnShare').textContent=t('↗️ แชร์','↗️ Share');render();});
+  document.getElementById('btnSave').addEventListener('click',async function(){ var b=this,o=b.textContent; b.textContent=t('⏳ กำลังสร้าง...','⏳ ...'); b.disabled=true; try{ var c=await capture(); var a=document.createElement('a'); a.href=c.toDataURL('image/png'); a.download='iufit-'+STATE.tpl+'-'+STATE.format+'.png'; a.click(); }catch(e){ alert('Error: '+e.message); } b.textContent=o; b.disabled=false; });
+  document.getElementById('btnShare').addEventListener('click',async function(){ var b=this,o=b.textContent; b.textContent='⏳'; b.disabled=true; try{ var c=await capture(); await new Promise(function(res){ c.toBlob(async function(bl){ var f=new File([bl],'iufit-'+STATE.tpl+'.png',{type:'image/png'}); if(navigator.canShare&&navigator.canShare({files:[f]})){ try{await navigator.share({files:[f],title:'IUFIT',text:t('ผลลัพธ์จาก IUFIT 💪','My IUFIT results 💪')});}catch(e){} } else { alert(t('เครื่องนี้ไม่รองรับแชร์ไฟล์ — ใช้บันทึกรูปแทน','Sharing not supported — use Save')); } res(); },'image/png'); }); }catch(e){ alert('Error: '+e.message); } b.textContent=o; b.disabled=false; });
+  window.addEventListener('resize',fitScale);
+  render();
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',initUI); else initUI();
+})();
+</script>
+</body>
+</html>
