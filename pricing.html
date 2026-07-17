@@ -92,14 +92,14 @@ function draw(){
     else if(YR)h+=(p.yrWas?'<span class="was">฿'+B.fmt(p.yrWas)+'</span>':'')+'<span class="now">฿'+B.fmt(p.yr)+'</span><span class="unit"> '+B.t('per_yr')+'</span><div class="save">≈ ฿'+B.fmt(Math.round(p.yr/12))+B.t('per_mo')+' · '+B.t('launch_price')+'</div>';
     else h+=(p.moWas?'<span class="was">฿'+B.fmt(p.moWas)+'</span>':'')+'<span class="now">฿'+B.fmt(p.mo)+'</span><span class="unit"> '+B.t('per_mo')+'</span><div class="save">'+B.t('launch_price')+'</div>';
     h+='</div><div class="feats">';B.planFeats(p).forEach(function(f){h+='✓ '+f+'<br>';});h+='</div>';
-    if(B.IS_STORE)h+='<div class="psub" style="text-align:center;margin:0">'+B.t('manage_web')+'</div>';
+    if(B.IS_STORE)h+='<a class="cta ghost" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('cta_line')+'</a>';
     else if(p.contact)h+='<a class="cta ghost" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('contact')+'</a>';
     else h+='<a class="cta pri" href="billing.html?plan='+p.k+'&cycle='+(YR?'yr':'mo')+'&lang='+B.LANG+'">'+B.t('choose_plan')+'</a>';
     h+='</div>';
   });
   g.innerHTML=h;
 }
-function drawPersonal(){var p=B.getPlan('personal_pro');if(!p)return;var cur=B.currentPlanKey(),isCur=(cur===p.k),h='<div class="card'+(isCur?' cur':'')+'">';if(isCur)h+='<span class="badge cur">'+B.t('current_plan')+'</span>';else if(p.badge)h+='<span class="badge">'+B.planBadge(p)+'</span>';h+='<div class="pname">'+p.name+'</div><div class="psub">'+B.planSub(p)+'</div><div class="price"><span class="now">฿'+B.fmt(p.mo)+'</span><span class="unit"> '+B.t('per_mo')+'</span></div><div class="feats">';B.planFeats(p).forEach(function(f){h+='✓ '+f+'<br>';});h+='</div>';if(B.IS_STORE)h+='<div class="psub" style="text-align:center;margin:0">'+B.t('manage_web')+'</div>';else h+='<a class="cta pri" href="billing.html?plan=personal_pro&cycle=mo&lang='+B.LANG+'">'+B.t('choose_plan')+'</a>';h+='</div>';var el=document.getElementById('ppgrid');if(el)el.innerHTML=h;}
+function drawPersonal(){var p=B.getPlan('personal_pro');if(!p)return;var free=(B.LANG==='en'?'Free':'ฟรี'),start=(B.LANG==='en'?'Start free':'เริ่มใช้ฟรี');var cur=B.currentPlanKey(),isCur=(cur===p.k),h='<div class="card'+(isCur?' cur':'')+'">';if(isCur)h+='<span class="badge cur">'+B.t('current_plan')+'</span>';else if(p.badge)h+='<span class="badge">'+B.planBadge(p)+'</span>';h+='<div class="pname">'+p.name+'</div><div class="psub">'+B.planSub(p)+'</div><div class="price"><span class="now" style="color:#18b26b">'+free+'</span></div><div class="feats">';B.planFeats(p).forEach(function(f){h+='✓ '+f+'<br>';});h+='</div><a class="cta ghost" href="open.html">'+start+'</a></div>';var el=document.getElementById('ppgrid');if(el)el.innerHTML=h;}
 draw();drawPersonal();
 try{var _f=document.getElementById("foot");if(_f)_f.innerHTML=B.footerHtml();}catch(e){}
 </script>
