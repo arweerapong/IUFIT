@@ -21,20 +21,16 @@
   var OMISE_READY=false;
   var CHARGE_ENDPOINT='https://iufit-omise.ar-weerapong.workers.dev';
   var LINE_URL='https://line.me/R/ti/p/@987qyznd';
-  /* ===== ข้อมูลติดต่อผู้ให้บริการ (Omise requires public contact) — แก้ค่าให้เป็นข้อมูลจริงก่อนยื่น =====
-     TODO(กรอกจริง): name = ชื่อ-นามสกุลผู้สมัคร (บุคคลธรรมดา, ต้องตรงกับบัตร ปชช./บัญชีธนาคาร)
-                     addr = ที่อยู่ตามที่ใช้ยืน Omise · phone = เบอร์ติดต่อจริง */
+  /* ===== ข้อมูลติดต่อผู้ให้บริการ (แสดงต่อสาธารณะ) =====
+     Privacy: ที่อยู่บ้าน + เบอร์ส่วนตัว "ไม่แสดง" ในหน้าเว็บ/แอป (ป้องกันข้อมูลส่วนตัวรั่ว)
+     แสดงเฉพาะ ชื่อ + อีเมล + LINE · ข้อมูลยืนยันตัวตนสำหรับ Omise ให้กรอกใน Omise dashboard */
   var CONTACT={
     name:'วีระพงศ์ แซ่เอี๊ยว',
-    addr:'9 รามคำแหง 170 แยก 8 ถนนรามคำแหง แขวงมีนบุรี เขตมีนบุรี กรุงเทพฯ 10510',
-    phone:'099-395-9266',
     email:'support@iufit.com',
     line:'@987qyznd'
   };
   function contactRowsHtml(){
     return '<div class="crow"><span>'+t('c_name')+'</span><b>'+CONTACT.name+'</b></div>'+
-      '<div class="crow"><span>'+t('c_addr')+'</span><b>'+CONTACT.addr+'</b></div>'+
-      '<div class="crow"><span>'+t('c_phone')+'</span><b><a class="blue" href="tel:'+CONTACT.phone.replace(/[^0-9+]/g,'')+'">'+CONTACT.phone+'</a></b></div>'+
       '<div class="crow"><span>'+t('c_email')+'</span><b><a class="blue" href="mailto:'+CONTACT.email+'">'+CONTACT.email+'</a></b></div>'+
       '<div class="crow"><span>'+t('c_line')+'</span><b><a class="blue" href="'+LINE_URL+'" target="_blank" rel="noopener">'+CONTACT.line+'</a></b></div>';
   }
@@ -62,7 +58,7 @@
     th:{
       nav_pricing:'ราคา',nav_billing:'สมัคร',nav_myplan:'แพ็กของฉัน',
       pricing_title:'แพ็กเทรนเนอร์',pricing_sub:'ดูแลลูกเทรนเป็นระบบ — ส่งแผน รับการบ้าน ติดตามผล และให้ IU MATE ช่วยลดงานทุกวัน',
-      personal_title:'สำหรับผู้ใช้ทั่วไป',personal_sub:'ไม่ใช่เทรนเนอร์? Personal ใช้ฟรี 100% · AI เป็นเครดิต (แจกฟรี 10 ครั้งแรก · ซื้อเพิ่ม S/M/L 159/289/549)',
+      personal_title:'สำหรับผู้ใช้ทั่วไป',personal_sub:'ไม่ใช่เทรนเนอร์? Personal ใช้ฟรี 100% · AI เป็นเครดิต (แจกฟรี 10 ครั้งแรก · ซื้อแพ็กเสริมได้)',
       trial_hero_t:'ทดลอง Trainer Pro ฟรี 30 วัน',trial_hero_m:'ไม่ต้องใส่บัตร · ยกเลิกได้ทุกเมื่อ · เริ่มใช้ได้ทันทีในแอป',trial_hero_cta:'เปิดแอปเพื่อทดลองฟรี →',
       trust_pay:'ชำระเงินปลอดภัย Omise',trust_pp:'รองรับ PromptPay',trust_ssl:'เข้ารหัส SSL',
       why_title:'ทำไมเทรนเนอร์เลือก IUFIT',why1_t:'ครบในแอปเดียว',why1_m:'ส่งแผนอาหาร/ฝึก รับ-ตรวจการบ้าน แชท และติดตามผลลูกเทรน',why2_t:'IU MATE ช่วยลดงาน',why2_m:'ร่างเมนู/โปรแกรมฝึก สรุปการบ้าน และคนที่ต้องตามให้',why3_t:'ลูกเทรนไม่ต้องจ่าย',why3_m:'เชิญด้วย QR เข้าใช้ผ่านที่นั่งของคุณ ไม่ต้องซื้อแพ็กเอง',
@@ -110,7 +106,7 @@
     en:{
       nav_pricing:'Pricing',nav_billing:'Subscribe',nav_myplan:'My plan',
       pricing_title:'Trainer plans',pricing_sub:'Coach clients systematically — send plans, collect homework, track results, and let IU MATE cut your daily work.',
-      personal_title:'For individuals',personal_sub:'Not a coach? Personal is 100% free · AI runs on credits (10 free to start · buy S/M/L 159/289/549).',
+      personal_title:'For individuals',personal_sub:'Not a coach? Personal is 100% free · AI runs on credits (10 free to start · add-on packs available).',
       trial_hero_t:'Try Trainer Pro free · 30 days',trial_hero_m:'No card · cancel anytime · start instantly in the app',trial_hero_cta:'Open the app to start free →',
       trust_pay:'Secure payments by Omise',trust_pp:'PromptPay supported',trust_ssl:'SSL encrypted',
       why_title:'Why coaches choose IUFIT',why1_t:'All in one app',why1_m:'Send meal/workout plans, review homework, chat, and track clients',why2_t:'IU MATE cuts your work',why2_m:'Draft menus/programs, summarize homework and at-risk clients',why3_t:'Clients pay nothing',why3_m:'Invite by QR — they join on your seats, no purchase needed',
@@ -162,7 +158,7 @@
     {k:'free',name:'Free',sub:'ผู้ใช้ทั่วไป + เทรนเนอร์ลองระบบ',subEn:'General users & trial coaches',clients:3,mo:0,yr:0,
      feats:['ลูกเทรน 3 คน','เครื่องมือโค้ชเต็ม (จำกัดแค่จำนวน)','IU MATE ฟรีไม่อั้น','เครดิต AI 10 ครั้ง (ครั้งเดียว)'],featsEn:['3 clients','Full coach tools (limited by count)','IU MATE free unlimited','AI credits 10 (one-time)']},
     {k:'personal_pro',name:'Personal',sub:'ผู้ใช้ทั่วไป — ฟรี 100%',subEn:'For individuals — 100% free',badge:'ฟรี',badgeEn:'Free',clients:0,mo:0,yr:0,
-     feats:['ใช้ฟรีทุกฟีเจอร์หลัก','IU MATE ฟรีไม่อั้น','เครดิต AI แจกฟรี 10 ครั้งแรก','ซื้อเครดิตเพิ่ม S/M/L 159/289/549'],featsEn:['All core features free','IU MATE free unlimited','10 free AI credits to start','Buy more credits S/M/L 159/289/549']},
+     feats:['ใช้ฟรีทุกฟีเจอร์หลัก','IU MATE ฟรีไม่อั้น','เครดิต AI แจกฟรี 10 ครั้งแรก','ซื้อเครดิตเพิ่มได้'],featsEn:['All core features free','IU MATE free unlimited','10 free AI credits to start','Buy more credit packs']},
     {k:'starter',name:'Trainer Starter',sub:'เริ่มดูแลลูกเทรน 10 คนแบบเป็นระบบ',subEn:'Coach up to 10 clients',clients:10,mo:399,yr:3990,
      feats:['ลูกเทรน 10 คน','ส่งแผนอาหาร / แผนฝึก','รับ-ตรวจการบ้าน','แชทกับลูกเทรน','ดู progress รายคน','IU MATE ฟรีไม่อั้น','เครื่องมือโค้ชเต็ม (จำกัดแค่จำนวน)','สแกนอาหาร AI ใช้เครดิต (ฟรี 10 ครั้งตอนสมัคร)'],
      featsEn:['10 clients','Send meal & workout plans','Receive & review homework','Chat with clients','Per-client progress','IU MATE free unlimited','Full coach tools (limited by count)','AI food scan uses credits (10 free on signup)']},

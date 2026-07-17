@@ -68,9 +68,9 @@ function render(){
 
   var a='';
   if(B.IS_STORE){a='<div class="bn info"><b>'+B.t('act_store_t')+'</b>'+B.t('act_store_m')+'</div><a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('line_btn')+'</a>';}
-  else if(trial){a='<a class="btn pri" href="billing.html?plan=pro&cycle=mo&lang='+B.LANG+'">'+B.t('act_sub_keep')+'</a><a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('act_see_all')+'</a>';}
-  else if(paid){a='<a class="btn pri" href="billing.html?plan='+planKey+'&cycle=mo&lang='+B.LANG+'">'+B.t('act_renew')+'</a><a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('act_change')+'</a>';}
-  else{a='<a class="btn green" href="billing.html?plan=pro&cycle=mo&lang='+B.LANG+'">'+B.t('act_upgrade')+'</a><a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('act_see_all')+'</a>';}
+  else if(trial){a='<a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('act_sub_keep')+'</a><a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('act_see_all')+'</a>';}
+  else if(paid){a='<a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('act_renew')+'</a><a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('act_change')+'</a>';}
+  else{a='<a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('act_upgrade')+'</a><a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('act_see_all')+'</a>';}
   document.getElementById('actions').innerHTML=a;
 }
 render();
