@@ -1089,6 +1089,24 @@ function wplanQuotaReply(q){
 
 var RISK_KW=['เจ็บหน้าอก','แน่นหน้าอก','หายใจไม่ออก','หายใจลำบาก','หอบ','เวียนหัว','หน้ามืด','เป็นลม','จะเป็นลม','วูบ','ใจสั่น','ชาแขน','ชาขา','ปวดมาก','เจ็บมาก','บาดเจ็บ','เจ็บเข่า','เจ็บหลัง','เจ็บข้อ','เจ็บข้อมือ','ข้อเท้าพลิก','เคล็ด','ตั้งครรภ์','ท้องอยู่','คนท้อง','chest pain','cant breathe','short of breath','dizzy','faint','passed out','injured','injury','sprain','severe pain','pregnan'];
 function isHealthRisk(message){ var t=synNorm(message); return RISK_KW.some(function(k){return t.indexOf(synNorm(k))>=0;}); }
+/* ---- CRISIS GUARD (added 2026-07-19) — disordered-eating / self-harm signals ------------------
+ * Purely ADDITIVE: nothing above is changed. Before this, "อยากตาย" / "ล้วงคอหลังกินทุกครั้ง" /
+ * "i want to starve myself" scored as ordinary FOOD/GOAL_LOSE messages and IU Mate answered with
+ * the clarify card ("ให้ช่วยเรื่องไหนดีครับ? จัดตารางฝึก / แนะนำเมนู …"). That is the wrong reply
+ * for those messages. `isCrisis()` is checked FIRST inside buildReply(), ahead of isHealthRisk().
+ * The card gives no diet/training guidance at all — support + a professional referral only.
+ * Phrasings that are merely hungry ("วันนี้ยังไม่กินอะไรเลย") are deliberately NOT matched. */
+var CRISIS_KW=['อยากตาย','ไม่อยากอยู่','ฆ่าตัวตาย','ทำร้ายตัวเอง','กรีดแขน','จบชีวิต',
+ 'suicide','kill myself','end my life','self harm','selfharm','hurt myself',
+ 'ล้วงคอ','ทำให้อาเจียน','ทำให้อ้วก','กินแล้วอ้วก','กินเสร็จแล้วอ้วก','กินเสร็จล้วง',
+ 'purge','purging','bulimi','anorexi','บูลิเมีย','อะนอเร็กเซีย',
+ 'อดข้าวทั้งวัน','อดอาหารหลายวัน','อดมื้อทุกวัน','ไม่กินข้าวหลายวัน','อดข้าวหลายวัน',
+ 'starve myself','starving myself','stop eating completely','eating disorder',
+ 'เกลียดร่างกายตัวเอง','hate my body','รู้สึกผิดทุกครั้งที่กิน','guilty every time i eat'];
+function isCrisis(message){ var t=synNorm(message); return CRISIS_KW.some(function(k){return t.indexOf(synNorm(k))>=0;}); }
+function crisisReply(){ return { title:L('คุณสำคัญกว่าตัวเลขบนตาชั่งนะครับ','You matter more than any number'),
+  message:L('ผมอ่านข้อความของคุณแล้วเป็นห่วงจริง ๆ ครับ เรื่องแบบนี้ไม่ควรต้องรับมือคนเดียว และไม่ใช่เรื่องที่ผู้ช่วยในแอปจะช่วยได้ดีพอ\n\n• ถ้ารู้สึกไม่ปลอดภัยตอนนี้ โทร 1323 (สายด่วนสุขภาพจิต กรมสุขภาพจิต) ฟรี ตลอด 24 ชม.\n• หรือเหตุฉุกเฉิน โทร 1669\n• ถ้าพอไหว ลองบอกคนที่ไว้ใจสักคนวันนี้ แค่ประโยคเดียวก็พอ\n• นักจิตวิทยา/นักกำหนดอาหารที่ดูแลเรื่องความสัมพันธ์กับอาหารช่วยได้จริง และไม่ได้แปลว่าคุณอ่อนแอ\n\nผมจะไม่แนะนำแผนอาหารหรือการฝึกในเรื่องนี้นะครับ — ขอให้คุณได้คุยกับคนที่ช่วยได้จริงก่อน','I read your message and I am genuinely concerned. This is not something you should have to handle alone, and it is not something an in-app assistant can help with well enough.\n\n• If you do not feel safe right now, call your local emergency number, or in Thailand 1323 (Department of Mental Health, free, 24h)\n• For emergencies in Thailand, 1669\n• If you can, tell one person you trust today — a single sentence is enough\n• A psychologist or a dietitian who works on food relationships genuinely helps, and reaching out is not weakness\n\nI am not going to suggest a meal plan or a workout here — I would rather you talk to someone who can actually help.'),
+  disclaimer:L('IU Mate เป็นผู้ช่วยในแอป ไม่ใช่ผู้ให้บริการด้านสุขภาพจิตหรือการแพทย์','IU Mate is an in-app assistant, not a mental-health or medical service.') }; }
 function safetyReply(){ return { title:L('ดูแลความปลอดภัยก่อนนะครับ','Safety first'), message:L('ถ้ามีอาการเจ็บ บาดเจ็บ หรือรู้สึกผิดปกติ (เช่น เจ็บหน้าอก หายใจไม่ออก เวียนหัว หรือเป็นลม) แนะนำให้หยุดออกกำลังกายก่อน แล้วปรึกษาแพทย์หรือผู้เชี่ยวชาญนะครับ · IU Mate ช่วยดูข้อมูลบันทึกทั่วไปในแอปได้ แต่วินิจฉัยหรือรักษาแทนผู้เชี่ยวชาญไม่ได้','If you feel pain, an injury, or anything unusual (chest pain, trouble breathing, dizziness, fainting), please stop exercising first and consult a doctor or professional. IU Mate can read your general logs in the app, but cannot diagnose or treat.'), disclaimer:disclaimer() }; }
 /* ============================ Workout Plan Builder (rule-based, no AI) ============================ */
 var WORKOUT_TEMPLATES=[
@@ -1656,6 +1674,7 @@ function buildExerciseAlt(message){var t=(''+message).toLowerCase();var pat='';
   return {title:L('ท่าทางเลือก','Alternatives'),message:L('ท่าแทนกลุ่ม ','Alternatives for ')+pat+' ('+eqLb[eqk]+'):\n• '+alts.join('\n• '),disclaimer:L('ถ้าไม่มีอุปกรณ์เลย เลือกท่าที่คุมได้ปลอดภัย หรือข้ามท่านั้นชั่วคราวแล้วถามโค้ชเพิ่ม','If you have no equipment, pick a safe controllable move or skip it and ask your coach.')};}
  return {title:L('หาท่าแทน','Find alternative'),message:L('บอกชื่อท่าหรือกลุ่มกล้าม (สควอท/ดัน/ดึง/สะโพก/แกนกลาง) + อุปกรณ์ที่มี เดี๋ยวแนะนำท่าแทนให้ครับ','Tell me the move or muscle group (squat/push/pull/hinge/core) + your equipment, and I will suggest alternatives.')};}
 function buildReply(intent, message, nlu){
+  if(isCrisis(message)) return crisisReply();   /* added 2026-07-19 — see CRISIS_KW above */
   if(isHealthRisk(message)) return safetyReply();
   if(isMedical(message)) return { title:L('เรื่องนี้ควรปรึกษาผู้เชี่ยวชาญ','Please consult a professional'),
     message:L('เรื่องนี้ควรปรึกษาแพทย์หรือผู้เชี่ยวชาญโดยตรงนะครับ IU Mate ช่วยเรื่องการบันทึกอาหาร การฝึก และการติดตามผลทั่วไปได้','This is best discussed with a doctor or specialist. IU Mate can help with logging food, training and general tracking.') };
