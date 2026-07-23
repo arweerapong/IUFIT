@@ -1,0 +1,1 @@
+import{e as o,p as r,g as a,P as s}from"./vendor-6FF0eHXD.js";const t={style:{background:"var(--card)","border-radius":"15px",padding:"14px","box-shadow":"0 5px 14px rgba(8,20,45,.05)","margin-bottom":"11px"}},c=o({__name:"ResCard",setup(n){return(e,p)=>(r(),a("div",t,[s(e.$slots,"default")]))}});export{c as _};
