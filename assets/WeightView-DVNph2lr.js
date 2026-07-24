@@ -1,0 +1,1 @@
+import{e as t,f as o,g as r,C as a,x as n}from"./vendor-oFropKQ0.js";import{c as s}from"./ResDrillOpen-DNo-BLlJ.js";import"./index-BkJzWaCf.js";const c={"aria-hidden":"true"},f=t({__name:"WeightView",setup(i){const e=a();return o(async()=>{await e.replace("/body"),s("w")}),(p,_)=>(n(),r("section",c))}});export{f as default};
