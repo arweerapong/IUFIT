@@ -51,7 +51,7 @@
    เอากล่องที่สอง "ไม่ต้องรีบ ทำทีหลังได้" ออก (รายละเอียดบอกครบแล้วในกล่องคำถามเอง) */
 /* v1046 = Result Card เปิดใช้จริง: การ์ดฉลอง 5 แบบ (streak/workout/PR/progress/monthly)
    เด้ง overlay ตอนทำสำเร็จ + มาสคอต bob + confetti + ปุ่มแชร์ PNG · ตัวจับ latch กันเด้งซ้ำ */
-const CACHE = 'iufit-v1092-wear-connect-flag-and-identify'
+const CACHE = 'iufit-v1093-wear-sheet-accent-token-fix'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
