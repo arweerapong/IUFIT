@@ -1,0 +1,1 @@
+import e from"./IuMateSheet-CwOdZZwP.js";import{e as t,m as a,x as o}from"./vendor-CeIJNO9d.js";import"./index-BGeH7fLV.js";import"./IuIcon-CWPnUp_Z.js";const _=t({__name:"IuMateView",setup(r){return(p,m)=>(o(),a(e,{variant:"page"}))}});export{_ as default};
