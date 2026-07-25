@@ -59,7 +59,16 @@
    🧹 ลบ ResWatchSlide/ResDrillWatch ที่กลายเป็นไฟล์กำพร้า + เลิก prefetch จอที่กดเข้าไม่ได้
    ✏️ ปุ่ม/ทางเข้ากลับไปใช้คำว่า "เชื่อมนาฬิกา" (มีสองแหล่งแล้ว ไม่ใช่ Health Connect ทางเดียว)
    🤖 IU MATE: ถาม "โปรตีนวันละกี่กรัม" ได้ตัวเลขของตัวเองเลย ไม่ใช่บทความ + ปุ่มให้กดต่อ */
-const CACHE = 'iufit-v1106-energy-merge'
+/* v1107 = ⚡ ความเร็วตอนเปิดแอป (ฟีดแบ็ก "ช้ากว่าตอนเป็น vanilla")
+   วัดจาก dist จริง: โหลดน้อยกว่า vanilla 3 เท่า (264KB gz เทียบ 853KB) แต่ช้ากว่า
+   เพราะต้องผ่าน **5 ชั้นแบบต่อคิว** กว่าจะเห็นหน้าแรก — ปัญหาคือจำนวนรอบ ไม่ใช่ไบต์
+     1. HTML: network-first → แคชก่อนแล้วอัปเดตเบื้องหลัง
+        (ของเดิมรอเน็ตครบรอบก่อนโค้ดบรรทัดแรกจะรัน ทุกครั้งที่เปิดแอป
+         แอป Android ยิ่งหนักเพราะ server.url ชี้ที่ iufit.com)
+     2. precache ก้อน /assets ที่ index.html อ้าง ตั้งแต่ตอน install
+        (เดิมเก็บแบบ "เจอตอนไหนค่อยเก็บ" ⇒ ครั้งแรกหลังอัปเวอร์ชันต้องยิงทีละก้อนต่อคิว)
+     3. modulepreload ก้อนหน้าแรก 17 ไฟล์ ⇒ ยุบ 3 ชั้นเหลือ 1 (ดู scripts/vite-preload-landing.mjs) */
+const CACHE = 'iufit-v1107-boot-speed'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
@@ -75,10 +84,45 @@ const FILES = [
   '/apple-touch-icon.png',
 ]
 
+/**
+ * ⚡ 2569-07-26 · อ่านชื่อก้อน `/assets/*` จาก index.html แล้ว precache ตั้งแต่ตอน install
+ * ══════════════════════════════════════════════════════════════════════════════
+ * เดิมก้อนโค้ดถูกแคชแบบ "เจอตอนไหนค่อยเก็บ" ⇒ ครั้งแรกหลังปล่อยเวอร์ชันใหม่ ผู้ใช้ต้อง
+ * ยิงเน็ตทีละก้อนแบบต่อคิว (ก้อนหลัก → ก้อนของหน้า → ก้อนที่หน้านั้นเรียกต่อ) กว่าจะเห็นจอ
+ *
+ * ทำไมอ่านจาก HTML แทนที่จะฮาร์ดโค้ดรายชื่อ: ชื่อไฟล์มี hash ต่อท้ายและเปลี่ยนทุก build
+ * รายชื่อที่เขียนมือจะล้าสมัยเงียบ ๆ ในวันที่ลืมอัปเดต แล้วกลายเป็น precache ของที่ไม่มีจริง
+ * index.html คือแหล่งความจริงเดียวที่บอกว่า build นี้ต้องใช้ก้อนไหน
+ *
+ * ⚠️ ดึงเฉพาะก้อนที่ index.html อ้างตรง ๆ (ก้อนหลัก + vendor + css) ไม่ไล่ทั้งกราฟ
+ * ก้อนของแต่ละหน้ายังโหลดตอนเข้าหน้านั้น — precache ทั้งแอปจะกินเน็ตผู้ใช้เพื่อหน้าที่เขาไม่เปิด
+ */
+async function precacheShell(c) {
+  try {
+    // `cache: 'reload'` — ต้องได้ของสดจากเซิร์ฟเวอร์ ไม่ใช่ของเก่าใน HTTP cache ของเบราว์เซอร์
+    const res = await fetch('/index.html', { cache: 'reload' })
+    if (!res || !res.ok) return
+    const html = await res.clone().text()
+    await c.put('/index.html', res.clone())
+    await c.put('/', res)
+    const urls = [
+      ...new Set(
+        [...html.matchAll(/(?:src|href)="(\/assets\/[^"]+\.(?:js|css))"/g)].map((m) => m[1]),
+      ),
+    ]
+    await Promise.allSettled(urls.map((u) => c.add(u)))
+  } catch {
+    /* เน็ตล่มตอน install = ไม่ต้อง precache · fetch handler ยังเก็บให้ตอนใช้จริงอยู่ดี */
+  }
+}
+
 /* resilient install: ไฟล์เดียวหาย/404 ต้องไม่ทำให้อัปเดตทั้งชุดพัง (allSettled ไม่ใช่ all) */
 self.addEventListener('install', (e) => {
   e.waitUntil(
-    caches.open(CACHE).then((c) => Promise.allSettled(FILES.map((f) => c.add(f)))),
+    caches.open(CACHE).then(async (c) => {
+      await Promise.allSettled(FILES.map((f) => c.add(f)))
+      await precacheShell(c)
+    }),
   )
   self.skipWaiting()
 })
@@ -99,21 +143,45 @@ self.addEventListener('fetch', (e) => {
   const isHTML =
     e.request.mode === 'navigate' || url.pathname.endsWith('/') || url.pathname.endsWith('index.html')
 
+  /**
+   * ⚡ 2569-07-26 · HTML เปลี่ยนจาก network-first → **แคชก่อน แล้วอัปเดตเบื้องหลัง**
+   * ══════════════════════════════════════════════════════════════════════════════
+   * ของเดิมรอเน็ตครบรอบก่อนโค้ดบรรทัดแรกจะได้รัน — **ทุกครั้งที่เปิดแอป**
+   * สมัยเป็นไฟล์เดียว รอบนั้นคุ้ม เพราะมันส่งทั้งแอปมาเลย
+   * ตอนนี้ index.html เหลือ 12KB ที่ไม่มีเนื้อหาอะไร รอบนั้นจึงเป็นการรอเปล่า ๆ
+   * ก่อนงานจริงจะเริ่ม · แอป Android ยิ่งหนักเพราะ `server.url` ชี้ที่ iufit.com
+   * ⇒ เปิดแอปทุกครั้งวิ่งผ่านเน็ต ไม่ได้อ่านจากเครื่อง
+   *
+   * ทำไมของเก่าไม่ค้าง: index.html กับก้อน `/assets/*` อยู่ใน **แคชชื่อเดียวกัน**
+   * และถูกลบพร้อมกันตอน activate ⇒ HTML ที่เสิร์ฟจากแคชอ้างถึงก้อนที่อยู่ในแคชนั้นเสมอ
+   * ไม่มีทางเกิดกรณี "HTML เก่าชี้ไปก้อนที่ถูกลบแล้ว"
+   * และเมื่อมี SW ใหม่ `skipWaiting + claim` จะยิง controllerchange ให้หน้ารีโหลดเอง
+   * (ดู src/pwa.ts) ⇒ อย่างช้าที่สุดคือช้าไปหนึ่งการเปิดแอป แล้วตามทันเอง
+   */
   if (isHTML) {
     e.respondWith(
-      fetch(e.request)
-        .then((n) => {
-          if (n && n.ok && sameOrigin) {
-            const c1 = n.clone()
-            const c2 = n.clone()
-            caches.open(CACHE).then((c) => {
-              c.put('/index.html', c1)
-              c.put('/', c2)
-            })
-          }
-          return n
-        })
-        .catch(() => caches.match(e.request).then((r) => r || caches.match('/index.html'))),
+      caches.match('/index.html').then((cached) => {
+        const fresh = fetch(e.request)
+          .then((n) => {
+            if (n && n.ok && sameOrigin) {
+              const c1 = n.clone()
+              const c2 = n.clone()
+              caches.open(CACHE).then((c) => {
+                c.put('/index.html', c1)
+                c.put('/', c2)
+              })
+            }
+            return n
+          })
+          .catch(() => null)
+        // มีของในแคช = ตอบทันที แล้วปล่อยให้อัปเดตวิ่งต่อเบื้องหลัง
+        // `waitUntil` กัน SW ถูกฆ่ากลางคันก่อนเขียนแคชเสร็จ (ไม่งั้นจะไม่มีวันได้ของใหม่)
+        if (cached) {
+          e.waitUntil(fresh)
+          return cached
+        }
+        return fresh.then((n) => n || caches.match('/index.html'))
+      }),
     )
     return
   }
