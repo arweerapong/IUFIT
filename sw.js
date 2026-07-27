@@ -295,7 +295,7 @@
       ไม่ใช่กุตัวเลข (ก้าวรายชั่วโมง · cadence · โซนหัวใจรายเวลา · SpO2 รายชั่วโมง ·
       สเกลความเครียด ซึ่งนาฬิกาไม่ได้ให้ค่าความเครียดมาเลย)
    ⚠️ ต้อง build APK ใหม่ — งาน HRV อยู่ฝั่ง native */
-const CACHE = 'iufit-v1135-hc-recovery'
+const CACHE = 'iufit-v1136-share-photo-bg'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
