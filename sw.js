@@ -295,7 +295,7 @@
       ไม่ใช่กุตัวเลข (ก้าวรายชั่วโมง · cadence · โซนหัวใจรายเวลา · SpO2 รายชั่วโมง ·
       สเกลความเครียด ซึ่งนาฬิกาไม่ได้ให้ค่าความเครียดมาเลย)
    ⚠️ ต้อง build APK ใหม่ — งาน HRV อยู่ฝั่ง native */
-const CACHE = 'iufit-v1140-widget-bridge'
+const CACHE = 'iufit-v1141-shellfix'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
@@ -367,8 +367,43 @@ self.addEventListener('fetch', (e) => {
   const sameOrigin = url.origin === self.location.origin
   /* history-mode SPA: /food, /coach/... มาเป็น mode==='navigate' ทั้งหมด → เข้าทาง network-first
      และตอนออฟไลน์ตกมาที่ ./index.html ให้ router เดินเส้นทางต่อเองฝั่ง client */
-  const isHTML =
-    e.request.mode === 'navigate' || url.pathname.endsWith('/') || url.pathname.endsWith('index.html')
+  /* 🐛 2569-07-28 · **แยกหน้าเอกสารออกจาก app shell** (P0 · รายงานตรวจโค้ด 28 ก.ค.)
+     ═══════════════════════════════════════════════════════════════════════════
+     เงื่อนไขเดิมถือว่า "ทุก navigation = หน้าแอป" ⇒ เกิดสองปัญหาพร้อมกัน:
+
+       1. **เสิร์ฟผิดหน้า** — สาขา HTML ด้านล่างเป็น *cache-first* ⇒ เปิด
+          `/privacy.html` แล้วได้ `/index.html` จากแคชกลับไป**ทันที** โดยไม่ดู path
+          (แรงกว่าฝั่ง deploy ที่เป็น network-first ด้วยซ้ำ — อันนั้นยังไปถามเน็ตก่อน)
+       2. **เขียนทับเชลล์** — response ของหน้าเอกสารถูก `put('/index.html')`
+          ⇒ เชลล์ในแคชกลายเป็นหน้านโยบายถาวร
+
+     แยกสามทาง (กติกาเดียวกับ `IUFIT-app-deploy/sw.js` — ห้ามให้สอง SW คิดไม่ตรงกัน):
+       · เชลล์จริง   `/` หรือ `/index.html`      → เขียนทับเชลล์ได้
+       · เส้นทาง SPA  navigate ที่ไม่มีนามสกุล    → ใช้เชลล์ตอบ แต่ **ไม่เขียนแคช**
+       · หน้า `.html` เดี่ยว                      → network-first เก็บใต้คีย์ตัวเอง */
+  const swIsShell = (pn) => pn === '/' || pn.endsWith('/index.html')
+  const hasExt = /\.[a-z0-9]{1,8}$/i.test(url.pathname)
+  const nav = e.request.mode === 'navigate'
+  const isHTML = sameOrigin && (swIsShell(url.pathname) || (nav && !hasExt))
+  const isDoc = sameOrigin && /\.html?$/i.test(url.pathname) && !swIsShell(url.pathname)
+
+  /* หน้าเอกสารเดี่ยว (privacy · terms · account-delete · …) — network-first
+     ออฟไลน์แล้วไม่มีสำเนา ⇒ ปล่อยเป็น network error ตามจริง
+     **ห้าม**ตกมาที่ `/index.html` — คนที่ขอหน้านโยบายไม่ควรได้แอปทั้งตัว */
+  if (isDoc) {
+    e.respondWith(
+      fetch(e.request)
+        .then((n) => {
+          if (n && n.ok) {
+            const cl = n.clone()
+            e.waitUntil(caches.open(CACHE).then((c) => c.put(e.request, cl)))
+          }
+          return n
+        })
+        .catch(() => caches.match(e.request)),
+    )
+    return
+  }
 
   /**
    * ⚡ 2569-07-26 · HTML เปลี่ยนจาก network-first → **แคชก่อน แล้วอัปเดตเบื้องหลัง**
@@ -390,7 +425,10 @@ self.addEventListener('fetch', (e) => {
       caches.match('/index.html').then((cached) => {
         const fresh = fetch(e.request)
           .then((n) => {
-            if (n && n.ok && sameOrigin) {
+            /* ⚠️ `swIsShell` ตรงนี้คือหัวใจ — ห้ามถอด
+               เส้นทาง SPA เซิร์ฟเวอร์ส่ง index.html กลับมาเหมือนกันก็จริง
+               แต่วันไหนส่ง 404 มาแทน จะทับเชลล์ด้วยหน้า 404 = บั๊กเดิมในรูปแบบใหม่ */
+            if (n && n.ok && sameOrigin && swIsShell(url.pathname)) {
               const c1 = n.clone()
               const c2 = n.clone()
               caches.open(CACHE).then((c) => {
@@ -425,7 +463,10 @@ self.addEventListener('fetch', (e) => {
             }
             return n
           })
-          .catch(() => caches.match('/index.html')),
+          /* ⚠️ เดิมปิดท้ายด้วย `.catch(() => caches.match('/index.html'))`
+             ⇒ `.js`/`.css` ที่โหลดไม่ได้จะได้ **HTML** กลับไป ⇒ เบราว์เซอร์พาร์ส
+             เป็นสคริปต์แล้วพังด้วย SyntaxError ที่ไล่ต้นตอไม่เจอ
+             โหลดไม่ได้ต้องเป็นโหลดไม่ได้ — เงียบกว่านั้นคือโกหก */,
     ),
   )
 })
