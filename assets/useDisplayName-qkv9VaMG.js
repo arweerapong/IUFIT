@@ -1,0 +1,1 @@
+import{u,b as m}from"./vendor-BVC6_PxF.js";import{aP as o,aQ as i,aR as n,aS as N}from"./index-SFDk31tB.js";function p(){const{locale:s}=u(),e=m(()=>s.value==="en");return{en:e,dishName:m(()=>a=>N(a,e.value)),ingName:m(()=>a=>n(a,e.value)),equipName:m(()=>a=>i(a,e.value)),moveName:m(()=>a=>o(a,e.value))}}export{p as u};
