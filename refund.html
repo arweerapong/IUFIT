@@ -19,10 +19,12 @@
 <p class="sub" id="h-sub"></p>
 
 <div class="card policy">
-  <div class="pt"><span class="ic">🎁</span><div id="p1"></div></div>
-  <div class="pt"><span class="ic">🚫</span><div id="p2"></div></div>
-  <div class="pt"><span class="ic">🔁</span><div id="p3"></div></div>
-  <div class="pt"><span class="ic">💳</span><div id="p4"></div></div>
+  <!-- ⭐ 2569-07-30 · ไอคอนเรียงตามนโยบายใหม่: หลักการ → ข้อยกเว้น(7 วัน) → วิธีคืน → การยกเลิก → ช่องทาง
+       ข้อความจริงอยู่ใน billing-common.js คีย์ refund_p1..p5 (ทั้ง th และ en) -->
+  <div class="pt"><span class="ic">🧾</span><div id="p1"></div></div>
+  <div class="pt"><span class="ic">↩️</span><div id="p2"></div></div>
+  <div class="pt"><span class="ic">💳</span><div id="p3"></div></div>
+  <div class="pt"><span class="ic">🔁</span><div id="p4"></div></div>
   <div class="pt"><span class="ic">💬</span><div id="p5"></div></div>
 </div>
 
@@ -32,7 +34,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v108"></script>
+<script src="billing-common.js?v=v109"></script>
 <script>
 var B=window.IUFIT_BILLING;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}

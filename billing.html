@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Subscribe · IUFIT</title>
-<meta name="description" content="Subscribe to an IUFIT trainer plan — choose plan, cycle and pay via Omise">
+<meta name="description" content="Subscribe to an IUFIT coach plan — choose plan, cycle and pay via Omise">
 <link rel="stylesheet" href="billing.css?v=v107">
 </head>
 <body>
@@ -14,6 +14,11 @@
   <span id="langtog" style="font-size:12px;font-weight:800;color:var(--muted);cursor:pointer"></span>
 </div>
 <div class="nav"><a id="n-pr" href="pricing.html"></a><a class="on" id="n-bl" href="billing.html"></a><a id="n-mp" href="my-plan.html"></a></div>
+
+<!-- 🔴 แถบเตือนโหมดทดสอบ — เติมจากสคริปต์ท้ายไฟล์
+     มีไว้เพื่อให้ "ปล่อยขึ้นจริงทั้งที่ยังเป็นคีย์ test" เห็นได้ทันทีตั้งแต่วินาทีแรก
+     ไม่ใช่ไปรู้ตอนสิ้นเดือนว่าไม่มีเงินเข้าเลยสักบาท -->
+<div id="testBanner" class="hide"></div>
 
 <div id="resultPanel" class="hide"></div>
 
@@ -31,6 +36,8 @@
       <button id="t-mo" class="on" onclick="setCycle(false)"></button>
       <button id="t-yr" onclick="setCycle(true)"></button>
     </div>
+    <!-- การ์ดแจ้งว่ารายปียังไม่เปิด — เนื้อหาเติมจาก renderPay() เพราะต้องขึ้น/ลงตามรอบที่เลือก -->
+    <div id="yrNotice" class="bn warn hide" style="margin:0 0 12px"></div>
     <label style="font-size:12.5px;font-weight:700;color:var(--navy);display:block;margin-bottom:6px" id="lbl-pick"></label>
     <div id="planPick"></div>
     <div id="summary" style="margin-top:14px"></div>
@@ -45,7 +52,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v108"></script>
+<script src="billing-common.js?v=v109"></script>
 <script>
 var B=window.IUFIT_BILLING;
 var YR=(B.qs('cycle')==='yr'), PLAN=B.qs('plan')||'pro', PM='card';
@@ -54,6 +61,8 @@ document.getElementById('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
 document.getElementById('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
 T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
 
+/* รายปี **ดูราคาได้ตามปกติ** — ด่านกันจ่ายอยู่ที่ `renderPay()` และ `payNow()` แทน
+   (เจ้าของตัดสิน 2569-07-30: ให้เห็นราคารายปีเพื่อวางแผนได้ แค่ยังกดจ่ายไม่ได้) */
 function setCycle(yr){YR=yr;document.getElementById('t-mo').className=yr?'':'on';document.getElementById('t-yr').className=yr?'on':'';renderPlanPick();renderSummary();renderPay();}
 function pickPlan(k){PLAN=k;renderPlanPick();renderSummary();renderPay();}
 function renderPlanPick(){
@@ -78,23 +87,47 @@ function renderSummary(){
 function renderPay(){
   var body=document.getElementById('payBody');
   var soon=!B.OMISE_READY, amt='฿'+B.fmt(YR?B.getPlan(PLAN).yr:B.getPlan(PLAN).mo), h='';
+  /* 🔴 รายปียังไม่เปิดชำระ (เพดาน Omise 3,000 บ./รายการ · ราคารายปี 3,990–7,990 เกินทุกตัว)
+     ดูราคาได้ แต่ **กรอกบัตรไม่ได้และกดจ่ายไม่ได้** — บอกเหตุผลและวันที่เปิดให้ชัด
+     ไม่ปล่อยให้กรอกบัตรจนจบแล้วค่อยเด้ง error ตอนกดจ่าย (เสียเวลาผู้ใช้และดูเหมือนระบบพัง) */
+  var yrLocked=(YR&&!B.YEARLY_OPEN);
   if(soon)h+='<div class="bn warn" style="margin:0 0 10px"><b>'+B.t('omise_soon_t')+'</b>'+B.t('omise_soon_m')+'</div>';
-  h+='<div class="pm"><button id="pm-card" class="'+(PM==='card'?'on':'')+'" onclick="setPM(\'card\')">'+B.t('pm_card')+'</button><button id="pm-pp" class="'+(PM==='promptpay'?'on':'')+'" onclick="setPM(\'promptpay\')">'+B.t('pm_pp')+'</button></div>';
-  h+='<div id="cardForm" class="'+(PM==='card'?'':'hide')+'"><div class="field"><label>'+B.t('card_name')+'</label><input id="card-name" placeholder="'+B.t('card_name_ph')+'"></div><div class="field"><label>'+B.t('card_num')+'</label><input id="card-num" inputmode="numeric" placeholder="0000 0000 0000 0000"></div><div style="display:flex;gap:10px"><div class="field" style="flex:1"><label>'+B.t('card_exp')+'</label><input id="card-exp" placeholder="MM/YY"></div><div class="field" style="flex:1"><label>'+B.t('card_cvv')+'</label><input id="card-cvv" inputmode="numeric" placeholder="123"></div></div></div>';
-  h+='<label style="display:flex;gap:9px;align-items:flex-start;margin:12px 0;font-size:12px;line-height:1.5;cursor:pointer;color:var(--navy)"><input type="checkbox" id="agree" onchange="var b=document.getElementById(\'payBtn\');if(b){b.disabled=!this.checked;b.style.opacity=this.checked?1:.5;}" style="margin-top:2px;flex:none"><span>'+B.t('consent_refund')+' — <a class="blue" href="refund.html?lang='+B.LANG+'" target="_blank" rel="noopener">'+B.t('nav_refund')+'</a></span></label>';
-  h+='<button id="payBtn" class="btn pri" disabled style="opacity:.5" onclick="payNow()">'+B.t('pay_btn')+' '+amt+'</button>';
-  if(soon)h+='<a class="btn line" style="margin-top:8px" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('book_line')+'</a><button class="btn ghost" style="margin-top:8px" onclick="reserveLocal()">'+B.t('reserve_local')+'</button>';
+  /* 🔴 2569-07-30 · PromptPay ถูก "ปิดไว้ชั่วคราว" — ยังไม่รองรับจริง
+     payNow() ด้านล่างสร้างได้เฉพาะ card token (Omise.createToken('card',...)) และอ่านค่าจากฟอร์มบัตร
+     ถ้าเปิดให้เลือก PromptPay ได้ ผู้ใช้จะกดจ่ายแล้วไปอ่านฟอร์มบัตรที่ซ่อนอยู่ (ค่าว่าง) → ขึ้น alert 'card error'
+     การรองรับจริงต้องใช้ Omise source (type:'promptpay') + ฝั่ง CHARGE_ENDPOINT ต้องสร้าง charge จาก source
+     และคืน QR ให้สแกน ⇒ **เปิดคืนได้เฉพาะเมื่อ backend รองรับแล้วเท่านั้น** */
+  h+='<div class="pm"><button id="pm-card" class="on" onclick="setPM(\'card\')">'+B.t('pm_card')+'</button>'
+    +'<button id="pm-pp" disabled aria-disabled="true" style="opacity:.45;cursor:not-allowed">'+B.t('pm_pp')+' · '+B.t('pm_pp_soon')+'</button></div>';
+  var dis=yrLocked?' disabled':'', fOp=yrLocked?';opacity:.5':'';
+  h+='<div id="cardForm" class="'+(PM==='card'?'':'hide')+'" style="pointer-events:'+(yrLocked?'none':'auto')+fOp+'"><div class="field"><label>'+B.t('card_name')+'</label><input id="card-name"'+dis+' placeholder="'+B.t('card_name_ph')+'"></div><div class="field"><label>'+B.t('card_num')+'</label><input id="card-num"'+dis+' inputmode="numeric" placeholder="0000 0000 0000 0000"></div><div style="display:flex;gap:10px"><div class="field" style="flex:1"><label>'+B.t('card_exp')+'</label><input id="card-exp"'+dis+' placeholder="MM/YY"></div><div class="field" style="flex:1"><label>'+B.t('card_cvv')+'</label><input id="card-cvv"'+dis+' inputmode="numeric" placeholder="123"></div></div></div>';
+  /* ⚠️ ช่องติ๊กต้องปลดล็อกปุ่มจ่ายไม่ได้เมื่อรายปีถูกล็อก — ไม่งั้นติ๊กแล้วกดจ่ายได้ทั้งที่ห้ามไว้ */
+  h+='<label style="display:flex;gap:9px;align-items:flex-start;margin:12px 0;font-size:12px;line-height:1.5;cursor:'+(yrLocked?'not-allowed':'pointer')+';color:var(--navy)'+fOp+'"><input type="checkbox" id="agree"'+dis+' onchange="var b=document.getElementById(\'payBtn\');if(b&&!window.__yrLocked){b.disabled=!this.checked;b.style.opacity=this.checked?1:.5;}" style="margin-top:2px;flex:none"><span>'+B.t('consent_refund')+' — <a class="blue" href="refund.html?lang='+B.LANG+'" target="_blank" rel="noopener">'+B.t('nav_refund')+'</a></span></label>';
+  /* รายปีล็อกไว้ ⇒ ปุ่มจ่ายกดไม่ได้ตั้งแต่ต้น (ช่องติ๊กยอมรับก็ปลดไม่ได้)
+     ⭐ 2569-07-30 · ตัดปุ่ม "จองราคานี้ไว้ในเครื่อง" และ "สมัครทาง LINE" ออกตามที่เจ้าของสั่ง
+        เหลือทางเดียวคือชำระผ่าน Omise — สองปุ่มนั้นมีไว้ตอนยังไม่มีช่องทางจ่ายจริง */
+  h+='<button id="payBtn" class="btn pri"'+(yrLocked?' disabled':' disabled')+' style="opacity:.5" onclick="payNow()">'+B.t('pay_btn')+' '+amt+'</button>';
   h+='<p class="note" style="margin-top:10px">'+B.t('secure_note')+'</p>';
   h+='<div style="margin-top:14px;padding:12px 14px;background:#f6f9ff;border:1px solid var(--line);border-radius:12px"><b style="font-size:12.5px;color:var(--navy);display:block;margin-bottom:7px">'+B.t('contact_title')+'</b>'+B.contactRowsHtml()+'</div>';
   body.innerHTML=h;
+  window.__yrLocked=yrLocked; // ให้ handler ของช่องติ๊กอ่านได้ (inline onchange อยู่นอกสโคปนี้)
+  /* การ์ดแจ้งเหนือรายการแพ็ก — ขึ้น/ลงตามรอบที่เลือก */
+  var nb=document.getElementById('yrNotice');
+  if(nb){nb.className=yrLocked?'bn warn':'bn warn hide';
+    nb.innerHTML='<b>'+B.t('yr_soon_t')+'</b><span>'+B.t('yr_soon_m')+'</span>';}
 }
-function setPM(m){PM=m;renderPay();}
-function reserveLocal(){
-  try{localStorage.setItem('iufit_reserve',JSON.stringify({plan:PLAN,cycle:YR?'yr':'mo',ts:Date.now()}));}catch(e){}
-  alert(B.getPlan(PLAN).name+' ('+(YR?B.t('per_yr'):B.t('per_mo'))+') ✓');
-}
+/* กันไว้อีกชั้น: payNow() รองรับเฉพาะบัตร ⇒ ไม่ยอมให้ PM กลายเป็นค่าอื่นแม้ถูกเรียกจากที่อื่น */
+function setPM(){PM='card';renderPay();}
+/* ⭐ 2569-07-30 · ถอด `reserveLocal()` ออก — ปุ่ม "จองราคานี้ไว้ในเครื่อง"
+   มันแค่เขียน localStorage แล้วเด้ง alert · ไม่ได้จองอะไรจริง ไม่มีผลผูกพันฝั่งเรา
+   ⇒ ทำให้ผู้ใช้เข้าใจผิดว่าล็อกราคาไว้แล้ว · ตอนนี้มีช่องทางจ่ายจริงแล้วจึงไม่ต้องมี */
 function loadOmise(cb){if(window.Omise){cb();return;}var s=document.createElement('script');s.src='https://cdn.omise.co/omise.js';s.onload=cb;s.onerror=function(){alert('Omise load failed');};document.head.appendChild(s);}
+/* payNow() รองรับ **บัตรเท่านั้น** — Omise.createToken('card',...) + POST {token} ไป CHARGE_ENDPOINT/charge
+   ถ้าจะเพิ่ม PromptPay ต้องเพิ่ม branch สร้าง source (type:'promptpay') และ backend ต้องคืน QR/สถานะรอชำระด้วย */
 function payNow(){
+  /* 🔴 ด่านสุดท้ายฝั่งเบราว์เซอร์ — ต่อให้มีคนปลด disabled ใน devtools ก็ต้องไม่หลุด
+     (ด่านจริงอยู่ที่ worker ซึ่งปฏิเสธยอด > 3,000 อยู่แล้ว · ชั้นนี้กันไม่ให้ยิงไปตั้งแต่ต้น) */
+  if(YR&&!B.YEARLY_OPEN){alert(B.t('yr_soon_t')+'\n'+B.t('yr_soon_m'));return;}
   var ag=document.getElementById('agree');if(ag&&!ag.checked){alert(B.t('consent_req'));return;}
   if(!B.OMISE_READY){try{window.open(B.LINE_URL,'_blank');}catch(x){}return;}
   loadOmise(function(){
@@ -103,19 +136,40 @@ function payNow(){
     Omise.createToken('card',{name:document.getElementById('card-name').value,number:(document.getElementById('card-num').value||'').replace(/\s/g,''),expiration_month:(exp[0]||'').trim(),expiration_year:('20'+(exp[1]||'').trim()).slice(-4),security_code:document.getElementById('card-cvv').value},function(status,resp){
       if(status!==200){alert(resp.message||'card error');return;}
       fetch(B.CHARGE_ENDPOINT+'/charge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:resp.id,plan:PLAN,cycle:YR?'yr':'mo',account:B.accountKey()})})
-        .then(function(r){return r.json();}).then(function(j){location.href='billing.html?lang='+B.LANG+'&result='+(j.status==='successful'?'success':(j.status==='pending'?'pending':'failed'));})
+        .then(function(r){return r.json();}).then(function(j){
+          /* 🔴 3-D Secure — บรรทัดนี้คือหัวใจ ห้ามลบ
+             บัญชีเราถูกบังคับ 3DS ทุกรายการ ⇒ charge ตอบ `pending` + `authorize_uri`
+             (หน้ายืนยัน OTP/แอปธนาคาร) · ถ้าไม่พาผู้ใช้ไปที่นั่น charge จะค้างแล้วหมดอายุ
+             ⇒ **ไม่มีรายการไหนสำเร็จเลยสักรายการ** ทั้งที่ลูกค้าเข้าใจว่าจ่ายแล้ว
+
+             ⚠️ ต้อง redirect ทั้งหน้า ห้าม window.open — ธนาคารหลายแห่งบล็อก 3DS ใน popup/iframe */
+          if(j&&j.authorize_uri){location.href=j.authorize_uri;return;}
+          location.href='billing.html?lang='+B.LANG+'&result='+(j.status==='successful'?'success':(j.status==='pending'?'pending':'failed'));})
         .catch(function(){location.href='billing.html?lang='+B.LANG+'&result=failed';});
     });
   });
 }
 function showResult(kind){
   var el=document.getElementById('resultPanel');el.classList.remove('hide');
-  var map={success:{cls:'success',ic:'✓'},pending:{cls:'pending',ic:'⏳'},failed:{cls:'failed',ic:'✕'}}[kind];if(!map)return;
+  /* `return` = ธนาคารพาผู้ใช้กลับมาหลังทำ 3DS เสร็จ
+     🔴 **ไม่ได้แปลว่าจ่ายสำเร็จ** — ผลจริงมาทาง webhook ของ Omise เท่านั้น
+        ผู้ใช้ปิดแท็บกลางทางได้ · แก้ URL เองได้ ⇒ หน้านี้บอกได้แค่ "กำลังตรวจสอบ"
+        ใช้หน้าตาเดียวกับ pending โดยตั้งใจ */
+  var map={success:{cls:'success',ic:'✓'},pending:{cls:'pending',ic:'⏳'},'return':{cls:'pending',ic:'⏳'},failed:{cls:'failed',ic:'✕'}}[kind];if(!map)return;
+  if(kind==='return')kind='pending';
   el.innerHTML='<div class="result '+map.cls+'"><div class="ic">'+map.ic+'</div><h2>'+B.t('res_'+kind+'_t')+'</h2><p class="sub">'+B.t('res_'+kind+'_m')+'</p>'
     +'<a class="btn pri" style="max-width:320px;margin:10px auto 0" href="my-plan.html?lang='+B.LANG+'">'+B.t('go_myplan')+'</a>'
     +(kind==='failed'?'<a class="btn ghost" style="max-width:320px;margin:8px auto 0" href="billing.html?plan='+PLAN+'&cycle='+(YR?'yr':'mo')+'&lang='+B.LANG+'">'+B.t('retry')+'</a>':'')
     +(kind!=='success'?'<a class="btn line" style="max-width:320px;margin:8px auto 0" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('line_help')+'</a>':'')+'</div>';
 }
+/* แถบเตือนโหมดทดสอบ — ขึ้นเสมอไม่ว่าจะอยู่หน้าไหนของ flow (checkout / ผลลัพธ์ / store guard) */
+(function(){
+  if(!B.OMISE_TEST_MODE)return;
+  var el=document.getElementById('testBanner');if(!el)return;
+  el.className='';
+  el.style.cssText='background:#fef8ed;border:2px solid #f5d98a;border-radius:12px;padding:11px 14px;margin:0 0 14px;font-size:13px;line-height:1.55;color:#8b5d0d';
+  el.innerHTML='<b style="display:block;margin-bottom:2px">'+B.t('testmode_t')+'</b>'+B.t('testmode_m');
+})();
 (function(){
   var res=B.qs('result');
   if(res){showResult(res);return;}
@@ -125,6 +179,8 @@ function showResult(kind){
   var lbl=B.accountLabel();
   document.getElementById('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl+B.t('acct_bind')):B.t('acct_login');
   document.getElementById('t-mo').className=YR?'':'on';document.getElementById('t-yr').className=YR?'on':'';
+  /* ปุ่มสลับรายปีคงข้อความเดิม ("รายปี · ประหยัด 2 เดือน") — เจ้าของสั่งไม่ให้แตะ
+     การแจ้งว่ายังไม่เปิดไปอยู่ที่การ์ดเหนือรายการแพ็ก + ปุ่มชำระเงินที่กดไม่ได้แทน */
   renderPlanPick();renderSummary();renderPay();
 })();
 try{var _f=document.getElementById('foot');if(_f)_f.innerHTML=B.footerHtml();}catch(e){}

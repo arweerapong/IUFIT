@@ -6,7 +6,7 @@
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js"></script>
 <style>
-:root{--navy:#0B1F5F;--deep:#003C8F;--blue:#165DFF;--cyan:#25C7FF;--ink:#10233F;--mut:#5E6F8A;--lg:#F2F4F8;--line:#e6ebf3}
+:root{--navy:#0B1F5F;--deep:#0B3D9E;--blue:#0E47B3;--cyan:#25C7FF;--ink:#10233F;--mut:#5E6F8A;--lg:#F2F4F8;--line:#e6ebf3}
 *{box-sizing:border-box;font-family:'Kanit',sans-serif;-webkit-tap-highlight-color:transparent}
 body{margin:0;background:#e7ecf3;color:var(--ink)}
 .app{max-width:1180px;margin:0 auto;padding:16px 16px 70px}
@@ -47,7 +47,7 @@ input[type=file]{display:none}
 
 /* ===================== CARD (light premium · ported from preview) ===================== */
 #card{width:1080px;position:relative;overflow:hidden;color:var(--ink);font-family:'Kanit',sans-serif;
-  background:linear-gradient(180deg,#FFFFFF 0%,#F4FAFF 55%,#EEF6FF 100%);--blue:#0A84FF;--navy:#10233F;--deep:#003C8F;--cyan:#25C7FF;--ink:#10233F;--mut:#7B8AA5;--line:#DDE7F5;--soft:#EEF6FF;--glass:rgba(255,255,255,.78);--green:#12B7A8}
+  background:linear-gradient(180deg,#FFFFFF 0%,#F4FAFF 55%,#EEF6FF 100%);--blue:#1150C8;--navy:#10233F;--deep:#0B3D9E;--cyan:#25C7FF;--ink:#10233F;--mut:#7B8AA5;--line:#DDE7F5;--soft:#EEF6FF;--glass:rgba(255,255,255,.78);--green:#12B7A8}
 #card.sq{height:1080px}#card.t916{height:1920px}
 #card .tech{position:absolute;inset:0;pointer-events:none;
   background:
@@ -64,7 +64,7 @@ input[type=file]{display:none}
 .logoR{display:flex;align-items:center;justify-content:center;gap:14px}
 .applogo{font-family:'Montserrat','Kanit',sans-serif;font-weight:800;font-style:italic;letter-spacing:.5px;font-size:60px;line-height:1;color:#0a1f4d;white-space:nowrap}
 .applogo span{font-size:1em;line-height:1;vertical-align:baseline;font-style:inherit}
-.applogo .fit{color:#0A84FF}
+.applogo .fit{color:#1150C8}
 #card.sq .applogo{font-size:54px}
 .tag{text-align:center;font-size:18px;font-weight:700;letter-spacing:.26em;color:var(--mut);margin-top:-16px}
 
@@ -95,7 +95,7 @@ input[type=file]{display:none}
 .ba{position:relative;display:flex;gap:22px;flex:1;min-height:0}
 .half{flex:1;border-radius:30px;position:relative;background:linear-gradient(160deg,#eef2f8,#e3e9f3);
   border:2px solid #e1e8f3;min-height:420px;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.half.after{border-color:rgba(10,132,255,.55);box-shadow:0 0 0 5px rgba(10,132,255,.18),0 18px 40px rgba(10,132,255,.18)}
+.half.after{border-color:rgba(17,80,200,.55);box-shadow:0 0 0 5px rgba(17,80,200,.18),0 18px 40px rgba(17,80,200,.18)}
 .ph{text-align:center;color:#9aabc6}
 .ph .cam{width:92px;height:92px;margin:0 auto 16px;display:block;opacity:.85}
 .ph .big{font-size:42px;font-weight:800;letter-spacing:.04em;color:#7e93b4}
@@ -104,14 +104,14 @@ input[type=file]{display:none}
 .ribbon{position:absolute;left:50%;transform:translateX(-50%);bottom:0;min-width:62%;text-align:center;
   font-size:24px;font-weight:800;color:#fff;padding:13px 22px;border-radius:18px 18px 0 0}
 .ribbon.bf{background:linear-gradient(180deg,#9aa7bd,#7c8aa3)}
-.ribbon.af{background:linear-gradient(180deg,#0A84FF,#0A84FF)}
+.ribbon.af{background:linear-gradient(180deg,#1150C8,#1150C8)}
 .chev{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;width:88px;height:88px;border-radius:50%;
   background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 30px rgba(0,40,120,.22)}
 .chev svg{width:42px;height:42px;color:var(--blue)}
 
 /* duration pill (9:16) */
 .durpill{align-self:center;display:inline-flex;align-items:center;gap:12px;font-size:30px;font-weight:800;color:#fff;
-  background:linear-gradient(135deg,#0A84FF,#003C8F);border-radius:999px;padding:15px 34px;box-shadow:0 14px 30px rgba(22,93,255,.34)}
+  background:linear-gradient(135deg,#1150C8,#0B3D9E);border-radius:999px;padding:15px 34px;box-shadow:0 14px 30px rgba(22,93,255,.34)}
 .durpill svg{width:30px;height:30px}
 
 /* stats — outline circle (result) */
@@ -139,9 +139,9 @@ input[type=file]{display:none}
 .foot .ic .appicon{width:100%;height:100%;object-fit:cover;border-radius:20px}
 .foot .ft{flex:1}.foot .ft b{display:block;font-size:26px;color:var(--navy)}
 .foot .ft span{font-size:18px;color:var(--mut)}
-.foot .cta{font-size:23px;font-weight:800;color:#fff;background:linear-gradient(135deg,#0A84FF,#003C8F);border-radius:999px;padding:16px 30px;display:flex;align-items:center;gap:10px;white-space:nowrap}
+.foot .cta{font-size:23px;font-weight:800;color:#fff;background:linear-gradient(135deg,#1150C8,#0B3D9E);border-radius:999px;padding:16px 30px;display:flex;align-items:center;gap:10px;white-space:nowrap}
 .foot .cta svg{width:24px;height:24px}
-.footblue{background:linear-gradient(135deg,#003C8F,#0A84FF);border:none}
+.footblue{background:linear-gradient(135deg,#0B3D9E,#1150C8);border:none}
 .footblue .ft b,.footblue .ft span{color:#fff}.footblue .ft span{opacity:.85}
 .footblue .ic{background:transparent}
 .footblue .cta{background:#fff;color:var(--blue)}.footblue .cta svg{color:var(--blue)}
@@ -152,12 +152,12 @@ input[type=file]{display:none}
 
 /* coach header */
 .chead{display:flex;align-items:center;gap:22px}
-.av{border-radius:50%;background:linear-gradient(150deg,#0A84FF,#25C7FF);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;flex:none;overflow:hidden}
+.av{border-radius:50%;background:linear-gradient(150deg,#1150C8,#25C7FF);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;flex:none;overflow:hidden}
 .av svg{width:58%;height:58%;opacity:.92}
 .cklab{font-size:18px;font-weight:700;letter-spacing:.18em;color:var(--mut)}
 .cknm{font-size:42px;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:10px;line-height:1.05}
 .vb{width:30px;height:30px;flex:none}
-.crole{display:inline-block;font-size:19px;font-weight:800;color:#fff;background:linear-gradient(135deg,#0A84FF,#0A84FF);border-radius:999px;padding:7px 20px;margin-top:6px}
+.crole{display:inline-block;font-size:19px;font-weight:800;color:#fff;background:linear-gradient(135deg,#1150C8,#1150C8);border-radius:999px;padding:7px 20px;margin-top:6px}
 .csub{font-size:21px;color:var(--mut);font-weight:600;margin-top:6px}
 .showcase{margin-left:auto;text-align:right;flex:none}
 .showcase .a{font-size:20px;font-weight:800;color:var(--navy);letter-spacing:.04em}
@@ -166,7 +166,7 @@ input[type=file]{display:none}
 /* info cards (coach) */
 .info{display:flex;gap:18px}
 .icard{flex:1;background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:20px;display:flex;gap:15px;align-items:flex-start;box-shadow:0 12px 30px rgba(13,54,110,.08)}
-.icard .ii{width:60px;height:60px;border-radius:16px;background:linear-gradient(150deg,#0A84FF,#25C7FF);display:flex;align-items:center;justify-content:center;flex:none}
+.icard .ii{width:60px;height:60px;border-radius:16px;background:linear-gradient(150deg,#1150C8,#25C7FF);display:flex;align-items:center;justify-content:center;flex:none}
 .icard .ii svg{width:30px;height:30px;color:#fff}
 .icard .il{font-size:19px;font-weight:800;color:var(--navy)}
 .icard .ie{font-size:15px;font-weight:700;letter-spacing:.12em;color:#9fb0cb}
@@ -179,7 +179,7 @@ input[type=file]{display:none}
 .cstat .se{font-size:14px;font-weight:700;letter-spacing:.12em;color:#9fb0cb;margin-bottom:10px}
 .cstat .sv{font-size:46px;font-weight:800;color:var(--blue);letter-spacing:-1px;line-height:1}
 .cstat .sv small{font-size:20px;color:var(--mut);font-weight:700}
-.cstat .dn{width:48px;height:48px;border-radius:50%;background:linear-gradient(150deg,#0A84FF,#0A84FF);display:flex;align-items:center;justify-content:center;margin:12px auto 0}
+.cstat .dn{width:48px;height:48px;border-radius:50%;background:linear-gradient(150deg,#1150C8,#1150C8);display:flex;align-items:center;justify-content:center;margin:12px auto 0}
 .cstat .dn svg{width:26px;height:26px;color:#fff}
 .cstat .dn.up{background:linear-gradient(150deg,#12B7A8,#0a8f84)}
 .stars{color:#ffb020;font-size:30px;letter-spacing:4px}
@@ -214,7 +214,7 @@ input[type=file]{display:none}
 
 #card .half img{width:100%;height:100%;object-fit:cover}
 #card .av img{width:100%;height:100%;object-fit:cover}
-.cstat .dn{width:48px;height:48px;border-radius:50%;background:linear-gradient(150deg,#0A84FF,#003C8F);display:flex;align-items:center;justify-content:center;margin:12px auto 0}
+.cstat .dn{width:48px;height:48px;border-radius:50%;background:linear-gradient(150deg,#1150C8,#0B3D9E);display:flex;align-items:center;justify-content:center;margin:12px auto 0}
 .cstat .dn svg{width:26px;height:26px;color:#fff}
 .cstat .dn.up{background:linear-gradient(150deg,#12B7A8,#0a8f84)}
 #card .vbadge{width:30px;height:30px;flex:none;vertical-align:middle}
@@ -289,14 +289,14 @@ body.embed{background:#eef2f8}
 .wiztitle{font-size:15px;font-weight:800;color:#002766;text-align:center}
 .wizdots{display:flex;gap:6px;justify-content:center;margin-top:9px}
 .wizdots i{width:8px;height:8px;border-radius:50%;background:#cfdaea;transition:.2s}
-.wizdots i.on{background:#165dff;width:22px;border-radius:4px}
+.wizdots i.on{background:#0e47b3;width:22px;border-radius:4px}
 .wizbody{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:14px 15px;min-height:0}
 .wstep .panel{margin:0 0 12px}
 .wstep .steplbl{font-size:12.5px;font-weight:800;color:#5e6f8a;margin:0 2px 10px}
 .wizfoot{flex:none;display:flex;gap:10px;padding:11px 15px calc(11px + env(safe-area-inset-bottom));background:#fff;border-top:1px solid #e6ebf3}
 .wbtn{height:48px;border-radius:14px;border:none;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer}
-.wbtn.back{flex:0 0 38%;background:#fff;color:#165dff;border:1.5px solid #cdddf5}
-.wbtn.next{flex:1;background:linear-gradient(135deg,#0b2f86,#165dff);color:#fff}
+.wbtn.back{flex:0 0 38%;background:#fff;color:#0e47b3;border:1.5px solid #cdddf5}
+.wbtn.next{flex:1;background:linear-gradient(135deg,#0b2f86,#0e47b3);color:#fff}
 .wiz .previewWrap{position:static}.wiz .stage{min-height:auto}.wiz .btns{margin-top:12px}.wiz .hint{margin-top:8px}
 
 /* ===== v6.32 result/coach redesign ===== */
@@ -326,9 +326,9 @@ body.embed{background:#eef2f8}
       <div class="panel">
         <h3>เทมเพลต</h3>
         <div class="tabs" id="tplTabs">
-          <span class="tab on" data-v="result"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#dbe6f7"/><rect x="6" y="6" width="48" height="8" rx="2" fill="#0a84ff"/><rect x="6" y="19" width="22" height="33" rx="3" fill="#fff"/><rect x="32" y="19" width="22" height="33" rx="3" fill="#fff"/><rect x="6" y="57" width="48" height="5" rx="2" fill="#aebfdc"/><rect x="6" y="65" width="32" height="5" rx="2" fill="#aebfdc"/></svg><span class="tpl-lb">Result Card<br><small style="font-weight:500;opacity:.7">ก่อน/หลัง</small></span></span>
+          <span class="tab on" data-v="result"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#dbe6f7"/><rect x="6" y="6" width="48" height="8" rx="2" fill="#1150c8"/><rect x="6" y="19" width="22" height="33" rx="3" fill="#fff"/><rect x="32" y="19" width="22" height="33" rx="3" fill="#fff"/><rect x="6" y="57" width="48" height="5" rx="2" fill="#aebfdc"/><rect x="6" y="65" width="32" height="5" rx="2" fill="#aebfdc"/></svg><span class="tpl-lb">Result Card<br><small style="font-weight:500;opacity:.7">ก่อน/หลัง</small></span></span>
           <span class="tab" data-v="coach"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#002766"/><circle cx="30" cy="21" r="10" fill="#fff"/><rect x="15" y="35" width="30" height="5" rx="2" fill="#ffd24a"/><rect x="11" y="45" width="38" height="24" rx="3" fill="rgba(255,255,255,.16)"/></svg><span class="tpl-lb">Coach Story<br><small style="font-weight:500;opacity:.7">แบรนด์โค้ช</small></span></span>
-          <span class="tab" data-v="stats"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#eef3fb"/><rect x="6" y="6" width="48" height="8" rx="2" fill="#0a84ff"/><circle cx="20" cy="34" r="11" fill="none" stroke="#0a84ff" stroke-width="3"/><rect x="7" y="52" width="20" height="7" rx="2" fill="#cfe0ff"/><rect x="33" y="50" width="20" height="11" rx="2" fill="#cfe0ff"/><rect x="33" y="34" width="20" height="9" rx="2" fill="#dbe6f7"/></svg><span class="tpl-lb">Stats<br><small style="font-weight:500;opacity:.7">ไม่มีรูป</small></span></span>
+          <span class="tab" data-v="stats"><svg viewBox="0 0 60 76" class="tpv"><rect width="60" height="76" rx="7" fill="#eef3fb"/><rect x="6" y="6" width="48" height="8" rx="2" fill="#1150c8"/><circle cx="20" cy="34" r="11" fill="none" stroke="#1150c8" stroke-width="3"/><rect x="7" y="52" width="20" height="7" rx="2" fill="#cfe0ff"/><rect x="33" y="50" width="20" height="11" rx="2" fill="#cfe0ff"/><rect x="33" y="34" width="20" height="9" rx="2" fill="#dbe6f7"/></svg><span class="tpl-lb">Stats<br><small style="font-weight:500;opacity:.7">ไม่มีรูป</small></span></span>
           
         </div>
         <div style="margin-top:11px"><label>ขนาด export (responsive ตามนี้)</label>
@@ -452,7 +452,7 @@ const I={
  trophy:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4h12v2h3v3a4 4 0 0 1-4 4h-.4A6 6 0 0 1 13 16.9V19h3v2H8v-2h3v-2.1A6 6 0 0 1 7.4 13H7a4 4 0 0 1-4-4V6h3V4Zm0 4H5v1a2 2 0 0 0 1 1.7V8Zm13 0h-1v2.7A2 2 0 0 0 19 9V8Z"/></svg>',
  img:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="8.5" cy="9.5" r="1.8"/><path d="m4 18 5-5 4 4 3-3 4 4"/></svg>'
 };
-const VBADGE='<svg class="vbadge" viewBox="0 0 24 24"><path fill="#165DFF" d="M12 2l2.4 1.8 3-.3 1 2.8 2.6 1.5-.9 2.9.9 2.9-2.6 1.5-1 2.8-3-.3L12 22l-2.4-1.8-3 .3-1-2.8L3 16.4l.9-2.9L3 10.6l2.6-1.5 1-2.8 3 .3z"/><path fill="#fff" d="m10.6 15.2-2.6-2.6 1.3-1.3 1.3 1.3 3.8-3.8 1.3 1.3z"/></svg>';
+const VBADGE='<svg class="vbadge" viewBox="0 0 24 24"><path fill="#0E47B3" d="M12 2l2.4 1.8 3-.3 1 2.8 2.6 1.5-.9 2.9.9 2.9-2.6 1.5-1 2.8-3-.3L12 22l-2.4-1.8-3 .3-1-2.8L3 16.4l.9-2.9L3 10.6l2.6-1.5 1-2.8 3 .3z"/><path fill="#fff" d="m10.6 15.2-2.6-2.6 1.3-1.3 1.3 1.3 3.8-3.8 1.3 1.3z"/></svg>';
 
 const RC={tpl:'result',ratio:'9:16',ba:'lr',
  coachName:'Coach Name',coachHandle:'@coachname',verified:true,specialties:['Fat Loss','Muscle Gain','Nutrition'],
@@ -490,7 +490,12 @@ let HIST=MOCK_HISTORY;let EMBED=false;
 const TH_MONTH=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
 function thDate(iso){if(!iso)return '';const d=new Date(iso);return d.getDate()+' '+TH_MONTH[d.getMonth()]+' '+(d.getFullYear()+543);}
 function thMonth(iso){if(!iso)return '';const d=new Date(iso);return TH_MONTH[d.getMonth()]+' '+(d.getFullYear()+543);}
-function initSource(){const sel=$('trainee');sel.innerHTML=Object.entries(HIST).map(([k,v])=>'<option value="'+k+'">'+v.name+'</option>').join('');setDates();sel.addEventListener('change',setDates);$('pull').addEventListener('click',pull);}
+/* 🔒 2569-07-28 · เดิมต่อ `v.name` เข้า innerHTML ตรง ๆ ⇒ ชื่อที่มี HTML รันได้
+   ใช้ DOM API + textContent แทน · เบราว์เซอร์จะถือว่าเป็น "ข้อความ" เสมอ
+   ไม่ว่าจะมี < > " หรือ event handler อยู่ข้างในก็ตาม */
+function initSource(){const sel=$('trainee');sel.textContent='';
+  Object.entries(HIST).forEach(function(kv){var o=document.createElement('option');o.value=kv[0];o.textContent=(kv[1]&&kv[1].name)||kv[0];sel.appendChild(o);});
+  setDates();sel.addEventListener('change',setDates);$('pull').addEventListener('click',pull);}
 function setDates(){const t=HIST[$('trainee').value];if(!t)return;$('dBefore').value=t.rows[0].d;$('dAfter').value=t.rows[t.rows.length-1].d;}
 function nearest(rows,ds){if(!ds)return rows[rows.length-1];const x=new Date(ds);return rows.reduce((a,b)=>Math.abs(new Date(b.d)-x)<Math.abs(new Date(a.d)-x)?b:a);}
 function pull(){
@@ -528,8 +533,8 @@ function lineChart(pts,w,h){
   const mx=Math.max.apply(null,pts),mn=Math.min.apply(null,pts),rng=(mx-mn)||1,st=w/(pts.length-1);
   const xy=pts.map((p,i)=>[i*st,h-10-((p-mn)/rng)*(h-26)]);
   const d='M'+xy.map(p=>p[0].toFixed(1)+','+p[1].toFixed(1)).join(' L');
-  const dots=xy.map(p=>'<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4" fill="#fff" stroke="#165DFF" stroke-width="2.5"/>').join('');
-  return '<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="'+h+'"><defs><linearGradient id="lc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#165DFF" stop-opacity=".25"/><stop offset="1" stop-color="#165DFF" stop-opacity="0"/></linearGradient></defs><path d="'+d+' L'+w+','+h+' L0,'+h+' Z" fill="url(#lc)"/><path d="'+d+'" fill="none" stroke="#165DFF" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>'+dots+'</svg>';
+  const dots=xy.map(p=>'<circle cx="'+p[0].toFixed(1)+'" cy="'+p[1].toFixed(1)+'" r="4" fill="#fff" stroke="#0E47B3" stroke-width="2.5"/>').join('');
+  return '<svg viewBox="0 0 '+w+' '+h+'" width="100%" height="'+h+'"><defs><linearGradient id="lc" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0E47B3" stop-opacity=".25"/><stop offset="1" stop-color="#0E47B3" stop-opacity="0"/></linearGradient></defs><path d="'+d+' L'+w+','+h+' L0,'+h+' Z" fill="url(#lc)"/><path d="'+d+'" fill="none" stroke="#0E47B3" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>'+dots+'</svg>';
 }
 function multiChart(series,w,h){
   let body='';
@@ -556,7 +561,7 @@ function baHalf(src,after,big,sub,ribbon){return '<div class="half'+(after?' aft
 function statR(icon,label,val,unit,chg){return '<div class="stat"><div class="ci">'+icon+'</div><div class="sl">'+label+'</div><div class="sv">'+val+(unit?'<small> '+unit+'</small>':'')+'</div>'+(chg?'<div class="chg">'+chg+'</div>':'')+'</div>';}
 function cstatCard(label,en,val,unit,arrow){var dn='';if(arrow==='down')dn='<div class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>';else if(arrow==='up')dn='<div class="dn up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></div>';return '<div class="cstat"><div class="sl">'+label+'</div>'+(en?'<div class="se">'+en+'</div>':'')+'<div class="sv">'+val+'<small>'+unit+'</small></div>'+dn+'</div>';}
 function icardEl(icon,label,en,val){return '<div class="icard"><div class="ii">'+icon+'</div><div><div class="il">'+label+'</div>'+(en?'<div class="ie">'+en+'</div>':'')+'<div class="iv">'+val+'</div></div></div>';}
-function avatarC(size){return '<div class="av" style="width:'+size+'px;height:'+size+'px">'+(RC.imgC?'<img src="'+RC.imgC+'">':'<svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="8" r="4.2"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg>')+'</div>';}
+function avatarC(size){return '<div class="av" style="width:'+size+'px;height:'+size+'px">'+(RC.imgC?'<img src="'+rcAttr(RC.imgC)+'">':'<svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="8" r="4.2"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg>')+'</div>';}
 function coachGoal(){if(RC.goal)return RC.goal;var g=RC._goalCode;if(L==='en')return g==='lose'?'Fat loss':g==='gain'?'Muscle gain':g==='keep'?'Body recomposition':'Fat loss & muscle gain';return g==='lose'?'ลดไขมัน':g==='gain'?'สร้างกล้ามเนื้อ':g==='keep'?'ควบคุมรูปร่าง':'ลดไขมัน สร้างกล้ามเนื้อ';}
 function coachSummary(){if(RC.summary)return RC.summary;var wc=wchange();var en=(L==='en');var parts=[];if(wc!=null&&wc<0)parts.push(en?('lost '+fmt(Math.abs(wc))+' kg'):('ลดน้ำหนัก '+fmt(Math.abs(wc))+' กก.'));if(RC.bfBefore!=null&&RC.bfAfter!=null&&RC.bfAfter<RC.bfBefore)parts.push(en?('body fat -'+fmt(RC.bfBefore-RC.bfAfter)+'%'):('ไขมันลด '+fmt(RC.bfBefore-RC.bfAfter)+'%'));var t=parts.length?parts.join(' · '):(en?'visibly leaner & firmer':'รูปร่างกระชับขึ้นชัดเจน');if(RC.period)t+=(en?(' in '+(''+RC.period).replace(/[^0-9.]/g,'')+' weeks'):(' ใน'+RC.period));return t;}
 function ftReal(label){return '<div class="foot"><div class="ic"><img class="appicon" src="'+APPICON+'"></div><div class="ft"><b>'+label+'</b><span>'+T('แอปที่เข้าใจคุณ วางแผนเฉพาะคุณ เห็นผลจริง','An app that gets you · plans for you · real results')+'</span></div><div class="cta">'+T('บันทึกเลย','Save now')+' '+ARROW+'</div></div>';}
@@ -571,7 +576,7 @@ function sdUp(t){return '<div class="sd up"><svg viewBox="0 0 24 24" fill="none"
 function sSub(t){return '<div class="sub">'+t+'</div>';}
 function ringSVG(pct){var C=2*Math.PI*88;var off=C*(1-pct);return '<div class="ring"><svg viewBox="0 0 210 210"><defs><linearGradient id="rg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f7bff"/><stop offset="1" stop-color="#25C7FF"/></linearGradient></defs><circle cx="105" cy="105" r="88" fill="none" stroke="#e3ecfa" stroke-width="22"/><circle cx="105" cy="105" r="88" fill="none" stroke="url(#rg2)" stroke-width="22" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 105 105)"/></svg><div class="pc">'+Math.round(pct*100)+'<small>%</small></div></div>';}
 function _monthLabels(n){var thM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];var enM=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];var arr=L==='en'?enM:thM;var now=new Date().getMonth();var out=[];for(var i=n-1;i>=0;i--){out.push(arr[((now-i)%12+12)%12]);}return out;}
-function trendSVG(arr,goalW,unit){if(!arr||arr.length<2)arr=[RC.wBefore||0,RC.wAfter||0];var ex=goalW!=null?arr.concat([goalW]):arr;var vmin=Math.min.apply(null,ex)-1,vmax=Math.max.apply(null,ex)+1;if(vmax<=vmin)vmax=vmin+1;var n=arr.length,x0=80,x1=900,top=30,bot=210;function X(i){return x0+(x1-x0)*i/(n-1);}function Y(v){return top+(vmax-v)/(vmax-vmin)*(bot-top);}var pts=arr.map(function(v,i){return X(i).toFixed(0)+','+Y(v).toFixed(1);}).join(' ');var dots=arr.map(function(v,i){return '<circle cx="'+X(i).toFixed(0)+'" cy="'+Y(v).toFixed(1)+'" r="7" fill="#0A84FF" stroke="#fff" stroke-width="3"/>';}).join('');var labs=arr.map(function(v,i){return '<text x="'+X(i).toFixed(0)+'" y="'+(Y(v)-16).toFixed(1)+'" text-anchor="middle" font-size="20" font-weight="800" fill="#10233F" font-family="Kanit">'+fmt(v)+'</text>';}).join('');var mo=_monthLabels(n);var xlab=mo.map(function(m,i){return '<text x="'+X(i).toFixed(0)+'" y="248" text-anchor="middle" font-size="19" fill="#7B8AA5" font-family="Kanit">'+m+'</text>';}).join('');var gl='';if(goalW!=null){var gy=Y(goalW);gl='<line x1="60" y1="'+gy.toFixed(1)+'" x2="920" y2="'+gy.toFixed(1)+'" stroke="#9cc0f5" stroke-width="2" stroke-dasharray="7 6"/><text x="915" y="'+(gy-8).toFixed(1)+'" text-anchor="end" font-size="17" fill="#7B8AA5" font-family="Kanit">'+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+unit+'</text>';}return '<svg viewBox="0 0 980 270">'+gl+'<polyline points="'+pts+'" fill="none" stroke="#0A84FF" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>'+dots+labs+xlab+'</svg>';}
+function trendSVG(arr,goalW,unit){if(!arr||arr.length<2)arr=[RC.wBefore||0,RC.wAfter||0];var ex=goalW!=null?arr.concat([goalW]):arr;var vmin=Math.min.apply(null,ex)-1,vmax=Math.max.apply(null,ex)+1;if(vmax<=vmin)vmax=vmin+1;var n=arr.length,x0=80,x1=900,top=30,bot=210;function X(i){return x0+(x1-x0)*i/(n-1);}function Y(v){return top+(vmax-v)/(vmax-vmin)*(bot-top);}var pts=arr.map(function(v,i){return X(i).toFixed(0)+','+Y(v).toFixed(1);}).join(' ');var dots=arr.map(function(v,i){return '<circle cx="'+X(i).toFixed(0)+'" cy="'+Y(v).toFixed(1)+'" r="7" fill="#1150C8" stroke="#fff" stroke-width="3"/>';}).join('');var labs=arr.map(function(v,i){return '<text x="'+X(i).toFixed(0)+'" y="'+(Y(v)-16).toFixed(1)+'" text-anchor="middle" font-size="20" font-weight="800" fill="#10233F" font-family="Kanit">'+fmt(v)+'</text>';}).join('');var mo=_monthLabels(n);var xlab=mo.map(function(m,i){return '<text x="'+X(i).toFixed(0)+'" y="248" text-anchor="middle" font-size="19" fill="#7B8AA5" font-family="Kanit">'+m+'</text>';}).join('');var gl='';if(goalW!=null){var gy=Y(goalW);gl='<line x1="60" y1="'+gy.toFixed(1)+'" x2="920" y2="'+gy.toFixed(1)+'" stroke="#9cc0f5" stroke-width="2" stroke-dasharray="7 6"/><text x="915" y="'+(gy-8).toFixed(1)+'" text-anchor="end" font-size="17" fill="#7B8AA5" font-family="Kanit">'+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+unit+'</text>';}return '<svg viewBox="0 0 980 270">'+gl+'<polyline points="'+pts+'" fill="none" stroke="#1150C8" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>'+dots+labs+xlab+'</svg>';}
 function perRange(){
   var wk=RC.period?(parseInt((''+RC.period).replace(/[^0-9]/g,''))||0):0;
   var days=wk>0?wk*7:(RC.streakDays||0);
@@ -659,7 +664,7 @@ function tplCoach(){
     h+='</div>';return h;
   }
   var h='<div class="tech"></div>'+WMARK+'<div class="cc" style="gap:26px">'+LOGOWM;
-  h+='<div class="chead">'+avatarC(130)+'<div style="flex:1"><span class="crole" style="background:#e8f0ff;color:var(--blue)">'+T('เทรนเนอร์','Trainer')+'</span><div class="cknm" style="margin-top:6px">'+name+'</div><div class="csub" style="color:var(--blue);font-weight:700">Personal Trainer</div><div class="csub">'+T('โค้ชเฉพาะทาง ','Specialist · ')+spec+'</div></div></div>';
+  h+='<div class="chead">'+avatarC(130)+'<div style="flex:1"><span class="crole" style="background:#e8f0ff;color:var(--blue)">'+T('โค้ช','Coach')+'</span><div class="cknm" style="margin-top:6px">'+name+'</div><div class="csub" style="color:var(--blue);font-weight:700">Personal Coach</div><div class="csub">'+T('โค้ชเฉพาะทาง ','Specialist · ')+spec+'</div></div></div>';
   h+='<div class="ba">'+baHalf(RC.imgB,false,'BEFORE',T('วางรูป BEFORE','Insert BEFORE'),'BEFORE')+CHEV+baHalf(RC.imgA,true,'AFTER',T('วางรูป AFTER','Insert AFTER'),'AFTER')+'</div>';
   h+='<div class="info">'+icardEl(I.target,T('เป้าหมาย','CLIENT GOAL'),'',goal)+icardEl(I.cal,T('ระยะเวลา','DURATION'),'',perEN(RC.period))+icardEl(I.trophy,T('สรุปผลลัพธ์','RESULT SUMMARY'),'',summary)+'</div>';
   h+='<div class="cstats">'+cstats(true)+'</div>';
@@ -687,8 +692,8 @@ function tplProgress(){
   if(RC.workoutCount!=null)rows.push(trow(I.dumbbell,'ออกกำลังกาย','',RC.workoutCount,'ครั้ง'));
   if(RC.planDays!=null)rows.push(trow(I.clip,'ทำตามแผน','',RC.planDays+'/'+(RC.planTotal||30),'วัน'));
   const chart='<div class="mt-chart"><div class="chh">แนวโน้มการเปลี่ยนแปลง</div>'+
-    '<div class="mt-leg"><span><i style="background:#165DFF"></i>น้ำหนัก</span><span><i style="background:#25C7FF"></i>ไขมัน</span><span><i style="background:#7c6cf0"></i>รอบเอว</span></div>'+
-    multiChart([{pts:RC.trendW,c:'#165DFF'},{pts:RC.trendBF,c:'#25C7FF'},{pts:RC.trendWaist,c:'#7c6cf0'}],560,tall?230:180)+'</div>';
+    '<div class="mt-leg"><span><i style="background:#0E47B3"></i>น้ำหนัก</span><span><i style="background:#25C7FF"></i>ไขมัน</span><span><i style="background:#7c6cf0"></i>รอบเอว</span></div>'+
+    multiChart([{pts:RC.trendW,c:'#0E47B3'},{pts:RC.trendBF,c:'#25C7FF'},{pts:RC.trendWaist,c:'#7c6cf0'}],560,tall?230:180)+'</div>';
   const badge='<div class="pbadge"><div class="tr">'+I.trophy+'</div><div><b>ยอดเยี่ยม!</b><span>คุณทำได้ดีกว่า <span class="pct">'+(RC.percentile!=null?RC.percentile:82)+'%</span><br>ของผู้ใช้ IUFIT</span></div></div>';
   const body=tall
     ? '<div class="mt-body col">'+mtPhotos()+'<div class="mt-rows">'+rows.join('')+'</div></div>'
@@ -750,6 +755,92 @@ document.fonts.ready.then(render);setTimeout(render,300);
 
 
 /* ---- EMBED MODE: receive real app data from parent ---- */
+
+/* ═══════════════════════════════════════════════════════════════════════════
+   🔒 2569-07-28 · ด่านกรองข้อมูลจาก postMessage (P0 จากรายงานตรวจโค้ด 28 ก.ค.)
+   ═══════════════════════════════════════════════════════════════════════════
+   ปัญหาเดิม: ตัวรับ message ไม่ตรวจ `origin`/`source` เลย ⇒ **เว็บไซต์ใดก็ได้**
+   ฝังหน้านี้เป็น iframe แล้วส่งชื่อที่มี HTML เข้ามา ⇒ สคริปต์รันใต้ origin
+   ของ iufit.com ⇒ อ่าน localStorage (มีสถานะบัญชี/สุขภาพ) ได้ทั้งก้อน
+
+   ป้องกันสองชั้น เพราะชั้นเดียวพลาดได้:
+     ชั้นที่ 1 — ตรวจ origin + source (กันคนนอกตั้งแต่ประตู)
+     ชั้นที่ 2 — ล้างค่าทุกตัวก่อนใช้ (เผื่อวันหน้ามีทางเข้าอื่นที่ยังไม่รู้จัก)
+
+   ⚠️ ชั้นที่ 2 จำเป็นจริง ๆ ไม่ใช่ของแถม — หน้านี้ประกอบการ์ดด้วย `innerHTML`
+   หลายจุด (`tplResult` / `tplCoach` / `avatarC`) ⇒ สตริงทุกตัวที่ไหลมาจากข้อมูล
+   คือช่องทางได้หมด · ล้างที่ปากทางจุดเดียวคุ้มกว่าไล่แก้ทุก template
+   ═══════════════════════════════════════════════════════════════════════════ */
+var RC_MAX_STR=120, RC_MAX_ROWS=200, RC_MAX_PEOPLE=200;
+
+/** หนีอักขระที่ทำให้หลุดออกจาก "ข้อความ" ไปเป็น "โครงสร้าง HTML" */
+function rcEsc(v){
+  return String(v==null?'':v).replace(/[&<>"']/g,function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  }).slice(0,RC_MAX_STR);
+}
+/** ใช้กับค่าที่ถูกวางในแอตทริบิวต์ (ต้องกัน `"` เป็นพิเศษ) */
+function rcAttr(v){ return rcEsc(v); }
+/** ตัวเลขที่อยู่ในช่วงจริงเท่านั้น — NaN/Infinity/สตริง คืน null */
+function rcNum(v,lo,hi){
+  var x=typeof v==='number'?v:parseFloat(v);
+  if(!isFinite(x)||x<lo||x>hi) return null;
+  return x;
+}
+/** วันที่รูปแบบ YYYY-MM-DD เท่านั้น */
+function rcDate(v){ return /^\d{4}-\d{2}-\d{2}$/.test(String(v||''))?String(v):''; }
+/**
+ * URL รูปภาพ — อนุญาตเฉพาะสามแบบที่หน้านี้ใช้จริง
+ * ⚠️ ห้ามอนุญาต `javascript:` และ `data:text/html` เด็ดขาด (รันสคริปต์ได้ทั้งคู่)
+ */
+function rcImgUrl(v){
+  var u=String(v==null?'':v).trim();
+  if(/^data:image\/(png|jpe?g|gif|webp);base64,[A-Za-z0-9+/=]+$/.test(u)) return u;
+  if(/^blob:/.test(u)) return u;
+  if(/^https:\/\//.test(u)) return u;
+  return '';   /* ไม่รู้จัก = ไม่ใช้ ดีกว่าเดา */
+}
+/** สร้างก้อน HIST ใหม่จากศูนย์ — คัดเฉพาะช่องที่หน้านี้ใช้ ทิ้งที่เหลือทั้งหมด */
+function rcCleanHist(h){
+  var out={},k,i,v,rows,r,keys;
+  if(!h||typeof h!=='object') return null;
+  keys=Object.keys(h).slice(0,RC_MAX_PEOPLE);
+  for(i=0;i<keys.length;i++){
+    k=keys[i]; v=h[k];
+    if(!v||typeof v!=='object'||!Array.isArray(v.rows)) continue;
+    rows=[];
+    v.rows.slice(0,RC_MAX_ROWS).forEach(function(row){
+      if(!row||typeof row!=='object') return;
+      var d=rcDate(row.d), w=rcNum(row.w,20,400);
+      if(!d||w===null) return;            /* ไม่มีวันที่หรือน้ำหนัก = แถวใช้ไม่ได้ */
+      rows.push({d:d,w:w,waist:rcNum(row.waist,30,250),bf:rcNum(row.bf,1,70),mus:rcNum(row.mus,5,120)});
+    });
+    if(!rows.length) continue;
+    out[rcEsc(k)]={
+      name:rcEsc(v.name||k), rows:rows,
+      pct:rcNum(v.pct,0,100), gw:rcNum(v.gw,20,400),
+      workouts:rcNum(v.workouts,0,100000), streak:rcNum(v.streak,0,100000),
+      protein:rcNum(v.protein,0,1000), cal:rcNum(v.cal,0,20000)
+    };
+  }
+  return Object.keys(out).length?out:null;
+}
+/** กรองทั้งซอง — คืนรูปทรงเดิมที่ `applyEmbed` คาดหวัง แต่ค่าปลอดภัยแล้ว */
+function rcCleanPayload(d){
+  var out={type:'iufit-rc'};
+  if(d.lang==='en'||d.lang==='th') out.lang=d.lang;
+  if(d.mode==='client'||d.mode==='coach') out.mode=d.mode;
+  if(typeof d.select==='string') out.select=rcEsc(d.select);
+  var h=rcCleanHist(d.hist); if(h) out.hist=h;
+  if(d.coach&&typeof d.coach==='object'){
+    out.coach={};
+    if(d.coach.name!=null) out.coach.name=rcEsc(d.coach.name);
+    if(d.coach.handle!=null) out.coach.handle=rcEsc(d.coach.handle);
+    var ph=rcImgUrl(d.coach.photo); if(ph) out.coach.photo=ph;
+  }
+  return out;
+}
+
 function applyEmbed(d){
   EMBED=true; if(d.lang)L=d.lang; if(d.hist) HIST=d.hist;
   if(d.coach){ if(d.coach.name!=null){RC.coachName=d.coach.name;if(d.coach.photo)RC.imgC=d.coach.photo; if($('coachName'))$('coachName').value=d.coach.name;}
@@ -818,11 +909,32 @@ function applyEmbed(d){
   }
   try{ pull(); }catch(e){}
 }
+/* 🔒 ชั้นที่ 1 — รับเฉพาะข้อความจาก **หน้าแม่ที่เป็น origin เดียวกัน**
+   `e.origin` = ใครส่ง · `e.source` = หน้าต่างไหนส่ง — ต้องตรงทั้งคู่
+   (ตรวจ origin อย่างเดียวไม่พอ: iframe ลูกของเราเองก็มี origin เดียวกัน) */
 window.addEventListener('message',function(e){
-  var d=e.data; if(!d||d.type!=='iufit-rc')return; applyEmbed(d);
+  if(e.origin!==location.origin) return;
+  if(e.source!==window.parent) return;
+  var d=e.data; if(!d||typeof d!=='object'||d.type!=='iufit-rc') return;
+  applyEmbed(rcCleanPayload(d));
 });
-// tell parent we're ready to receive data
-try{ if(window.parent!==window) window.parent.postMessage({type:'iufit-rc-ready'},'*'); }catch(e){}
+
+/* บอกหน้าแม่ว่าพร้อมรับข้อมูล
+   ⚠️ เดิมส่งด้วย target origin `'*'` = ประกาศให้ทุกคนที่ฝังเราอยู่รู้ว่าเราพร้อม
+   ⇒ เท่ากับเชิญเว็บภายนอกให้ยิงข้อมูลเข้ามา · ระบุ `location.origin` ชัด ๆ
+   เบราว์เซอร์จะไม่ส่งเลยถ้าหน้าแม่คนละ origin ซึ่งเป็นสิ่งที่ต้องการ
+
+   `rcFramedBySelf()` — กันอีกชั้นก่อนถึงขั้นส่ง: ถ้าถูกฝังโดยเว็บอื่น
+   เราจะเงียบสนิท ไม่ประกาศตัว · `document.referrer` คือหน้าแม่ในกรณี iframe
+   (อ่าน `parent.location` ตรง ๆ ไม่ได้ — cross-origin จะโยน error) */
+function rcFramedBySelf(){
+  try{
+    if(window.parent===window) return false;
+    var ref=document.referrer||'';
+    return ref.indexOf(location.origin+'/')===0 || ref===location.origin;
+  }catch(e){ return false; }
+}
+try{ if(rcFramedBySelf()) window.parent.postMessage({type:'iufit-rc-ready'},location.origin); }catch(e){}
 
 async function capture(){
   await document.fonts.ready;

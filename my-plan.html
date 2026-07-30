@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My plan · IUFIT</title>
-<meta name="description" content="Your IUFIT trainer plan status, trial and renewal">
+<meta name="description" content="Your IUFIT coach plan status, trial and renewal">
 <link rel="stylesheet" href="billing.css?v=v107">
 </head>
 <body>
@@ -29,7 +29,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v108"></script>
+<script src="billing-common.js?v=v109"></script>
 <script>
 var B=window.IUFIT_BILLING;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
@@ -55,13 +55,13 @@ function render(){
   document.getElementById('reminder').innerHTML=rb;
 
   var h='';
-  var planName=trial?B.t('trial_name'):(paid?(p?p.name:'Trainer'):(expired?B.t('free_name'):(p&&p.k!=='free'?p.name:B.t('free_name'))));
+  var planName=trial?B.t('trial_name'):(paid?(p?p.name:'Coach'):(expired?B.t('free_name'):(p&&p.k!=='free'?p.name:B.t('free_name'))));
   h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><div class="psub" style="margin:0">'+B.t('cur_label')+'</div><div class="pname" style="font-size:21px">'+planName+'</div>';
   if(trial)h+='<div class="save" style="color:var(--blue)">'+tp('trial_left',{d:tdl})+'</div>';
   else if(paid&&exp)h+='<div class="psub" style="margin-top:3px">'+tp('expires_on',{date:thDate(exp)})+(edl!=null?tp('days_more',{d:edl}):'')+'</div>';
   else if(expired)h+='<div class="save" style="color:var(--red)">'+B.t('one_client')+'</div>';
   h+='</div>';
-  var pb=trial?'#eaf3ff':(paid?'#eafaf0':'#f1f4f9'),pf=trial?'#0a84ff':(paid?'#18b26b':'#7a8aa6');
+  var pb=trial?'#eaf3ff':(paid?'#eafaf0':'#f1f4f9'),pf=trial?'#1150c8':(paid?'#18b26b':'#7a8aa6');
   h+='<span style="background:'+pb+';color:'+pf+';font-size:11px;font-weight:800;padding:5px 12px;border-radius:20px;white-space:nowrap">'+B.t(trial?'pill_trial':(paid?'pill_active':'pill_free'))+'</span></div>';
   if(p&&p.k!=='free'){h+='<div class="feats" style="margin-top:12px;border-top:1px solid var(--line);padding-top:11px">';B.planFeats(p).slice(0,4).forEach(function(f){h+='✓ '+f+'<br>';});h+='</div>';}
   document.getElementById('statusCard').innerHTML=h;
