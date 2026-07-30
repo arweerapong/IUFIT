@@ -120,7 +120,7 @@ function renderSummary(){
   }
   var p=B.getPlan(PLAN);if(!p)return;
   var pr=YR?p.yr:p.mo,un=YR?B.t('per_yr'):B.t('per_mo'),was=YR?p.yrWas:p.moWas;
-  var h='<div class="sumrow"><span>'+p.name+' '+un+'</span><span>'+(was?'<span style="color:#9aa6bf;text-decoration:line-through;margin-right:6px">฿'+B.fmt(was)+'</span>':'')+'฿'+B.fmt(pr)+'</span></div>';
+  var h='<div class="sumrow"><span>'+p.name+' '+un+'</span><span>'+(was?'<span style="color:var(--muted);text-decoration:line-through;margin-right:6px">฿'+B.fmt(was)+'</span>':'')+'฿'+B.fmt(pr)+'</span></div>';
   if(YR)h+='<div class="sumrow"><span class="psub" style="margin:0">'+B.t('equiv')+'</span><span class="psub" style="margin:0">฿'+B.fmt(Math.round(pr/12))+B.t('per_mo')+'</span></div>';
   h+='<div class="sumrow total"><span>'+B.t('order_total')+'</span><span>฿'+B.fmt(pr)+'</span></div>';
   document.getElementById('summary').innerHTML=h;
@@ -214,7 +214,10 @@ function showResult(kind){
         ใช้หน้าตาเดียวกับ pending โดยตั้งใจ */
   var map={success:{cls:'success',ic:'✓'},pending:{cls:'pending',ic:'⏳'},'return':{cls:'pending',ic:'⏳'},failed:{cls:'failed',ic:'✕'}}[kind];if(!map)return;
   if(kind==='return')kind='pending';
-  el.innerHTML='<div class="result '+map.cls+'"><div class="ic">'+map.ic+'</div><h2>'+B.t('res_'+kind+'_t')+'</h2><p class="sub">'+B.t('res_'+kind+'_m')+'</p>'
+  /* เครดิตกับแพ็กเป็นคนละสินค้า ⇒ ข้อความสำเร็จต้องต่างกัน
+     (ซื้อเครดิตแล้วขึ้นว่า "แพ็กเปิดใช้งานแล้ว" = บอกสิ่งที่ไม่จริงกับลูกค้าที่เพิ่งจ่ายเงิน) */
+  var msg=(kind==='success'&&B.isCredit(PLAN))?B.t('cr_success_m'):B.t('res_'+kind+'_m');
+  el.innerHTML='<div class="result '+map.cls+'"><div class="ic">'+map.ic+'</div><h2>'+B.t('res_'+kind+'_t')+'</h2><p class="sub">'+msg+'</p>'
     +'<a class="btn pri" style="max-width:320px;margin:10px auto 0" href="my-plan.html?lang='+B.LANG+'">'+B.t('go_myplan')+'</a>'
     +(kind==='failed'?'<a class="btn ghost" style="max-width:320px;margin:8px auto 0" href="billing.html?plan='+PLAN+'&cycle='+(YR?'yr':'mo')+'&lang='+B.LANG+'">'+B.t('retry')+'</a>':'')
     +(kind!=='success'?'<a class="btn line" style="max-width:320px;margin:8px auto 0" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('line_help')+'</a>':'')+'</div>';

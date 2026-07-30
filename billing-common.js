@@ -227,6 +227,9 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       cr_need_email_m:'เครดิตผูกกับบัญชีอีเมล · กรุณาเข้าสู่ระบบด้วยอีเมลและยืนยันอีเมลในแอปก่อน แล้วกลับมาที่หน้านี้',
       cr_tab_plan:'แพ็กโค้ช',
       cr_tab_credit:'เครดิต AI',
+      /* ข้อความหน้าสำเร็จของ "เครดิต" ต้องต่างจาก "แพ็ก" — คนละสินค้า คนละสิ่งที่ได้รับ
+         เดิมใช้ข้อความเดียวกัน ⇒ ซื้อเครดิตแล้วขึ้นว่า "แพ็กของคุณเปิดใช้งานแล้ว" ซึ่งไม่จริง */
+      cr_success_m:'เครดิตถูกเติมเข้าบัญชีของคุณแล้ว · เปิดแอป IUFIT ด้วยบัญชีเดิม ยอดเครดิตจะอัปเดตอัตโนมัติ',
       need_login_t:'ต้องเข้าสู่ระบบก่อนชำระเงิน',
       need_login_m:'เราต้องรู้ว่าจะเปิดแพ็กให้บัญชีไหน · กรุณาเปิดแอป IUFIT แล้วเข้าสู่ระบบ จากนั้นกลับมาที่หน้านี้อีกครั้ง',
       pay_checking:'กำลังตรวจสอบผลการชำระเงิน…',
@@ -301,6 +304,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       cr_need_email_m:'Credits are tied to your e-mail account. Please sign in with e-mail and verify it in the app, then come back to this page.',
       cr_tab_plan:'Coach plans',
       cr_tab_credit:'AI credits',
+      cr_success_m:'Your credits have been added · open IUFIT with the same account and the balance updates automatically.',
       need_login_t:'Please sign in before paying',
       need_login_m:'We need to know which account to activate. Open the IUFIT app, sign in, then come back to this page.',
       pay_checking:'Checking your payment…',

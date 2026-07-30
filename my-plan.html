@@ -61,7 +61,10 @@ function render(){
   else if(paid&&exp)h+='<div class="psub" style="margin-top:3px">'+tp('expires_on',{date:thDate(exp)})+(edl!=null?tp('days_more',{d:edl}):'')+'</div>';
   else if(expired)h+='<div class="save" style="color:var(--red)">'+B.t('one_client')+'</div>';
   h+='</div>';
-  var pb=trial?'#eaf3ff':(paid?'#eafaf0':'#f1f4f9'),pf=trial?'#1150c8':(paid?'#18b26b':'#7a8aa6');
+  /* 🔴 สีชิปประกอบด้วย JS ⇒ ด่านคอนทราสต์ตรวจไม่เห็น ([C1-dyn])
+     #18b26b เป็นเขียวตัวเก่าที่ตกค้างหลัง --green เปลี่ยนเป็น #0b804c
+     บนพื้น #eafaf0 ได้แค่ 2.55:1 · var(--green) ได้ 4.62:1 — อ้างโทเคนเพื่อไม่ให้ตกค้างซ้ำ */
+  var pb=trial?'#eaf3ff':(paid?'#eafaf0':'#f1f4f9'),pf=trial?'#1150c8':(paid?'var(--green)':'#7a8aa6');
   h+='<span style="background:'+pb+';color:'+pf+';font-size:11px;font-weight:800;padding:5px 12px;border-radius:20px;white-space:nowrap">'+B.t(trial?'pill_trial':(paid?'pill_active':'pill_free'))+'</span></div>';
   if(p&&p.k!=='free'){h+='<div class="feats" style="margin-top:12px;border-top:1px solid var(--line);padding-top:11px">';B.planFeats(p).slice(0,4).forEach(function(f){h+='✓ '+f+'<br>';});h+='</div>';}
   document.getElementById('statusCard').innerHTML=h;

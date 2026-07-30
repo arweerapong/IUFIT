@@ -1,7 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;500;600;700&family=Montserrat:wght@700;800&display=swap');
 /* IUFIT billing — shared theme (pricing.html / billing.html / my-plan.html) */
 :root{
-  --navy:#071E4A;--blue:#1150C8;--green:#18b26b;--amber:#a86b00;--red:#c0392b;
+  --navy:#071E4A;--blue:#1150C8;--red:#c0392b;
+  /* เขียว/อำพัน = สีของ IUFIT เอง ⇒ ปรับให้เข้มพอผ่าน 4.5:1 ได้ (ฮิวเดิม) */
+  --green:#0b804c; /* 4.62:1 บน #eafaf0 · ขาวบนพื้นนี้ 4.99:1 */
+  --amber:#9c6300; /* 4.69:1 บน #fff7e6 */
   --bg:#F6F9FF;--card:#fff;--line:#DDE7F5;--muted:#5f6b7a;--ink:#10233F;--line-green:#06c755;
 }
 *{box-sizing:border-box}
@@ -16,7 +19,7 @@ h1{font-size:24px;color:var(--navy);margin:14px 0 4px;letter-spacing:-.01em}
 .sub{color:var(--muted);font-size:14px;margin:0 0 16px}
 .launch{background:#fff7e6;border:1px solid #f3d99a;color:var(--amber);border-radius:12px;padding:9px 13px;font-size:13px;font-weight:700;margin-bottom:14px}
 .toggle{display:inline-flex;background:#eef2f8;border-radius:11px;padding:3px;gap:3px;margin-bottom:18px}
-.toggle button{border:none;border-radius:8px;padding:9px 18px;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;background:none;color:#7a8aa6}
+.toggle button{border:none;border-radius:8px;padding:9px 18px;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;background:none;color:var(--muted)}
 .toggle button.on{background:#fff;color:var(--blue);box-shadow:0 1px 4px rgba(18,50,100,.12)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:14px}
 .card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(7,30,74,.05);position:relative;display:flex;flex-direction:column}
@@ -29,18 +32,26 @@ h1{font-size:24px;color:var(--navy);margin:14px 0 4px;letter-spacing:-.01em}
 .price{margin:4px 0 10px}
 .price .now{font-size:27px;font-weight:800;color:var(--blue);font-family:'Montserrat','Kanit',sans-serif}
 .price .unit{font-size:13px;color:var(--muted)}
-.price .was{font-size:14px;color:#9aa6bf;text-decoration:line-through;margin-right:7px}
+.price .was{font-size:14px;color:var(--muted);text-decoration:line-through;margin-right:7px} /* #9aa6bf = 2.32:1 บน --bg ⇒ --muted 5.14:1 */
 .price .free{font-size:25px;font-weight:800;color:var(--green);font-family:'Montserrat','Kanit',sans-serif}
 .save{font-size:11px;color:var(--green);font-weight:700;margin-top:2px}
 .feats{font-size:13px;line-height:1.8;color:var(--ink);margin:0 0 14px;flex:1}
 .btn{display:block;width:100%;text-align:center;text-decoration:none;font-weight:800;border-radius:12px;padding:13px;font-size:14.5px;border:none;cursor:pointer;font-family:inherit}
 .btn.pri{background:var(--blue);color:#fff}
-.btn.line{background:var(--line-green);color:#fff}
+/* ปุ่ม LINE — ใช้ "แบบขาว" ตามไกด์ไลน์ LINE (พื้นขาว · ขอบเทา · โลโก้/ไอคอนเขียว #06C755)
+   ไกด์ไลน์ห้ามแก้ทั้งสีพื้น**และ**สีตัวอักษรของปุ่มเขียว ⇒ ทาอักษรดำทับพื้น #06c755 = ดัดแปลงแบรนด์บุคคลที่สาม
+   แบบขาวอยู่ในไกด์ไลน์เต็มร้อย และแก้ได้มากกว่า:
+     · อักษร --navy บนขาว = 16.23:1 (เดิมดำบนเขียว 9.31:1)
+     · พื้นเขียว #06c755 บนพื้นหน้า #f6f9ff ได้แค่ 2.14:1 ⇒ ปุ่มแยกจากพื้นไม่ออก · ขอบช่วยบอกขอบเขตแทน
+   ⚠️ ห้ามใส่ #06331C กลับมา — ไม่มีอยู่ในพาเลตของ IUFIT หรือของ LINE
+   หมายเหตุ: ปุ่มชุดนี้เป็นข้อความล้วน ไม่มีไอคอน ⇒ ไม่ตั้งกฎ svg{color:#06C755} ทิ้งไว้
+   (กฎที่ไม่มีใครใช้ = FAIL ค้างในด่านโดยไม่มีใครเห็นบนจอ · ถ้าวันไหนใส่โลโก้ LINE ค่อยเพิ่มพร้อมกัน) */
+.btn.line{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
 .btn.ghost{background:#eef2f7;color:var(--blue)}
 .btn.green{background:var(--green);color:#fff}
 .btn:disabled{opacity:.55;cursor:default}
 .cta{display:block;text-align:center;text-decoration:none;font-weight:800;border-radius:11px;padding:12px;font-size:14px;cursor:pointer;border:none;font-family:inherit;width:100%}
-.cta.line{background:var(--line-green);color:#fff}
+.cta.line{background:#fff;color:var(--navy);border:1.5px solid var(--line)} /* ปุ่ม LINE แบบขาว — ดูเหตุผลที่ .btn.line */
 .cta.pri{background:var(--blue);color:#fff}
 .cta.ghost{background:#eef2f7;color:var(--blue)}
 .addon{background:#f7f9fc;border:1px dashed #cdddf5}

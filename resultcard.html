@@ -96,14 +96,14 @@ input[type=file]{display:none}
 .half{flex:1;border-radius:30px;position:relative;background:linear-gradient(160deg,#eef2f8,#e3e9f3);
   border:2px solid #e1e8f3;min-height:420px;display:flex;align-items:center;justify-content:center;overflow:hidden}
 .half.after{border-color:rgba(17,80,200,.55);box-shadow:0 0 0 5px rgba(17,80,200,.18),0 18px 40px rgba(17,80,200,.18)}
-.ph{text-align:center;color:#9aabc6}
+.ph{text-align:center;color:#4F6891}
 .ph .cam{width:92px;height:92px;margin:0 auto 16px;display:block;opacity:.85}
-.ph .big{font-size:42px;font-weight:800;letter-spacing:.04em;color:#7e93b4}
-.ph .sm{font-size:23px;font-weight:600;letter-spacing:.18em;margin-top:4px;color:#9fb0cb}
+.ph .big{font-size:42px;font-weight:800;letter-spacing:.04em;color:#3E5578}
+.ph .sm{font-size:23px;font-weight:600;letter-spacing:.18em;margin-top:4px;color:#4F6891}
 .half.after .ph .big{color:var(--blue)}
 .ribbon{position:absolute;left:50%;transform:translateX(-50%);bottom:0;min-width:62%;text-align:center;
-  font-size:24px;font-weight:800;color:#fff;padding:13px 22px;border-radius:18px 18px 0 0}
-.ribbon.bf{background:linear-gradient(180deg,#9aa7bd,#7c8aa3)}
+  font-size:24px;font-weight:800;color:#fff;padding:13px 22px;border-radius:18px 18px 0 0;background:linear-gradient(180deg,#8290A8,#7c8aa3)}
+.ribbon.bf{background:linear-gradient(180deg,#8290A8,#7c8aa3)}
 .ribbon.af{background:linear-gradient(180deg,#1150C8,#1150C8)}
 .chev{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;width:88px;height:88px;border-radius:50%;
   background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 12px 30px rgba(0,40,120,.22)}
@@ -141,18 +141,17 @@ input[type=file]{display:none}
 .foot .ft span{font-size:18px;color:var(--mut)}
 .foot .cta{font-size:23px;font-weight:800;color:#fff;background:linear-gradient(135deg,#1150C8,#0B3D9E);border-radius:999px;padding:16px 30px;display:flex;align-items:center;gap:10px;white-space:nowrap}
 .foot .cta svg{width:24px;height:24px}
-.footblue{background:linear-gradient(135deg,#0B3D9E,#1150C8);border:none}
-.footblue .ft b,.footblue .ft span{color:#fff}.footblue .ft span{opacity:.85}
-.footblue .ic{background:transparent}
-.footblue .cta{background:#fff;color:var(--blue)}.footblue .cta svg{color:var(--blue)}
+/* 🗑 2569-07-31 · ลบ .footblue (4 บรรทัด) — ไม่มีที่ไหนใส่คลาสนี้เลย
+   (ตรวจครบ classList.add/remove/toggle · className= · สตริงใน innerHTML · ค่าที่เป็นไปได้ของ RC.tpl)
+   `.footblue .cta` เป็น [G] FAIL ค้างอยู่ (#ffffff on #eef6ff = 1.09:1) ทั้งที่ไม่มีใครเห็นบนจอ */
 .feats{display:flex;justify-content:center;gap:30px;font-size:18px;color:var(--mut);font-weight:600}
 .feats .f{display:flex;align-items:center;gap:9px}.feats svg{width:22px;height:22px;color:var(--blue)}
 .feats i{width:1px;height:20px;background:#d6e0f0}
-.disc{text-align:center;font-size:17px;color:#9fb0cb}
+.disc{text-align:center;font-size:17px;color:#4F6891}
 
 /* coach header */
 .chead{display:flex;align-items:center;gap:22px}
-.av{border-radius:50%;background:linear-gradient(150deg,#1150C8,#25C7FF);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;flex:none;overflow:hidden}
+.av{border-radius:50%;background:linear-gradient(150deg,#1150C8,#007EA9);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;flex:none;overflow:hidden}
 .av svg{width:58%;height:58%;opacity:.92}
 .cklab{font-size:18px;font-weight:700;letter-spacing:.18em;color:var(--mut)}
 .cknm{font-size:42px;font-weight:800;color:var(--navy);display:flex;align-items:center;gap:10px;line-height:1.05}
@@ -166,23 +165,23 @@ input[type=file]{display:none}
 /* info cards (coach) */
 .info{display:flex;gap:18px}
 .icard{flex:1;background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:20px;display:flex;gap:15px;align-items:flex-start;box-shadow:0 12px 30px rgba(13,54,110,.08)}
-.icard .ii{width:60px;height:60px;border-radius:16px;background:linear-gradient(150deg,#1150C8,#25C7FF);display:flex;align-items:center;justify-content:center;flex:none}
+.icard .ii{width:60px;height:60px;border-radius:16px;background:linear-gradient(150deg,#1150C8,#007EA9);display:flex;align-items:center;justify-content:center;flex:none}
 .icard .ii svg{width:30px;height:30px;color:#fff}
 .icard .il{font-size:19px;font-weight:800;color:var(--navy)}
-.icard .ie{font-size:15px;font-weight:700;letter-spacing:.12em;color:#9fb0cb}
+.icard .ie{font-size:15px;font-weight:700;letter-spacing:.12em;color:#4F6891}
 .icard .iv{font-size:20px;color:var(--ink);font-weight:600;line-height:1.3;margin-top:4px}
 
 /* coach stat cards (filled) */
 .cstats{display:flex;gap:18px}
 .cstat{flex:1;background:var(--glass);border:1px solid var(--line);border-radius:20px;padding:20px 16px;text-align:center;position:relative;box-shadow:0 12px 30px rgba(13,54,110,.08)}
 .cstat .sl{font-size:20px;font-weight:700;color:var(--navy)}
-.cstat .se{font-size:14px;font-weight:700;letter-spacing:.12em;color:#9fb0cb;margin-bottom:10px}
+.cstat .se{font-size:14px;font-weight:700;letter-spacing:.12em;color:#4F6891;margin-bottom:10px}
 .cstat .sv{font-size:46px;font-weight:800;color:var(--blue);letter-spacing:-1px;line-height:1}
 .cstat .sv small{font-size:20px;color:var(--mut);font-weight:700}
 .cstat .dn{width:48px;height:48px;border-radius:50%;background:linear-gradient(150deg,#1150C8,#1150C8);display:flex;align-items:center;justify-content:center;margin:12px auto 0}
 .cstat .dn svg{width:26px;height:26px;color:#fff}
 .cstat .dn.up{background:linear-gradient(150deg,#12B7A8,#0a8f84)}
-.stars{color:#ffb020;font-size:30px;letter-spacing:4px}
+.stars{color:#B87700;font-size:30px;letter-spacing:4px}
 .cby{font-size:20px;color:var(--mut);font-weight:700;margin-left:10px}
 
 /* ===== compact 1:1 (square) so content fits 1080 — no overlap ===== */
@@ -247,12 +246,12 @@ input[type=file]{display:none}
 .scard .sv small{font-size:18px;color:var(--mut);font-weight:700}
 .scard .sd{display:inline-flex;align-items:center;gap:5px;font-size:16px;font-weight:700;margin-top:9px;padding:5px 13px;border-radius:999px}
 .scard .sd.dn{color:var(--blue);background:#eef4ff}
-.scard .sd.up{color:var(--green);background:#e7faf6}
+.scard .sd.up{color:#0C7D73;background:#e7faf6}
 .scard .sd svg{width:15px;height:15px}
 .scard .sub{font-size:16px;color:var(--mut);margin-top:9px}
 .achieve{display:flex;align-items:center;gap:20px;background:linear-gradient(120deg,#eaf2ff,#dff0ff 90%);border:1px solid #cfe0ff;border-radius:22px;padding:22px 26px}
-.achieve .at{width:66px;height:66px;border-radius:50%;background:linear-gradient(150deg,#2f7bff,#0b2f86);display:flex;align-items:center;justify-content:center;flex:none}
-.achieve .at svg{width:34px;height:34px;color:#ffd34d}
+.achieve .at{width:66px;height:66px;border-radius:50%;background:linear-gradient(150deg,#1150C8,#0b2f86);color:#ffd34d;display:flex;align-items:center;justify-content:center;flex:none}
+.achieve .at svg{width:34px;height:34px}
 .achieve b{font-size:25px;color:var(--navy);display:block;line-height:1.15}
 .achieve span{font-size:19px;color:var(--deep);font-weight:600}
 .trendc{background:var(--glass);border:1px solid var(--line);border-radius:22px;padding:22px 26px;box-shadow:0 12px 30px rgba(13,54,110,.07)}
@@ -307,15 +306,12 @@ body.embed{background:#eef2f8}
 .crole{display:inline-block;font-size:17px;font-weight:800;color:var(--blue);background:#e8f0ff;border:1.5px solid #cfe0ff;border-radius:999px;padding:4px 15px;margin-bottom:6px}
 .info3{display:flex;gap:14px}
 .info3 .it{flex:1;background:#f6f9ff;border:1.5px solid #e4ecfb;border-radius:18px;padding:16px;display:flex;gap:13px;align-items:flex-start}
-.info3 .it .ii{width:52px;height:52px;border-radius:14px;background:linear-gradient(150deg,#2a6bff,#25C7FF);display:flex;align-items:center;justify-content:center;flex:none}
-.info3 .it .ii svg{width:27px;height:27px;color:#fff}
+.info3 .it .ii{width:52px;height:52px;border-radius:14px;background:linear-gradient(150deg,#2a6bff,#007EA9);color:#fff;display:flex;align-items:center;justify-content:center;flex:none}
+.info3 .it .ii svg{width:27px;height:27px}
 .info3 .it .il{font-size:17px;color:var(--mut);font-weight:600}
 .info3 .it .iv{font-size:22px;font-weight:800;color:var(--ink);line-height:1.18;margin-top:2px}
-.cquote{background:#f3f8ff;border-radius:22px;padding:24px 30px;position:relative}
-.cquote .qm{font-size:64px;font-weight:800;color:#bcd4ff;line-height:.5;font-family:Georgia,serif;display:block}
-.cquote .qt{font-size:25px;font-weight:600;color:var(--navy);line-height:1.4;margin-top:4px}
-.cquote .stars{color:#ffb020;font-size:25px;letter-spacing:3px;margin-top:12px}
-.cquote .cby{font-size:18px;color:var(--mut);font-weight:700;margin-left:8px;letter-spacing:0}
+/* 🗑 2569-07-31 · ลบ .cquote (5 บรรทัด) — ไม่มีที่ไหนใส่คลาสนี้ (tplCoach ใช้ .quote)
+   `.stars` / `.cby` มีกฎ global อยู่แล้ว (ดูหมวด coach stat cards) ⇒ ดาวและชื่อผู้รีวิวไม่หายสี */
 </style></head>
 <body>
 <div class="app">
@@ -552,15 +548,37 @@ function multiChart(series,w,h){
 /* ===== RESULT CARD ===== */
 
 /* ---- light premium card helpers (v6.34) ---- */
+
+/* 🔴 2569-07-31 · `currentColor` ใช้ไม่ได้กับ <svg> ที่อยู่ใน #card
+   ─────────────────────────────────────────────────────────────────────────
+   capture() โคลน #card แล้วส่งให้ html2canvas · html2canvas ไม่ได้ "วาด" inline SVG เอง
+   แต่ serialize ทั้งก้อนเป็น data-URL แล้ววาดเป็น <img>
+   ⇒ SVG ก้อนนั้นหลุดจากเอกสาร ไม่เหลือทั้ง var() และ currentColor
+   ⇒ currentColor ตกกลับเป็นค่าเริ่มต้นของ `color` = **ดำ** (ไอคอนขาวบนพื้นน้ำเงินจะกลายเป็นดำ)
+
+   ⚠️ ที่พังคือ **inline SVG เท่านั้น** — CSS var() บน element HTML ธรรมดายังทำงานปกติ
+      เพราะ html2canvas อ่านผ่าน getComputedStyle() ซึ่งเบราว์เซอร์แทนค่า var() ให้แล้ว
+      (อย่าไปไล่ถอด var() ออกจาก CSS ปกติ — นั่นไม่ใช่สาเหตุ)
+
+   ⇒ ทุก SVG ที่ถูกวาดใน #card ต้องระบุสีตรง ๆ · ic() แทน currentColor ตอนประกอบ
+   ไอคอนของหน้าเว็บ (นอก #card) ใช้ currentColor ต่อได้ตามปกติ */
+function ic(svg,color){return String(svg).split('currentColor').join(color);}
+const CARD_BLUE='#1150C8', CARD_MUT='#7B8AA5', ON_BLUE='#ffffff';
+
+/* ARROW ใช้เฉพาะใน ftReal() ซึ่งไม่มีใครเรียก ⇒ ไม่เคยถูกวาดใน #card ⇒ ไม่แตะ */
 const ARROW='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
-const CHEV='<div class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>';
+/* .chev svg{color:var(--blue)} — ใน #card คือ #1150C8 */
+const CHEV='<div class="chev"><svg viewBox="0 0 24 24" fill="none" stroke="#1150C8" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></div>';
 const LOGOWM='<div class="logoR"><div class="applogo"><span>IU</span><span class="fit">FIT</span></div></div>';
 const WMARK='';
-function camPH(big,sub){return '<div class="ph"><svg class="cam" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7l1.6-2.4h4.8L16 7"/><circle cx="12" cy="13.5" r="3.4"/></svg><div class="big">'+big+'</div>'+(sub?'<div class="sm">'+sub+'</div>':'')+'</div>';}
+/* .ph{color:#4F6891} */
+function camPH(big,sub){return '<div class="ph"><svg class="cam" viewBox="0 0 24 24" fill="none" stroke="#4F6891" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="3"/><path d="M8 7l1.6-2.4h4.8L16 7"/><circle cx="12" cy="13.5" r="3.4"/></svg><div class="big">'+big+'</div>'+(sub?'<div class="sm">'+sub+'</div>':'')+'</div>';}
 function baHalf(src,after,big,sub,ribbon){return '<div class="half'+(after?' after':'')+'">'+(src?'<img src="'+src+'">':camPH(big,sub))+'<div class="ribbon '+(after?'af':'bf')+'">'+ribbon+'</div></div>';}
-function statR(icon,label,val,unit,chg){return '<div class="stat"><div class="ci">'+icon+'</div><div class="sl">'+label+'</div><div class="sv">'+val+(unit?'<small> '+unit+'</small>':'')+'</div>'+(chg?'<div class="chg">'+chg+'</div>':'')+'</div>';}
-function cstatCard(label,en,val,unit,arrow){var dn='';if(arrow==='down')dn='<div class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>';else if(arrow==='up')dn='<div class="dn up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></div>';return '<div class="cstat"><div class="sl">'+label+'</div>'+(en?'<div class="se">'+en+'</div>':'')+'<div class="sv">'+val+'<small>'+unit+'</small></div>'+dn+'</div>';}
-function icardEl(icon,label,en,val){return '<div class="icard"><div class="ii">'+icon+'</div><div><div class="il">'+label+'</div>'+(en?'<div class="ie">'+en+'</div>':'')+'<div class="iv">'+val+'</div></div></div>';}
+/* .stat .ci svg{color:var(--blue)} */
+function statR(icon,label,val,unit,chg){return '<div class="stat"><div class="ci">'+ic(icon,CARD_BLUE)+'</div><div class="sl">'+label+'</div><div class="sv">'+val+(unit?'<small> '+unit+'</small>':'')+'</div>'+(chg?'<div class="chg">'+chg+'</div>':'')+'</div>';}
+function cstatCard(label,en,val,unit,arrow){var dn='';if(arrow==='down')dn='<div class="dn"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg></div>';else if(arrow==='up')dn='<div class="dn up"><svg viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></div>';return '<div class="cstat"><div class="sl">'+label+'</div>'+(en?'<div class="se">'+en+'</div>':'')+'<div class="sv">'+val+'<small>'+unit+'</small></div>'+dn+'</div>';}
+/* .cstat .dn svg / .icard .ii svg{color:#fff} — วงกลม/สี่เหลี่ยมพื้นน้ำเงิน ⇒ ไอคอนต้องขาว */
+function icardEl(icon,label,en,val){return '<div class="icard"><div class="ii">'+ic(icon,ON_BLUE)+'</div><div><div class="il">'+label+'</div>'+(en?'<div class="ie">'+en+'</div>':'')+'<div class="iv">'+val+'</div></div></div>';}
 function avatarC(size){return '<div class="av" style="width:'+size+'px;height:'+size+'px">'+(RC.imgC?'<img src="'+rcAttr(RC.imgC)+'">':'<svg viewBox="0 0 24 24" fill="#fff"><circle cx="12" cy="8" r="4.2"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7z"/></svg>')+'</div>';}
 function coachGoal(){if(RC.goal)return RC.goal;var g=RC._goalCode;if(L==='en')return g==='lose'?'Fat loss':g==='gain'?'Muscle gain':g==='keep'?'Body recomposition':'Fat loss & muscle gain';return g==='lose'?'ลดไขมัน':g==='gain'?'สร้างกล้ามเนื้อ':g==='keep'?'ควบคุมรูปร่าง':'ลดไขมัน สร้างกล้ามเนื้อ';}
 function coachSummary(){if(RC.summary)return RC.summary;var wc=wchange();var en=(L==='en');var parts=[];if(wc!=null&&wc<0)parts.push(en?('lost '+fmt(Math.abs(wc))+' kg'):('ลดน้ำหนัก '+fmt(Math.abs(wc))+' กก.'));if(RC.bfBefore!=null&&RC.bfAfter!=null&&RC.bfAfter<RC.bfBefore)parts.push(en?('body fat -'+fmt(RC.bfBefore-RC.bfAfter)+'%'):('ไขมันลด '+fmt(RC.bfBefore-RC.bfAfter)+'%'));var t=parts.length?parts.join(' · '):(en?'visibly leaner & firmer':'รูปร่างกระชับขึ้นชัดเจน');if(RC.period)t+=(en?(' in '+(''+RC.period).replace(/[^0-9.]/g,'')+' weeks'):(' ใน'+RC.period));return t;}
@@ -570,9 +588,11 @@ var _fIcons={chart:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" s
 
 
 /* ---- Stats Dashboard helpers + template (v6.47) ---- */
-function sCard(icon,label,val,unit,extra){return '<div class="scard"><div class="si">'+icon+'</div><div class="sl">'+label+'</div><div class="sv">'+val+(unit?'<small> '+unit+'</small>':'')+'</div>'+(extra||'')+'</div>';}
-function sdDn(t){return '<div class="sd dn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>'+t+'</div>';}
-function sdUp(t){return '<div class="sd up"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>'+t+'</div>';}
+/* .scard .si svg{color:var(--blue)} */
+function sCard(icon,label,val,unit,extra){return '<div class="scard"><div class="si">'+ic(icon,CARD_BLUE)+'</div><div class="sl">'+label+'</div><div class="sv">'+val+(unit?'<small> '+unit+'</small>':'')+'</div>'+(extra||'')+'</div>';}
+/* .scard .sd.dn{color:var(--blue)} · .scard .sd.up{color:#0C7D73} */
+function sdDn(t){return '<div class="sd dn"><svg viewBox="0 0 24 24" fill="none" stroke="#1150C8" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>'+t+'</div>';}
+function sdUp(t){return '<div class="sd up"><svg viewBox="0 0 24 24" fill="none" stroke="#0C7D73" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg>'+t+'</div>';}
 function sSub(t){return '<div class="sub">'+t+'</div>';}
 function ringSVG(pct){var C=2*Math.PI*88;var off=C*(1-pct);return '<div class="ring"><svg viewBox="0 0 210 210"><defs><linearGradient id="rg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f7bff"/><stop offset="1" stop-color="#25C7FF"/></linearGradient></defs><circle cx="105" cy="105" r="88" fill="none" stroke="#e3ecfa" stroke-width="22"/><circle cx="105" cy="105" r="88" fill="none" stroke="url(#rg2)" stroke-width="22" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 105 105)"/></svg><div class="pc">'+Math.round(pct*100)+'<small>%</small></div></div>';}
 function _monthLabels(n){var thM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];var enM=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];var arr=L==='en'?enM:thM;var now=new Date().getMonth();var out=[];for(var i=n-1;i>=0;i--){out.push(arr[((now-i)%12+12)%12]);}return out;}
@@ -611,10 +631,12 @@ function tplStats(){
   var daysN=RC.period?(parseInt((''+RC.period).replace(/[^0-9]/g,''))||4)*7:(RC.streakDays||30);
   var totalK=(RC.caloriesAvg!=null)?Math.round(RC.caloriesAvg*daysN):null;
   var head='<div class="tech"></div><div class="cc">'+LOGOWM+'<div class="title">'+T('ผลลัพธ์<span class="b">ของฉัน</span>','My <span class="b">Results</span>')+'</div>';
-  var hero='<div class="heroc"><div class="hcol"><div class="hlbl"><div class="hi">'+I.scale+'</div>'+T('น้ำหนักปัจจุบัน','Current weight')+'</div><div class="hbig">'+fmt(curW)+'<small> '+KG+'</small></div>'+(goalW!=null?'<div class="hchip">'+I.target+' '+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+KG+'</div>':'')+'</div><div class="hsep"></div><div class="hcol"><div class="hlbl"><div class="hi">'+I.chart+'</div>'+T('ลดลงในเดือนนี้','Lost this month')+'</div><div class="hbig blue">'+(lost!=null?sign(lost):'–')+'<small> '+KG+'</small></div></div>'+(goalW!=null?'<div class="hsep"></div><div class="hring">'+ringSVG(pct)+'<div class="hrtx">'+T('ความคืบหน้า<br>สู่เป้าหมาย','Progress<br>to goal')+(rem!=null?'<br><span>'+T('อีก ','')+fmt(rem)+' '+KG+(en?' to go':' ถึงเป้าหมาย')+'</span>':'')+'</div></div>':'')+'</div>';
+  /* .hlbl .hi svg{color:var(--blue)} · .hchip{color:var(--mut)} — ระบุสีตรง ๆ เพราะถูก html2canvas serialize */
+  var hero='<div class="heroc"><div class="hcol"><div class="hlbl"><div class="hi">'+ic(I.scale,CARD_BLUE)+'</div>'+T('น้ำหนักปัจจุบัน','Current weight')+'</div><div class="hbig">'+fmt(curW)+'<small> '+KG+'</small></div>'+(goalW!=null?'<div class="hchip">'+ic(I.target,CARD_MUT)+' '+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+KG+'</div>':'')+'</div><div class="hsep"></div><div class="hcol"><div class="hlbl"><div class="hi">'+ic(I.chart,CARD_BLUE)+'</div>'+T('ลดลงในเดือนนี้','Lost this month')+'</div><div class="hbig blue">'+(lost!=null?sign(lost):'–')+'<small> '+KG+'</small></div></div>'+(goalW!=null?'<div class="hsep"></div><div class="hring">'+ringSVG(pct)+'<div class="hrtx">'+T('ความคืบหน้า<br>สู่เป้าหมาย','Progress<br>to goal')+(rem!=null?'<br><span>'+T('อีก ','')+fmt(rem)+' '+KG+(en?' to go':' ถึงเป้าหมาย')+'</span>':'')+'</div></div>':'')+'</div>';
   var grid='<div class="sgrid">'+(bf?sCard(I.percent,T('เปอร์เซ็นต์ไขมัน','Body fat'),fmt(RC.bfAfter),'%',sdDn((RC.bfAfter-RC.bfBefore<0?'':'+')+fmt(RC.bfAfter-RC.bfBefore)+'%')):'')+(RC.muscleChange!=null?sCard(I.muscle,T('กล้ามเนื้อ','Muscle'),sign(RC.muscleChange),'%',sSub(T('เปลี่ยนแปลง','change'))):'')+(RC.waistAfter!=null||RC.waistChange!=null?sCard(I.waist,T('รอบเอว','Waist'),(RC.waistAfter!=null?fmt(RC.waistAfter):sign(RC.waistChange)),CM,(RC.waistChange?sdDn(sign(RC.waistChange)+' '+CM):'')):'')+(RC.workoutCount!=null?sCard(I.dumbbell,T('ออกกำลังกาย','Workouts'),RC.workoutCount,T('ครั้ง','x'),''):'')+(totalK!=null?sCard(I.flame,T('แคลอรี่ทั้งหมด','Total calories'),fmt(totalK),T('แคลอรี','kcal'),sSub(T('เฉลี่ย/วัน ','Avg/day ')+fmt(RC.caloriesAvg))):'')+(RC.streakDays!=null?sCard(I.cal,T('ต่อเนื่อง','Streak'),RC.streakDays,T('วัน','days'),sSub(T('ไม่ขาดเลย!','No misses!'))):'')+(RC.planCompletion!=null?sCard(I.clip,T('วินัยรายเดือน','Discipline'),RC.planCompletion,'%',sSub(T('สม่ำเสมอเยี่ยม!','Super consistent!'))):'')+'</div>';
   var lostTxt=(lost!=null&&lost<0)?(T('คุณลดน้ำหนักได้ ','You lost ')+fmt(Math.abs(lost))+' '+KG+(en?' this month':' ในเดือนนี้')):(T('เดินหน้าต่อเนื่อง','Keep up the momentum'));
-  var achieve='<div class="achieve"><div class="at"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg></div><div><b>'+T('ยอดเยี่ยม! ','Great! ')+lostTxt+'</b><span>'+T('คุณกำลังเข้าใกล้เป้าหมายมากขึ้นทุกวัน!','Getting closer to your goal every day!')+'</span></div></div>';
+  /* .achieve .at{color:#ffd34d} บนวงกลมน้ำเงินเข้ม */
+  var achieve='<div class="achieve"><div class="at"><svg viewBox="0 0 24 24" fill="none" stroke="#FFD34D" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0zM7 6H4v2a3 3 0 0 0 3 3M17 6h3v2a3 3 0 0 1-3 3"/></svg></div><div><b>'+T('ยอดเยี่ยม! ','Great! ')+lostTxt+'</b><span>'+T('คุณกำลังเข้าใกล้เป้าหมายมากขึ้นทุกวัน!','Getting closer to your goal every day!')+'</span></div></div>';
   var trend=(!DENSE()&&tw&&tw.length>=2)?'<div class="trendc"><div class="th"><b>'+T('แนวโน้มน้ำหนัก (6 เดือน)','Weight trend (6 months)')+'</b><span>'+T('หน่วย: กก.','unit: kg')+'</span></div>'+trendSVG(tw,goalW,KG)+'</div>':'';
   var quote=RC.quote?('<div class="quote"><div class="qm">“</div><div class="qt">'+RC.quote+'</div><div class="qm r">”</div></div>'):'';
   var foot=dlFooter();
@@ -635,13 +657,13 @@ function tplResult(){
     if(RC.bfBefore!=null&&RC.bfAfter!=null)st+=statR(I.percent,T('ไขมันในร่างกาย','Body fat'),sign(RC.bfAfter-RC.bfBefore),'%',T('▼ เปลี่ยน','▼ CHANGE'));
     if(RC.waistChange!=null)st+=statR(I.waist,T('รอบเอว','Waist'),sign(RC.waistChange),CM,T('▼ เปลี่ยน','▼ CHANGE'));
     if(RC.muscleChange!=null)st+=statR(I.muscle,T('กล้ามเนื้อ','Muscle'),sign(RC.muscleChange),'%',T('▲ เปลี่ยน','▲ CHANGE'));
-    st+='<div class="stat"><div class="ci">'+I.trophy+'</div><div class="sl">'+T('ความสำเร็จของฉัน','My achievement')+'</div><div class="sv" style="font-size:30px;margin-top:14px">★</div></div>';
+    st+='<div class="stat"><div class="ci">'+ic(I.trophy,CARD_BLUE)+'</div><div class="sl">'+T('ความสำเร็จของฉัน','My achievement')+'</div><div class="sv" style="font-size:30px;margin-top:14px">★</div></div>';
   }
   var h='<div class="tech"></div>'+WMARK+'<div class="cc">'+LOGOWM;
   h+='<div class="title">'+T('ผลลัพธ์<span class="b">ของฉัน</span>','My <span class="b">Results</span>')+'</div>';
   h+='';
   h+='<div class="ba">'+baHalf(RC.imgB,false,'BEFORE',(dense?'YOUR PHOTO':'INSERT PHOTO'),T('ก่อนเริ่ม','Before'))+CHEV+baHalf(RC.imgA,true,'AFTER',(dense?'YOUR PHOTO':'INSERT PHOTO'),T('หลังจบโปรแกรม','After'))+'</div>';
-  if(!dense&&RC.period)h+='<div class="durpill">'+I.cal+T('ระยะเวลา ','Duration ')+perEN(RC.period)+'</div>';
+  if(!dense&&RC.period)h+='<div class="durpill">'+ic(I.cal,ON_BLUE)+T('ระยะเวลา ','Duration ')+perEN(RC.period)+'</div>'; /* .durpill{color:#fff} */
   h+='<div class="stats">'+st+'</div>';
   if(RC.quote)h+='<div class="quote'+(dense?'':' dash')+'"><div class="qm">“</div><div class="qt">'+RC.quote+'</div><div class="qm r">”</div></div>';
   h+=dlFooter();
