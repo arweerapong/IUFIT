@@ -35,7 +35,14 @@
      ⚠️ secret key ฝั่ง worker ต้องสลับให้ตรงกันด้วย ไม่งั้นคีย์คนละโหมดจะคุยกันไม่รู้เรื่อง
         `npx wrangler secret put OMISE_SECRET_KEY` (test ↔ live)
      ⚠️ webhook ของ Omise แยกคนละชุดระหว่าง test/live — ต้องตั้ง endpoint ทั้งสองโหมด */
-  var OMISE_TEST_MODE=true;
+  /* ⭐ 2569-07-31 · สลับเป็น live แล้ว
+     ทดสอบครบก่อนสลับ: จ่ายสำเร็จ · บัตรถูกปฏิเสธ 4 แบบ · ยกเลิกกลาง 3DS · ปิดแท็บกลาง 3DS
+     · แพ็กโค้ชเขียน entitlement ลง Firebase · แพ็กเครดิตเติมเข้ากระเป๋า iufit-gym
+     · ด่านรายปี 4 ชั้น · ด่าน account · `/status` วนถามผล
+
+     🔴 สลับกลับเป็น test ต้องทำ **สามอย่างพร้อมกัน** ไม่งั้นคีย์คนละโหมดคุยกันไม่รู้เรื่อง:
+        1. ตัวแปรนี้         2. `wrangler secret put OMISE_SECRET_KEY`   3. webhook ใน Dashboard */
+  var OMISE_TEST_MODE=false;
 
   /* public key ทั้งสองโหมด — เปิดเผยได้ทั้งคู่ (ใช้สร้างโทเคนบัตรฝั่งเบราว์เซอร์เท่านั้น) */
   var OMISE_PUBLIC_KEY = OMISE_TEST_MODE
