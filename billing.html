@@ -31,8 +31,14 @@
 <div id="checkout" class="hide">
   <h1 id="co-h"></h1>
   <p class="sub" id="acctLine"></p>
+  <!-- สลับระหว่างแพ็กโค้ช (รายเดือน) กับเครดิต AI (ซื้อครั้งเดียว) — คนละชนิดสินค้า -->
+  <div class="toggle" style="margin-bottom:12px">
+    <button id="k-plan" class="on" onclick="setKind('plan')"></button>
+    <button id="k-credit" onclick="setKind('credit')"></button>
+  </div>
+
   <div class="card" style="margin-bottom:14px">
-    <div class="toggle" style="margin-bottom:14px">
+    <div class="toggle" id="cycleToggle" style="margin-bottom:14px">
       <button id="t-mo" class="on" onclick="setCycle(false)"></button>
       <button id="t-yr" onclick="setCycle(true)"></button>
     </div>
@@ -64,9 +70,35 @@ T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
 /* รายปี **ดูราคาได้ตามปกติ** — ด่านกันจ่ายอยู่ที่ `renderPay()` และ `payNow()` แทน
    (เจ้าของตัดสิน 2569-07-30: ให้เห็นราคารายปีเพื่อวางแผนได้ แค่ยังกดจ่ายไม่ได้) */
 function setCycle(yr){YR=yr;document.getElementById('t-mo').className=yr?'':'on';document.getElementById('t-yr').className=yr?'on':'';renderPlanPick();renderSummary();renderPay();}
+/* KIND = ชนิดสินค้าที่กำลังซื้อ · 'plan' = แพ็กโค้ชรายเดือน · 'credit' = เครดิต AI ซื้อครั้งเดียว
+   แยกกันเพราะคิดเงินคนละแบบ: แพ็กมีรอบบิลและวันหมดอายุ · เครดิตเป็นของสะสมไม่มีรอบ */
+var KIND='plan';
+function setKind(k){
+  KIND=k;
+  if(k==='credit'){ if(!B.isCredit(PLAN))PLAN=B.CREDIT_PACKS[1].k; }
+  else { if(B.isCredit(PLAN))PLAN='pro'; }
+  document.getElementById('k-plan').className=(k==='plan')?'on':'';
+  document.getElementById('k-credit').className=(k==='credit')?'on':'';
+  /* เครดิตไม่มีรายเดือน/รายปี ⇒ ซ่อนตัวสลับรอบไปเลย ไม่ให้เข้าใจผิดว่าเป็นสมาชิกรายเดือน */
+  document.getElementById('cycleToggle').style.display=(k==='credit')?'none':'';
+  T('lbl-pick',k==='credit'?'cr_pick':'pick_plan');
+  renderPlanPick();renderSummary();renderPay();
+}
 function pickPlan(k){PLAN=k;renderPlanPick();renderSummary();renderPay();}
 function renderPlanPick(){
-  var el=document.getElementById('planPick'),h='';
+  var el=document.getElementById('planPick');
+  if(KIND==='credit'){
+    var ch='';
+    B.CREDIT_PACKS.forEach(function(c){
+      var on=(PLAN===c.k);
+      ch+='<button onclick="pickPlan(\''+c.k+'\')" style="width:100%;text-align:left;border:1.5px solid '+(on?'var(--blue)':'var(--line)')+';background:'+(on?'#eef4ff':'#fff')+';border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between;align-items:center">'
+        +'<span><b style="color:var(--navy);font-size:14.5px">'+B.t('cr_title')+' '+c.name+'</b><br>'
+        +'<span style="font-size:11.5px;color:var(--muted)">'+B.t('cr_scan')+' '+c.scan+' '+B.t('cr_unit')+' · '+B.t('cr_analyze')+' '+c.analyze+' '+B.t('cr_unit')+'</span></span>'
+        +'<span style="font-weight:850;color:var(--blue);white-space:nowrap">฿'+B.fmt(c.price)+'</span></button>';
+    });
+    el.innerHTML=ch;return;
+  }
+  var h='';
   B.PLANS.forEach(function(p){
     if(p.k==='free'||p.contact)return;
     var on=(PLAN===p.k),pr=YR?p.yr:p.mo,un=YR?B.t('per_yr'):B.t('per_mo');
@@ -77,6 +109,15 @@ function renderPlanPick(){
   el.innerHTML=h;
 }
 function renderSummary(){
+  if(KIND==='credit'){
+    var c=B.getCredit(PLAN);if(!c)return;
+    document.getElementById('summary').innerHTML=
+      '<div class="sumrow"><span>'+B.t('cr_title')+' '+c.name+' · '+B.t('cr_once')+'</span><span>฿'+B.fmt(c.price)+'</span></div>'
+      +'<div class="sumrow"><span class="psub" style="margin:0">'+B.t('cr_scan')+'</span><span class="psub" style="margin:0">'+c.scan+' '+B.t('cr_unit')+'</span></div>'
+      +'<div class="sumrow"><span class="psub" style="margin:0">'+B.t('cr_analyze')+'</span><span class="psub" style="margin:0">'+c.analyze+' '+B.t('cr_unit')+'</span></div>'
+      +'<div class="sumrow total"><span>'+B.t('order_total')+'</span><span>฿'+B.fmt(c.price)+'</span></div>';
+    return;
+  }
   var p=B.getPlan(PLAN);if(!p)return;
   var pr=YR?p.yr:p.mo,un=YR?B.t('per_yr'):B.t('per_mo'),was=YR?p.yrWas:p.moWas;
   var h='<div class="sumrow"><span>'+p.name+' '+un+'</span><span>'+(was?'<span style="color:#9aa6bf;text-decoration:line-through;margin-right:6px">฿'+B.fmt(was)+'</span>':'')+'฿'+B.fmt(pr)+'</span></div>';
@@ -86,11 +127,17 @@ function renderSummary(){
 }
 function renderPay(){
   var body=document.getElementById('payBody');
-  var soon=!B.OMISE_READY, amt='฿'+B.fmt(YR?B.getPlan(PLAN).yr:B.getPlan(PLAN).mo), h='';
+  var isCr=(KIND==='credit');
+  var soon=!B.OMISE_READY, h='';
+  var amt='฿'+B.fmt(isCr?B.getCredit(PLAN).price:(YR?B.getPlan(PLAN).yr:B.getPlan(PLAN).mo));
+  /* เครดิตต้องเป็นบัญชีอีเมลที่ยืนยันแล้ว — `iufit-gym` ผูกกระเป๋ากับ uid รูป `email:…`
+     บอกตั้งแต่ตรงนี้ ไม่ปล่อยให้กรอกบัตรจนจบแล้วค่อยเด้ง error */
+  var crBlocked=isCr && (B.accountKey().indexOf('email:')!==0);
+  if(crBlocked)h+='<div class="bn warn" style="margin:0 0 10px"><b>'+B.t('cr_need_email_t')+'</b>'+B.t('cr_need_email_m')+'</div>';
   /* 🔴 รายปียังไม่เปิดชำระ (เพดาน Omise 3,000 บ./รายการ · ราคารายปี 3,990–7,990 เกินทุกตัว)
      ดูราคาได้ แต่ **กรอกบัตรไม่ได้และกดจ่ายไม่ได้** — บอกเหตุผลและวันที่เปิดให้ชัด
      ไม่ปล่อยให้กรอกบัตรจนจบแล้วค่อยเด้ง error ตอนกดจ่าย (เสียเวลาผู้ใช้และดูเหมือนระบบพัง) */
-  var yrLocked=(YR&&!B.YEARLY_OPEN);
+  var yrLocked=(YR&&!B.YEARLY_OPEN&&!isCr)||crBlocked;
   if(soon)h+='<div class="bn warn" style="margin:0 0 10px"><b>'+B.t('omise_soon_t')+'</b>'+B.t('omise_soon_m')+'</div>';
   /* 🔴 2569-07-30 · PromptPay ถูก "ปิดไว้ชั่วคราว" — ยังไม่รองรับจริง
      payNow() ด้านล่างสร้างได้เฉพาะ card token (Omise.createToken('card',...)) และอ่านค่าจากฟอร์มบัตร
@@ -113,7 +160,8 @@ function renderPay(){
   window.__yrLocked=yrLocked; // ให้ handler ของช่องติ๊กอ่านได้ (inline onchange อยู่นอกสโคปนี้)
   /* การ์ดแจ้งเหนือรายการแพ็ก — ขึ้น/ลงตามรอบที่เลือก */
   var nb=document.getElementById('yrNotice');
-  if(nb){nb.className=yrLocked?'bn warn':'bn warn hide';
+  var showYrNotice=(YR&&!B.YEARLY_OPEN&&KIND!=='credit');
+  if(nb){nb.className=showYrNotice?'bn warn':'bn warn hide';
     nb.innerHTML='<b>'+B.t('yr_soon_t')+'</b><span>'+B.t('yr_soon_m')+'</span>';}
 }
 /* กันไว้อีกชั้น: payNow() รองรับเฉพาะบัตร ⇒ ไม่ยอมให้ PM กลายเป็นค่าอื่นแม้ถูกเรียกจากที่อื่น */
@@ -127,7 +175,11 @@ function loadOmise(cb){if(window.Omise){cb();return;}var s=document.createElemen
 function payNow(){
   /* 🔴 ด่านสุดท้ายฝั่งเบราว์เซอร์ — ต่อให้มีคนปลด disabled ใน devtools ก็ต้องไม่หลุด
      (ด่านจริงอยู่ที่ worker ซึ่งปฏิเสธยอด > 3,000 อยู่แล้ว · ชั้นนี้กันไม่ให้ยิงไปตั้งแต่ต้น) */
-  if(YR&&!B.YEARLY_OPEN){alert(B.t('yr_soon_t')+'\n'+B.t('yr_soon_m'));return;}
+  var isCr=(KIND==='credit');
+  if(!isCr&&YR&&!B.YEARLY_OPEN){alert(B.t('yr_soon_t')+'\n'+B.t('yr_soon_m'));return;}
+  /* เครดิตเติมเข้ากระเป๋าที่ผูกกับอีเมล ⇒ บัญชี LINE ล้วนจ่ายแล้วเติมไม่เข้า
+     (worker ปฏิเสธซ้ำด้วย `credit_needs_email` — ชั้นนี้ให้ผู้ใช้รู้เหตุผลก่อน) */
+  if(isCr&&B.accountKey().indexOf('email:')!==0){alert(B.t('cr_need_email_t')+'\n\n'+B.t('cr_need_email_m'));return;}
   /* 🔴 2569-07-30 · เจอจากการทดสอบจริง — ห้ามรับเงินถ้าไม่รู้ว่าเป็นของใคร
      `accountKey()` คืนค่าว่างเมื่อยังไม่เคยล็อกอินในแอป (เช่นกดลิงก์นี้จาก Rich Menu ตรง ๆ)
      ปล่อยไว้ = จ่ายเงินสำเร็จแต่เปิดแพ็กให้ใครไม่ได้ และตามหาเจ้าของย้อนหลังไม่ได้
@@ -137,10 +189,10 @@ function payNow(){
   if(!B.OMISE_READY){try{window.open(B.LINE_URL,'_blank');}catch(x){}return;}
   loadOmise(function(){
     try{Omise.setPublicKey(B.OMISE_PUBLIC_KEY);}catch(e){}
-    var p=B.getPlan(PLAN),amt=(YR?p.yr:p.mo)*100,exp=(document.getElementById('card-exp').value||'').split('/');
+    var exp=(document.getElementById('card-exp').value||'').split('/');
     Omise.createToken('card',{name:document.getElementById('card-name').value,number:(document.getElementById('card-num').value||'').replace(/\s/g,''),expiration_month:(exp[0]||'').trim(),expiration_year:('20'+(exp[1]||'').trim()).slice(-4),security_code:document.getElementById('card-cvv').value},function(status,resp){
       if(status!==200){alert(resp.message||'card error');return;}
-      fetch(B.CHARGE_ENDPOINT+'/charge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:resp.id,plan:PLAN,cycle:YR?'yr':'mo',account:B.accountKey()})})
+      fetch(B.CHARGE_ENDPOINT+'/charge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:resp.id,plan:PLAN,cycle:isCr?'once':(YR?'yr':'mo'),account:B.accountKey()})})
         .then(function(r){return r.json();}).then(function(j){
           /* 🔴 3-D Secure — บรรทัดนี้คือหัวใจ ห้ามลบ
              บัญชีเราถูกบังคับ 3DS ทุกรายการ ⇒ charge ตอบ `pending` + `authorize_uri`
@@ -213,6 +265,9 @@ function pollStatus(ref){
   if(B.IS_STORE){document.getElementById('storeGuard').classList.remove('hide');T('sg-h','billing_title');T('sg-t','store_guard_t');T('sg-m','store_guard_m');document.getElementById('sg-line').innerHTML=B.t('line_btn');return;}
   document.getElementById('checkout').classList.remove('hide');
   T('co-h','billing_title');T('pm-h','pay_method');T('lbl-pick','pick_plan');T('t-mo','monthly');T('t-yr','yearly');T('co-note','secure_note');
+  T('k-plan','cr_tab_plan');T('k-credit','cr_tab_credit');
+  /* เปิดหน้ามาที่แท็บเครดิตได้ถ้า URL ระบุแพ็กเครดิตมา (เช่นลิงก์จากในแอป) */
+  if(B.isCredit(PLAN))setKind('credit');
   var lbl=B.accountLabel();
   document.getElementById('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl+B.t('acct_bind')):B.t('acct_login');
   document.getElementById('t-mo').className=YR?'':'on';document.getElementById('t-yr').className=YR?'on':'';

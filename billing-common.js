@@ -180,7 +180,13 @@
       order_total:'ยอดชำระ',equiv:'เทียบเท่า',
       store_guard_t:'สมัครผ่านเว็บหรือ LINE',store_guard_m:'การชำระเงินทำนอกแอป · เปิด iufit.com/billing.html ในเบราว์เซอร์ หรือทักไลน์เพื่อสมัคร — เปิดแอปด้วยบัญชีเดิมแล้วแพ็กจะปลดล็อกให้อัตโนมัติ',
       line_btn:'💬 ทักไลน์ @987qyznd',
-      res_success_t:'ชำระเงินสำเร็จ',res_success_m:'แพ็กของคุณเปิดใช้งานแล้ว · เปิดแอป IUFIT ด้วยบัญชีเดิม แพ็กจะปลดล็อกอัตโนมัติภายในไม่กี่วินาที',
+      res_success_t:'ชำระเงินสำเร็จ',/* ⭐ 2569-07-30 (รอบสอง) · คืนข้อความ "อัตโนมัติ" แล้ว — ตอนนี้**เป็นจริง**
+   worker เขียน entitlement ลง Firebase `/entitlements/{key}` ทันทีที่ webhook ยืนยันว่าจ่ายสำเร็จ
+   ทดสอบจริงแล้วได้ `{plan:'starter',exp:'2026-08-30',status:'active',autopay:true}`
+
+   🔴 กฎ: ข้อความนี้ผูกกับความสามารถจริงของระบบ — ถ้าวันไหนถอด `writeEntitlement()` ออก
+      ต้องแก้ข้อความนี้ด้วย ห้ามปล่อยให้สัญญาสิ่งที่ทำไม่ได้ */
+res_success_m:'แพ็กของคุณเปิดใช้งานแล้ว · เปิดแอป IUFIT ด้วยบัญชีเดิม แพ็กจะปลดล็อกอัตโนมัติภายในไม่กี่วินาที',
       res_pending_t:'รอการยืนยันการชำระ',res_pending_m:'เรากำลังรอผลการชำระเงิน (เช่น การยืนยัน 3-D Secure กับธนาคารของคุณ) · เมื่อสำเร็จ แพ็กจะเปิดให้อัตโนมัติ',
       res_failed_t:'ชำระเงินไม่สำเร็จ',res_failed_m:'ยังไม่มีการตัดเงิน · ลองใหม่อีกครั้ง หรือทักไลน์ให้เราช่วย',
       go_myplan:'ไปหน้าแพ็กของฉัน',retry:'ลองชำระอีกครั้ง',line_help:'ทักไลน์ขอความช่วยเหลือ',
@@ -210,6 +216,17 @@
          ⚠️ วันที่นี้เป็น **คำสัญญาต่อสาธารณะ** ถ้าจะเลื่อน ต้องแก้ที่นี่ที่เดียวและแจ้งลูกค้า */
       yr_soon_t:'ระบบชำระรายปียังไม่เปิดให้บริการ ',
       yr_soon_m:'จะเปิดให้บริการวันที่ 1 มกราคม 2570 · ระหว่างนี้เลือกชำระแบบรายเดือนได้ตามปกติ',
+      cr_title:'แพ็กเครดิต AI',
+      cr_sub:'สำหรับสแกนอาหารด้วยภาพและวิเคราะห์ด้วย AI · ซื้อครั้งเดียว ไม่มีรายเดือน',
+      cr_scan:'สแกนอาหาร',
+      cr_analyze:'วิเคราะห์',
+      cr_unit:'ครั้ง',
+      cr_pick:'เลือกแพ็กเครดิต',
+      cr_once:'ชำระครั้งเดียว',
+      cr_need_email_t:'แพ็กเครดิตต้องใช้บัญชีที่ยืนยันอีเมลแล้ว',
+      cr_need_email_m:'เครดิตผูกกับบัญชีอีเมล · กรุณาเข้าสู่ระบบด้วยอีเมลและยืนยันอีเมลในแอปก่อน แล้วกลับมาที่หน้านี้',
+      cr_tab_plan:'แพ็กโค้ช',
+      cr_tab_credit:'เครดิต AI',
       need_login_t:'ต้องเข้าสู่ระบบก่อนชำระเงิน',
       need_login_m:'เราต้องรู้ว่าจะเปิดแพ็กให้บัญชีไหน · กรุณาเปิดแอป IUFIT แล้วเข้าสู่ระบบ จากนั้นกลับมาที่หน้านี้อีกครั้ง',
       pay_checking:'กำลังตรวจสอบผลการชำระเงิน…',
@@ -273,6 +290,17 @@
       contact_title:'Service provider contact',c_name:'Business owner',c_addr:'Address',c_addr_show:'▾ Show business address',c_phone:'Phone',c_hours:'Business hours',c_email:'Email',c_line:'LINE',
       yr_soon_t:'Yearly billing is not available yet ',
       yr_soon_m:'It opens on 1 January 2027. In the meantime, monthly billing works as usual.',
+      cr_title:'AI credit packs',
+      cr_sub:'For photo food scanning and AI analysis · one-time purchase, no subscription',
+      cr_scan:'Food scans',
+      cr_analyze:'Analyses',
+      cr_unit:'',
+      cr_pick:'Choose a credit pack',
+      cr_once:'One-time payment',
+      cr_need_email_t:'Credit packs require an e-mail verified account',
+      cr_need_email_m:'Credits are tied to your e-mail account. Please sign in with e-mail and verify it in the app, then come back to this page.',
+      cr_tab_plan:'Coach plans',
+      cr_tab_credit:'AI credits',
       need_login_t:'Please sign in before paying',
       need_login_m:'We need to know which account to activate. Open the IUFIT app, sign in, then come back to this page.',
       pay_checking:'Checking your payment…',
@@ -306,6 +334,20 @@
      featsEn:['Multiple coaches / groups','Many clients','Team dashboard','Team-wide reports','Admin role management','Custom to your usage']}
   ];
   var ADDON={clients:5,mo:99};
+  /* ===== แพ็กเครดิต AI — ซื้อครั้งเดียวจบ ไม่มีรอบบิล =====
+     ⚠️ ตัวเลขต้องตรงกับ **3 ที่**: `core/pricing/pricing.js` · `workers/iufit-omise` (PRICES)
+        และ `CR_PACKS` ใน worker `iufit-gym` ซึ่งเป็นคนเติมยอดจริง
+        ⇒ แก้ราคาหรือจำนวนต้องไล่ครบทั้งสาม ไม่งั้นยอดที่โชว์กับที่ได้จริงไม่ตรงกัน
+
+     🔴 ซื้อได้เฉพาะบัญชีที่ยืนยันอีเมลแล้ว — `iufit-gym` ผูกกระเป๋ากับ uid รูป `email:…`
+        บัญชี LINE ล้วนเติมไม่เข้า ⇒ ต้องกันตั้งแต่หน้าเว็บ ไม่ใช่ตัดเงินแล้วค่อยรู้ */
+  var CREDIT_PACKS=[
+    {k:'credit_s',name:'S',price:159,scan:100,analyze:100},
+    {k:'credit_m',name:'M',price:289,scan:250,analyze:300},
+    {k:'credit_l',name:'L',price:549,scan:500,analyze:600}
+  ];
+  function getCredit(k){for(var i=0;i<CREDIT_PACKS.length;i++)if(CREDIT_PACKS[i].k===k)return CREDIT_PACKS[i];return null;}
+  function isCredit(k){return !!getCredit(k);}
   function getPlan(k){for(var i=0;i<PLANS.length;i++)if(PLANS[i].k===k)return PLANS[i];return null;}
   function planSub(p){return (LANG==='en'&&p.subEn)?p.subEn:p.sub;}
   function planFeats(p){return (LANG==='en'&&p.featsEn)?p.featsEn:p.feats;}
@@ -341,6 +383,7 @@
     OMISE_READY:OMISE_READY, OMISE_PUBLIC_KEY:OMISE_PUBLIC_KEY, CHARGE_ENDPOINT:CHARGE_ENDPOINT, LINE_URL:LINE_URL,
     YEARLY_OPEN:YEARLY_OPEN, OMISE_TEST_MODE:OMISE_TEST_MODE,
     PLANS:PLANS, ADDON:ADDON, getPlan:getPlan, price:price, fmt:fmt,
+    CREDIT_PACKS:CREDIT_PACKS, getCredit:getCredit, isCredit:isCredit,
     planSub:planSub, planFeats:planFeats, planBadge:planBadge,
     appState:appState, accountKey:accountKey, accountLabel:accountLabel,
     currentPlanKey:currentPlanKey, planExpiry:planExpiry,
