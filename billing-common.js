@@ -210,6 +210,14 @@
          ⚠️ วันที่นี้เป็น **คำสัญญาต่อสาธารณะ** ถ้าจะเลื่อน ต้องแก้ที่นี่ที่เดียวและแจ้งลูกค้า */
       yr_soon_t:'ระบบชำระรายปียังไม่เปิดให้บริการ ',
       yr_soon_m:'จะเปิดให้บริการวันที่ 1 มกราคม 2570 · ระหว่างนี้เลือกชำระแบบรายเดือนได้ตามปกติ',
+      need_login_t:'ต้องเข้าสู่ระบบก่อนชำระเงิน',
+      need_login_m:'เราต้องรู้ว่าจะเปิดแพ็กให้บัญชีไหน · กรุณาเปิดแอป IUFIT แล้วเข้าสู่ระบบ จากนั้นกลับมาที่หน้านี้อีกครั้ง',
+      pay_checking:'กำลังตรวจสอบผลการชำระเงิน…',
+      pay_paid_t:'ชำระเงินสำเร็จ',
+      pay_paid_m:'แพ็กของคุณเปิดใช้งานแล้ว',
+      pay_failed_t:'การชำระเงินไม่สำเร็จ',
+      pay_failed_m:'ไม่มีการตัดเงินจากบัตรของคุณ · ลองใหม่อีกครั้งหรือทักไลน์หาเราได้เลย',
+      pay_slow:'ผลยังไม่กลับมาภายในเวลาที่คาดไว้ · ไม่ต้องกังวล ถ้าเงินถูกตัดจริงระบบจะเปิดแพ็กให้อัตโนมัติ · ตรวจสอบได้ที่หน้าแพ็กของฉัน หรือทักไลน์หาเรา',
       testmode_t:'⚠️ โหมดทดสอบ — ไม่มีการตัดเงินจริง',
       testmode_m:'หน้านี้กำลังใช้คีย์ทดสอบของ Omise · รับได้เฉพาะบัตรทดสอบเท่านั้น บัตรจริงจะถูกปฏิเสธ · ถ้าคุณเห็นข้อความนี้บนเว็บจริง กรุณาแจ้งเราทาง LINE'
     },
@@ -265,6 +273,14 @@
       contact_title:'Service provider contact',c_name:'Business owner',c_addr:'Address',c_addr_show:'▾ Show business address',c_phone:'Phone',c_hours:'Business hours',c_email:'Email',c_line:'LINE',
       yr_soon_t:'Yearly billing is not available yet ',
       yr_soon_m:'It opens on 1 January 2027. In the meantime, monthly billing works as usual.',
+      need_login_t:'Please sign in before paying',
+      need_login_m:'We need to know which account to activate. Open the IUFIT app, sign in, then come back to this page.',
+      pay_checking:'Checking your payment…',
+      pay_paid_t:'Payment successful',
+      pay_paid_m:'Your plan is now active.',
+      pay_failed_t:'Payment was not completed',
+      pay_failed_m:'Your card was not charged. Please try again or message us on LINE.',
+      pay_slow:'We have not received the result yet. Don’t worry — if the payment went through, your plan will activate automatically. Check My plan, or message us on LINE.',
       testmode_t:'⚠️ Test mode — no real charges',
       testmode_m:'This page is using Omise test keys. Only test cards are accepted; real cards will be declined. If you see this on the live site, please let us know on LINE.'
     }

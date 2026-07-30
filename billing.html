@@ -128,6 +128,11 @@ function payNow(){
   /* 🔴 ด่านสุดท้ายฝั่งเบราว์เซอร์ — ต่อให้มีคนปลด disabled ใน devtools ก็ต้องไม่หลุด
      (ด่านจริงอยู่ที่ worker ซึ่งปฏิเสธยอด > 3,000 อยู่แล้ว · ชั้นนี้กันไม่ให้ยิงไปตั้งแต่ต้น) */
   if(YR&&!B.YEARLY_OPEN){alert(B.t('yr_soon_t')+'\n'+B.t('yr_soon_m'));return;}
+  /* 🔴 2569-07-30 · เจอจากการทดสอบจริง — ห้ามรับเงินถ้าไม่รู้ว่าเป็นของใคร
+     `accountKey()` คืนค่าว่างเมื่อยังไม่เคยล็อกอินในแอป (เช่นกดลิงก์นี้จาก Rich Menu ตรง ๆ)
+     ปล่อยไว้ = จ่ายเงินสำเร็จแต่เปิดแพ็กให้ใครไม่ได้ และตามหาเจ้าของย้อนหลังไม่ได้
+     (worker ปฏิเสธซ้ำอีกชั้นด้วย `no_account` — ชั้นนี้มีไว้ให้ผู้ใช้รู้เหตุผลก่อนกรอกบัตร) */
+  if(!B.accountKey()){alert(B.t('need_login_t')+'\n\n'+B.t('need_login_m'));try{window.open('open.html','_blank');}catch(x){}return;}
   var ag=document.getElementById('agree');if(ag&&!ag.checked){alert(B.t('consent_req'));return;}
   if(!B.OMISE_READY){try{window.open(B.LINE_URL,'_blank');}catch(x){}return;}
   loadOmise(function(){
@@ -170,9 +175,41 @@ function showResult(kind){
   el.style.cssText='background:#fef8ed;border:2px solid #f5d98a;border-radius:12px;padding:11px 14px;margin:0 0 14px;font-size:13px;line-height:1.55;color:#8b5d0d';
   el.innerHTML='<b style="display:block;margin-bottom:2px">'+B.t('testmode_t')+'</b>'+B.t('testmode_m');
 })();
+/* วนถามผลจริงหลังกลับจากหน้า 3DS
+   ─────────────────────────────────────────────────────────────────────────
+   เมื่อบังคับ 3DS ผลการจ่ายเงินไม่ได้อยู่ในมือเบราว์เซอร์เลย — มาทาง webhook อย่างเดียว
+   ถ้าไม่ถามกลับ ลูกค้าจะเห็น "รอการยืนยัน" ค้างตลอดไปแม้จ่ายสำเร็จแล้ว
+
+   ⚠️ ถามได้อย่างเดียว **ห้ามให้หน้านี้ตัดสินสิทธิ์** — มันแค่แสดงสิ่งที่ฝั่ง server สรุปไว้
+   ⚠️ มีเพดานเวลา 60 วิ แล้วบอกทางออก ไม่ปล่อยให้หมุนไม่รู้จบ */
+function pollStatus(ref){
+  var box=document.getElementById('resultPanel'); if(!box)return;
+  var tries=0, MAX=20; // 20 × 3 วิ = 60 วิ
+  var note=document.createElement('p');
+  note.style.cssText='font-size:12.5px;color:var(--muted);margin:10px auto 0;max-width:320px';
+  note.textContent=B.t('pay_checking');
+  var card=box.querySelector('.result'); if(card)card.appendChild(note);
+  (function tick(){
+    tries++;
+    fetch(B.CHARGE_ENDPOINT+'/status?ref='+encodeURIComponent(ref))
+      .then(function(r){return r.json();})
+      .then(function(j){
+        if(j.state==='paid'){location.href='billing.html?lang='+B.LANG+'&result=success';return;}
+        if(j.state==='failed'){location.href='billing.html?lang='+B.LANG+'&result=failed';return;}
+        if(tries>=MAX){note.textContent=B.t('pay_slow');return;}
+        setTimeout(tick,3000);
+      })
+      .catch(function(){ if(tries<MAX)setTimeout(tick,3000); else note.textContent=B.t('pay_slow'); });
+  })();
+}
 (function(){
   var res=B.qs('result');
-  if(res){showResult(res);return;}
+  if(res){
+    showResult(res);
+    /* `return` = เพิ่งกลับจากธนาคาร ⇒ เริ่มถามผล · สถานะอื่นเป็นผลสรุปแล้ว ไม่ต้องถาม */
+    if(res==='return'){var rf=B.qs('ref'); if(rf)pollStatus(rf);}
+    return;
+  }
   if(B.IS_STORE){document.getElementById('storeGuard').classList.remove('hide');T('sg-h','billing_title');T('sg-t','store_guard_t');T('sg-m','store_guard_m');document.getElementById('sg-line').innerHTML=B.t('line_btn');return;}
   document.getElementById('checkout').classList.remove('hide');
   T('co-h','billing_title');T('pm-h','pay_method');T('lbl-pick','pick_plan');T('t-mo','monthly');T('t-yr','yearly');T('co-note','secure_note');
