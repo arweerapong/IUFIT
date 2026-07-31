@@ -299,6 +299,14 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       ap_login_m:'เพื่อความปลอดภัย เราต้องยืนยันก่อนว่าคุณเป็นเจ้าของบัญชีนี้จริง · กรุณาเปิดแอป IUFIT เข้าสู่ระบบด้วยอีเมล แล้วกลับมาที่หน้านี้อีกครั้ง',
       ap_line_t:'ยกเลิกผ่านทีมงาน',
       ap_line_m:'บัญชีนี้ยังจัดการการต่ออายุจากหน้าเว็บไม่ได้ · ทักไลน์แจ้งว่า “ขอยกเลิกการต่ออายุอัตโนมัติ” ทีมงานจะปิดให้ในเวลาทำการ และสิทธิ์ของคุณจะอยู่จนครบรอบที่ชำระไว้แล้ว',
+      /* 🔴 2569-08-01 · แยกคนละสถานการณ์ ไม่ใช้ ap_fail ก้อนเดียวทุกกรณี
+         `ap_fail`     = ผู้ใช้กดปุ่มแล้วไม่สำเร็จ
+         `ap_read`     = เปิดหน้ามาแล้วอ่านสถานะไม่ได้ (ผู้ใช้ยังไม่ได้ทำอะไร)
+         `ap_mismatch` = บัญชีในเครื่องไม่ตรงกับบัญชีที่ล็อกอิน (ด่านทำงานถูก ไม่ใช่ระบบพัง) */
+      ap_read_t:'ยังดูสถานะการต่ออายุไม่ได้ตอนนี้ ',
+      ap_read_m:'แพ็กของคุณไม่ได้รับผลกระทบ · ลองรีเฟรชหน้านี้อีกครั้ง ถ้ายังไม่ได้ทักไลน์มาได้เลย',
+      ap_mismatch_t:'บัญชีในเครื่องนี้ไม่ตรงกับบัญชีที่เข้าสู่ระบบ ',
+      ap_mismatch_m:'เพื่อความปลอดภัย เราจะไม่แสดงหรือแก้ข้อมูลการเงินของบัญชีอื่น · เข้าสู่ระบบด้วยบัญชีที่ซื้อแพ็กไว้ในแอป แล้วเปิดหน้านี้อีกครั้ง',
       ap_fail_t:'ยังทำรายการไม่สำเร็จ',
       ap_fail_m:'ยังไม่มีการเปลี่ยนแปลงใด ๆ กับแพ็กของคุณ · ลองใหม่อีกครั้ง หรือทักไลน์ให้เราช่วยยกเลิกให้',
       /* ===== กันกดจ่ายซ้ำ / ยิงถี่เกิน (billing.html) ================================ */
@@ -405,6 +413,10 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       ap_login_m:'For your security we must confirm you own this account · open the IUFIT app, sign in with your email, then come back to this page.',
       ap_line_t:'Cancel via our team',
       ap_line_m:'This account cannot manage renewal from the website yet · message us on LINE saying “please cancel auto-renewal”. We will switch it off during business hours, and your access stays until the end of the cycle you already paid for.',
+      ap_read_t:'Cannot show renewal status right now ',
+      ap_read_m:'Your plan is unaffected. Try refreshing this page — if it keeps happening, message us on LINE.',
+      ap_mismatch_t:'This device is signed in to a different account ',
+      ap_mismatch_m:'For your safety we never show or change another account\'s billing. Sign in with the account that bought the plan, then reopen this page.',
       ap_fail_t:'That did not go through',
       ap_fail_m:'Nothing about your plan was changed · try again, or message us on LINE and we will cancel it for you.',
       /* ===== duplicate / too-many payment attempts (billing.html) ==================== */

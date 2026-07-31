@@ -33,7 +33,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v111"></script>
+<script src="billing-common.js?v=v112"></script>
 <script>
 var B=window.IUFIT_BILLING;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
@@ -112,6 +112,15 @@ function apRender(st){
   if(st.kind==='line'){el.innerHTML=apBox('info',B.t('ap_line_t'),B.t('ap_line_m'),apLineBtn());return;}
   if(st.kind==='login'){el.innerHTML=apBox('warn',B.t('ap_login_t'),B.t('ap_login_m'),apLineBtn());return;}
   if(st.kind==='fail'){el.innerHTML=apBox('urgent',B.t('ap_fail_t'),B.t('ap_fail_m'),apLineBtn());return;}
+  /* 🔴 2569-08-01 · แยก "อ่านสถานะไม่ได้ตอนเปิดหน้า" ออกจาก "กดแล้วทำไม่สำเร็จ"
+     เดิมใช้ `fail` ก้อนเดียว ⇒ ผู้ใช้เปิดหน้ามาเฉย ๆ ยังไม่ได้กดอะไรเลย
+     แต่เห็นข้อความว่า "ยังทำรายการไม่สำเร็จ · ยังไม่มีการเปลี่ยนแปลงใด ๆ กับแพ็กของคุณ"
+     ⇒ อ่านแล้วนึกว่าตัวเองเผลอไปกดอะไรผิด หรือระบบเพิ่งทำอะไรพลาดกับแพ็กที่จ่ายเงินไว้
+     **ข้อความบอกความล้มเหลวต้องตรงกับสิ่งที่ผู้ใช้เพิ่งทำ ไม่ใช่ใช้ก้อนเดียวทุกกรณี** */
+  if(st.kind==='readfail'){el.innerHTML=apBox('warn',B.t('ap_read_t'),B.t('ap_read_m'),apLineBtn());return;}
+  /* 403 — บัญชีในเครื่องไม่ตรงกับบัญชีที่ล็อกอินอยู่ (เช่นเคยล็อกอินคนละอีเมล หรือสลับเครื่อง)
+     ด่านฝั่ง server ทำงานถูกต้องแล้ว สิ่งที่ต้องแก้คือ **บอกให้ตรงว่าเกิดอะไรและทำยังไงต่อ** */
+  if(st.kind==='mismatch'){el.innerHTML=apBox('warn',B.t('ap_mismatch_t'),B.t('ap_mismatch_m'),apLineBtn());return;}
   /* st.kind==='ent' */
   var e=st.ent,d=thDate(e.exp),p=B.getPlan(e.plan),pname=p?p.name:e.plan;
   var h=(st.note||'');
@@ -145,6 +154,7 @@ function apSet(want){
       .then(function(res){
         apBusy=false;
         if(res.s===401){apRender({kind:'login'});return;}
+        if(res.s===403){apRender({kind:'mismatch'});return;}
         if(res.s!==200||!res.j||res.j.ok!==true){apRender({kind:'fail'});return;}
         var ent=res.j.entitlement||e;
         var t=want?'ap_res_t':'ap_done_t',m=want?'ap_res_m':'ap_done_m';
@@ -163,13 +173,14 @@ function apSet(want){
       .then(function(r){return r.json().then(function(j){return {s:r.status,j:j};});})
       .then(function(res){
         if(res.s===401){apRender({kind:'login'});return;}
-        if(res.s!==200){apRender({kind:'fail'});return;}
+        if(res.s===403){apRender({kind:'mismatch'});return;}
+        if(res.s!==200){apRender({kind:'readfail'});return;}
         var e=res.j&&res.j.entitlement;
         /* ไม่มีแพ็กที่จ่ายเงินไว้ = ไม่มีอะไรให้ยกเลิก ⇒ ไม่ต้องขึ้นกล่องอะไรเลย */
         if(!e||!e.plan){apRender({kind:'hide'});return;}
         apRender({kind:'ent',ent:e});
       })
-      .catch(function(){apRender({kind:'fail'});});
+      .catch(function(){apRender({kind:'readfail'});});
   });
 })();
 
