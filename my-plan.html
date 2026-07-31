@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My plan · IUFIT</title>
 <meta name="description" content="Your IUFIT coach plan status, trial and renewal">
-<link rel="stylesheet" href="billing.css?v=v107">
+<link rel="stylesheet" href="billing.css?v=v108">
 </head>
 <body>
 <div class="wrap">
@@ -19,6 +19,10 @@
 <p class="sub" id="acctLine"></p>
 <div id="reminder"></div>
 <div class="card" id="statusCard"></div>
+<!-- 🔴 การต่ออายุอัตโนมัติ + ทางยกเลิก — เติมจาก apRender() ท้ายไฟล์
+     ก่อน 2569-07-31 หน้านี้มีแต่ปุ่ม "ต่ออายุ/ทักไลน์" ทั้งที่ refund.html และ terms.html
+     สัญญาไว้ว่า "ยกเลิกการต่ออายุอัตโนมัติได้ทุกเมื่อ" = คำสัญญาที่ทำไม่ได้ -->
+<div id="autopay" style="margin-top:14px"></div>
 <div id="actions" style="margin-top:14px"></div>
 
 <div class="how" style="margin-top:18px">
@@ -29,7 +33,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v109"></script>
+<script src="billing-common.js?v=v111"></script>
 <script>
 var B=window.IUFIT_BILLING;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
@@ -77,6 +81,98 @@ function render(){
   document.getElementById('actions').innerHTML=a;
 }
 render();
+
+/* ══════════════════════════════════════════════════════════════════════════════
+   การต่ออายุอัตโนมัติ — แสดงสถานะจริง + ปุ่มยกเลิก/เปิดกลับ
+   ──────────────────────────────────────────────────────────────────────────────
+   🔴 ทำไมต้องถาม server ไม่ใช้ค่าใน localStorage:
+      สถานะ autopay อยู่ที่ Firebase (worker เป็นคนเขียน) · localStorage ของหน้านี้
+      ไม่เคยรู้จักฟิลด์นั้นเลย ⇒ ถ้าเดาเอาเอง ปุ่มจะโชว์ผิดสถานะ ซึ่งกับเรื่องเงิน
+      "แสดงผิด" แย่กว่า "ไม่แสดง"
+
+   🔴 ทำไมต้องยืนยันตัวตน: `/status?account=` กับ `/autopay` เปลี่ยน/อ่านสถานะการเงิน
+      ⇒ worker บังคับ Bearer token (Firebase id token ของแอป) และเทียบ uid กับ account
+      หน้านี้จึงส่งโทเคนไปด้วยเสมอ · ไม่มีโทเคน = บอกให้ไปล็อกอินในแอป ไม่ใช่แสร้งว่าทำได้
+
+   ⚠️ บัญชี LINE ล้วนไม่มี Firebase session ⇒ กดยกเลิกเองไม่ได้ · ต้องบอกทางออกที่ทำได้จริง
+      (ทักไลน์ให้แอดมินปิดให้) ไม่ใช่ซ่อนปุ่มเงียบ ๆ แล้วปล่อยให้เขาหาทางเอง
+   ══════════════════════════════════════════════════════════════════════════════ */
+var apBusy=false;
+function esc(s){return (''+(s==null?'':s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
+function apBox(cls,title,body,extra){
+  return '<div class="bn '+cls+'"><b>'+title+'</b>'+body+'</div>'+(extra||'');
+}
+function apLineBtn(){
+  return '<a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('line_btn')+'</a>';
+}
+function apRender(st){
+  var el=document.getElementById('autopay'); if(!el)return;
+  if(st.kind==='hide'){el.innerHTML='';return;}
+  if(st.kind==='loading'){el.innerHTML='<p class="note" style="margin:0">'+B.t('ap_loading')+'</p>';return;}
+  if(st.kind==='line'){el.innerHTML=apBox('info',B.t('ap_line_t'),B.t('ap_line_m'),apLineBtn());return;}
+  if(st.kind==='login'){el.innerHTML=apBox('warn',B.t('ap_login_t'),B.t('ap_login_m'),apLineBtn());return;}
+  if(st.kind==='fail'){el.innerHTML=apBox('urgent',B.t('ap_fail_t'),B.t('ap_fail_m'),apLineBtn());return;}
+  /* st.kind==='ent' */
+  var e=st.ent,d=thDate(e.exp),p=B.getPlan(e.plan),pname=p?p.name:e.plan;
+  var h=(st.note||'');
+  if(e.autopay){
+    h+='<div class="bn info"><b>'+B.t('ap_title')+'</b>'+tp('ap_on',{date:esc(d)})+'</div>'
+      +'<button class="btn ghost" id="apBtn" onclick="apSet(false)">'+B.t('ap_cancel')+'</button>';
+  }else if(e.hasCard){
+    h+='<div class="bn ok"><b>'+B.t('ap_title')+'</b>'+tp('ap_off',{date:esc(d)})+'</div>'
+      +'<button class="btn ghost" id="apBtn" onclick="apSet(true)">'+B.t('ap_resume')+'</button>';
+  }else{
+    h+='<div class="bn info"><b>'+B.t('ap_title')+'</b>'+B.t('ap_off_nocard')+'</div>';
+  }
+  document.getElementById('autopay').innerHTML=h;
+  window.__apEnt=e; window.__apPlanName=pname;
+}
+/** เปลี่ยนสถานะจริง — ถามยืนยันด้วยข้อความที่บอกตรง ๆ ว่าจะเกิดอะไรและสิทธิ์อยู่ถึงวันไหน */
+function apSet(want){
+  if(apBusy)return; var e=window.__apEnt; if(!e)return;
+  var d=thDate(e.exp);
+  var msg=want?tp('ap_confirm_on',{date:d}):tp('ap_confirm',{plan:window.__apPlanName||e.plan,date:d});
+  if(!confirm(msg))return;
+  apBusy=true;
+  var btn=document.getElementById('apBtn');
+  if(btn){btn.disabled=true;btn.textContent=B.t('ap_working');}
+  B.authToken(function(tok){
+    if(!tok){apBusy=false;apRender({kind:'login'});return;}
+    fetch(B.CHARGE_ENDPOINT+'/autopay',{method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
+      body:JSON.stringify({account:B.accountKey(),autopay:want})})
+      .then(function(r){return r.json().then(function(j){return {s:r.status,j:j};});})
+      .then(function(res){
+        apBusy=false;
+        if(res.s===401){apRender({kind:'login'});return;}
+        if(res.s!==200||!res.j||res.j.ok!==true){apRender({kind:'fail'});return;}
+        var ent=res.j.entitlement||e;
+        var t=want?'ap_res_t':'ap_done_t',m=want?'ap_res_m':'ap_done_m';
+        apRender({kind:'ent',ent:ent,note:'<div class="bn ok"><b>'+B.t(t)+'</b>'+tp(m,{date:esc(thDate(ent.exp))})+'</div>'});
+      })
+      .catch(function(){apBusy=false;apRender({kind:'fail'});});
+  });
+}
+(function loadAutopay(){
+  if(!B.accountKey()){apRender({kind:'hide'});return;}
+  if(!B.canSelfServe()){apRender({kind:'line'});return;}
+  apRender({kind:'loading'});
+  B.authToken(function(tok){
+    if(!tok){apRender({kind:'login'});return;}
+    fetch(B.CHARGE_ENDPOINT+'/status?account='+encodeURIComponent(B.accountKey()),{headers:{'Authorization':'Bearer '+tok}})
+      .then(function(r){return r.json().then(function(j){return {s:r.status,j:j};});})
+      .then(function(res){
+        if(res.s===401){apRender({kind:'login'});return;}
+        if(res.s!==200){apRender({kind:'fail'});return;}
+        var e=res.j&&res.j.entitlement;
+        /* ไม่มีแพ็กที่จ่ายเงินไว้ = ไม่มีอะไรให้ยกเลิก ⇒ ไม่ต้องขึ้นกล่องอะไรเลย */
+        if(!e||!e.plan){apRender({kind:'hide'});return;}
+        apRender({kind:'ent',ent:e});
+      })
+      .catch(function(){apRender({kind:'fail'});});
+  });
+})();
+
 try{var _f=document.getElementById("foot");if(_f)_f.innerHTML=B.footerHtml();}catch(e){}
 </script>
 </body>

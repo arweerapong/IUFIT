@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Subscribe · IUFIT</title>
 <meta name="description" content="Subscribe to an IUFIT coach plan — choose plan, cycle and pay via Omise">
-<link rel="stylesheet" href="billing.css?v=v107">
+<link rel="stylesheet" href="billing.css?v=v108">
 </head>
 <body>
 <div class="wrap">
@@ -58,7 +58,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v109"></script>
+<script src="billing-common.js?v=v111"></script>
 <script>
 var B=window.IUFIT_BILLING;
 var YR=(B.qs('cycle')==='yr'), PLAN=B.qs('plan')||'pro', PM='card';
@@ -91,7 +91,7 @@ function renderPlanPick(){
     var ch='';
     B.CREDIT_PACKS.forEach(function(c){
       var on=(PLAN===c.k);
-      ch+='<button onclick="pickPlan(\''+c.k+'\')" style="width:100%;text-align:left;border:1.5px solid '+(on?'var(--blue)':'var(--line)')+';background:'+(on?'#eef4ff':'#fff')+';border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between;align-items:center">'
+      ch+='<button onclick="pickPlan(\''+c.k+'\')" style="width:100%;text-align:left;border:1.5px solid '+(on?'var(--blue)':'var(--line-strong)')+';background:'+(on?'#eef4ff':'#fff')+';border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between;align-items:center">'
         +'<span><b style="color:var(--navy);font-size:14.5px">'+B.t('cr_title')+' '+c.name+'</b><br>'
         +'<span style="font-size:11.5px;color:var(--muted)">'+B.t('cr_scan')+' '+c.scan+' '+B.t('cr_unit')+' · '+B.t('cr_analyze')+' '+c.analyze+' '+B.t('cr_unit')+'</span></span>'
         +'<span style="font-weight:850;color:var(--blue);white-space:nowrap">฿'+B.fmt(c.price)+'</span></button>';
@@ -102,7 +102,7 @@ function renderPlanPick(){
   B.PLANS.forEach(function(p){
     if(p.k==='free'||p.contact)return;
     var on=(PLAN===p.k),pr=YR?p.yr:p.mo,un=YR?B.t('per_yr'):B.t('per_mo');
-    h+='<button onclick="pickPlan(\''+p.k+'\')" style="width:100%;text-align:left;border:1.5px solid '+(on?'var(--blue)':'var(--line)')+';background:'+(on?'#eef4ff':'#fff')+';border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between;align-items:center">'
+    h+='<button onclick="pickPlan(\''+p.k+'\')" style="width:100%;text-align:left;border:1.5px solid '+(on?'var(--blue)':'var(--line-strong)')+';background:'+(on?'#eef4ff':'#fff')+';border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;font-family:inherit;display:flex;justify-content:space-between;align-items:center">'
       +'<span><b style="color:var(--navy);font-size:14.5px">'+p.name+'</b>'+(p.badge?' <span class="badge" style="margin:0;vertical-align:middle">'+B.planBadge(p)+'</span>':'')+'<br><span style="font-size:11.5px;color:var(--muted)">'+p.clients+B.t('clients_unit')+'</span></span>'
       +'<span style="font-weight:850;color:var(--blue);white-space:nowrap">฿'+B.fmt(pr)+'<span style="font-size:11px;color:var(--muted)"> '+un+'</span></span></button>';
   });
@@ -137,7 +137,13 @@ function renderPay(){
   /* 🔴 รายปียังไม่เปิดชำระ (เพดาน Omise 3,000 บ./รายการ · ราคารายปี 3,990–7,990 เกินทุกตัว)
      ดูราคาได้ แต่ **กรอกบัตรไม่ได้และกดจ่ายไม่ได้** — บอกเหตุผลและวันที่เปิดให้ชัด
      ไม่ปล่อยให้กรอกบัตรจนจบแล้วค่อยเด้ง error ตอนกดจ่าย (เสียเวลาผู้ใช้และดูเหมือนระบบพัง) */
-  var yrLocked=(YR&&!B.YEARLY_OPEN&&!isCr)||crBlocked;
+  /* 🔴 2569-08-01 · แพ็กโค้ชยังไม่เปิดขาย (ฟรีถึง 31 ธ.ค. 2569) — **เครดิต AI ยังซื้อได้**
+     `!isCr` คือหัวใจของบรรทัดนี้: ปิดเฉพาะแพ็ก ไม่ปิดเครดิต เพราะเป็นคนละสินค้า
+     ⚠️ ต้องขึ้นข้อความว่า "ยังไม่ต้องจ่าย" ไม่ใช่ปล่อยปุ่มเทา ๆ เงียบ ๆ
+        ปุ่มที่กดไม่ได้โดยไม่บอกเหตุผล ผู้ใช้จะอ่านว่าระบบพัง แล้วเลิกใช้ทั้งที่ของฟรีอยู่ */
+  var planLocked=(!isCr && !B.PLANS_OPEN);
+  var yrLocked=(YR&&!B.YEARLY_OPEN&&!isCr)||crBlocked||planLocked;
+  if(planLocked)h+='<div class="bn ok" style="margin:0 0 10px"><b>'+B.t('pl_free_t')+'</b>'+B.t('pl_free_m')+'</div>';
   if(soon)h+='<div class="bn warn" style="margin:0 0 10px"><b>'+B.t('omise_soon_t')+'</b>'+B.t('omise_soon_m')+'</div>';
   /* 🔴 2569-07-30 · PromptPay ถูก "ปิดไว้ชั่วคราว" — ยังไม่รองรับจริง
      payNow() ด้านล่างสร้างได้เฉพาะ card token (Omise.createToken('card',...)) และอ่านค่าจากฟอร์มบัตร
@@ -153,7 +159,11 @@ function renderPay(){
   /* รายปีล็อกไว้ ⇒ ปุ่มจ่ายกดไม่ได้ตั้งแต่ต้น (ช่องติ๊กยอมรับก็ปลดไม่ได้)
      ⭐ 2569-07-30 · ตัดปุ่ม "จองราคานี้ไว้ในเครื่อง" และ "สมัครทาง LINE" ออกตามที่เจ้าของสั่ง
         เหลือทางเดียวคือชำระผ่าน Omise — สองปุ่มนั้นมีไว้ตอนยังไม่มีช่องทางจ่ายจริง */
-  h+='<button id="payBtn" class="btn pri"'+(yrLocked?' disabled':' disabled')+' style="opacity:.5" onclick="payNow()">'+B.t('pay_btn')+' '+amt+'</button>';
+  /* ตอนแพ็กถูกล็อก ปุ่มไม่ควรเขียนว่า "ชำระเงิน ฿399" — ยอดนั้นยังไม่ต้องจ่าย
+     ข้อความบนปุ่มคือสิ่งที่ผู้ใช้อ่านก่อนอย่างอื่น ต้องตรงกับความจริง */
+  h+='<button id="payBtn" class="btn pri" disabled style="opacity:.5" onclick="payNow()">'
+    +(planLocked?B.t('pl_free_btn'):B.t('pay_btn')+' '+amt)+'</button>';
+  if(planLocked)h+='<p class="note" style="margin-top:10px">'+B.t('pl_free_cr')+'</p>';
   h+='<p class="note" style="margin-top:10px">'+B.t('secure_note')+'</p>';
   h+='<div style="margin-top:14px;padding:12px 14px;background:#f6f9ff;border:1px solid var(--line);border-radius:12px"><b style="font-size:12.5px;color:var(--navy);display:block;margin-bottom:7px">'+B.t('contact_title')+'</b>'+B.contactRowsHtml()+'</div>';
   body.innerHTML=h;
@@ -169,13 +179,34 @@ function setPM(){PM='card';renderPay();}
 /* ⭐ 2569-07-30 · ถอด `reserveLocal()` ออก — ปุ่ม "จองราคานี้ไว้ในเครื่อง"
    มันแค่เขียน localStorage แล้วเด้ง alert · ไม่ได้จองอะไรจริง ไม่มีผลผูกพันฝั่งเรา
    ⇒ ทำให้ผู้ใช้เข้าใจผิดว่าล็อกราคาไว้แล้ว · ตอนนี้มีช่องทางจ่ายจริงแล้วจึงไม่ต้องมี */
-function loadOmise(cb){if(window.Omise){cb();return;}var s=document.createElement('script');s.src='https://cdn.omise.co/omise.js';s.onload=cb;s.onerror=function(){alert('Omise load failed');};document.head.appendChild(s);}
+function loadOmise(cb){if(window.Omise){cb();return;}var s=document.createElement('script');s.src='https://cdn.omise.co/omise.js';s.onload=cb;s.onerror=function(){setPaying(false);alert('Omise load failed');};document.head.appendChild(s);}
+/* 🔴 2569-07-31 · กันกดจ่ายซ้ำ — **ชั้นที่ 1 จาก 2**
+   ═══════════════════════════════════════════════════════════════════════════
+   createToken + สร้าง charge ใช้เวลาหลายวินาที · ปุ่มเดิมกดรัวได้ตลอดช่วงนั้น
+   ⇒ สอง charge สอง 3DS · เคสแย่สุดผู้ใช้ยืนยันทั้งคู่ = ถูกตัดเงินสองรอบ
+
+   ⚠️ ชั้นนี้เป็นแค่ UX — ใครก็ยิง `/charge` ตรงข้ามหน้าเว็บได้
+      **ด่านจริงอยู่ที่ worker** (ล็อก `pending:<account>|<plan>|<cycle>` ใน KV)
+      ห้ามถอดชั้นไหนออกโดยคิดว่าซ้ำซ้อน — คนละหน้าที่กัน (เทียบด่านรายปี 3 ชั้น) */
+var PAYING=false;
+function setPaying(on){
+  PAYING=on;
+  var b=document.getElementById('payBtn'); if(!b)return;
+  if(on){ if(!b.getAttribute('data-lbl'))b.setAttribute('data-lbl',b.textContent); b.textContent=B.t('pay_processing'); }
+  else { var l=b.getAttribute('data-lbl'); if(l)b.textContent=l; }
+  b.disabled=on;
+  b.style.opacity=on?.6:1;
+}
 /* payNow() รองรับ **บัตรเท่านั้น** — Omise.createToken('card',...) + POST {token} ไป CHARGE_ENDPOINT/charge
    ถ้าจะเพิ่ม PromptPay ต้องเพิ่ม branch สร้าง source (type:'promptpay') และ backend ต้องคืน QR/สถานะรอชำระด้วย */
 function payNow(){
+  /* กันการกดซ้อนตั้งแต่บรรทัดแรก — ครอบคลุมกรณีปุ่มถูกปลด disabled จาก devtools ด้วย */
+  if(PAYING)return;
   /* 🔴 ด่านสุดท้ายฝั่งเบราว์เซอร์ — ต่อให้มีคนปลด disabled ใน devtools ก็ต้องไม่หลุด
      (ด่านจริงอยู่ที่ worker ซึ่งปฏิเสธยอด > 3,000 อยู่แล้ว · ชั้นนี้กันไม่ให้ยิงไปตั้งแต่ต้น) */
   var isCr=(KIND==='credit');
+  /* 🔴 แพ็กโค้ชยังไม่เปิดขาย — ชั้นที่ 2 จาก 3 (ชั้น 3 คือ worker ปฏิเสธ kind!=='credit') */
+  if(!isCr&&!B.PLANS_OPEN){alert(B.t('pl_free_t')+'\n'+B.t('pl_free_m'));return;}
   if(!isCr&&YR&&!B.YEARLY_OPEN){alert(B.t('yr_soon_t')+'\n'+B.t('yr_soon_m'));return;}
   /* เครดิตเติมเข้ากระเป๋าที่ผูกกับอีเมล ⇒ บัญชี LINE ล้วนจ่ายแล้วเติมไม่เข้า
      (worker ปฏิเสธซ้ำด้วย `credit_needs_email` — ชั้นนี้ให้ผู้ใช้รู้เหตุผลก่อน) */
@@ -187,13 +218,21 @@ function payNow(){
   if(!B.accountKey()){alert(B.t('need_login_t')+'\n\n'+B.t('need_login_m'));try{window.open('open.html','_blank');}catch(x){}return;}
   var ag=document.getElementById('agree');if(ag&&!ag.checked){alert(B.t('consent_req'));return;}
   if(!B.OMISE_READY){try{window.open(B.LINE_URL,'_blank');}catch(x){}return;}
+  /* ล็อกปุ่มทันทีที่ผ่านด่านทั้งหมด — ก่อนงานที่กินเวลาชิ้นแรก (โหลด omise.js) */
+  setPaying(true);
   loadOmise(function(){
     try{Omise.setPublicKey(B.OMISE_PUBLIC_KEY);}catch(e){}
     var exp=(document.getElementById('card-exp').value||'').split('/');
     Omise.createToken('card',{name:document.getElementById('card-name').value,number:(document.getElementById('card-num').value||'').replace(/\s/g,''),expiration_month:(exp[0]||'').trim(),expiration_year:('20'+(exp[1]||'').trim()).slice(-4),security_code:document.getElementById('card-cvv').value},function(status,resp){
-      if(status!==200){alert(resp.message||'card error');return;}
+      /* บัตรผิดรูป = ยังไม่มีอะไรถูกส่งไปเลย ⇒ ปลดปุ่มให้แก้แล้วลองใหม่ได้ทันที */
+      if(status!==200){setPaying(false);alert(resp.message||'card error');return;}
       fetch(B.CHARGE_ENDPOINT+'/charge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:resp.id,plan:PLAN,cycle:isCr?'once':(YR?'yr':'mo'),account:B.accountKey()})})
         .then(function(r){return r.json();}).then(function(j){
+          /* 🔴 ด่านฝั่ง server บอกว่า "ไม่สร้างรายการให้" — ไม่มีการตัดเงินเกิดขึ้น
+             ⇒ **ห้ามพาไปหน้า "ชำระเงินไม่สำเร็จ"** เพราะจะทำให้ผู้ใช้เข้าใจว่าบัตรมีปัญหา
+                แล้วไปลองบัตรใบอื่น ทั้งที่เหตุผลจริงคือ "รายการก่อนหน้ายังค้างอยู่" */
+          if(j&&j.error==='duplicate_pending'){setPaying(false);alert(B.t('pay_dup_t')+'\n\n'+B.t('pay_dup_m'));return;}
+          if(j&&j.error==='rate_limited'){setPaying(false);alert(B.t('pay_rate_t')+'\n\n'+B.t('pay_rate_m'));return;}
           /* 🔴 3-D Secure — บรรทัดนี้คือหัวใจ ห้ามลบ
              บัญชีเราถูกบังคับ 3DS ทุกรายการ ⇒ charge ตอบ `pending` + `authorize_uri`
              (หน้ายืนยัน OTP/แอปธนาคาร) · ถ้าไม่พาผู้ใช้ไปที่นั่น charge จะค้างแล้วหมดอายุ

@@ -46,8 +46,20 @@ input[type=file]{display:none}
 .note{font-size:11px;color:#3f5170;background:#eef3fb;border:1px solid #d8e4f5;border-radius:10px;padding:9px 11px;line-height:1.5}
 
 /* ===================== CARD (light premium · ported from preview) ===================== */
+/* 🔴 2569-08-01 · --mut ของ #card เคยเป็น #7B8AA5 (เทาอ่อนกว่าของ :root)
+   ═══════════════════════════════════════════════════════════════════════════
+   ทุกบล็อกในการ์ดนั่งบนกระจกฝ้า --glass rgba(255,255,255,.78) ทับไล่สีของ #card
+   ⇒ พื้นจริงที่แย่สุดคือสต็อปเข้มสุด #EEF6FF ผสมฝ้าแล้ว = #FBFDFF
+   #7B8AA5 บนพื้นนั้นได้ 3.38:1 (บนขาวล้วนก็ยังแค่ 3.44:1) ⇒ **ตกเกณฑ์ตัวอักษร 4.5:1**
+   จุดที่โดน: .dlfoot .dlx>span · .quote.dash .qt · .foot .ft span · .cstat .sv small
+             · .heroc .hrtx · .hlbl · .hbig small · .scard .sl/.sv small/.sub · .trendc .th span
+             · .cby · .stat .sl · .tag · .subln span  (ทั้งหมดเป็นข้อความจริง ไม่ใช่ของตกแต่ง)
+   ⇒ ยุบกลับไปใช้ค่าเดียวกับ :root #5E6F8A (5.06:1 บนพื้นการ์ด · 5.15:1 บนขาว)
+   ผลพลอยได้: ด่าน G6 เลิกฟ้อง "--mut ประกาศ 2 ค่าในไฟล์เดียว" — ค่าเดียวทั้งไฟล์แล้ว
+   ⚠️ ค่าดิบ #7B8AA5 ที่ฝังใน <script> (CARD_MUT · ป้ายแกนของ trendSVG) ถูกเปลี่ยนตามด้วย
+      ทั้งชุด ไม่งั้นการ์ดจะมีเทาสองเฉดที่แปลว่าเรื่องเดียวกัน */
 #card{width:1080px;position:relative;overflow:hidden;color:var(--ink);font-family:'Kanit',sans-serif;
-  background:linear-gradient(180deg,#FFFFFF 0%,#F4FAFF 55%,#EEF6FF 100%);--blue:#1150C8;--navy:#10233F;--deep:#0B3D9E;--cyan:#25C7FF;--ink:#10233F;--mut:#7B8AA5;--line:#DDE7F5;--soft:#EEF6FF;--glass:rgba(255,255,255,.78);--green:#12B7A8}
+  background:linear-gradient(180deg,#FFFFFF 0%,#F4FAFF 55%,#EEF6FF 100%);--blue:#1150C8;--navy:#10233F;--deep:#0B3D9E;--cyan:#25C7FF;--ink:#10233F;--mut:#5E6F8A;--line:#DDE7F5;--soft:#EEF6FF;--glass:rgba(255,255,255,.78);--green:#12B7A8}
 #card.sq{height:1080px}#card.t916{height:1920px}
 #card .tech{position:absolute;inset:0;pointer-events:none;
   background:
@@ -135,7 +147,12 @@ input[type=file]{display:none}
 /* footer */
 .foot{display:flex;align-items:center;gap:22px;background:var(--glass);border:1px solid var(--line);border-radius:24px;padding:22px 26px;box-shadow:0 16px 42px rgba(13,54,110,.10)}
 .foot .ic{width:84px;height:84px;border-radius:20px;background:transparent;display:flex;align-items:center;justify-content:center;flex:none;overflow:hidden}
-.foot .ic svg{width:42px;height:42px;color:#fff}
+/* 🗑 2569-08-01 · ลบ `.foot .ic svg{width:42px;height:42px;color:#fff}` — กฎตาย
+   `ftReal()` (ฟังก์ชันเดียวที่สร้าง `.foot`) ใส่ `<img class="appicon">` ใน `.ic` เสมอ
+   ไม่เคยมี <svg> · และ `.foot .ic` เองประกาศ `background:transparent`
+   ⇒ ถ้ามี svg จริงมันจะเป็นไอคอน**ขาวบนกระจกฝ้าสีขาว** = 1.02:1 มองไม่เห็นเลย
+   กฎที่ไม่มีใครใช้แต่ตกเกณฑ์ = FAIL ค้างในด่านโดยไม่มีอะไรให้แก้บนจอ ⇒ ลบทิ้ง
+   (ถ้าวันไหนเปลี่ยนกลับมาใช้ svg ต้องใส่พื้นเข้มให้ `.ic` พร้อมกัน) */
 .foot .ic .appicon{width:100%;height:100%;object-fit:cover;border-radius:20px}
 .foot .ft{flex:1}.foot .ft b{display:block;font-size:26px;color:var(--navy)}
 .foot .ft span{font-size:18px;color:var(--mut)}
@@ -563,7 +580,7 @@ function multiChart(series,w,h){
    ⇒ ทุก SVG ที่ถูกวาดใน #card ต้องระบุสีตรง ๆ · ic() แทน currentColor ตอนประกอบ
    ไอคอนของหน้าเว็บ (นอก #card) ใช้ currentColor ต่อได้ตามปกติ */
 function ic(svg,color){return String(svg).split('currentColor').join(color);}
-const CARD_BLUE='#1150C8', CARD_MUT='#7B8AA5', ON_BLUE='#ffffff';
+const CARD_BLUE='#1150C8', CARD_MUT='#5E6F8A', ON_BLUE='#ffffff';
 
 /* ARROW ใช้เฉพาะใน ftReal() ซึ่งไม่มีใครเรียก ⇒ ไม่เคยถูกวาดใน #card ⇒ ไม่แตะ */
 const ARROW='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>';
@@ -596,7 +613,7 @@ function sdUp(t){return '<div class="sd up"><svg viewBox="0 0 24 24" fill="none"
 function sSub(t){return '<div class="sub">'+t+'</div>';}
 function ringSVG(pct){var C=2*Math.PI*88;var off=C*(1-pct);return '<div class="ring"><svg viewBox="0 0 210 210"><defs><linearGradient id="rg2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#2f7bff"/><stop offset="1" stop-color="#25C7FF"/></linearGradient></defs><circle cx="105" cy="105" r="88" fill="none" stroke="#e3ecfa" stroke-width="22"/><circle cx="105" cy="105" r="88" fill="none" stroke="url(#rg2)" stroke-width="22" stroke-linecap="round" stroke-dasharray="'+C.toFixed(1)+'" stroke-dashoffset="'+off.toFixed(1)+'" transform="rotate(-90 105 105)"/></svg><div class="pc">'+Math.round(pct*100)+'<small>%</small></div></div>';}
 function _monthLabels(n){var thM=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];var enM=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];var arr=L==='en'?enM:thM;var now=new Date().getMonth();var out=[];for(var i=n-1;i>=0;i--){out.push(arr[((now-i)%12+12)%12]);}return out;}
-function trendSVG(arr,goalW,unit){if(!arr||arr.length<2)arr=[RC.wBefore||0,RC.wAfter||0];var ex=goalW!=null?arr.concat([goalW]):arr;var vmin=Math.min.apply(null,ex)-1,vmax=Math.max.apply(null,ex)+1;if(vmax<=vmin)vmax=vmin+1;var n=arr.length,x0=80,x1=900,top=30,bot=210;function X(i){return x0+(x1-x0)*i/(n-1);}function Y(v){return top+(vmax-v)/(vmax-vmin)*(bot-top);}var pts=arr.map(function(v,i){return X(i).toFixed(0)+','+Y(v).toFixed(1);}).join(' ');var dots=arr.map(function(v,i){return '<circle cx="'+X(i).toFixed(0)+'" cy="'+Y(v).toFixed(1)+'" r="7" fill="#1150C8" stroke="#fff" stroke-width="3"/>';}).join('');var labs=arr.map(function(v,i){return '<text x="'+X(i).toFixed(0)+'" y="'+(Y(v)-16).toFixed(1)+'" text-anchor="middle" font-size="20" font-weight="800" fill="#10233F" font-family="Kanit">'+fmt(v)+'</text>';}).join('');var mo=_monthLabels(n);var xlab=mo.map(function(m,i){return '<text x="'+X(i).toFixed(0)+'" y="248" text-anchor="middle" font-size="19" fill="#7B8AA5" font-family="Kanit">'+m+'</text>';}).join('');var gl='';if(goalW!=null){var gy=Y(goalW);gl='<line x1="60" y1="'+gy.toFixed(1)+'" x2="920" y2="'+gy.toFixed(1)+'" stroke="#9cc0f5" stroke-width="2" stroke-dasharray="7 6"/><text x="915" y="'+(gy-8).toFixed(1)+'" text-anchor="end" font-size="17" fill="#7B8AA5" font-family="Kanit">'+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+unit+'</text>';}return '<svg viewBox="0 0 980 270">'+gl+'<polyline points="'+pts+'" fill="none" stroke="#1150C8" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>'+dots+labs+xlab+'</svg>';}
+function trendSVG(arr,goalW,unit){if(!arr||arr.length<2)arr=[RC.wBefore||0,RC.wAfter||0];var ex=goalW!=null?arr.concat([goalW]):arr;var vmin=Math.min.apply(null,ex)-1,vmax=Math.max.apply(null,ex)+1;if(vmax<=vmin)vmax=vmin+1;var n=arr.length,x0=80,x1=900,top=30,bot=210;function X(i){return x0+(x1-x0)*i/(n-1);}function Y(v){return top+(vmax-v)/(vmax-vmin)*(bot-top);}var pts=arr.map(function(v,i){return X(i).toFixed(0)+','+Y(v).toFixed(1);}).join(' ');var dots=arr.map(function(v,i){return '<circle cx="'+X(i).toFixed(0)+'" cy="'+Y(v).toFixed(1)+'" r="7" fill="#1150C8" stroke="#fff" stroke-width="3"/>';}).join('');var labs=arr.map(function(v,i){return '<text x="'+X(i).toFixed(0)+'" y="'+(Y(v)-16).toFixed(1)+'" text-anchor="middle" font-size="20" font-weight="800" fill="#10233F" font-family="Kanit">'+fmt(v)+'</text>';}).join('');var mo=_monthLabels(n);var xlab=mo.map(function(m,i){return '<text x="'+X(i).toFixed(0)+'" y="248" text-anchor="middle" font-size="19" fill="#5E6F8A" font-family="Kanit">'+m+'</text>';}).join('');var gl='';if(goalW!=null){var gy=Y(goalW);gl='<line x1="60" y1="'+gy.toFixed(1)+'" x2="920" y2="'+gy.toFixed(1)+'" stroke="#9cc0f5" stroke-width="2" stroke-dasharray="7 6"/><text x="915" y="'+(gy-8).toFixed(1)+'" text-anchor="end" font-size="17" fill="#5E6F8A" font-family="Kanit">'+T('เป้าหมาย ','Goal ')+fmt(goalW)+' '+unit+'</text>';}return '<svg viewBox="0 0 980 270">'+gl+'<polyline points="'+pts+'" fill="none" stroke="#1150C8" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>'+dots+labs+xlab+'</svg>';}
 function perRange(){
   var wk=RC.period?(parseInt((''+RC.period).replace(/[^0-9]/g,''))||0):0;
   var days=wk>0?wk*7:(RC.streakDays||0);

@@ -7,7 +7,10 @@
 <meta property="og:title" content="โปรไฟล์โค้ช · IUFIT">
 <meta property="og:description" content="ดูโปรไฟล์โค้ชและเริ่มเทรนผ่านแอป IUFIT">
 <style>
-:root{--navy:#12305f;--blue:#1150C8;--blue2:#065fce;--green:#0D7C4D;--warn:#E8940E;--bg:#EAF2FF;--card:#fff;--line:#DDE7F5;--muted:#626D83;--ink:#10233F;--line-green:#06c755;--soft:#eef4ff}
+:root{--navy:#12305f;--blue:#1150C8;--blue2:#065fce;--green:#0D7C4D;--warn:#E8940E;--bg:#EAF2FF;--card:#fff;--line:#DDE7F5;--muted:#626D83;--ink:#10233F;--line-green:#06c755;--soft:#eef4ff;
+  /* --line-strong = ขอบที่บอกขอบเขตของตัวควบคุม (WCAG 1.4.11 ≥3:1) · ดูเหตุผลเต็มใน billing.css
+     --line #DDE7F5 บนขาวได้แค่ 1.25:1 ⇒ ใช้เป็นขอบปุ่มไม่ได้ · #7B8AA5 ได้ 3.44:1 บนขาว */
+  --line-strong:#7B8AA5}
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Thai','Sarabun',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
 .wrap{max-width:520px;margin:0 auto;padding:20px 15px 60px}
@@ -39,7 +42,7 @@ body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'No
 .btn.ghost{background:var(--soft);color:var(--blue)}
 /* ปุ่ม LINE แบบขาวตามไกด์ไลน์ LINE — พื้นขาว · ขอบเทา · ไอคอนเขียว (เหมือน billing.css)
    อักษร --navy บนขาว = 13.01:1 · เดิม #06331C บนเขียว 6.21:1 (และ #06331C ไม่มีในพาเลตไหนเลย) */
-.btn.line{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+.btn.line{background:#fff;color:var(--navy);border:1.5px solid var(--line-strong)}
 .btn.line svg{color:var(--line-green)}
 .how ol{margin:8px 0 0;padding-left:20px}
 .how li{font-size:12.5px;margin:5px 0;color:var(--ink)}

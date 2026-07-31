@@ -6,7 +6,9 @@
 <title>ขอลบบัญชีและข้อมูล · IUFIT</title>
 <meta name="description" content="วิธีลบบัญชี IUFIT และข้อมูลทั้งหมดของคุณ — ทำเองในแอป หรือส่งคำขอถึงเรา">
 <style>
-:root{--navy:#071E4A;--blue:#1150C8;--bg:#F6F9FF;--card:#fff;--line:#DDE7F5;--muted:#657289;--ink:#10233F;--red:#e8505b}
+:root{--navy:#071E4A;--blue:#1150C8;--bg:#F6F9FF;--card:#fff;--line:#DDE7F5;--muted:#657289;--ink:#10233F;--red:#e8505b;
+  /* --line-strong = ขอบที่บอกขอบเขตของตัวควบคุม (WCAG 1.4.11 ≥3:1) · ดูเหตุผลเต็มใน billing.css */
+  --line-strong:#7B8AA5}
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Thai',sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
 .wrap{max-width:780px;margin:0 auto;padding:28px 18px 70px}
@@ -28,7 +30,7 @@ a{color:var(--blue);font-weight:700}
 /* ปุ่ม LINE แบบขาวตามไกด์ไลน์ LINE — ชุดเดียวกับ billing.css / t.html
    อักษร --navy บนขาว = 16.23:1 · เดิม #06331C บนเขียว 6.21:1 (สีนอกพาเลตทั้ง IUFIT และ LINE)
    ปุ่มนี้เป็นข้อความล้วน ไม่มีไอคอน ⇒ ไม่ตั้งกฎ svg{color:#06C755} ทิ้งไว้ให้เป็น FAIL ค้าง */
-.btn.line{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+.btn.line{background:#fff;color:var(--navy);border:1.5px solid var(--line-strong)}
 </style>
 </head>
 <body>

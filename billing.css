@@ -6,6 +6,15 @@
   --green:#0b804c; /* 4.62:1 บน #eafaf0 · ขาวบนพื้นนี้ 4.99:1 */
   --amber:#9c6300; /* 4.69:1 บน #fff7e6 */
   --bg:#F6F9FF;--card:#fff;--line:#DDE7F5;--muted:#5f6b7a;--ink:#10233F;--line-green:#06c755;
+  /* 🔴 2569-08-01 · เส้นขอบมีสองบทบาท ต้องมีสองค่า — ค่าเดียวทำสองงานไม่ได้
+     --line       #DDE7F5  เส้นคั่น/ขอบการ์ด = ของตกแต่ง ไม่มีเกณฑ์คอนทราสต์บังคับ
+     --line-strong #7B8AA5 ขอบที่ **บอกขอบเขตของตัวควบคุม** (ปุ่ม · ช่องกรอก)
+                           WCAG 1.4.11 บังคับ ≥ 3:1 · ค่านี้ได้ 3.44:1 บนขาว · 3.27:1 บน --bg
+     ทำไมถึงต้องแยก: ปุ่ม LINE แบบขาว (.btn.line / .cta.line) พื้นขาวบนพื้นหน้าเกือบขาว
+     ⇒ **ขอบคือสิ่งเดียวที่บอกว่าปุ่มอยู่ตรงไหน** แต่ #DDE7F5 บนขาวได้แค่ 1.25:1
+     (และบน --bg 1.18:1) ⇒ คำอธิบายเดิมที่เขียนว่า "ขอบช่วยบอกขอบเขตแทน" ไม่เป็นจริง
+     ⚠️ ห้ามดัน --line ทั้งตัวให้เข้ม — เส้นคั่นในการ์ดที่เข้ม 3:1 จะแย่งสายตากับตัวหนังสือ */
+  --line-strong:#7B8AA5;
 }
 *{box-sizing:border-box}
 body{margin:0;font-family:'Kanit','Segoe UI','Noto Sans Thai',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
@@ -43,15 +52,19 @@ h1{font-size:24px;color:var(--navy);margin:14px 0 4px;letter-spacing:-.01em}
    แบบขาวอยู่ในไกด์ไลน์เต็มร้อย และแก้ได้มากกว่า:
      · อักษร --navy บนขาว = 16.23:1 (เดิมดำบนเขียว 9.31:1)
      · พื้นเขียว #06c755 บนพื้นหน้า #f6f9ff ได้แค่ 2.14:1 ⇒ ปุ่มแยกจากพื้นไม่ออก · ขอบช่วยบอกขอบเขตแทน
+   🔴 2569-08-01 · ประโยคบรรทัดบน ("ขอบช่วยบอกขอบเขตแทน") **ไม่เคยเป็นจริงจนถึงวันนี้** —
+      ขอบเดิมคือ --line #DDE7F5 ซึ่งบนพื้นขาวได้ 1.25:1 (บน --bg 1.18:1) ⇒ ปุ่มพื้นขาว
+      ขอบขาวจาง ๆ บนพื้นหน้าเกือบขาว = ไม่มีอะไรบอกขอบเขตเลยทั้งพื้นและขอบ
+      ⇒ เปลี่ยนเป็น --line-strong #7B8AA5 (3.44:1 บนขาว) ⇒ ตอนนี้ประโยคนั้นเป็นจริงแล้ว
    ⚠️ ห้ามใส่ #06331C กลับมา — ไม่มีอยู่ในพาเลตของ IUFIT หรือของ LINE
    หมายเหตุ: ปุ่มชุดนี้เป็นข้อความล้วน ไม่มีไอคอน ⇒ ไม่ตั้งกฎ svg{color:#06C755} ทิ้งไว้
    (กฎที่ไม่มีใครใช้ = FAIL ค้างในด่านโดยไม่มีใครเห็นบนจอ · ถ้าวันไหนใส่โลโก้ LINE ค่อยเพิ่มพร้อมกัน) */
-.btn.line{background:#fff;color:var(--navy);border:1.5px solid var(--line)}
+.btn.line{background:#fff;color:var(--navy);border:1.5px solid var(--line-strong)}
 .btn.ghost{background:#eef2f7;color:var(--blue)}
 .btn.green{background:var(--green);color:#fff}
 .btn:disabled{opacity:.55;cursor:default}
 .cta{display:block;text-align:center;text-decoration:none;font-weight:800;border-radius:11px;padding:12px;font-size:14px;cursor:pointer;border:none;font-family:inherit;width:100%}
-.cta.line{background:#fff;color:var(--navy);border:1.5px solid var(--line)} /* ปุ่ม LINE แบบขาว — ดูเหตุผลที่ .btn.line */
+.cta.line{background:#fff;color:var(--navy);border:1.5px solid var(--line-strong)} /* ปุ่ม LINE แบบขาว — ดูเหตุผลที่ .btn.line */
 .cta.pri{background:var(--blue);color:#fff}
 .cta.ghost{background:#eef2f7;color:var(--blue)}
 .addon{background:#f7f9fc;border:1px dashed #cdddf5}
@@ -74,9 +87,9 @@ a.blue{color:var(--blue);font-weight:700}
 .sumrow.total{border-bottom:none;font-weight:850;font-size:17px;color:var(--navy);padding-top:11px}
 .field{margin:10px 0}
 .field label{display:block;font-size:12.5px;font-weight:700;color:var(--navy);margin-bottom:5px}
-.field input{width:100%;border:1.5px solid var(--line);border-radius:11px;padding:11px 13px;font-size:14.5px;font-family:inherit}
+.field input{width:100%;border:1.5px solid var(--line-strong);border-radius:11px;padding:11px 13px;font-size:14.5px;font-family:inherit}
 .pm{display:flex;gap:10px;margin:8px 0 14px}
-.pm button{flex:1;border:1.5px solid var(--line);background:#fff;border-radius:12px;padding:13px;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;color:var(--ink)}
+.pm button{flex:1;border:1.5px solid var(--line-strong);background:#fff;border-radius:12px;padding:13px;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;color:var(--ink)}
 .pm button.on{border-color:var(--blue);background:#eef4ff;color:var(--blue)}
 .result{text-align:center;padding:30px 18px}
 .result .ic{width:64px;height:64px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:10px}

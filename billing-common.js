@@ -95,10 +95,36 @@
      (และอย่าลืมขยับ `MAX_THB_PER_CHARGE` ใน `workers/iufit-omise/src/index.js` ให้สอดคล้อง) */
   var YEARLY_OPEN=false;
 
+  /* 🔴 2569-08-01 · **แพ็กโค้ชยังไม่เปิดขาย — แต่เครดิต AI ซื้อได้** (คำสั่งเจ้าของ)
+     ═══════════════════════════════════════════════════════════════════════════
+     เหตุผล: หน้าขายประกาศไว้ว่า **"ฟรีถึง 31 ธ.ค. 2026 · ราคาด้านล่างเป็นราคาหลังจากนั้น"**
+     ถ้าเก็บเงินค่าแพ็กตอนนี้ = เก็บเงินสวนกับสิ่งที่ประกาศเอง ⇒ ลูกค้าขอเงินคืนได้เต็ม ๆ
+
+     ⭐ เจ้าของเลือก **ไม่แก้ข้อความหน้าขาย** แต่ปิดที่ปุ่มแทน — คำประกาศจึงยังเป็นจริงอยู่
+
+     ทำไมเครดิต AI ยังขายได้: มันเป็น **คนละสินค้า** ที่ไม่เคยอยู่ในคำสัญญา "ฟรีถึงสิ้นปี"
+     (คำสัญญานั้นพูดถึงแพ็กโค้ชเท่านั้น) · เครดิตซื้อครั้งเดียวจบ ไม่มีรอบบิล ไม่มี autopay
+
+     🔴 ปิด 3 ชั้นเหมือนด่านรายปี — ห้ามถอดชั้นไหนโดยคิดว่าซ้ำซ้อน:
+        1. `renderPay()` — ล็อกฟอร์มบัตร + ปุ่มจ่าย เมื่อ `KIND==='plan'`
+        2. `payNow()`    — ปฏิเสธตั้งแต่บรรทัดแรก (กันคนปลด disabled ใน devtools)
+        3. **worker**    — `/charge` ปฏิเสธ `kind!=='credit'` (ด่านจริง · ยิง API ตรงข้ามหน้าเว็บได้)
+
+     เปิดขายเมื่อไหร่: เปลี่ยนเป็น true ที่นี่ **และ** ปลดด่านใน worker พร้อมกัน
+     ถ้าเปลี่ยนแค่ที่นี่ ปุ่มจะกดได้แต่ server ปฏิเสธ ⇒ ผู้ใช้เห็น "ชำระเงินไม่สำเร็จ" */
+  var PLANS_OPEN=false;
+
   /* Cloudflare Worker `iufit-omise` — สร้าง charge ฝั่ง server (ที่เก็บ secret key)
-     ⚠️ ซอร์สของ worker **ไม่อยู่ในโปรเจกต์นี้** อยู่ที่ Cloudflare Dashboard → Workers & Pages
-        ⇒ แก้ 3DS/webhook ต้องไปแก้ที่นั่น หรือเอาซอร์สเข้ามาเก็บในรีโปให้ตรวจได้ */
+     ⭐ 2569-07-31 · ซอร์สอยู่ในรีโปแล้วที่ `workers/iufit-omise/src/index.js`
+        (คอมเมนต์เดิมเขียนว่า "ไม่อยู่ในโปรเจกต์นี้" ซึ่งล้าสมัยไปแล้ว) */
   var CHARGE_ENDPOINT='https://iufit-omise.ar-weerapong.workers.dev';
+
+  /* Firebase Web API key — **สาธารณะโดยการออกแบบ** (Google เรียกว่า "ตัวระบุโปรเจกต์")
+     ค่าเดียวกับ `src/config/runtime.ts` → `IUFIT_FB_KEY` ซึ่งอยู่ใน bundle ของแอปที่
+     เสิร์ฟบน iufit.com อยู่แล้ว ⇒ ไม่ใช่ความลับ และซ่อนที่นี่ก็ไม่ได้เพิ่มอะไร
+     🔴 ต่างจาก secret key ของ Omise (`skey_…`) โดยสิ้นเชิง — **ตัวนั้นห้ามอยู่ในไฟล์นี้เด็ดขาด**
+     ใช้ทำอย่างเดียว: ต่ออายุ id token ของผู้ใช้เพื่อเอาไปยืนยันตัวตนกับ worker */
+  var FB_KEY='AIzaSyBX7njtAb7n6uN1JG_e5QSq2Gkor8Ji4cc';
   var LINE_URL='https://line.me/R/ti/p/@987qyznd';
   /* ===== ข้อมูลติดต่อผู้ให้บริการ (แสดงต่อสาธารณะ) =====
      ⭐ 2569-07-30 · เจ้าของตัดสินใจใหม่ (เพื่อปลดข้อจำกัดบัญชี Omise: โอนยอดถูกระงับ / บังคับ 3DS / จำกัด 3,000 บ.)
@@ -223,6 +249,12 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
          ⚠️ วันที่นี้เป็น **คำสัญญาต่อสาธารณะ** ถ้าจะเลื่อน ต้องแก้ที่นี่ที่เดียวและแจ้งลูกค้า */
       yr_soon_t:'ระบบชำระรายปียังไม่เปิดให้บริการ ',
       yr_soon_m:'จะเปิดให้บริการวันที่ 1 มกราคม 2570 · ระหว่างนี้เลือกชำระแบบรายเดือนได้ตามปกติ',
+      /* แพ็กโค้ชยังไม่เปิดขาย — ต้องบอก "ยังไม่ต้องจ่าย" ไม่ใช่ "ระบบขัดข้อง"
+         เพราะสิ่งที่เกิดขึ้นคือของฟรี ไม่ใช่ความผิดพลาด */
+      pl_free_t:'ตอนนี้ยังไม่ต้องจ่าย ',
+      pl_free_m:'ทุกแพ็กใช้ฟรีถึง 31 ธ.ค. 2569 · ราคาที่เห็นคือราคาหลังจากนั้น เราจะแจ้งล่วงหน้าก่อนเริ่มเก็บเงิน',
+      pl_free_btn:'ใช้ฟรีอยู่แล้ว ไม่ต้องชำระเงิน',
+      pl_free_cr:'ถ้าต้องการเครดิต AI เพิ่ม เลือกแท็บ "เครดิต AI" ด้านบนได้เลย',
       cr_title:'แพ็กเครดิต AI',
       cr_sub:'สำหรับสแกนอาหารด้วยภาพและวิเคราะห์ด้วย AI · ซื้อครั้งเดียว ไม่มีรายเดือน',
       cr_scan:'สแกนอาหาร',
@@ -245,6 +277,36 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       pay_failed_t:'การชำระเงินไม่สำเร็จ',
       pay_failed_m:'ไม่มีการตัดเงินจากบัตรของคุณ · ลองใหม่อีกครั้งหรือทักไลน์หาเราได้เลย',
       pay_slow:'ผลยังไม่กลับมาภายในเวลาที่คาดไว้ · ไม่ต้องกังวล ถ้าเงินถูกตัดจริงระบบจะเปิดแพ็กให้อัตโนมัติ · ตรวจสอบได้ที่หน้าแพ็กของฉัน หรือทักไลน์หาเรา',
+      /* ===== ยกเลิก / เปิดการต่ออายุอัตโนมัติ (my-plan.html) ===========================
+         🔴 ถ้อยคำต้องตรงกับสิ่งที่โค้ดทำจริงเป๊ะ ๆ — worker `/autopay` แตะแค่ฟิลด์ `autopay`
+            **ไม่แตะ `exp` เลย** ⇒ ที่เขียนว่า "ใช้งานได้ถึงวันที่ …" เป็นความจริง ไม่ใช่คำปลอบ
+            ถ้าวันไหนมีใครแก้ให้ตัดสิทธิ์ทันที ต้องมาแก้ข้อความชุดนี้ด้วย */
+      ap_title:'การต่ออายุอัตโนมัติ',
+      ap_loading:'กำลังตรวจสอบสถานะการต่ออายุ…',
+      ap_working:'กำลังดำเนินการ…',
+      ap_on:'<b>เปิดอยู่</b> — เมื่อถึงวันหมดอายุ ({date}) ระบบจะเรียกเก็บเงินจากบัตรที่บันทึกไว้ เพื่อต่อรอบถัดไปให้อัตโนมัติ',
+      ap_off:'<b>ปิดแล้ว</b> — จะไม่มีการเรียกเก็บเงินอีก และคุณ<b>ยังใช้งานแพ็กได้ตามปกติจนถึงวันที่ {date}</b>',
+      ap_off_nocard:'<b>ปิดอยู่</b> — ไม่มีการเรียกเก็บเงินอัตโนมัติสำหรับแพ็กนี้ · ต่ออายุเองได้ที่หน้าสมัคร',
+      ap_cancel:'ยกเลิกการต่ออายุอัตโนมัติ',
+      ap_resume:'เปิดการต่ออายุอัตโนมัติอีกครั้ง',
+      ap_confirm:'ยกเลิกการต่ออายุอัตโนมัติใช่ไหม?\n\n• บัตรของคุณจะไม่ถูกเรียกเก็บเงินอีก\n• แพ็ก {plan} ยังใช้งานได้ตามปกติจนถึงวันที่ {date} — ไม่ถูกตัดสิทธิ์ทันที\n• เปิดการต่ออายุกลับได้ทุกเมื่อที่หน้านี้',
+      ap_confirm_on:'เปิดการต่ออายุอัตโนมัติอีกครั้งใช่ไหม?\n\n• เมื่อถึงวันที่ {date} ระบบจะเรียกเก็บเงินจากบัตรที่บันทึกไว้เพื่อต่อรอบถัดไป\n• ยกเลิกได้ทุกเมื่อที่หน้านี้',
+      ap_done_t:'ยกเลิกการต่ออายุอัตโนมัติแล้ว',
+      ap_done_m:'จะไม่มีการเรียกเก็บเงินอีก · แพ็กของคุณใช้งานได้ถึงวันที่ {date}',
+      ap_res_t:'เปิดการต่ออายุอัตโนมัติแล้ว',
+      ap_res_m:'ระบบจะต่อรอบถัดไปให้อัตโนมัติเมื่อถึงวันที่ {date}',
+      ap_login_t:'ต้องเข้าสู่ระบบก่อนจัดการการต่ออายุ',
+      ap_login_m:'เพื่อความปลอดภัย เราต้องยืนยันก่อนว่าคุณเป็นเจ้าของบัญชีนี้จริง · กรุณาเปิดแอป IUFIT เข้าสู่ระบบด้วยอีเมล แล้วกลับมาที่หน้านี้อีกครั้ง',
+      ap_line_t:'ยกเลิกผ่านทีมงาน',
+      ap_line_m:'บัญชีนี้ยังจัดการการต่ออายุจากหน้าเว็บไม่ได้ · ทักไลน์แจ้งว่า “ขอยกเลิกการต่ออายุอัตโนมัติ” ทีมงานจะปิดให้ในเวลาทำการ และสิทธิ์ของคุณจะอยู่จนครบรอบที่ชำระไว้แล้ว',
+      ap_fail_t:'ยังทำรายการไม่สำเร็จ',
+      ap_fail_m:'ยังไม่มีการเปลี่ยนแปลงใด ๆ กับแพ็กของคุณ · ลองใหม่อีกครั้ง หรือทักไลน์ให้เราช่วยยกเลิกให้',
+      /* ===== กันกดจ่ายซ้ำ / ยิงถี่เกิน (billing.html) ================================ */
+      pay_processing:'กำลังดำเนินการ…',
+      pay_dup_t:'มีรายการที่กำลังดำเนินการอยู่แล้ว',
+      pay_dup_m:'คุณเพิ่งเริ่มชำระแพ็กนี้ไปเมื่อสักครู่ · เพื่อไม่ให้ถูกตัดเงินซ้ำ ระบบจึงยังไม่สร้างรายการใหม่ · ตรวจที่หน้า “แพ็กของฉัน” ก่อน หรือรอสักครู่แล้วลองใหม่',
+      pay_rate_t:'ลองบ่อยเกินไป',
+      pay_rate_m:'เพื่อความปลอดภัยของระบบชำระเงิน กรุณารอสักครู่แล้วลองใหม่อีกครั้ง · ยังไม่มีการตัดเงินจากบัตรของคุณ',
       testmode_t:'⚠️ โหมดทดสอบ — ไม่มีการตัดเงินจริง',
       testmode_m:'หน้านี้กำลังใช้คีย์ทดสอบของ Omise · รับได้เฉพาะบัตรทดสอบเท่านั้น บัตรจริงจะถูกปฏิเสธ · ถ้าคุณเห็นข้อความนี้บนเว็บจริง กรุณาแจ้งเราทาง LINE'
     },
@@ -300,6 +362,10 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       contact_title:'Service provider contact',c_name:'Business owner',c_addr:'Address',c_addr_show:'▾ Show business address',c_phone:'Phone',c_hours:'Business hours',c_email:'Email',c_line:'LINE',
       yr_soon_t:'Yearly billing is not available yet ',
       yr_soon_m:'It opens on 1 January 2027. In the meantime, monthly billing works as usual.',
+      pl_free_t:'No payment needed right now ',
+      pl_free_m:'Every plan is free through 31 Dec 2026. The prices shown apply after that — we will tell you before any charge begins.',
+      pl_free_btn:'Already free — no payment needed',
+      pl_free_cr:'Need more AI credits? Switch to the "AI credits" tab above.',
       cr_title:'AI credit packs',
       cr_sub:'For photo food scanning and AI analysis · one-time purchase, no subscription',
       cr_scan:'Food scans',
@@ -320,6 +386,33 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       pay_failed_t:'Payment was not completed',
       pay_failed_m:'Your card was not charged. Please try again or message us on LINE.',
       pay_slow:'We have not received the result yet. Don’t worry — if the payment went through, your plan will activate automatically. Check My plan, or message us on LINE.',
+      /* ===== cancel / resume auto-renewal (my-plan.html) ============================= */
+      ap_title:'Auto-renewal',
+      ap_loading:'Checking your auto-renewal status…',
+      ap_working:'Working…',
+      ap_on:'<b>On</b> — on your expiry date ({date}) we charge the saved card to renew the next cycle automatically.',
+      ap_off:'<b>Off</b> — you will not be charged again, and <b>you keep full access until {date}</b>.',
+      ap_off_nocard:'<b>Off</b> — no automatic charges for this plan · you can renew yourself on the Subscribe page.',
+      ap_cancel:'Cancel auto-renewal',
+      ap_resume:'Turn auto-renewal back on',
+      ap_confirm:'Cancel auto-renewal?\n\n• Your card will not be charged again\n• Your {plan} plan keeps working until {date} — access is NOT cut off now\n• You can turn it back on anytime on this page',
+      ap_confirm_on:'Turn auto-renewal back on?\n\n• On {date} we will charge your saved card for the next cycle\n• You can cancel again anytime on this page',
+      ap_done_t:'Auto-renewal cancelled',
+      ap_done_m:'You will not be charged again · your plan stays active until {date}.',
+      ap_res_t:'Auto-renewal is on',
+      ap_res_m:'We will renew the next cycle automatically on {date}.',
+      ap_login_t:'Please sign in to manage renewal',
+      ap_login_m:'For your security we must confirm you own this account · open the IUFIT app, sign in with your email, then come back to this page.',
+      ap_line_t:'Cancel via our team',
+      ap_line_m:'This account cannot manage renewal from the website yet · message us on LINE saying “please cancel auto-renewal”. We will switch it off during business hours, and your access stays until the end of the cycle you already paid for.',
+      ap_fail_t:'That did not go through',
+      ap_fail_m:'Nothing about your plan was changed · try again, or message us on LINE and we will cancel it for you.',
+      /* ===== duplicate / too-many payment attempts (billing.html) ==================== */
+      pay_processing:'Working…',
+      pay_dup_t:'A payment is already in progress',
+      pay_dup_m:'You started paying for this plan moments ago · to avoid charging you twice we did not create a second one · check My plan first, or wait a moment and try again.',
+      pay_rate_t:'Too many attempts',
+      pay_rate_m:'For payment security, please wait a moment and try again · your card has not been charged.',
       testmode_t:'⚠️ Test mode — no real charges',
       testmode_m:'This page is using Omise test keys. Only test cards are accepted; real cards will be declined. If you see this on the live site, please let us know on LINE.'
     }
@@ -368,6 +461,40 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
 
   function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function accountKey(){var s=appState();try{if(s.lineId)return 'line:'+s.lineId;if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0)return s.fbuid;if(s.emailId)return 'email:'+s.emailId;}catch(e){}return '';}
+
+  /* ===== ยืนยันตัวตนกับ worker (ใช้ session ที่แอปสร้างไว้แล้ว) =====================
+     ⭐ 2569-07-31 · ต่อกับ **ระบบล็อกอินเดิม** ไม่ได้ประดิษฐ์กลไกใหม่
+       แอปยืนยันอีเมลด้วย OTP → ได้ Firebase session → เก็บที่ localStorage['iufit']
+       คีย์ `_fbtok` (id token) · `_fbrt` (refresh token) · `_fbexp` (หมดอายุ, ms)
+       หน้านี้อยู่โดเมนเดียวกับแอป จึงอ่านได้ตรง ๆ เหมือนที่ `appState()` ทำอยู่แล้ว
+       และ uid ของ session (`s.fbuid`) **คือค่าเดียวกับ `accountKey()`** ⇒ worker เทียบตรงได้
+
+     🔴 ทำไมต้องต่ออายุโทเคนเอง: id token อายุ 1 ชั่วโมง แต่คนเปิดหน้า "แพ็กของฉัน"
+        ทีหลังเป็นวัน ⇒ ถ้าใช้ `_fbtok` ดิบ ๆ ปุ่มยกเลิกจะพังเกือบทุกครั้ง = ฟีเจอร์หลอกตา
+
+     🔴 **ไม่เขียนกลับลง localStorage** โดยตั้งใจ — เก็บในหน่วยความจำของหน้านี้เท่านั้น
+        ถ้าเขียนกลับ เราต้อง read-modify-write ก้อน `iufit` ทั้งก้อน ซึ่งถ้าแอปเปิดอยู่
+        อีกแท็บแล้วเขียนชนกัน = ข้อมูลผู้ใช้หายทั้งก้อน · แลกกับการยิงต่ออายุ 1 ครั้ง
+        ต่อการเปิดหน้า ซึ่งถูกกว่ามาก */
+  var _tok='',_tokExp=0;
+  function authToken(cb){
+    var s=appState();
+    if(_tok&&Date.now()<_tokExp-60000){cb(_tok);return;}
+    var tok=s._fbtok||'',exp=+(s._fbexp||0);
+    if(tok&&Date.now()<exp-60000){_tok=tok;_tokExp=exp;cb(tok);return;}
+    var rt=s._fbrt||'';
+    if(!rt){cb('');return;}
+    fetch('https://securetoken.googleapis.com/v1/token?key='+encodeURIComponent(FB_KEY),{
+      method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
+      body:'grant_type=refresh_token&refresh_token='+encodeURIComponent(rt)
+    }).then(function(r){return r.json();}).then(function(j){
+      if(j&&j.id_token){_tok=j.id_token;_tokExp=Date.now()+((+j.expires_in||3600)*1000);cb(_tok);}
+      else cb('');
+    }).catch(function(){cb('');});
+  }
+  /* จัดการแพ็กเองบนเว็บได้ไหม — ต้องเป็นบัญชีอีเมลที่มี Firebase session อยู่จริง
+     บัญชี LINE ล้วนไม่มี session แบบนี้ ⇒ ต้องไปทางแอดมิน (ทักไลน์) และหน้าเว็บต้องบอกตรง ๆ */
+  function canSelfServe(){var s=appState();return accountKey().indexOf('email:')===0&&!!(s._fbtok||s._fbrt);}
   function accountLabel(){var s=appState();return s.lineName||s.emailId||(s.users&&s.users[0]&&s.users[0].name)||'';}
   function currentPlanKey(){
     var s=appState();var m=s.mem;
@@ -392,11 +519,12 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   window.IUFIT_BILLING={
     PLATFORM:PLATFORM, IS_STORE:IS_STORE, LANG:LANG, t:t, setLang:setLang,
     OMISE_READY:OMISE_READY, OMISE_PUBLIC_KEY:OMISE_PUBLIC_KEY, CHARGE_ENDPOINT:CHARGE_ENDPOINT, LINE_URL:LINE_URL,
-    YEARLY_OPEN:YEARLY_OPEN, OMISE_TEST_MODE:OMISE_TEST_MODE,
+    YEARLY_OPEN:YEARLY_OPEN, PLANS_OPEN:PLANS_OPEN, OMISE_TEST_MODE:OMISE_TEST_MODE,
     PLANS:PLANS, ADDON:ADDON, getPlan:getPlan, price:price, fmt:fmt,
     CREDIT_PACKS:CREDIT_PACKS, getCredit:getCredit, isCredit:isCredit,
     planSub:planSub, planFeats:planFeats, planBadge:planBadge,
     appState:appState, accountKey:accountKey, accountLabel:accountLabel,
+    authToken:authToken, canSelfServe:canSelfServe,
     currentPlanKey:currentPlanKey, planExpiry:planExpiry,
     trialDaysLeft:trialDaysLeft, trialActive:trialActive, trialExpired:trialExpired,
     paidActive:paidActive, daysUntil:daysUntil, reminderTier:reminderTier, today:today, qs:qs,
