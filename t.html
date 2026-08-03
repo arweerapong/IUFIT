@@ -130,7 +130,11 @@ function render(d){
    +cases
    +contacts
    +'<a class="btn pri" href="'+joinURL+'">'+IC.send+'เริ่มเทรนกับโค้ชนี้</a>'
-   +((!arr(d.contacts).length&&d.ct)?('<a class="btn line" href="'+ctURL(d.ct)+'" target="_blank" rel="noopener">'+IC.chat+'ติดต่อโค้ช · '+esc(d.ct)+'</a>'):'')
+   /* 🔒 2569-08-02 · `ctURL()` ปล่อย URL ที่ขึ้นต้นด้วย http(s) ผ่านทั้งดุ้น ⇒ ค่าอย่าง
+      `https://x" onmouseover=alert(1) x="` แตกออกจาก attribute ได้ · ค่านี้มาจาก
+      `/pub/coach/{code}/ct` ที่โค้ชเขียนเอง = โค้ชยิงสคริปต์ใส่คนที่เปิดหน้าโปรไฟล์ตัวเอง
+      ⇒ ต้อง esc() เหมือนทุก attribute อื่นในไฟล์นี้ (จุดนี้เป็นจุดเดียวที่หลุด) */
+   +((!arr(d.contacts).length&&d.ct)?('<a class="btn line" href="'+esc(ctURL(d.ct))+'" target="_blank" rel="noopener">'+IC.chat+'ติดต่อโค้ช · '+esc(d.ct)+'</a>'):'')
    +'<a class="btn ghost" href="https://iufit.com">'+IC.dl+'เปิด / ดาวน์โหลดแอป IUFIT</a>'
    +'<div class="card how"><div class="sect">'+IC.rocket+'เริ่มยังไง</div><ol>'
    +'<li>กด “เริ่มเทรนกับโค้ชนี้” — เปิดแอป IUFIT</li>'

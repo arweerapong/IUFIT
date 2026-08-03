@@ -277,6 +277,18 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       pay_failed_t:'การชำระเงินไม่สำเร็จ',
       pay_failed_m:'ไม่มีการตัดเงินจากบัตรของคุณ · ลองใหม่อีกครั้งหรือทักไลน์หาเราได้เลย',
       pay_slow:'ผลยังไม่กลับมาภายในเวลาที่คาดไว้ · ไม่ต้องกังวล ถ้าเงินถูกตัดจริงระบบจะเปิดแพ็กให้อัตโนมัติ · ตรวจสอบได้ที่หน้าแพ็กของฉัน หรือทักไลน์หาเรา',
+      /* ═══════════════════════════════════════════════════════════════════════════════
+         🔴 2569-08-02 · "เงินถูกตัดแล้ว แต่เปิดสิทธิ์ยังไม่ได้" — คนละเรื่องกับ "ยังไม่รู้ผล"
+         ═══════════════════════════════════════════════════════════════════════════════
+         worker คืน `state:'pending'` + `charged:true` ในเคสนี้ (ถูกแล้ว — ยังไม่จบจริง)
+         แต่เดิมหน้าเว็บพูดเหมือน "ยังไม่รู้ผล" ทุกประการ แล้ววนถามครบ 20 ครั้งก็ขึ้น
+         `pay_slow` ที่ขึ้นต้นว่า "ผลยังไม่กลับมา" + "**ถ้า**เงินถูกตัดจริง"
+         ⇒ ลูกค้าอ่านว่า "จ่ายไม่ผ่าน" แล้วไปกดจ่ายซ้ำ = ถูกตัดเงินรอบสองของจริง
+         ⛔ ห้ามใช้คำที่มีเงื่อนไข ("ถ้า" / "อาจ") ในสองคีย์นี้ — เรารู้แน่แล้วว่าเงินออกไปแล้ว
+         ⛔ ห้ามพูดว่า "สำเร็จ" เช่นกัน — ของยังไม่ถึงมือเขา */
+      pay_charged_t:'เงินถูกตัดแล้ว · กำลังเปิดสิทธิ์ให้',
+      pay_charged_m:'การชำระเงินของคุณสำเร็จเรียบร้อยแล้ว — ระบบกำลังเปิดสิทธิ์ให้อยู่ · **ไม่ต้องกดจ่ายซ้ำ** กรุณารอสักครู่ในหน้านี้',
+      pay_slow_paid:'เงินถูกตัดจากบัตรของคุณเรียบร้อยแล้ว · ระบบกำลังเปิดสิทธิ์ให้และจะเสร็จเองอัตโนมัติ · **กรุณาอย่ากดจ่ายซ้ำ** — ตรวจสอบได้ที่หน้าแพ็กของฉัน หรือทักไลน์หาเราพร้อมแจ้งเวลาที่จ่าย',
       /* ===== ยกเลิก / เปิดการต่ออายุอัตโนมัติ (my-plan.html) ===========================
          🔴 ถ้อยคำต้องตรงกับสิ่งที่โค้ดทำจริงเป๊ะ ๆ — worker `/autopay` แตะแค่ฟิลด์ `autopay`
             **ไม่แตะ `exp` เลย** ⇒ ที่เขียนว่า "ใช้งานได้ถึงวันที่ …" เป็นความจริง ไม่ใช่คำปลอบ
@@ -315,6 +327,12 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       pay_dup_m:'คุณเพิ่งเริ่มชำระแพ็กนี้ไปเมื่อสักครู่ · เพื่อไม่ให้ถูกตัดเงินซ้ำ ระบบจึงยังไม่สร้างรายการใหม่ · ตรวจที่หน้า “แพ็กของฉัน” ก่อน หรือรอสักครู่แล้วลองใหม่',
       pay_rate_t:'ลองบ่อยเกินไป',
       pay_rate_m:'เพื่อความปลอดภัยของระบบชำระเงิน กรุณารอสักครู่แล้วลองใหม่อีกครั้ง · ยังไม่มีการตัดเงินจากบัตรของคุณ',
+      /* 🔴 2569-08-02 · คนละเรื่องกับ `pay_dup_*` โดยสิ้นเชิง — ต้องแยกข้อความ
+         `pay_dup_*`    = ยังไม่รู้ผล มีรายการค้างอยู่   ⇒ "รอดูผลก่อน"
+         `pay_recent_*` = **จ่ายสำเร็จไปแล้ว** เมื่อครู่นี้ ⇒ "คุณได้ของแล้ว ไม่ต้องจ่ายซ้ำ"
+         ถ้าใช้ข้อความเดียวกัน คนที่จ่ายสำเร็จแล้วจะนึกว่ายังไม่สำเร็จแล้วไปลองบัตรใบอื่น */
+      pay_recent_t:'ชำระเงินรายการนี้สำเร็จไปแล้วเมื่อครู่นี้',
+      pay_recent_m:'เราจึงไม่สร้างรายการใหม่ให้ เพื่อไม่ให้คุณถูกตัดเงินซ้ำ · ตรวจสอบได้ที่หน้า “แพ็กของฉัน” · ถ้าคิดว่ามีอะไรผิดพลาด ทักไลน์หาเราได้เลย',
       testmode_t:'⚠️ โหมดทดสอบ — ไม่มีการตัดเงินจริง',
       testmode_m:'หน้านี้กำลังใช้คีย์ทดสอบของ Omise · รับได้เฉพาะบัตรทดสอบเท่านั้น บัตรจริงจะถูกปฏิเสธ · ถ้าคุณเห็นข้อความนี้บนเว็บจริง กรุณาแจ้งเราทาง LINE'
     },
@@ -394,6 +412,11 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       pay_failed_t:'Payment was not completed',
       pay_failed_m:'Your card was not charged. Please try again or message us on LINE.',
       pay_slow:'We have not received the result yet. Don’t worry — if the payment went through, your plan will activate automatically. Check My plan, or message us on LINE.',
+      /* 🔴 see th — "charged but not yet delivered" is NOT "result unknown".
+         No conditional words ("if" / "may") here: we already know the money left. */
+      pay_charged_t:'Payment taken — activating your access',
+      pay_charged_m:'Your payment went through. We are activating your access right now — **do not pay again.** Please stay on this page for a moment.',
+      pay_slow_paid:'Your card has been charged successfully. We are still activating your access and it will complete automatically. **Please do not pay again** — check My plan, or message us on LINE with the time you paid.',
       /* ===== cancel / resume auto-renewal (my-plan.html) ============================= */
       ap_title:'Auto-renewal',
       ap_loading:'Checking your auto-renewal status…',
@@ -425,6 +448,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       pay_dup_m:'You started paying for this plan moments ago · to avoid charging you twice we did not create a second one · check My plan first, or wait a moment and try again.',
       pay_rate_t:'Too many attempts',
       pay_rate_m:'For payment security, please wait a moment and try again · your card has not been charged.',
+      pay_recent_t:'This payment already went through moments ago',
+      pay_recent_m:'So we did not create a second one — you will not be charged twice · check My plan to confirm · if something looks wrong, message us on LINE.',
       testmode_t:'⚠️ Test mode — no real charges',
       testmode_m:'This page is using Omise test keys. Only test cards are accepted; real cards will be declined. If you see this on the live site, please let us know on LINE.'
     }
@@ -508,13 +533,35 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
      บัญชี LINE ล้วนไม่มี session แบบนี้ ⇒ ต้องไปทางแอดมิน (ทักไลน์) และหน้าเว็บต้องบอกตรง ๆ */
   function canSelfServe(){var s=appState();return accountKey().indexOf('email:')===0&&!!(s._fbtok||s._fbrt);}
   function accountLabel(){var s=appState();return s.lineName||s.emailId||(s.users&&s.users[0]&&s.users[0].name)||'';}
+  /* ══════════════════════════════════════════════════════════════════════════════════
+     🔴 2569-08-03 (F3) · เกณฑ์ตัดชั้นจากจำนวนที่นั่ง — **ต้องมาจากจำนวนที่นั่งที่ขายจริง**
+     ══════════════════════════════════════════════════════════════════════════════════
+     ของเดิม: `>=100 studio · >=50 growth · >=20 pro · >=5 starter`
+     ซึ่ง **ไม่ตรงกับ `PLANS` ที่อยู่ในไฟล์เดียวกันนี้เอง** (starter 10 · pro 20 · growth 30)
+     ⇒ ลูกค้า Trainer Growth ที่จ่าย ฿799 มี 30 ที่นั่ง ตกเกณฑ์ `>=20` ⇒ ถูกอ่านเป็น 'pro'
+       · `my-plan.html` โชว์ "แพ็กปัจจุบัน = Trainer Pro ฿599"
+       · `pricing.html` ติดป้าย "แพ็กปัจจุบัน" ผิดการ์ด
+     **นี่คือของจริงที่ลูกค้าที่จ่ายเงินแล้วเห็นผิดอยู่ทุกวัน ไม่ใช่ความเสี่ยงในอนาคต**
+
+     ค่าใหม่ **ไม่ได้ตั้งใหม่** — ยกมาจาก `acctPlan()` ใน `src/core/entitlements.ts` ทั้งชุด
+     ซึ่งตรงกับของที่ขายจริงทุกตัว (ตรวจกับ `core/pricing` + `SEATS_BY_PLAN` มาแล้ว):
+       · 10 → Starter · 20 → Pro · 30 → Growth (฿799)
+       · 50 → **ยิมแพ็ก S (50 ลูกค้า)** ⇒ เส้น `studio` อยู่ที่ 50 ไม่ใช่ 100
+         (`clients:'100+'` บนการ์ด Studio เป็นข้อความขาย ไม่ใช่เกณฑ์ตัดชั้น)
+     ⇒ `>=50 studio · >=30 growth · >=20 pro · ที่เหลือ starter`
+     (`>=5 starter` เดิมถูกตัดทิ้ง — สาขานั้นกับสาขาสุดท้ายคืนค่าเดียวกันอยู่แล้ว)
+
+     ⚠️ **ต้องเท่ากับ `acctPlan()` ทุกตัวเลข** — คนเดียวกันเปิดแอปกับเปิดหน้าเว็บต้องเห็น
+        ชั้นเดียวกัน · `scripts/verify-seats.mjs` §5 execute ไฟล์นี้จริงแล้วเรียกฟังก์ชันนี้
+        เทียบกับแอป **ทุกจำนวนที่นั่ง 0-120** · ขยับที่ไหนที่เดียวแล้วด่านแดงทันที
+     ══════════════════════════════════════════════════════════════════════════════════ */
   function currentPlanKey(){
     var s=appState();var m=s.mem;
     if(s.lic&&s.lic.n&&s.lic.c)return 'personal_pro';
     if(m&&m.via==='seat')return 'free';
     if(m&&m.exp&&m.exp>=today()&&m.tier==='pro'){
       var seats=m.seats||0;
-      if(seats>=100)return 'studio';if(seats>=50)return 'growth';if(seats>=20)return 'pro';if(seats>=5)return 'starter';return 'starter';
+      if(seats>=50)return 'studio';if(seats>=30)return 'growth';if(seats>=20)return 'pro';return 'starter';
     }
     if(s.trial&&s.trial.start&&trialDaysLeft()>0)return 'pro';
     return 'free';
@@ -528,6 +575,39 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   function reminderTier(daysLeft){if(daysLeft==null||daysLeft<0)return 0;if(daysLeft<=1)return 1;if(daysLeft<=3)return 3;if(daysLeft<=7)return 7;if(daysLeft<=10)return 10;return 0;}
   function qs(name){try{var m=new RegExp('[?&]'+name+'=([^&]+)').exec(location.search);return m?decodeURIComponent(m[1]):'';}catch(e){return '';}}
 
+  /* ══════════════════════════════════════════════════════════════════════════════════
+     🔴 2569-08-02 · หนีอักขระ HTML — **ตัวเดียวของทั้งโฟลเดอร์ line-oa/**
+     ══════════════════════════════════════════════════════════════════════════════════
+     ทุกหน้าในโฟลเดอร์นี้ประกอบ DOM ด้วยการต่อสตริงแล้วยัด `innerHTML` และหน้าเหล่านี้อยู่
+     **origin เดียวกับแอป** ซึ่ง `localStorage['iufit']` เก็บ `_fbtok` และ `_fbrt`
+     (refresh token ที่ต่ออายุ session ได้ไม่จำกัด — ดู `authToken()` ข้างบน)
+     ⇒ JS ที่รันได้บน origin นี้หนึ่งบรรทัด = ยึดบัญชีถาวร ไม่ใช่แค่ขโมย session ชั่วคราว
+
+     ครอบ `'` ด้วยแม้ค่าที่ใส่จะอยู่ใน `"…"` เสมอ — วันหน้าใครเขียน attribute ด้วย single
+     quote จะได้ไม่กลายเป็นช่องโหว่ใหม่เงียบ ๆ · `esc(0)` ต้องได้ `'0'` ไม่ใช่ `''` จึงเช็ก
+     null/undefined แยกแทนการใช้ `||` */
+  function esc(s){
+    return (''+(s===null||s===undefined?'':s)).replace(/[&<>"']/g,function(c){
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+    });
+  }
+
+  /* ══════════════════════════════════════════════════════════════════════════════════
+     🔴 2569-08-02 · `?plan=` ต้องเป็นรหัสที่เรารู้จักเท่านั้น (allow-list)
+     ══════════════════════════════════════════════════════════════════════════════════
+     ค่านี้เดินทางไกลกว่าที่เห็น: ลงไปถึง `href` ของปุ่ม "ลองใหม่" ในหน้าผลลัพธ์ (`showResult`)
+     และถูกส่งต่อไปยัง `/charge` ฝั่ง worker · การหนีอักขระอย่างเดียวยังเหลือชั้นที่ผิดพลาดได้
+     (ใครเพิ่มจุดที่ใช้ `PLAN` ใหม่แล้วลืม `esc()`) ⇒ **ตัดที่ต้นทาง**: ค่าที่ไม่อยู่ในลิสต์
+     ถูกโยนทิ้งตั้งแต่บรรทัดแรก เหลือแต่รหัสที่ประกอบจาก `PLANS`/`CREDIT_PACKS` ของเราเอง
+
+     ผลพลอยได้: `?plan=อะไรก็ไม่รู้` เดิมทำให้ `getPlan()` คืน null แล้ว `renderPay()` โยน
+     TypeError จนการ์ดชำระเงินหายทั้งใบแบบเงียบ ๆ — ตอนนี้ตกกลับเป็นค่าตั้งต้นแทน */
+  function planKeyOf(raw,fallback){
+    var k=''+(raw||'');
+    if(getPlan(k)||getCredit(k))return k;
+    return fallback||'pro';
+  }
+
   window.IUFIT_BILLING={
     PLATFORM:PLATFORM, IS_STORE:IS_STORE, LANG:LANG, t:t, setLang:setLang,
     OMISE_READY:OMISE_READY, OMISE_PUBLIC_KEY:OMISE_PUBLIC_KEY, CHARGE_ENDPOINT:CHARGE_ENDPOINT, LINE_URL:LINE_URL,
@@ -540,6 +620,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     currentPlanKey:currentPlanKey, planExpiry:planExpiry,
     trialDaysLeft:trialDaysLeft, trialActive:trialActive, trialExpired:trialExpired,
     paidActive:paidActive, daysUntil:daysUntil, reminderTier:reminderTier, today:today, qs:qs,
+    esc:esc, planKeyOf:planKeyOf,
     CONTACT:CONTACT, contactRowsHtml:contactRowsHtml, footerHtml:footerHtml
   };
 })();

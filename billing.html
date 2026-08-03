@@ -58,10 +58,15 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v112"></script>
+<script src="billing-common.js?v=v115"></script>
 <script>
 var B=window.IUFIT_BILLING;
-var YR=(B.qs('cycle')==='yr'), PLAN=B.qs('plan')||'pro', PM='card';
+/* 🔴 2569-08-02 · XSS สะท้อน — `?plan=` เคยไหลดิบ ๆ ลง `innerHTML` ที่ `showResult()`
+   `billing.html?result=failed&plan="><img src=x onerror=…` = รัน JS บน origin ของแอป
+   ซึ่งเก็บ `_fbrt` (refresh token) ⇒ ยึดบัญชีถาวร บนหน้าที่ผู้ใช้กำลังกรอกเลขบัตร
+   ⇒ `planKeyOf()` ยอมรับเฉพาะรหัสที่อยู่ใน `PLANS`/`CREDIT_PACKS` · นอกนั้นตกเป็น 'pro'
+   (ชั้นที่สองคือ `B.esc()` ที่จุดต่อสตริง — ดู `showResult`) */
+var YR=(B.qs('cycle')==='yr'), PLAN=B.planKeyOf(B.qs('plan'),'pro'), PM='card';
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
 document.getElementById('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
 document.getElementById('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
@@ -232,6 +237,10 @@ function payNow(){
              ⇒ **ห้ามพาไปหน้า "ชำระเงินไม่สำเร็จ"** เพราะจะทำให้ผู้ใช้เข้าใจว่าบัตรมีปัญหา
                 แล้วไปลองบัตรใบอื่น ทั้งที่เหตุผลจริงคือ "รายการก่อนหน้ายังค้างอยู่" */
           if(j&&j.error==='duplicate_pending'){setPaying(false);alert(B.t('pay_dup_t')+'\n\n'+B.t('pay_dup_m'));return;}
+          /* 🔴 2569-08-02 · รายการเดิม **สำเร็จไปแล้ว** เมื่อไม่กี่วินาทีก่อน (กด Back แล้วกดจ่ายซ้ำ)
+             ต้องบอกว่า "ได้ของแล้ว" ไม่ใช่ "กำลังดำเนินการ" และห้ามพาไปหน้าชำระไม่สำเร็จเด็ดขาด
+             — ไม่งั้นคนที่จ่ายสำเร็จแล้วจะไปลองบัตรใบอื่นและถูกตัดเงินจริงรอบสอง */
+          if(j&&j.error==='duplicate_recent'){setPaying(false);alert(B.t('pay_recent_t')+'\n\n'+B.t('pay_recent_m'));return;}
           if(j&&j.error==='rate_limited'){setPaying(false);alert(B.t('pay_rate_t')+'\n\n'+B.t('pay_rate_m'));return;}
           /* 🔴 3-D Secure — บรรทัดนี้คือหัวใจ ห้ามลบ
              บัญชีเราถูกบังคับ 3DS ทุกรายการ ⇒ charge ตอบ `pending` + `authorize_uri`
@@ -240,7 +249,12 @@ function payNow(){
 
              ⚠️ ต้อง redirect ทั้งหน้า ห้าม window.open — ธนาคารหลายแห่งบล็อก 3DS ใน popup/iframe */
           if(j&&j.authorize_uri){location.href=j.authorize_uri;return;}
-          location.href='billing.html?lang='+B.LANG+'&result='+(j.status==='successful'?'success':(j.status==='pending'?'pending':'failed'));})
+          /* 🔴 2569-08-02 · ต้องหอบ `ref` ไปด้วยเมื่อผลยังไม่จบ
+             worker ตอบ `pending` ในเคส "ตัดเงินได้แล้วแต่เขียนสิทธิ์ไม่ลง" ด้วย (ไม่ใช่แค่ 3DS)
+             เดิมเส้นนี้ทิ้ง `ref` ⇒ หน้าผลลัพธ์ไม่มีอะไรให้วนถาม ⇒ ค้างที่ "รอการยืนยัน"
+             ตลอดกาล ทั้งที่ฝั่ง worker แค่รอให้มีใครมากระตุ้นให้ลองส่งมอบใหม่ */
+          var _ref=(j&&j.ref)?('&ref='+encodeURIComponent(j.ref)):'';
+          location.href='billing.html?lang='+B.LANG+'&result='+(j.status==='successful'?'success':(j.status==='pending'?'pending'+_ref:'failed'));})
         .catch(function(){location.href='billing.html?lang='+B.LANG+'&result=failed';});
     });
   });
@@ -257,8 +271,8 @@ function showResult(kind){
      (ซื้อเครดิตแล้วขึ้นว่า "แพ็กเปิดใช้งานแล้ว" = บอกสิ่งที่ไม่จริงกับลูกค้าที่เพิ่งจ่ายเงิน) */
   var msg=(kind==='success'&&B.isCredit(PLAN))?B.t('cr_success_m'):B.t('res_'+kind+'_m');
   el.innerHTML='<div class="result '+map.cls+'"><div class="ic">'+map.ic+'</div><h2>'+B.t('res_'+kind+'_t')+'</h2><p class="sub">'+msg+'</p>'
-    +'<a class="btn pri" style="max-width:320px;margin:10px auto 0" href="my-plan.html?lang='+B.LANG+'">'+B.t('go_myplan')+'</a>'
-    +(kind==='failed'?'<a class="btn ghost" style="max-width:320px;margin:8px auto 0" href="billing.html?plan='+PLAN+'&cycle='+(YR?'yr':'mo')+'&lang='+B.LANG+'">'+B.t('retry')+'</a>':'')
+    +'<a class="btn pri" style="max-width:320px;margin:10px auto 0" href="my-plan.html?lang='+B.esc(B.LANG)+'">'+B.t('go_myplan')+'</a>'
+    +(kind==='failed'?'<a class="btn ghost" style="max-width:320px;margin:8px auto 0" href="billing.html?plan='+B.esc(encodeURIComponent(PLAN))+'&cycle='+(YR?'yr':'mo')+'&lang='+B.esc(B.LANG)+'">'+B.t('retry')+'</a>':'')
     +(kind!=='success'?'<a class="btn line" style="max-width:320px;margin:8px auto 0" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('line_help')+'</a>':'')+'</div>';
 }
 /* แถบเตือนโหมดทดสอบ — ขึ้นเสมอไม่ว่าจะอยู่หน้าไหนของ flow (checkout / ผลลัพธ์ / store guard) */
@@ -276,32 +290,59 @@ function showResult(kind){
 
    ⚠️ ถามได้อย่างเดียว **ห้ามให้หน้านี้ตัดสินสิทธิ์** — มันแค่แสดงสิ่งที่ฝั่ง server สรุปไว้
    ⚠️ มีเพดานเวลา 60 วิ แล้วบอกทางออก ไม่ปล่อยให้หมุนไม่รู้จบ */
+/* 🔴 2569-08-02 · แยก "ยังไม่รู้ผล" ออกจาก "เงินถูกตัดแล้วแต่ยังเปิดสิทธิ์ไม่ได้"
+   ─────────────────────────────────────────────────────────────────────────
+   worker คืน `state:'pending'` ทั้งสองเคส (ถูกแล้ว — ทั้งคู่แปลว่า "ยังไม่จบ")
+   แต่แนบ `charged:true` มาด้วยเมื่อเงินออกจากบัตรไปแล้วจริง (`paid:true` + `delivered:false`)
+   ⇒ เมื่อรู้ว่าเงินออกไปแล้ว **ต้องเปลี่ยนคำพูดทันทีตั้งแต่รอบวนแรก** ไม่ใช่รอครบ 60 วิ
+      แล้วขึ้น "ผลยังไม่กลับมา" ซึ่งลูกค้าอ่านว่า "จ่ายไม่ผ่าน" แล้วไปกดจ่ายซ้ำ
+   ⚠️ `chargedSeen` เป็นทางเดียว (false → true เท่านั้น) โดยตั้งใจ — ถ้ารอบถัดไปตอบมา
+      ไม่ครบ/ล้มเหลว เราต้องไม่ถอนคำพูดที่ว่า "เงินถูกตัดแล้ว" กลับไปเป็น "ยังไม่รู้ผล" */
 function pollStatus(ref){
   var box=document.getElementById('resultPanel'); if(!box)return;
-  var tries=0, MAX=20; // 20 × 3 วิ = 60 วิ
+  var tries=0, MAX=20, chargedSeen=false; // 20 × 3 วิ = 60 วิ
   var note=document.createElement('p');
   note.style.cssText='font-size:12.5px;color:var(--muted);margin:10px auto 0;max-width:320px';
   note.textContent=B.t('pay_checking');
   var card=box.querySelector('.result'); if(card)card.appendChild(note);
+  /* เขียนหัวข้อ/คำอธิบายของการ์ดใหม่ให้ตรงความจริง — ใช้ textContent ล้วน ไม่แตะ innerHTML
+     (ค่าที่เอามาเขียนเป็นคำแปลของเราเอง แต่กติกาของหน้านี้คือไม่เปิดทาง XSS เพิ่มแม้แต่ทางเดียว) */
+  function sayCharged(){
+    if(chargedSeen)return; chargedSeen=true;
+    if(card){
+      var h=card.querySelector('h2'); if(h)h.textContent=B.t('pay_charged_t');
+      var s=card.querySelector('.sub'); if(s)s.textContent=B.t('pay_charged_m');
+    }
+    note.textContent=B.t('pay_charged_m');
+  }
+  function giveUpNote(){ note.textContent=B.t(chargedSeen?'pay_slow_paid':'pay_slow'); }
   (function tick(){
     tries++;
     fetch(B.CHARGE_ENDPOINT+'/status?ref='+encodeURIComponent(ref))
       .then(function(r){return r.json();})
       .then(function(j){
         if(j.state==='paid'){location.href='billing.html?lang='+B.LANG+'&result=success';return;}
+        /* `charged:true` + `failed` เกิดพร้อมกันไม่ได้ (worker ตอบ failed เฉพาะตอน
+           `status==='failed'` ซึ่งแปลว่าไม่มีเงินออก) ⇒ ลำดับนี้ปลอดภัย */
         if(j.state==='failed'){location.href='billing.html?lang='+B.LANG+'&result=failed';return;}
-        if(tries>=MAX){note.textContent=B.t('pay_slow');return;}
+        if(j.charged===true)sayCharged();
+        if(tries>=MAX){giveUpNote();return;}
         setTimeout(tick,3000);
       })
-      .catch(function(){ if(tries<MAX)setTimeout(tick,3000); else note.textContent=B.t('pay_slow'); });
+      .catch(function(){ if(tries<MAX)setTimeout(tick,3000); else giveUpNote(); });
   })();
 }
 (function(){
   var res=B.qs('result');
   if(res){
     showResult(res);
-    /* `return` = เพิ่งกลับจากธนาคาร ⇒ เริ่มถามผล · สถานะอื่นเป็นผลสรุปแล้ว ไม่ต้องถาม */
-    if(res==='return'){var rf=B.qs('ref'); if(rf)pollStatus(rf);}
+    /* `return`  = เพิ่งกลับจากธนาคาร ⇒ ยังไม่รู้ผล ต้องถาม
+       `pending` = 🔴 2569-08-02 · **ก็ยังไม่รู้ผลเหมือนกัน** — และเป็นเคสที่ worker ตอบ
+                   `pending` เพราะ "เงินเข้าแล้วแต่เขียนสิทธิ์ไม่ลง" ได้ด้วย
+                   เดิมเส้นนี้ไม่วนถามเลย ⇒ ลูกค้าค้างอยู่ที่ "รอการยืนยันการชำระ" ตลอดกาล
+                   ทั้งที่การถามหนึ่งครั้ง = การลองเปิดสิทธิ์ใหม่หนึ่งครั้งฝั่ง worker
+       ที่เหลือ (`success` / `failed`) เป็นผลสรุปแล้ว ไม่ต้องถาม */
+    if(res==='return'||res==='pending'){var rf=B.qs('ref'); if(rf)pollStatus(rf);}
     return;
   }
   if(B.IS_STORE){document.getElementById('storeGuard').classList.remove('hide');T('sg-h','billing_title');T('sg-t','store_guard_t');T('sg-m','store_guard_m');document.getElementById('sg-line').innerHTML=B.t('line_btn');return;}
