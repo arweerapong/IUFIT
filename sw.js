@@ -468,7 +468,7 @@
      `verify:contrast --gate` ผ่าน ([T] 191/191 · [G] 149/149 · [U] 0/0) ·
      `verify:rules` 143 เคส ตก 0 (รันนิพจน์จากไฟล์กฎ GOLIVE ตัวจริง) ·
      golden 21 ไฟล์ · 485 เคส · ตก 0 */
-const CACHE = 'iufit-v1183-golive-verify-badge-plan-toggle'
+const CACHE = 'iufit-v1184-join-device-claim-403-msg'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
