@@ -222,6 +222,10 @@
 res_success_m:'แพ็กของคุณเปิดใช้งานแล้ว · เปิดแอป IUFIT ด้วยบัญชีเดิม แพ็กจะปลดล็อกอัตโนมัติภายในไม่กี่วินาที',
       res_pending_t:'รอการยืนยันการชำระ',res_pending_m:'เรากำลังรอผลการชำระเงิน (เช่น การยืนยัน 3-D Secure กับธนาคารของคุณ) · เมื่อสำเร็จ แพ็กจะเปิดให้อัตโนมัติ',
       res_failed_t:'ชำระเงินไม่สำเร็จ',res_failed_m:'ยังไม่มีการตัดเงิน · ลองใหม่อีกครั้ง หรือทักไลน์ให้เราช่วย',
+      /* 🔴 2569-08-04 · "ไม่ทราบผล" ≠ "ไม่สำเร็จ" — ใช้เมื่อคำขอถูกส่งออกไปแล้วแต่คำตอบไม่กลับมา
+         (เน็ตหลุด · worker ตอบ 5xx · ก้อน JSON อ่านไม่ออก) ⇒ เงินอาจถูกตัดไปแล้วจริง ๆ
+         ห้ามมีคำว่า "ไม่สำเร็จ" และห้ามชวนให้จ่ายซ้ำเด็ดขาด — หน้านี้จึงไม่มีปุ่มลองใหม่ */
+      res_unknown_t:'ยังไม่ทราบผลการชำระเงิน',res_unknown_m:'คำขอถูกส่งออกไปแล้วแต่คำตอบไม่กลับมา · เงินอาจถูกตัดไปแล้ว 🔴 กรุณาอย่าเพิ่งกดจ่ายซ้ำ — ทักไลน์มาแจ้งเรา เราตรวจให้ได้ทันทีและคืนเงินให้ถ้าซ้ำ',
       go_myplan:'ไปหน้าแพ็กของฉัน',retry:'ลองชำระอีกครั้ง',line_help:'ทักไลน์ขอความช่วยเหลือ',
       myplan_title:'แพ็กของฉัน',acct_hint:'เปิดหน้านี้บนอุปกรณ์เดียวกับที่ใช้แอป เพื่อดูสถานะแพ็กของคุณ',
       cur_label:'แพ็กปัจจุบัน',trial_left:'ทดลองฟรี · เหลือ {d} วัน · ไม่ต้องใส่บัตร',expires_on:'หมดอายุ {date}',days_more:' · อีก {d} วัน',one_client:'ดูแลลูกเทรนได้ 3 คน',
@@ -365,6 +369,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       res_success_t:'Payment successful',res_success_m:'Your plan is active · open IUFIT with the same account and it unlocks automatically within seconds.',
       res_pending_t:'Awaiting payment confirmation',res_pending_m:'We are waiting for the payment result (e.g. 3-D Secure confirmation with your bank) · once done, your plan activates automatically.',
       res_failed_t:'Payment failed',res_failed_m:'No charge was made · try again, or chat on LINE for help.',
+      /* คู่ภาษาอังกฤษของ `res_unknown_*` — ความหมายต้องตรงกันเป๊ะ: ไม่ทราบผล ไม่ใช่ล้มเหลว */
+      res_unknown_t:'Payment result unknown',res_unknown_m:'Your request was sent but no answer came back · your card may already have been charged. 🔴 Please do not pay again — message us on LINE and we will check right away and refund any duplicate.',
       go_myplan:'Go to My plan',retry:'Try paying again',line_help:'Chat on LINE for help',
       myplan_title:'My plan',acct_hint:'Open this page on the same device as the app to see your plan status.',
       cur_label:'Current plan',trial_left:'Free trial · {d} days left · no card',expires_on:'Expires {date}',days_more:' · {d} days left',one_client:'3 clients',

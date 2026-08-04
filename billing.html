@@ -58,7 +58,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v115"></script>
+<script src="billing-common.js?v=v116"></script>
 <script>
 var B=window.IUFIT_BILLING;
 /* 🔴 2569-08-02 · XSS สะท้อน — `?plan=` เคยไหลดิบ ๆ ลง `innerHTML` ที่ `showResult()`
@@ -254,8 +254,32 @@ function payNow(){
              เดิมเส้นนี้ทิ้ง `ref` ⇒ หน้าผลลัพธ์ไม่มีอะไรให้วนถาม ⇒ ค้างที่ "รอการยืนยัน"
              ตลอดกาล ทั้งที่ฝั่ง worker แค่รอให้มีใครมากระตุ้นให้ลองส่งมอบใหม่ */
           var _ref=(j&&j.ref)?('&ref='+encodeURIComponent(j.ref)):'';
-          location.href='billing.html?lang='+B.LANG+'&result='+(j.status==='successful'?'success':(j.status==='pending'?'pending'+_ref:'failed'));})
-        .catch(function(){location.href='billing.html?lang='+B.LANG+'&result=failed';});
+          /* 🔴 2569-08-04 · **"ไม่รู้ผล" ไม่ใช่ "ไม่สำเร็จ"** (ออดิต 08-03 §R8)
+             ═══════════════════════════════════════════════════════════════════
+             เดิมทุกอย่างที่ไม่ใช่ successful/pending ตกไปเป็น `failed` เหมือนกันหมด
+             ⇒ รวมถึงคำตอบที่ **อ่านไม่ออกว่าเกิดอะไรขึ้น** (worker ตอบรูปแบบใหม่ /
+               Cloudflare แทรกหน้า error / ก้อน JSON ไม่มี status)
+             แต่ ณ จุดที่ worker ตอบอะไรกลับมาได้ **Omise อาจรับใบไปแล้ว** = เงินอาจออก
+             ⇒ ขึ้น "ชำระเงินไม่สำเร็จ" = ชวนให้เขากดจ่ายซ้ำ = ถูกตัดเงินรอบสองของจริง
+
+             แยกสามกอง:
+               `j.error`  = server ปฏิเสธก่อนคุยกับ Omise (บัตรถูกปฏิเสธก็อยู่กองนี้ —
+                            `charge_failed` แปลว่า Omise ไม่ยอมสร้างใบ) ⇒ ไม่มีเงินออก
+                            = `failed` จริง · ให้ลองใหม่ได้
+               status ที่จบแล้ว (failed/expired/reversed) ⇒ `failed`
+               นอกนั้น ⇒ `unknown` — พูดตรง ๆ ว่าไม่ทราบผล + หอบ `ref` ไปวนถามถ้ามี */
+          var _st=(j&&j.status)?String(j.status):'';
+          var _res=(_st==='successful')?'success'
+            :(_st==='pending')?'pending'
+            :(j&&j.error)?'failed'
+            :(_st==='failed'||_st==='expired'||_st==='reversed')?'failed'
+            :'unknown';
+          location.href='billing.html?lang='+B.LANG+'&result='+_res+((_res==='pending'||_res==='unknown')?_ref:'');})
+        /* 🔴 เน็ตหลุด / อ่าน JSON ไม่ออก / worker ตอบ 5xx — **ห้ามบอกว่าไม่สำเร็จ**
+           ตอนมาถึง catch นี้ คำขอถูกส่งออกไปแล้ว และเราไม่มีทางรู้เลยว่า Omise รับใบไปหรือยัง
+           (ไม่มี `ref` ในมือด้วย เพราะ ref ถูกสร้างฝั่ง server) ⇒ สิ่งเดียวที่พูดได้ตามจริงคือ
+           "ไม่ทราบผล · อย่าเพิ่งจ่ายซ้ำ · ทักมาตรวจให้ได้ทันที" */
+        .catch(function(){location.href='billing.html?lang='+B.LANG+'&result=unknown';});
     });
   });
 }
@@ -265,7 +289,10 @@ function showResult(kind){
      🔴 **ไม่ได้แปลว่าจ่ายสำเร็จ** — ผลจริงมาทาง webhook ของ Omise เท่านั้น
         ผู้ใช้ปิดแท็บกลางทางได้ · แก้ URL เองได้ ⇒ หน้านี้บอกได้แค่ "กำลังตรวจสอบ"
         ใช้หน้าตาเดียวกับ pending โดยตั้งใจ */
-  var map={success:{cls:'success',ic:'✓'},pending:{cls:'pending',ic:'⏳'},'return':{cls:'pending',ic:'⏳'},failed:{cls:'failed',ic:'✕'}}[kind];if(!map)return;
+  /* 🔴 `unknown` = "ยิงคำขอออกไปแล้วแต่ไม่รู้ผลเลย" — คนละเรื่องกับ `failed` โดยสิ้นเชิง
+     ใช้หน้าตาแบบ pending (ไม่ใช่กากบาทแดง) เพราะกากบาทแดงคือคำสั่งกลาย ๆ ว่า "จ่ายใหม่"
+     และหน้านี้จะ **ไม่มีปุ่มลองใหม่** ให้กด (ดูด้านล่าง) ด้วยเหตุผลเดียวกัน */
+  var map={success:{cls:'success',ic:'✓'},pending:{cls:'pending',ic:'⏳'},'return':{cls:'pending',ic:'⏳'},unknown:{cls:'pending',ic:'⚠️'},failed:{cls:'failed',ic:'✕'}}[kind];if(!map)return;
   if(kind==='return')kind='pending';
   /* เครดิตกับแพ็กเป็นคนละสินค้า ⇒ ข้อความสำเร็จต้องต่างกัน
      (ซื้อเครดิตแล้วขึ้นว่า "แพ็กเปิดใช้งานแล้ว" = บอกสิ่งที่ไม่จริงกับลูกค้าที่เพิ่งจ่ายเงิน) */
@@ -342,7 +369,9 @@ function pollStatus(ref){
                    เดิมเส้นนี้ไม่วนถามเลย ⇒ ลูกค้าค้างอยู่ที่ "รอการยืนยันการชำระ" ตลอดกาล
                    ทั้งที่การถามหนึ่งครั้ง = การลองเปิดสิทธิ์ใหม่หนึ่งครั้งฝั่ง worker
        ที่เหลือ (`success` / `failed`) เป็นผลสรุปแล้ว ไม่ต้องถาม */
-    if(res==='return'||res==='pending'){var rf=B.qs('ref'); if(rf)pollStatus(rf);}
+    /* `unknown` เข้ากลุ่มเดียวกัน — ถ้าบังเอิญมี `ref` ติดมา (worker ตอบก้อนที่อ่านไม่ออก
+       แต่ยังมี ref) การวนถามคือทางเดียวที่จะเปลี่ยน "ไม่ทราบผล" ให้เป็นความจริงได้ */
+    if(res==='return'||res==='pending'||res==='unknown'){var rf=B.qs('ref'); if(rf)pollStatus(rf);}
     return;
   }
   if(B.IS_STORE){document.getElementById('storeGuard').classList.remove('hide');T('sg-h','billing_title');T('sg-t','store_guard_t');T('sg-m','store_guard_m');document.getElementById('sg-line').innerHTML=B.t('line_btn');return;}
