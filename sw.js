@@ -597,7 +597,7 @@
       ⇒ เกตถามเพิ่มว่า "ของจริงเสิร์ฟอะไรอยู่" ไม่ใช่แค่ "เราจะวางอะไร"
 
    ⚠️ เลข sw ต้องขึ้นเสมอ ห้ามลดหรือเท่าเดิม (บทเรียน v1182 · ดู v1189) */
-const CACHE = 'iufit-v1202-log-fields-quickadd-undo-coachdd'
+const CACHE = 'iufit-v1206-movelib-sourced-holdsec-sharecode'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
