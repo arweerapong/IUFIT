@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy Policy · IUFIT</title>
+<meta name="description" content="IUFIT's Privacy Policy — how we collect and use your data, and your rights under the Thai PDPA">
+<style>
+/* This token set is copied from `privacy.html` verbatim EXCEPT for one value: `--muted`.
+   `#6B7890` on the `--bg` background (#F6F9FF) is 4.22:1, which FAILS WCAG AA (needs
+   4.5:1). It is used by `.upd`, `.foot` and the `color:var(--muted)` paragraphs — 4
+   places in this file. `#657289` is 4.61:1 and is the value this repo has ALREADY chosen
+   for the same token on the same background, in `line-oa/account-delete.html` (which is
+   why that file passes `verify:contrast`). So this is not a new colour invented here —
+   it is the fix the sibling file already carries.
+   NOTE: the Thai originals (`privacy.html`, `terms.html`) are still `#6B7890` and still
+   fail. Those two files are the source of truth and out of scope for this task (must not
+   be edited) — raised in the hand-over report of 2569-08-08. The [T] ceiling in
+   `verify:contrast` already counts those failures; these English editions do not add to
+   the count, because the value is corrected here.
+   (Comments in this file are in English on purpose: `verify-legal.mjs` §F asserts that no
+   Thai character survives anywhere in it, comments included — a Thai fragment left in a
+   comment is the signature of a half-copied edit.) */
+:root{--navy:#071E4A;--blue:#1150C8;--bg:#F6F9FF;--card:#fff;--line:#DDE7F5;--muted:#657289;--ink:#10233F}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Thai',sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+.wrap{max-width:780px;margin:0 auto;padding:28px 18px 70px}
+.logo{font-style:italic;font-weight:850;font-size:26px;color:#0a1f4d}
+.logo span{color:var(--blue)}
+h1{font-size:26px;color:var(--navy);margin:18px 0 4px;letter-spacing:-.01em}
+.upd{color:var(--muted);font-size:13px;margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 22px;box-shadow:0 10px 30px rgba(7,30,74,.05)}
+h2{font-size:18px;color:var(--navy);margin:26px 0 8px}
+h2:first-child{margin-top:0}
+p,li{font-size:14.5px;color:var(--ink)}
+ul{padding-left:20px}
+a{color:var(--blue);font-weight:700}
+.tag{display:inline-block;background:#fff3cd;color:#7a5d00;border:1px solid #f3e0a8;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:800}
+.toc a{display:inline-block;margin:2px 10px 2px 0;font-size:13px}
+.foot{margin-top:24px;color:var(--muted);font-size:12.5px;text-align:center}
+table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13.5px}
+td,th{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#eef4ff;color:var(--navy)}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">IU<span>FIT</span></div>
+  <h1>Privacy Policy</h1>
+  <!-- ==========================================================================================
+       ENGLISH EDITION of `privacy.html` — 2569-08-08
+       ==========================================================================================
+       This file is a TRANSLATION. `privacy.html` (Thai) is the source of truth: every section
+       here corresponds one-to-one to a section there, with the same number, so a citation such
+       as "section 12" resolves to the same subject in both files.
+
+       Rules for whoever edits this next:
+         · Edit `privacy.html` FIRST, then bring the change across here. Never the other way round.
+         · Do not add, remove or renumber a section on one side only. `scripts/verify-legal.mjs`
+           §F asserts section-for-section parity (count, numbering, sub-clauses) and the version
+           number, and goes red if the two drift apart — which is exactly the failure this repo
+           has already had once (app v1.0 vs web v1.1, missing the Health Connect section).
+         · Do NOT write a prevailing-language clause here. The documents do not contain one:
+           `terms.html` §13 says only that the Terms are governed by the law of Thailand. Adding
+           one would be drafting a new contract term, which is the owner's decision, not a
+           translator's.
+
+       ⚠️ The URL registered in the Google Play Console is `privacy.html` (the Thai file), NOT
+          this one. Do not rename either file.
+       ========================================================================================== -->
+  <p class="upd">Version 1.2 · Last updated July 2026 · Aligned with the Personal Data Protection Act (PDPA)</p>
+  <p class="upd" style="margin-top:-12px">English translation of the Thai original (privacy.html), version 1.2. The documents do not designate a prevailing language version.</p>
+
+  <div class="card">
+    <p>IUFIT ("we") takes your privacy seriously. This policy explains how we collect, use, disclose and protect your personal data, including your rights as a data subject.</p>
+
+    <h2>1. Who we are (Data Controller)</h2>
+    <p>IUFIT — a health and fitness application provided over the web/PWA and through LINE<br>
+    Personal data enquiries: email <a href="mailto:support@iufit.com">support@iufit.com</a> · <a href="https://line.me/R/ti/p/@987qyznd">LINE Official Account (@987qyznd)</a></p>
+
+    <h2>2. Data we collect</h2>
+    <ul>
+      <li><b>Identity / contact data:</b> email, name and (for coaches) phone number and province</li>
+      <li><b>Health data <span class="tag">sensitive data</span>:</b> weight, body measurements, food logs and exercise</li>
+      <li><b>Usage data:</b> sign-ins, features used, signup channel, device id and the time each entry was recorded</li>
+      <li><b>Payment data:</b> the package subscribed to, billing cycle, payment status and payment reference · <b>we do not store credit/debit card numbers</b> (see section 4)</li>
+      <li><b>Technical data</b> as far as necessary to provide the service</li>
+    </ul>
+
+    <h2>3. Purposes for which we use your data</h2>
+    <table>
+      <tr><th>Purpose</th><th>Legal basis</th></tr>
+      <tr><td>Providing the app (recording, analysing and displaying health data)</td><td>Consent (health data) / performance of a contract</td></tr>
+      <tr><td>Giving the coach you choose access to the relevant health data</td><td>Your consent</td></tr>
+      <tr><td>Analysing and improving the app (using usage data, not health data)</td><td>Consent</td></tr>
+      <tr><td>Taking payment for subscription packages, issuing proof of payment and activating your entitlement</td><td>Performance of a contract</td></tr>
+      <tr><td>Contacting you and sending news / promotions</td><td>Consent</td></tr>
+    </table>
+    <p>You can <b>consent to each purpose separately</b> and <b>withdraw your consent at any time</b> under Settings → Privacy &amp; consent (withdrawing consent does not affect the lawfulness of processing carried out before the withdrawal)</p>
+
+    <h2>4. Disclosure / sharing of data</h2>
+    <ul>
+      <li><b>Your coach</b> — only the data you consent to give them access to</li>
+      <!-- 2569-07-30 · Omise (payment service provider) added to the processor list — confirmed
+           against the real code in `line-oa/billing.html`: it loads https://cdn.omise.co/omise.js
+           and calls Omise.createToken('card', {...}) "in the user's browser". The card number,
+           CVV and expiry go straight to Omise; our side receives only the token id (resp.id),
+           which is then forwarded to CHARGE_ENDPOINT together with plan/cycle/account. That is
+           what makes the statement "IUFIT does not store card numbers" factually true. -->
+      <li><b>Service providers (data processors):</b> Google Firebase (storage / authentication), Cloudflare (back end), Resend (email delivery), <b>Omise</b> (credit/debit card payment processing) — used only as far as necessary to provide the service</li>
+      <li><b>Your card details:</b> when you pay through the website, your card details (card number, expiry date, CVV) are encrypted and <b>sent directly from your browser to Omise</b>, our payment service provider · <b>IUFIT does not store or record your card number</b>. Our systems receive only a payment reference (token) together with the package / billing cycle / user account, in order to activate your entitlement · Omise's use of data is governed by Omise's own privacy policy</li>
+      <li>We <b>do not sell</b> your personal data, and we <b>do not use health data for advertising</b></li>
+    </ul>
+
+    <h2>5. Transfers of data abroad</h2>
+    <p>Some data is stored on Google Firebase servers in the Singapore region (asia-southeast1), which has appropriate data protection measures in place</p>
+
+    <h2>6. Retention Period</h2>
+    <p>We keep your data for as long as your account is in use, and will delete it or make it non-identifiable when you delete your account, or when it is no longer necessary for the purpose (statistical usage data may be kept in non-identifiable form)</p>
+
+    <h2>7. Your rights under the PDPA</h2>
+    <ul>
+      <li>The right of access and to request a copy of your data (an Export function is available in the app)</li>
+      <li>The right to have your data corrected</li>
+      <li>The right to erase your data / delete your account (in Settings)</li>
+      <li>The right to withdraw consent</li>
+      <li>The right to object to / suspend the use of your data</li>
+      <li>The right to data portability</li>
+    </ul>
+
+    <h2>8. Security</h2>
+    <p>Health data is stored primarily on your own device, and synced to encrypted cloud storage only as far as necessary, with access restricted by security rules (the data subject and system administrators only)</p>
+
+    <h2>9. Data of minors</h2>
+    <p>This service is suitable for users who have reached the age of majority. A minor should obtain the consent of a parent or guardian as required by law</p>
+
+    <h2>10. Exercising your rights, and complaints</h2>
+    <p>To exercise your rights or to ask a question, contact <a href="mailto:support@iufit.com">support@iufit.com</a> or our <a href="https://line.me/R/ti/p/@987qyznd">LINE Official Account (@987qyznd)</a> · If you consider that we are not complying with the law, you have the right to lodge a complaint with the Office of the Personal Data Protection Committee (PDPC)</p>
+
+    <h2>11. Deleting your account and data</h2>
+    <p>You can delete your account and all your data yourself in the app (Settings → Privacy → Delete account), or see how and send us a request on the <a href="./account-delete.html">Request account &amp; data deletion</a> page</p>
+
+    <h2>12. Health data from Health Connect (Android app)</h2>
+    <p>For users of the IUFIT app on Android, we may connect to <b>Health Connect</b> in order to read your activity data. You must always grant permission first:</p>
+    <ul>
+      <li><b>Data types we read (read-only, never written back):</b> Steps, Distance, Calories burned, Heart rate, Sleep and Exercise sessions</li>
+      <li><b>Purpose:</b> to <b>display your activity inside the app only</b> (for example daily step / calorie / sleep summaries) and to combine it with your in-app records so you can see an overall picture of your health</li>
+      <li><b>Storage:</b> data from Health Connect is kept <b>on your device</b> and is not uploaded to our servers automatically</li>
+      <li><b>Sharing:</b> we <b>do not sell it, do not share it with third parties and do not use it for advertising</b> · it is not sent to your coach unless you give explicit consent, and it is not sent to any AI system</li>
+      <li><b>Your control:</b> you can grant or revoke permission for each data type at any time in the Health Connect app · you can disconnect in the IUFIT app (data already recorded remains) · and you can delete the data</li>
+    </ul>
+    <p style="font-size:13px;color:var(--muted)"><i>IUFIT's use and transfer of information received from Health Connect adheres to the <a href="https://developer.android.com/health-and-fitness/guides/health-connect/publish/policy" target="_blank" rel="noopener">Health Connect Permissions policy</a>, including the Limited Use requirements.</i></p>
+
+    <p style="margin-top:18px;color:var(--muted);font-size:12.5px">We may update this policy from time to time, and will state / display the date of the most recent update at the top</p>
+  </div>
+
+  <p class="foot">© 2026 IUFIT · <a href="https://iufit.com">iufit.com</a> · <a href="./terms.en.html">Terms of Use</a> · <a href="./refund.html?lang=en">Cancellation &amp; Refund Policy</a> · <a href="./contact.html?lang=en">Contact information</a></p>
+</div>
+</body>
+</html>

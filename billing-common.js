@@ -161,11 +161,34 @@
       '<details style="margin-top:4px"><summary style="cursor:pointer;font-weight:700;font-size:13px;color:var(--blue);padding:8px 0">'+t('c_addr_show')+'</summary>'+
       '<div class="crow" style="border-bottom:none"><span>'+t('c_addr')+'</span><b style="white-space:pre-line">'+CONTACT.address+'</b></div></details>';
   }
+  /* ⭐ 2569-08-08 · terms/privacy ในฟุตเตอร์เคยเป็น **สองลิงก์ที่หลุดจากกลไก `?lang=`**
+     ═══════════════════════════════════════════════════════════════════════════
+     ทุกลิงก์ที่นี่ส่ง `?lang=` ต่อให้หน้าถัดไปอยู่แล้ว (pricing · refund · contact ·
+     billing · my-plan) เพราะหน้าเหล่านั้น **โหลดไฟล์นี้** แล้ววาดข้อความจาก `T.th`/`T.en`
+     ⇒ พารามิเตอร์นั้นมีความหมายกับมันจริง (ดู `detectLang()`)
+
+     แต่ `terms.html` · `privacy.html` เป็น **HTML นิ่งที่ไม่โหลดไฟล์นี้เลย** — ไม่มี
+     `<script src="billing-common.js">` ไม่มี `T` ไม่มี `detectLang()` ⇒ ต่อ `?lang=en`
+     ไปก็ไม่เกิดอะไรขึ้น ผู้ใช้ EN ยังได้เอกสาร `<html lang="th">` เหมือนเดิม
+     ⇒ กลไก `?lang=` **แก้เคสนี้ไม่ได้โดยธรรมชาติของหน้าปลายทาง** ไม่ใช่เพราะใครลืมต่อ
+
+     ทางที่ได้ผลจริงคือสลับ **ชื่อไฟล์** ไปที่ฉบับอังกฤษที่มีอยู่จริงบนเว็บแล้ว
+     (`line-oa/{privacy,terms}.en.html` · ตรงกับที่ `src/components/LegalSheet.vue` ทำ)
+
+     ⚠️ ห้ามเปลี่ยนชื่อไฟล์ฉบับไทย — `privacy.html` คือ URL ที่ผูกไว้ใน Google Play Console
+        และ `terms.html`/`privacy.html` คือชุดที่ยื่นให้ Omise ตรวจ
+     ด่าน: §F ใน `scripts/verify-legal.mjs` */
+  var DOC_EN=(LANG==='en');
+  /** ที่อยู่เอกสารสัญญาตามภาษา — **ตัวเดียวของทั้งโฟลเดอร์** (export ไว้ท้ายไฟล์)
+      `pricing.html` มีลิงก์ terms/privacy ชุดที่สองอยู่ (id `l-terms` / `l-priv`) ซึ่งวันนี้
+      สลับแค่ **ข้อความ** ไม่ได้สลับ `href` ⇒ ผู้ใช้ EN บนหน้าราคายังตกไปเอกสารไทย
+      ⇒ แก้ที่นั้นด้วย `el.href=B.docHref('terms')` แทนการก๊อป ternary มาเป็นสำเนาที่สาม */
+  function docHref(which){return (which==='terms'?'terms':'privacy')+(DOC_EN?'.en':'')+'.html';}
   function footerHtml(){
     return '<div class="ftcontact"><b>'+t('contact_title')+'</b>'+
       '<div>'+CONTACT.name+'</div>'+
       '<div>'+t('c_email')+': <a class="blue" href="mailto:'+CONTACT.email+'">'+CONTACT.email+'</a> · LINE: <a class="blue" href="'+LINE_URL+'" target="_blank" rel="noopener">'+CONTACT.line+'</a></div>'+
-      '<div style="margin-top:6px"><a class="blue" href="pricing.html?lang='+LANG+'">'+t('nav_pricing')+'</a> · <a class="blue" href="refund.html?lang='+LANG+'">'+t('nav_refund')+'</a> · <a class="blue" href="terms.html">'+(LANG==='en'?'Terms':'ข้อกำหนด')+'</a> · <a class="blue" href="privacy.html">'+(LANG==='en'?'Privacy':'ความเป็นส่วนตัว')+'</a> · <a class="blue" href="contact.html?lang='+LANG+'">'+t('nav_contact')+'</a></div>'+
+      '<div style="margin-top:6px"><a class="blue" href="pricing.html?lang='+LANG+'">'+t('nav_pricing')+'</a> · <a class="blue" href="refund.html?lang='+LANG+'">'+t('nav_refund')+'</a> · <a class="blue" href="'+docHref('terms')+'">'+(DOC_EN?'Terms':'ข้อกำหนด')+'</a> · <a class="blue" href="'+docHref('privacy')+'">'+(DOC_EN?'Privacy':'ความเป็นส่วนตัว')+'</a> · <a class="blue" href="contact.html?lang='+LANG+'">'+t('nav_contact')+'</a></div>'+
       '</div><div class="ftcopy">© 2026 IUFIT · <a class="blue" href="https://iufit.com">iufit.com</a></div>';
   }
 
@@ -627,6 +650,6 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     trialDaysLeft:trialDaysLeft, trialActive:trialActive, trialExpired:trialExpired,
     paidActive:paidActive, daysUntil:daysUntil, reminderTier:reminderTier, today:today, qs:qs,
     esc:esc, planKeyOf:planKeyOf,
-    CONTACT:CONTACT, contactRowsHtml:contactRowsHtml, footerHtml:footerHtml
+    CONTACT:CONTACT, contactRowsHtml:contactRowsHtml, footerHtml:footerHtml, docHref:docHref
   };
 })();

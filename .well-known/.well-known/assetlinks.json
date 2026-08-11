@@ -1,0 +1,15 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.iufit.twa",
+      "sha256_cert_fingerprints": [
+        "1E:CB:97:B7:BD:9A:CD:15:0A:E6:AD:AB:EF:CC:FC:AC:CD:CA:EC:F0:5A:BD:67:BB:FD:EE:A7:9D:E9:EF:41:33",
+        "7D:56:D9:5E:6C:F0:7F:E0:C5:E6:43:83:C9:BB:EC:66:AB:77:0D:B8:14:D8:00:FF:D2:DF:89:26:EB:22:3F:FD"
+      ]
+    }
+  }
+]

@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Terms of Use · IUFIT</title>
+<meta name="description" content="IUFIT's Terms of Use — conditions of service, payment, refunds, the rules for sending content over chat, and liability">
+<style>
+/* This token set is copied from `terms.html` verbatim EXCEPT for one value: `--muted`.
+   `#6B7890` on the `--bg` background (#F6F9FF) is 4.22:1, which FAILS WCAG AA (needs
+   4.5:1). It is used by `.upd`, `.foot` and the `color:var(--muted)` paragraph — 3 places
+   in this file. `#657289` is 4.61:1 and is the value this repo has ALREADY chosen for the
+   same token on the same background, in `line-oa/account-delete.html`. Not a new colour
+   invented here — the fix the sibling file already carries.
+   NOTE: `terms.html` is still `#6B7890` and still fails. It is the source of truth and
+   out of scope for this task (must not be edited) — raised in the hand-over report of
+   2569-08-08.
+   (Comments in this file are in English on purpose: `verify-legal.mjs` §F asserts that no
+   Thai character survives anywhere in it, comments included.) */
+:root{--navy:#071E4A;--blue:#1150C8;--bg:#F6F9FF;--card:#fff;--line:#DDE7F5;--muted:#657289;--ink:#10233F}
+*{box-sizing:border-box}
+body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Thai',sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
+.wrap{max-width:780px;margin:0 auto;padding:28px 18px 70px}
+.logo{font-style:italic;font-weight:850;font-size:26px;color:#0a1f4d}
+.logo span{color:var(--blue)}
+h1{font-size:26px;color:var(--navy);margin:18px 0 4px;letter-spacing:-.01em}
+.upd{color:var(--muted);font-size:13px;margin:0 0 18px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:22px 22px;box-shadow:0 10px 30px rgba(7,30,74,.05)}
+h2{font-size:18px;color:var(--navy);margin:26px 0 8px}
+h2:first-child{margin-top:0}
+p,li{font-size:14.5px;color:var(--ink)}
+ul{padding-left:20px}
+a{color:var(--blue);font-weight:700}
+.tag{display:inline-block;background:#fff3cd;color:#7a5d00;border:1px solid #f3e0a8;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:800}
+.foot{margin-top:24px;color:var(--muted);font-size:12.5px;text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="logo">IU<span>FIT</span></div>
+  <h1>Terms of Use</h1>
+  <!-- ==========================================================================================
+       ENGLISH EDITION of `terms.html` — 2569-08-08
+       ==========================================================================================
+       This file is a TRANSLATION. `terms.html` (Thai) is the source of truth: every section here
+       corresponds one-to-one to a section there, with the same number and the same sub-clause
+       numbering (7.1–7.4), so a citation such as "section 12" resolves to the same subject in
+       both files.
+
+       Rules for whoever edits this next:
+         · Edit `terms.html` FIRST, then bring the change across here. Never the other way round.
+         · Do not add, remove or renumber a section on one side only. `scripts/verify-legal.mjs`
+           §F asserts section-for-section parity (count, numbering, sub-clauses) and the version
+           number, and goes red if the two drift apart.
+         · Do NOT write a prevailing-language clause here. §13 below is the whole of what the
+           document says about applicable law: it says the Terms are governed by the law of
+           Thailand, and nothing about which language version controls. Adding such a clause
+           would be drafting a new contract term — the owner's decision, not a translator's.
+         · The 50 MB / ~45 second limits and the 24-hour figure in §7 and §7.4 are carried across
+           from `terms.html` verbatim. Do not restate them differently, more confidently, or
+           more loosely here — if the figure changes, change it in `terms.html` first.
+
+       Section-history note carried over from `terms.html`:
+         2569-07-30 · v1.1: §4 states the 7-day window for a wrong/duplicate charge (matching
+         `refund.html`) · §7 (rules for sending content over chat) added · former §§7–13
+         renumbered to §§8–14.
+       ========================================================================================== -->
+  <p class="upd">Version 1.1 · Last updated July 2026</p>
+  <p class="upd" style="margin-top:-12px">English translation of the Thai original (terms.html), version 1.1. The documents do not designate a prevailing language version.</p>
+
+  <div class="card">
+    <p>Welcome to IUFIT. By accessing or using our application and services, you are taken to have read, understood and accepted these Terms. If you do not accept them, please do not use the service.</p>
+
+    <h2>1. Who we are</h2>
+    <p>IUFIT — a health/fitness application (food logging, exercise, progress tracking) and a platform that helps independent coaches look after their clients, provided over the web/PWA and through LINE<br>
+    Contact: email <a href="mailto:support@iufit.com">support@iufit.com</a> · <a href="https://line.me/R/ti/p/@987qyznd">LINE Official Account (@987qyznd)</a></p>
+
+    <h2>2. Our service</h2>
+    <ul>
+      <li><b>For ordinary users:</b> tools for logging food/water/weight/exercise, and summaries of your results</li>
+      <li><b>For coaches:</b> tools to manage clients, create groups, send plans, receive and review homework, and the IU MATE assistant</li>
+      <li><b>The coach–client connection:</b> IUFIT is an "intermediary that connects" coaches with clients. The training/coaching service itself is an agreement directly between the coach and the client</li>
+    </ul>
+
+    <h2>3. Accounts and user eligibility</h2>
+    <p>You must provide accurate information and look after your own account · This service is suitable for users who have reached the age of majority. A minor should obtain the consent of a parent or guardian as required by law</p>
+
+    <h2>4. Payment</h2>
+    <ul>
+      <li><b>Course fees / coaching fees</b> are a <b>person-to-person</b> service between the client and the coach. The client <b>pays the coach directly</b> (for example to the coach's PromptPay) · <span class="tag">important</span> <b>IUFIT does not receive, hold or process this money, and is not a party to the provision of the training service.</b> Disputes about the service or about refunds are a matter directly between the client and the coach</li>
+      <li><b>Coach tool packages</b> (where offered) are charged for separately · at present they are subscribed to and managed through the channels we specify (for example the LINE Official Account) · a <b>temporary launch price</b> may apply for a limited period</li>
+      <li><b>Cancellation:</b> you can cancel automatic renewal at any time. It takes effect from the next billing cycle, you will not be charged again, and you can keep using the service until the end of the cycle you have already paid for</li>
+      <li><b>Refunds for software packages:</b> a package is activated immediately after payment, so <b>as a rule there is no refund</b> · <b>except in the case of a mistaken or duplicated payment</b> (charged twice, charged more than the correct amount, or a payment error), for which a refund may be requested <b>within 7 days</b> of the date of payment · once approved, the refund is made <b>only through the original payment channel</b>, within 7–14 business days · request it by email at <a href="mailto:support@iufit.com">support@iufit.com</a> or on <a href="https://line.me/R/ti/p/@987qyznd">LINE OA (@987qyznd)</a> · for full details see the <a href="./refund.html?lang=en">Cancellation &amp; Refund Policy</a></li>
+    </ul>
+    <p style="font-size:13.5px;color:var(--muted)">The terms in this section <b>do not affect consumer rights conferred by Thai law</b></p>
+
+    <h2>5. Health information — not medical advice</h2>
+    <p>The recommendations, calculations and summaries in IUFIT (including the IU MATE assistant) are <b>general information to help you plan your health and exercise, and are not a diagnosis or medical advice</b>. If you have unusual symptoms, an injury, an underlying condition, are pregnant, or are about to start a new programme, you should consult a doctor or a qualified professional</p>
+
+    <h2>6. Acceptable use and user content</h2>
+    <ul>
+      <li>Do not use the service for anything unlawful, to infringe the rights of others, to send spam, or to damage the system</li>
+      <li>Content you create or upload (for example photos, logs, messages) remains yours, but you grant IUFIT the rights necessary to provide the service</li>
+      <li>We may suspend an account that breaches these Terms or causes harm to other users</li>
+    </ul>
+
+    <!-- 2569-07-30 · Section added at Omise's request ("the rules about video calls").
+         IUFIT has NO video call / live streaming feature (checked: videoCall/webrtc/RTCPeer/
+         jitsi/zoom/agora/twilio/livekit = 0 results · the 2 uses of getUserMedia are QR
+         scanning only) ⇒ do not write a rule that refers to a feature that does not exist.
+         The facts stated in this section are confirmed against the real code:
+           · photo/clip attachments in chat → src/services/media.ts
+             (MEDIA_MAX_VIDEO_BYTES = 50*1024*1024, MEDIA_MAX_VIDEO_SECONDS)
+           · automatic deletion after 24 h  → src/i18n/th.ts key autoDelete24h
+           · exercise demo clips on YouTube → embedded video, not a call -->
+    <h2>7. Rules for sending content over chat and communicating with your coach</h2>
+    <p>IUFIT provides a chat channel between coach and client (both one-to-one and group), which can carry <b>messages, photos and short video clips</b> (clips of no more than 50 MB and no longer than about 45 seconds · messages, photos and clips in chat are <b>deleted automatically within 24 hours</b> of being received). There are also exercise demonstration clips, which are video embedded from an external provider<br>
+    <span class="tag">please note</span> <b>IUFIT has no video call, voice call or live streaming feature</b> — communication in the app is by message and attachment only</p>
+
+    <p><b>7.1 What you may do</b></p>
+    <ul>
+      <li>Send clips or photos of your own exercise form, so your coach can check it and advise you</li>
+      <li>Send photos of meals, nutrition labels, or progress photos of your body, to support planning</li>
+      <li>Send messages asking about training, nutrition, scheduling, or the homework you have been given</li>
+      <li>Send screenshots of results from the app or from a wearable device (for example step count, sleep) so your coach can help you read them</li>
+      <li>Communicate politely and with respect on both sides · send only content you own or have the right to send</li>
+    </ul>
+
+    <p><b>7.2 What is strictly prohibited</b></p>
+    <ul>
+      <li><b>Pornographic content, nude images, or sexual content</b> of any kind (including photos which, even if claimed to be for checking body measurements, are sexual in nature or expose the genitals)</li>
+      <li><b>Harassment, intimidation, molestation, or sexual solicitation</b> · flirting with or pestering someone after being refused · sending repeated messages that make the other person uncomfortable</li>
+      <li>Demeaning, insulting, hateful or bullying behaviour on the basis of race, religion, gender, body shape or disability</li>
+      <li><b>Content involving minors in an inappropriate manner, in any form</b> · requesting, sending or exchanging such content is absolutely prohibited</li>
+      <li><b>Inviting someone to move the conversation off the platform in order to evade these rules</b>, or in order to do something prohibited by this section</li>
+      <li>Offering for sale, or soliciting the purchase of, unlawful goods or services · <b>drugs, stimulants, steroids, or supplements that are unlawful or unlicensed</b> · gambling</li>
+      <li>Gratuitously violent or gruesome content, encouragement of self-harm, or content that is unlawful under Thai law</li>
+      <li>Copyright infringement (for example passing on someone else's clips, e-books or software without the right to do so) and publishing another person's personal data without permission</li>
+      <li>Spam, irrelevant advertising, deceptive or phishing links, malware, or impersonating another person</li>
+    </ul>
+
+    <p><b>7.3 Penalties (tiered)</b></p>
+    <ol>
+      <li><b>Warning</b> — a written warning, and removal of the offending content</li>
+      <li><b>Temporary suspension</b> — suspension of chat privileges, or suspension of the account for a period, if the behaviour is repeated or escalates</li>
+      <li><b>Permanent ban</b> — permanent termination of the account, for repeated or serious breaches</li>
+    </ol>
+    <p><span class="tag">important</span> <b>Serious cases will be permanently banned immediately, with no prior warning</b> — for example content involving minors in an inappropriate manner, sexual harassment, threats of physical harm, or conduct amounting to a criminal offence · in such cases we <b>may retain the relevant data and notify the competent authorities</b> as required or permitted by law · being suspended or banned for a breach of these Terms <b>does not give rise to any right to a refund</b></p>
+
+    <p><b>7.4 Reporting</b></p>
+    <p>If you find content or behaviour that breaches section 7.2, report it to us at <a href="mailto:support@iufit.com">support@iufit.com</a> or on our <a href="https://line.me/R/ti/p/@987qyznd">LINE Official Account (@987qyznd)</a>, stating the account name concerned, the date and time, and as much detail as you know<br>
+    Because messages and attachments in chat are <b>deleted automatically within 24 hours</b>, please report it — and if you can, take a screenshot — as soon as possible, so that we have something to investigate with<br>
+    <!-- 2569-07-30 · The 7 business days figure was set by the owner · it is consistent with the
+         published business hours (Monday–Friday 10:00–16:00). If this promise is ever changed it
+         must be the owner's decision — it is text that has already been submitted to Omise. -->
+    We will investigate every report as quickly as possible, normally within <b>7 business days</b>, and will tell the person who reported it the outcome · while we investigate, we may suspend the account complained about as a precaution, for the safety of other users</p>
+
+    <h2>8. Intellectual Property</h2>
+    <p>The software, design, logo and content of IUFIT are our copyright. No part of them may be copied, adapted, distributed or sold on without our written permission</p>
+
+    <h2>9. Limitation of Liability</h2>
+    <p>The service is provided "as is". We work to keep it running well, but do not warrant that it will be free of errors or interruption · to the extent permitted by law, IUFIT is not liable for indirect or consequential loss, including loss arising from a training/coaching service that is an agreement between users themselves, and from a user's failure to back up their data</p>
+
+    <h2>10. Data collection and privacy</h2>
+    <p>Your use of the service is also subject to our <a href="./privacy.en.html">Privacy Policy</a>. Please read it alongside these Terms</p>
+
+    <h2>11. Suspension and termination</h2>
+    <p>You may stop using the service or delete your account at any time (in Settings) · we may suspend or terminate the service in the event of a breach of these Terms, a security risk, or where required by law</p>
+
+    <h2>12. Changes to these Terms</h2>
+    <p>We may update these Terms from time to time, and will display the date of the most recent update at the top. Continuing to use the service after a change is taken as acceptance of the updated Terms</p>
+
+    <h2>13. Governing law</h2>
+    <p>These Terms are governed by the law of Thailand</p>
+
+    <h2>14. Contact us</h2>
+    <p>For questions, or to exercise your rights, contact <a href="mailto:support@iufit.com">support@iufit.com</a> or our <a href="https://line.me/R/ti/p/@987qyznd">LINE Official Account (@987qyznd)</a><br>
+    Business details (name · phone · address · email · LINE) are on the <a href="./contact.html?lang=en">Contact information</a> page</p>
+  </div>
+
+  <p class="foot">© 2026 IUFIT · <a href="https://iufit.com">iufit.com</a> · <a href="./privacy.en.html">Privacy Policy</a> · <a href="./refund.html?lang=en">Cancellation &amp; Refund Policy</a> · <a href="./pricing.html?lang=en">Pricing</a> · <a href="./contact.html?lang=en">Contact information</a></p>
+</div>
+</body>
+</html>

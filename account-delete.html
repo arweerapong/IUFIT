@@ -37,7 +37,20 @@ a{color:var(--blue);font-weight:700}
 <div class="wrap">
 <div class="logo">IU<span>FIT</span></div>
 <h1>ขอลบบัญชีและข้อมูล</h1>
-<p class="upd">Request account &amp; data deletion · อัปเดต 1 ก.ค. 2569</p>
+<!-- ⭐ 2569-08-08 · หน้านี้เคยเป็น **ไทยทั้งหน้า + ย่อหน้าอังกฤษหนึ่งย่อหน้าต่อท้าย**
+     ย่อหน้านั้นย่อสามการ์ดให้เหลือประโยคเดียว ⇒ ผู้อ่าน EN ไม่ได้เห็นขั้นตอนจริง ไม่เห็น
+     รายการข้อมูลที่จะถูกลบ และ **ไม่เห็นคำเตือนว่ากู้คืนไม่ได้** (ซึ่งเป็นบรรทัดสำคัญที่สุด
+     ของหน้า) · เอกสารการลบเป็นเอกสารที่แบกความไว้ใจมากที่สุดในชุด — แปลครึ่งเดียวไม่ได้
+     ⇒ ตอนนี้ฝั่งอังกฤษเป็น **ฉบับสะท้อนครบทุกการ์ด** อยู่ในบล็อก div ที่ประกาศ lang=en
+        (ไม่เขียนแท็กเต็มไว้ในคอมเมนต์นี้โดยตั้งใจ — mutation test รอบแรกไปแก้สตริงใน
+         คอมเมนต์แทนที่จะแก้มาร์กอัปจริง แล้วรายงานว่า "ด่านจับไม่ได้" ทั้งที่ด่านถูก)
+        (ไม่แยกเป็นไฟล์ `.en.html` เพราะ URL หน้านี้ถูกยื่นไว้เป็น "account deletion URL"
+         ของ Google Play ⇒ แยกไฟล์แปลว่าผู้อ่านที่มาจากลิงก์นั้นยังเจอไทยล้วนอยู่ดี)
+     ⚠️ `<html lang="th">` ยังถูกต้อง — ภาษาหลักของหน้ายังเป็นไทย ส่วนอังกฤษประกาศ
+        `lang="en"` เฉพาะบล็อกของตัวเอง (โปรแกรมอ่านหน้าจอจึงออกเสียงถูกทั้งสองฝั่ง)
+     ⚠️ แก้ฝั่งไหน **ต้องแก้อีกฝั่งในคอมมิตเดียวกัน** — ด่าน §G ใน
+        `scripts/verify-legal.mjs` เทียบหัวข้อและคำสัญญาเชิงตัวเลขของสองฝั่งให้ตรงกัน -->
+<p class="upd">Request account &amp; data deletion · อัปเดต 1 ก.ค. 2569 · <a href="#en">English</a></p>
 
 <div class="card">
 <h2>วิธีที่ 1 — ลบเองในแอป (เร็วที่สุด)</h2>
@@ -74,8 +87,58 @@ a{color:var(--blue);font-weight:700}
 </div>
 
 <p class="muted">ผู้ควบคุมข้อมูล: IUFIT · ติดต่อ: support@iufit.com · LINE @987qyznd · ดูเพิ่มที่ <a href="privacy.html">นโยบายความเป็นส่วนตัว</a></p>
-<hr style="border:none;border-top:1px solid var(--line);margin:22px 0">
-<p class="muted"><b>English:</b> To delete your IUFIT account and all data, open the app → Settings → Privacy &amp; consent → Delete account. If you cannot access the app, email <a href="mailto:support@iufit.com?subject=Delete%20my%20IUFIT%20account">support@iufit.com</a> or contact LINE @987qyznd. We process requests within 30 days. Account data (profile, health/workout logs, cloud backup) is permanently deleted; chat photos/videos auto-delete within 24 hours.</p>
+
+<hr style="border:none;border-top:1px solid var(--line);margin:26px 0">
+
+<div lang="en" id="en">
+<h1>Request account &amp; data deletion</h1>
+<p class="upd">Updated 1 July 2569 (2026) · English edition of the Thai text above</p>
+
+<div class="card">
+<h2>Option 1 — delete it yourself in the app (fastest)</h2>
+<div class="step">
+<ol>
+<li>Open the IUFIT app</li>
+<li>Go to <b>⚙️ Settings → Privacy &amp; consent</b></li>
+<li>Tap <b>Delete account</b> and confirm</li>
+</ol>
+</div>
+<p class="muted">Deleting removes, immediately: your account, your cloud backup, and your user registration</p>
+</div>
+
+<div class="card">
+<h2>Option 2 — send us a request</h2>
+<p>If you cannot get into the app, or you would rather we did it for you, just send us a request. Tell us the email address or LINE account you signed up with, so we can verify who you are.</p>
+<p>
+<a class="btn" href="mailto:support@iufit.com?subject=Delete%20my%20IUFIT%20account">Email a deletion request</a>
+<a class="btn line" href="https://line.me/R/ti/p/@987qyznd" target="_blank" rel="noopener">Message us on LINE @987qyznd</a>
+</p>
+<p class="muted">We will action it within 30 days, as required by the PDPA, and confirm back to you once it is done</p>
+</div>
+
+<div class="card">
+<h2>What will be deleted</h2>
+<ul>
+<li>Profile data (name, sex, date of birth, height, weight, photo)</li>
+<li>Health / exercise data (weight, body measurements, food logs, training, water intake)</li>
+<li>Cloud backup (Firebase) and your user registration</li>
+<li>The email address / LINE account linked to your account</li>
+</ul>
+<!-- ⚠️ 2569-08-08 · ประโยค 24 ชั่วโมงข้างล่างถูก **ยกมาตรงตัว** จากฝั่งไทยบรรทัดเดียวกัน
+     (และตรงกับ terms.html ข้อ 7 / 7.4) · ห้ามทำให้อ่อนลง ห้ามทำให้หนักแน่นขึ้น และห้ามลบ
+     ออกจากฝั่งเดียว — ถ้าจะเปลี่ยน ต้องเปลี่ยนพร้อมกันทั้งสองฝั่งและใน terms.html
+     🔴 ดูรายงานส่งงาน 2569-08-08: **ไม่มีโค้ดในรีโปนี้ที่ทำการลบนั้น** และ
+        `src/services/courseTrack.ts` เก็บ R2 key ไว้เพื่อ "ลบเมื่อผู้ใช้ขอตาม PDPA"
+        คือลบ *เมื่อร้องขอ* · lifecycle rule ของบักเก็ตเป็นการตั้งค่าฝั่ง Cloudflare
+        (อยู่นอกรีโป) จึงยัง**ไม่ใช่หลักฐานว่าขัดกัน** แต่เป็นคำสัญญาที่ไม่มีใครในรีโปนี้
+        ยืนยันได้ ⇒ **เจ้าของต้องยืนยันกับ Cloudflare ว่ามี lifecycle rule 24 ชม. จริง**
+        ถ้าไม่มี ต้องแก้ถ้อยคำในเอกสารทั้งสามที่ ไม่ใช่แก้ที่นี่ที่เดียว -->
+<p class="muted" style="margin-top:10px">Photos / videos you have sent in chat (stored on Cloudflare R2) <b>are already auto-deleted within 24 hours</b></p>
+<div class="warn" style="margin-top:12px">Deleting your account is permanent and cannot be undone — if you want to keep your data, export it (Backup/Export) in Settings before you delete</div>
+</div>
+
+<p class="muted">Data Controller: IUFIT · Contact: support@iufit.com · LINE @987qyznd · see also our <a href="privacy.en.html">Privacy Policy</a></p>
+</div>
 </div>
 </body>
 </html>

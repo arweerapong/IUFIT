@@ -1,0 +1,1 @@
+const t={th:{privacy:"https://iufit.com/privacy.html",terms:"https://iufit.com/terms.html"},en:{privacy:"https://iufit.com/privacy.en.html",terms:"https://iufit.com/terms.en.html"}};function m(e,i){return(i==="en"?t.en:t.th)[e]}export{m as l};

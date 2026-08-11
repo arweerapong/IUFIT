@@ -79,17 +79,40 @@
       content="IUFIT แอปฟิตเนสสำหรับบันทึกอาหาร ออกกำลังกาย สร้างกลุ่มเทรน และติดตามผลลัพธ์"
     />
 
-    <!-- Design-system fonts (match live app: Kanit/Montserrat display + Noto Sans Thai body). -->
+    <!--
+      Design-system fonts — สเปก v4 §3
+      ══════════════════════════════════════════════════════════════════════════
+      สเปกสั่งสองตระกูล: Kanit (ตัวเลข/หัวข้อ · สูงสุด 600) · Noto Sans Thai (เนื้อหา)
+
+      🔴 `ital,wght@ … ;1,600` คือหัวใจของ §3 — เวิร์ดมาร์ก IUFIT ใช้ `font-style:italic`
+         และสเปกบอกว่า face `1,600` **ต้องโหลดจริง "ห้ามเฉือนตัวตรง"**
+         ถ้าขอแต่ `wght@600` เบราว์เซอร์จะสังเคราะห์เอียงเอง (synthesised oblique)
+         ซึ่งดูเกือบเหมือนในสกรีนช็อตแต่ผิดทุกเส้น ⇒ มองด้วยตาแทบจับไม่ได้
+         (ด่าน `verify-css-tokens.mjs` §V4-3 ตรึงทัปเปิลนี้ไว้ · แก้ลิงก์แล้วด่านแดง)
+
+      ✅ 2569-08-11 (Brand CI wave 3) · **cutover เสร็จแล้ว** — `--font-ui`→`--font-thai`
+         และ `--font-display`→`--font-num` (base.css) · `.iulogo`→`.iu-wordmark` (Kanit
+         italic 600 จริง ไม่มี skew) · การ์ดแชร์ทุกใบ (`ShareTemplateCard` ·
+         `CelebrationCard*`) สลับจาก Montserrat 800 skewX เป็น Kanit 600 italic จริงแล้ว
+         ⇒ **ไม่มีที่ใดใน src อ้าง Montserrat อีก** — ตัดออกจากลิงก์นี้แล้ว
+
+      ⚠️ Kanit 700/800 · Noto 700 **ไม่ได้อยู่ในสเปกตัวเลข/หัวข้อ (สูงสุด 600)** แต่ยังเก็บ
+         ไว้จริง (ไม่ใช่ของเหลือทิ้ง) เพราะ `base.css` มีหลายคลาส (`.gnum` `.mlbl` `.lgsec`
+         `.lgadd` ฯลฯ) ใช้ `font-weight:700/800` คู่กับ `var(--font-display)`/`var(--font-num)`
+         (=Kanit) จริงอยู่ตอนนี้ — ถอดตัวหนักออกจะได้ **synthetic bold ปลอม** (เบราว์เซอร์
+         สังเคราะห์หนาเอง) ไม่ใช่ regression ที่มองแล้วเห็นชัดจากซอร์ส ⇒ ปล่อยไว้ตามเดิม
+         จนกว่าจะมีรอบตรวจ/ลดตัวหนักของหัวข้อลงเหลือ 600 ทั้งแอปโดยตั้งใจ
+    -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Kanit:wght@500;600;700;800&family=Montserrat:wght@700;800&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,500;0,600;0,700;0,800;1,600&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <script type="module" crossorigin src="/assets/index-Cjz2t6rk.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/vendor-Bw2caL45.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-BQmxBviW.css">
-  <link rel="modulepreload" crossorigin href="/assets/HomeView-DTxo3kag.js"><link rel="modulepreload" crossorigin href="/assets/IuIcon-CqrsSLe6.js"><link rel="modulepreload" crossorigin href="/assets/IuFoodIcon-B-CXE3r4.js"><link rel="modulepreload" crossorigin href="/assets/WorkoutSetsSheet-n7Zj7FXb.js"><link rel="modulepreload" crossorigin href="/assets/WorkoutSheet.vue_vue_type_script_setup_true_lang-B0Ifinfu.js"><link rel="modulepreload" crossorigin href="/assets/workout.i18n-BE1L_giV.js"><link rel="modulepreload" crossorigin href="/assets/workoutplan.i18n-BiiED90c.js"><link rel="modulepreload" crossorigin href="/assets/useAllergyRecipe-GiM3A2-a.js"><link rel="modulepreload" crossorigin href="/assets/AllergyWarnBadge-BCSMgsXW.js"><link rel="modulepreload" crossorigin href="/assets/TargetCautionNote-DMxCuHg2.js"><link rel="modulepreload" crossorigin href="/assets/MealPlanPickModal-DZm7YANL.js"><link rel="modulepreload" crossorigin href="/assets/mealplan.i18n-BvpY-gWq.js"><link rel="modulepreload" crossorigin href="/assets/TargetEditSheet-TIAbdrom.js"><link rel="modulepreload" crossorigin href="/assets/IuDateField-CN-mOCb6.js"><link rel="modulepreload" crossorigin href="/assets/HistoryCalendar-Dba7quPr.js"><link rel="modulepreload" crossorigin href="/assets/FoodAdjustSheet-PheoNlbx.js"><link rel="modulepreload" crossorigin href="/assets/recovery-CUkmJ076.js"><link rel="modulepreload" crossorigin href="/assets/health-Zli6hRaf.js"><link rel="modulepreload" crossorigin href="/assets/wearIufitWatch-C7ylHZn8.js"></head>
+    <script type="module" crossorigin src="/assets/index-C1IYNl47.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/vendor-e0QoltpG.js">
+    <link rel="stylesheet" crossorigin href="/assets/index-CIvpHc7_.css">
+  <link rel="modulepreload" crossorigin href="/assets/HomeView-CHb_7Mls.js"><link rel="modulepreload" crossorigin href="/assets/IuIcon-BfMvznMg.js"><link rel="modulepreload" crossorigin href="/assets/useAllergyRecipe-Dc99K2AN.js"><link rel="modulepreload" crossorigin href="/assets/AllergyWarnBadge-DEyoSgjS.js"><link rel="modulepreload" crossorigin href="/assets/TargetCautionNote-BvNypojR.js"><link rel="modulepreload" crossorigin href="/assets/MealPlanPickModal-TbVOYT_r.js"><link rel="modulepreload" crossorigin href="/assets/mealplan.i18n-BvpY-gWq.js"><link rel="modulepreload" crossorigin href="/assets/WorkoutSetsSheet-Zc9OveGs.js"><link rel="modulepreload" crossorigin href="/assets/WorkoutSheet.vue_vue_type_script_setup_true_lang-CdnrZBfZ.js"><link rel="modulepreload" crossorigin href="/assets/workout.i18n-D2u6EA_p.js"><link rel="modulepreload" crossorigin href="/assets/workoutplan.i18n-BWJtzPr1.js"><link rel="modulepreload" crossorigin href="/assets/trainingScreens.i18n-CJZjuHPo.js"><link rel="modulepreload" crossorigin href="/assets/TargetEditSheet-BIgFYZ4w.js"><link rel="modulepreload" crossorigin href="/assets/BodyLogSheet.vue_vue_type_script_setup_true_lang-D7xUCeMC.js"><link rel="modulepreload" crossorigin href="/assets/IuDateField-CCDaLjdc.js"><link rel="modulepreload" crossorigin href="/assets/HistoryCalendar-cqTNaFTa.js"><link rel="modulepreload" crossorigin href="/assets/FoodAdjustSheet-BrMIIyh6.js"><link rel="modulepreload" crossorigin href="/assets/recovery-DWtMyWpC.js"><link rel="modulepreload" crossorigin href="/assets/health-D1b34aSG.js"><link rel="modulepreload" crossorigin href="/assets/wearIufitWatch-B6eGt5ZL.js"><link rel="modulepreload" crossorigin href="/assets/HomeSourceBadge-BT6MdiBm.js"><link rel="modulepreload" crossorigin href="/assets/MetricBar-72JATkNm.js"><link rel="modulepreload" crossorigin href="/assets/MetricEvidence-Dia8yo9D.js"><link rel="modulepreload" crossorigin href="/assets/homeCardData-DDtoMyRs.js"></head>
   <body>
     <div id="app"></div>
 
