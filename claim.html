@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>IUFIT — รับรหัสเปิดใช้งาน</title>
+<style>
+  :root{--blue:#2f7bff;--navy:#16223a;--ink:#445}
+  *{box-sizing:border-box;font-family:-apple-system,'Segoe UI',sans-serif}
+  body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;background:#eef3fb;color:var(--navy);padding:20px}
+  .card{background:#fff;border-radius:18px;box-shadow:0 10px 40px rgba(20,40,80,.12);max-width:380px;width:100%;padding:26px}
+  h1{font-size:19px;margin:0 0 4px}
+  p{font-size:13px;color:var(--ink);line-height:1.6;margin:6px 0}
+  input{width:100%;padding:12px;border:1.5px solid #d6deea;border-radius:11px;font-size:15px;margin-top:8px}
+  button{width:100%;padding:13px;border:none;border-radius:11px;background:var(--blue);color:#fff;font-size:15px;font-weight:800;margin-top:12px;cursor:pointer}
+  button.ghost{background:#eef2f7;color:var(--blue)}
+  .code{font-size:30px;font-weight:850;letter-spacing:3px;text-align:center;color:var(--blue);background:#f3f7ff;border-radius:12px;padding:16px;margin:12px 0;user-select:all}
+  .muted{font-size:11.5px;color:#8492ad}
+  .err{color:#c33;font-size:12.5px}
+  .hide{display:none}
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>✅ ชำระเงินสำเร็จ</h1>
+  <p>กรอกอีเมลที่ใช้ตอนชำระเงิน เพื่อรับรหัสเปิดใช้งาน IUFIT (รหัสจะส่งไปทางอีเมลด้วย)</p>
+
+  <div id="form">
+    <input id="email" type="email" placeholder="อีเมลที่ใช้จ่ายเงิน" autocomplete="email">
+    <button onclick="claim()">รับรหัสเปิดใช้งาน</button>
+    <p id="msg" class="err"></p>
+  </div>
+
+  <div id="result" class="hide">
+    <p>แพ็ก <b id="plan"></b> · ใช้ได้ถึง <span id="exp"></span></p>
+    <p>รหัสเปิดใช้งานของคุณ:</p>
+    <div class="code" id="code"></div>
+    <button onclick="location.href='./index.html'">เปิดแอป IUFIT แล้วเข้าสู่ระบบ</button>
+    <button class="ghost" onclick="copyCode()">คัดลอกรหัส</button>
+    <p class="muted">เปิดแอป → เข้าสู่ระบบ → กรอกรหัสนี้</p>
+  </div>
+
+  <p class="muted" style="margin-top:14px">ไม่ได้รับรหัส? ติดต่อผ่าน LINE Official Account ของ IUFIT</p>
+</div>
+
+<script>
+  // URL ของ Worker (Cloudflare workers.dev)
+  var WORKER_URL = 'https://iufit-webhook.ar-weerapong.workers.dev';
+
+  var qs = new URLSearchParams(location.search);
+  if (qs.get('email')) { document.getElementById('email').value = qs.get('email'); }
+
+  async function claim() {
+    var email = document.getElementById('email').value.trim();
+    var msg = document.getElementById('msg');
+    msg.textContent = '';
+    if (!email) { msg.textContent = 'กรอกอีเมลก่อนนะ'; return; }
+    msg.textContent = 'กำลังตรวจสอบ...';
+    try {
+      var r = await fetch(WORKER_URL + '/claim?email=' + encodeURIComponent(email));
+      var d = await r.json();
+      if (!d.ok) {
+        msg.textContent = (d.err === 'not found' || d.err === 'expired or none recent')
+          ? 'ยังไม่พบการชำระเงินของอีเมลนี้ (รออัปเดตสักครู่แล้วลองใหม่ หรือเช็กอีเมล)'
+          : 'เกิดข้อผิดพลาด ลองใหม่อีกครั้ง';
+        return;
+      }
+      document.getElementById('code').textContent = d.code;
+      document.getElementById('plan').textContent = d.plan;
+      document.getElementById('exp').textContent = d.exp;
+      document.getElementById('form').classList.add('hide');
+      document.getElementById('result').classList.remove('hide');
+    } catch (e) { msg.textContent = 'เชื่อมต่อไม่ได้ เช็กอินเทอร์เน็ต'; }
+  }
+  function copyCode() {
+    var c = document.getElementById('code').textContent;
+    navigator.clipboard && navigator.clipboard.writeText(c);
+  }
+</script>
+</body>
+</html>
