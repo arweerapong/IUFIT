@@ -1,0 +1,1 @@
+import{d as r,a as o}from"./vendor-e0QoltpG.js";const u=r("watchConnectedOverlay",()=>{const t=o(null);function a(e){t.value={deviceName:(e.deviceName||"").trim()||"—",battery:e.battery!=null&&e.battery>=0?Math.min(100,Math.round(e.battery)):null}}function n(){t.value=null}return{payload:t,show:a,dismiss:n}});export{u};
