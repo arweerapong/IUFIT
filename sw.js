@@ -606,7 +606,7 @@
    ถูกถอดจากสโตร์และผู้บริโภคทั้ง 24 ไฟล์ · คีย์ค้าง `iufit_vue_quiet` ถูกลบทิ้งตอนบูต
    (คนที่เคยเปิดซ่อนไว้กลับมาเห็นตัวเลขทันที — กันประตูทางเดียว) · `verify:quiet` ถูก
    reframe เป็นด่านกันคืนชีพ (ประกาศใน header ของด่าน) */
-const CACHE = 'iufit-v1232-local-notify-hero-workout'
+const CACHE = 'iufit-v1233-native-local-tray'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
