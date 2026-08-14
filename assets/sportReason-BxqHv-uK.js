@@ -1,0 +1,1 @@
+function r(e){switch(e){case"ok":return"err_ok";case"unsupported":return"err_unsupported";case"not_connected":return"err_not_connected";case"no_backend":return"err_no_backend";case"timeout":return"err_timeout";case"type_out_of_range":return"err_type_out_of_range";case"failed":return"err_failed";default:return"err_failed"}}export{r as s};
