@@ -31,7 +31,8 @@ h1{font-size:24px;color:var(--navy);margin:14px 0 4px;letter-spacing:-.01em}
 .toggle button{border:none;border-radius:8px;padding:9px 18px;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;background:none;color:var(--muted)}
 .toggle button.on{background:#fff;color:var(--blue);box-shadow:0 1px 4px rgba(18,50,100,.12)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:14px}
-.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(7,30,74,.05);position:relative;display:flex;flex-direction:column}
+/* 🔴 2569-08-15 · ขอบการ์ดใช้ `--line-strong` — `--line` (#DDE7F5) ได้แค่ 1.25:1 บนพื้นขาว ⇒ การ์ดกลืนไปกับหน้า (WCAG 1.4.11 บังคับ 3:1 · โทเคนที่ถูกต้องมีอยู่แล้วในไฟล์นี้ แค่การ์ดไม่ได้ใช้) */
+.card{background:var(--card);border:1px solid var(--line-strong);border-radius:18px;padding:20px;box-shadow:0 10px 30px rgba(7,30,74,.05);position:relative;display:flex;flex-direction:column}
 .card.hot{border:2px solid var(--blue);box-shadow:0 10px 30px rgba(17,80,200,.16)}
 .card.cur{border:1.5px solid var(--green)}
 .badge{display:inline-block;background:var(--blue);color:#fff;font-size:10px;font-weight:800;padding:3px 11px;border-radius:20px;margin-bottom:8px;width:fit-content}
