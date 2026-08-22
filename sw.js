@@ -650,7 +650,8 @@
 /* v1255 = AI scan: client timeout 45s + โชว์ error บน FoodLog + ข้อความ timeout/ai_failed
    (worker /ai/scan ค้างกับรูปจริง — แก้ที่ worker แยก · รอบนี้กัน UX หมุนค้างเงียบ) */
 /* v1256 = ย่อรูปสแกน 512px/0.65 (ลดโอกาสค้าง) + timeout UX จาก v1255 */
-const CACHE = 'iufit-v1256-ai-scan-resize'
+/* v1257 = ชื่อเมนู "โหมดกีฬา" + ไอคอนแจ้งเตือน native จาก JS (smallIcon) */
+const CACHE = 'iufit-v1257-sport-mode-label'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
