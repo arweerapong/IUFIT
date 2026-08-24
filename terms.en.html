@@ -33,10 +33,18 @@ ul{padding-left:20px}
 a{color:var(--blue);font-weight:700}
 .tag{display:inline-block;background:#fff3cd;color:#7a5d00;border:1px solid #f3e0a8;border-radius:8px;padding:2px 8px;font-size:12px;font-weight:800}
 .foot{margin-top:24px;color:var(--muted);font-size:12.5px;text-align:center}
+.legal-bar{position:sticky;top:0;z-index:5;display:flex;gap:8px;padding:10px 0 8px;margin:-8px 0 10px;background:var(--bg)}
+.legal-btn{height:40px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.legal-btn.pri{background:var(--navy);border:0;color:#fff}
 </style>
 </head>
 <body>
 <div class="wrap">
+  <div class="legal-bar" role="navigation">
+  <button type="button" class="legal-btn" id="legalBack">Back</button>
+  <button type="button" class="legal-btn pri" id="legalClose">Close</button>
+</div>
+
   <div class="logo">IU<span>FIT</span></div>
   <h1>Terms of Use</h1>
   <!-- ==========================================================================================
@@ -180,5 +188,15 @@ a{color:var(--blue);font-weight:700}
 
   <p class="foot">© 2026 IUFIT · <a href="https://iufit.com">iufit.com</a> · <a href="./privacy.en.html">Privacy Policy</a> · <a href="./refund.html?lang=en">Cancellation &amp; Refund Policy</a> · <a href="./pricing.html?lang=en">Pricing</a> · <a href="./contact.html?lang=en">Contact information</a></p>
 </div>
+<script>
+(function(){
+  function goBack(){ if (history.length > 1) history.back(); else location.href='/'; }
+  function goClose(){ window.close(); setTimeout(function(){ if (!document.hidden) location.href='/'; }, 80); }
+  var b = document.getElementById('legalBack');
+  var c = document.getElementById('legalClose');
+  if (b) b.onclick = goBack;
+  if (c) c.onclick = goClose;
+})();
+</script>
 </body>
 </html>
