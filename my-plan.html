@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My plan · IUFIT</title>
-<meta name="description" content="Your IUFIT coach plan status, trial and renewal">
+<title>My AI credits · IUFIT</title>
+<meta name="description" content="Your IUFIT AI credit balance linked to LINE OA / e-mail">
 <link rel="stylesheet" href="billing.css?v=v108">
 </head>
 <body>
@@ -17,174 +17,52 @@
 
 <h1 id="h-title"></h1>
 <p class="sub" id="acctLine"></p>
-<div id="reminder"></div>
 <div class="card" id="statusCard"></div>
-<!-- 🔴 การต่ออายุอัตโนมัติ + ทางยกเลิก — เติมจาก apRender() ท้ายไฟล์
-     ก่อน 2569-07-31 หน้านี้มีแต่ปุ่ม "ต่ออายุ/ทักไลน์" ทั้งที่ refund.html และ terms.html
-     สัญญาไว้ว่า "ยกเลิกการต่ออายุอัตโนมัติได้ทุกเมื่อ" = คำสัญญาที่ทำไม่ได้ -->
-<div id="autopay" style="margin-top:14px"></div>
 <div id="actions" style="margin-top:14px"></div>
-
-<div class="how" style="margin-top:18px">
-  <h2 id="kw-t"></h2>
-  <ol><li id="kw-1"></li><li id="kw-2"></li><li id="kw-3"></li></ol>
-</div>
-
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v116"></script>
+<script src="billing-common.js?v=v117"></script>
 <script>
 var B=window.IUFIT_BILLING;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
-function tp(k,map){var s=B.t(k);for(var x in map)s=s.replace('{'+x+'}',map[x]);return s;}
-function thDate(ymd){if(!ymd)return '';var p=ymd.split('-');return B.LANG==='en'?(p[2]+'/'+p[1]+'/'+p[0]):(p[2]+'/'+p[1]+'/'+(+p[0]+543));}
 document.getElementById('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
 document.getElementById('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
 T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
-T('h-title','myplan_title');T('kw-t','know_title');T('kw-1','know1');T('kw-2','know2');T('kw-3','know3');
+T('h-title','wal_title');
 
 function render(){
   var lbl=B.accountLabel();
-  document.getElementById('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl):B.t('acct_hint');
-  var planKey=B.currentPlanKey(),p=B.getPlan(planKey);
-  var trial=B.trialActive(),tdl=B.trialDaysLeft();
-  var paid=B.paidActive(),exp=B.planExpiry(),edl=B.daysUntil(exp);
-  var expired=B.trialExpired();
-
-  var rb='';
-  if(trial){var tier=B.reminderTier(tdl);if(tier){var cls=(tdl<=3)?'urgent':(tdl<=7)?'warn':'info';rb='<div class="bn '+cls+'"><b>'+B.t(tdl<=3?'rem_trial_soon':'rem_trial')+'</b>'+tp('rem_trial_m',{d:tdl})+'</div>';}}
-  else if(expired){rb='<div class="bn urgent"><b>'+B.t('rem_exp_t')+'</b>'+B.t('rem_exp_m')+'</div>';}
-  else if(paid&&edl!=null&&edl<=10){var pcls=(edl<=3)?'urgent':'warn';rb='<div class="bn '+pcls+'"><b>'+B.t('rem_paid_t')+'</b>'+tp('rem_paid_m',{d:edl,date:thDate(exp)})+'</div>';}
-  document.getElementById('reminder').innerHTML=rb;
-
-  var h='';
-  var planName=trial?B.t('trial_name'):(paid?(p?p.name:'Coach'):(expired?B.t('free_name'):(p&&p.k!=='free'?p.name:B.t('free_name'))));
-  h+='<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><div class="psub" style="margin:0">'+B.t('cur_label')+'</div><div class="pname" style="font-size:21px">'+planName+'</div>';
-  if(trial)h+='<div class="save" style="color:var(--blue)">'+tp('trial_left',{d:tdl})+'</div>';
-  else if(paid&&exp)h+='<div class="psub" style="margin-top:3px">'+tp('expires_on',{date:thDate(exp)})+(edl!=null?tp('days_more',{d:edl}):'')+'</div>';
-  else if(expired)h+='<div class="save" style="color:var(--red)">'+B.t('one_client')+'</div>';
-  h+='</div>';
-  /* 🔴 สีชิปประกอบด้วย JS ⇒ ด่านคอนทราสต์ตรวจไม่เห็น ([C1-dyn])
-     #18b26b เป็นเขียวตัวเก่าที่ตกค้างหลัง --green เปลี่ยนเป็น #0b804c
-     บนพื้น #eafaf0 ได้แค่ 2.55:1 · var(--green) ได้ 4.62:1 — อ้างโทเคนเพื่อไม่ให้ตกค้างซ้ำ */
-  var pb=trial?'#eaf3ff':(paid?'#eafaf0':'#f1f4f9'),pf=trial?'#1150c8':(paid?'var(--green)':'#7a8aa6');
-  h+='<span style="background:'+pb+';color:'+pf+';font-size:11px;font-weight:800;padding:5px 12px;border-radius:20px;white-space:nowrap">'+B.t(trial?'pill_trial':(paid?'pill_active':'pill_free'))+'</span></div>';
-  if(p&&p.k!=='free'){h+='<div class="feats" style="margin-top:12px;border-top:1px solid var(--line);padding-top:11px">';B.planFeats(p).slice(0,4).forEach(function(f){h+='✓ '+f+'<br>';});h+='</div>';}
-  document.getElementById('statusCard').innerHTML=h;
-
-  var a='';
-  if(B.IS_STORE){a='<div class="bn info"><b>'+B.t('act_store_t')+'</b>'+B.t('act_store_m')+'</div><a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('line_btn')+'</a>';}
-  else if(trial){a='<a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('act_sub_keep')+'</a><a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('act_see_all')+'</a>';}
-  else if(paid){a='<a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('act_renew')+'</a><a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('act_change')+'</a>';}
-  else{a='<a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('act_upgrade')+'</a><a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('act_see_all')+'</a>';}
-  document.getElementById('actions').innerHTML=a;
+  var uid=B.walletUid();
+  document.getElementById('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl):(uid?'':B.t('wal_no_acct'));
+  var card=document.getElementById('statusCard');
+  if(!uid){
+    card.innerHTML='<div class="bn warn" style="margin:0"><b>'+B.t(lbl?'wal_locked':'wal_no_acct')+'</b></div>';
+    document.getElementById('actions').innerHTML=
+      '<a class="btn pri" href="billing.html?lang='+B.LANG+'">'+B.t('nav_billing')+'</a>'+
+      '<a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('nav_pricing')+'</a>';
+    return;
+  }
+  card.innerHTML='<div class="psub" style="margin:0">'+B.t('wal_loading')+'</div>';
+  B.fetchWallet(function(w){
+    var h='';
+    if(w&&w.ok){
+      h+='<div class="psub" style="margin:0">'+B.t('wal_title')+'</div>';
+      h+='<div class="pname" style="font-size:22px;margin-top:6px">'+w.scan+' <span style="font-size:13px;font-weight:700;color:var(--muted)">'+B.t('cr_scan')+'</span></div>';
+      h+='<div class="pname" style="font-size:22px;margin-top:4px">'+w.analyze+' <span style="font-size:13px;font-weight:700;color:var(--muted)">'+B.t('cr_analyze')+'</span></div>';
+    }else if(w&&w.locked){
+      h+='<div class="bn warn" style="margin:0"><b>'+B.t('wal_locked')+'</b></div>';
+    }else{
+      h+='<div class="bn info" style="margin:0"><b>'+B.t('wal_unavailable')+'</b></div>';
+    }
+    card.innerHTML=h;
+  });
+  document.getElementById('actions').innerHTML=
+    '<a class="btn pri" href="billing.html?lang='+B.LANG+'">'+B.t('nav_billing')+'</a>'+
+    '<a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('nav_pricing')+'</a>';
 }
 render();
-
-/* ══════════════════════════════════════════════════════════════════════════════
-   การต่ออายุอัตโนมัติ — แสดงสถานะจริง + ปุ่มยกเลิก/เปิดกลับ
-   ──────────────────────────────────────────────────────────────────────────────
-   🔴 ทำไมต้องถาม server ไม่ใช้ค่าใน localStorage:
-      สถานะ autopay อยู่ที่ Firebase (worker เป็นคนเขียน) · localStorage ของหน้านี้
-      ไม่เคยรู้จักฟิลด์นั้นเลย ⇒ ถ้าเดาเอาเอง ปุ่มจะโชว์ผิดสถานะ ซึ่งกับเรื่องเงิน
-      "แสดงผิด" แย่กว่า "ไม่แสดง"
-
-   🔴 ทำไมต้องยืนยันตัวตน: `/status?account=` กับ `/autopay` เปลี่ยน/อ่านสถานะการเงิน
-      ⇒ worker บังคับ Bearer token (Firebase id token ของแอป) และเทียบ uid กับ account
-      หน้านี้จึงส่งโทเคนไปด้วยเสมอ · ไม่มีโทเคน = บอกให้ไปล็อกอินในแอป ไม่ใช่แสร้งว่าทำได้
-
-   ⚠️ บัญชี LINE ล้วนไม่มี Firebase session ⇒ กดยกเลิกเองไม่ได้ · ต้องบอกทางออกที่ทำได้จริง
-      (ทักไลน์ให้แอดมินปิดให้) ไม่ใช่ซ่อนปุ่มเงียบ ๆ แล้วปล่อยให้เขาหาทางเอง
-   ══════════════════════════════════════════════════════════════════════════════ */
-var apBusy=false;
-function esc(s){return (''+(s==null?'':s)).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-function apBox(cls,title,body,extra){
-  return '<div class="bn '+cls+'"><b>'+title+'</b>'+body+'</div>'+(extra||'');
-}
-function apLineBtn(){
-  return '<a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('line_btn')+'</a>';
-}
-function apRender(st){
-  var el=document.getElementById('autopay'); if(!el)return;
-  if(st.kind==='hide'){el.innerHTML='';return;}
-  if(st.kind==='loading'){el.innerHTML='<p class="note" style="margin:0">'+B.t('ap_loading')+'</p>';return;}
-  if(st.kind==='line'){el.innerHTML=apBox('info',B.t('ap_line_t'),B.t('ap_line_m'),apLineBtn());return;}
-  if(st.kind==='login'){el.innerHTML=apBox('warn',B.t('ap_login_t'),B.t('ap_login_m'),apLineBtn());return;}
-  if(st.kind==='fail'){el.innerHTML=apBox('urgent',B.t('ap_fail_t'),B.t('ap_fail_m'),apLineBtn());return;}
-  /* 🔴 2569-08-01 · แยก "อ่านสถานะไม่ได้ตอนเปิดหน้า" ออกจาก "กดแล้วทำไม่สำเร็จ"
-     เดิมใช้ `fail` ก้อนเดียว ⇒ ผู้ใช้เปิดหน้ามาเฉย ๆ ยังไม่ได้กดอะไรเลย
-     แต่เห็นข้อความว่า "ยังทำรายการไม่สำเร็จ · ยังไม่มีการเปลี่ยนแปลงใด ๆ กับแพ็กของคุณ"
-     ⇒ อ่านแล้วนึกว่าตัวเองเผลอไปกดอะไรผิด หรือระบบเพิ่งทำอะไรพลาดกับแพ็กที่จ่ายเงินไว้
-     **ข้อความบอกความล้มเหลวต้องตรงกับสิ่งที่ผู้ใช้เพิ่งทำ ไม่ใช่ใช้ก้อนเดียวทุกกรณี** */
-  if(st.kind==='readfail'){el.innerHTML=apBox('warn',B.t('ap_read_t'),B.t('ap_read_m'),apLineBtn());return;}
-  /* 403 — บัญชีในเครื่องไม่ตรงกับบัญชีที่ล็อกอินอยู่ (เช่นเคยล็อกอินคนละอีเมล หรือสลับเครื่อง)
-     ด่านฝั่ง server ทำงานถูกต้องแล้ว สิ่งที่ต้องแก้คือ **บอกให้ตรงว่าเกิดอะไรและทำยังไงต่อ** */
-  if(st.kind==='mismatch'){el.innerHTML=apBox('warn',B.t('ap_mismatch_t'),B.t('ap_mismatch_m'),apLineBtn());return;}
-  /* st.kind==='ent' */
-  var e=st.ent,d=thDate(e.exp),p=B.getPlan(e.plan),pname=p?p.name:e.plan;
-  var h=(st.note||'');
-  if(e.autopay){
-    h+='<div class="bn info"><b>'+B.t('ap_title')+'</b>'+tp('ap_on',{date:esc(d)})+'</div>'
-      +'<button class="btn ghost" id="apBtn" onclick="apSet(false)">'+B.t('ap_cancel')+'</button>';
-  }else if(e.hasCard){
-    h+='<div class="bn ok"><b>'+B.t('ap_title')+'</b>'+tp('ap_off',{date:esc(d)})+'</div>'
-      +'<button class="btn ghost" id="apBtn" onclick="apSet(true)">'+B.t('ap_resume')+'</button>';
-  }else{
-    h+='<div class="bn info"><b>'+B.t('ap_title')+'</b>'+B.t('ap_off_nocard')+'</div>';
-  }
-  document.getElementById('autopay').innerHTML=h;
-  window.__apEnt=e; window.__apPlanName=pname;
-}
-/** เปลี่ยนสถานะจริง — ถามยืนยันด้วยข้อความที่บอกตรง ๆ ว่าจะเกิดอะไรและสิทธิ์อยู่ถึงวันไหน */
-function apSet(want){
-  if(apBusy)return; var e=window.__apEnt; if(!e)return;
-  var d=thDate(e.exp);
-  var msg=want?tp('ap_confirm_on',{date:d}):tp('ap_confirm',{plan:window.__apPlanName||e.plan,date:d});
-  if(!confirm(msg))return;
-  apBusy=true;
-  var btn=document.getElementById('apBtn');
-  if(btn){btn.disabled=true;btn.textContent=B.t('ap_working');}
-  B.authToken(function(tok){
-    if(!tok){apBusy=false;apRender({kind:'login'});return;}
-    fetch(B.CHARGE_ENDPOINT+'/autopay',{method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
-      body:JSON.stringify({account:B.accountKey(),autopay:want})})
-      .then(function(r){return r.json().then(function(j){return {s:r.status,j:j};});})
-      .then(function(res){
-        apBusy=false;
-        if(res.s===401){apRender({kind:'login'});return;}
-        if(res.s===403){apRender({kind:'mismatch'});return;}
-        if(res.s!==200||!res.j||res.j.ok!==true){apRender({kind:'fail'});return;}
-        var ent=res.j.entitlement||e;
-        var t=want?'ap_res_t':'ap_done_t',m=want?'ap_res_m':'ap_done_m';
-        apRender({kind:'ent',ent:ent,note:'<div class="bn ok"><b>'+B.t(t)+'</b>'+tp(m,{date:esc(thDate(ent.exp))})+'</div>'});
-      })
-      .catch(function(){apBusy=false;apRender({kind:'fail'});});
-  });
-}
-(function loadAutopay(){
-  if(!B.accountKey()){apRender({kind:'hide'});return;}
-  if(!B.canSelfServe()){apRender({kind:'line'});return;}
-  apRender({kind:'loading'});
-  B.authToken(function(tok){
-    if(!tok){apRender({kind:'login'});return;}
-    fetch(B.CHARGE_ENDPOINT+'/status?account='+encodeURIComponent(B.accountKey()),{headers:{'Authorization':'Bearer '+tok}})
-      .then(function(r){return r.json().then(function(j){return {s:r.status,j:j};});})
-      .then(function(res){
-        if(res.s===401){apRender({kind:'login'});return;}
-        if(res.s===403){apRender({kind:'mismatch'});return;}
-        if(res.s!==200){apRender({kind:'readfail'});return;}
-        var e=res.j&&res.j.entitlement;
-        /* ไม่มีแพ็กที่จ่ายเงินไว้ = ไม่มีอะไรให้ยกเลิก ⇒ ไม่ต้องขึ้นกล่องอะไรเลย */
-        if(!e||!e.plan){apRender({kind:'hide'});return;}
-        apRender({kind:'ent',ent:e});
-      })
-      .catch(function(){apRender({kind:'readfail'});});
-  });
-})();
-
-try{var _f=document.getElementById("foot");if(_f)_f.innerHTML=B.footerHtml();}catch(e){}
+document.getElementById('foot').innerHTML=B.footerHtml();
 </script>
 </body>
 </html>

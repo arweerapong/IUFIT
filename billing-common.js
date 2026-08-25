@@ -206,7 +206,7 @@
   function setLang(l){try{localStorage.setItem('iufit_biller_lang',l);}catch(e){}location.reload();}
   var T={
     th:{
-      nav_pricing:'ราคา',nav_billing:'สมัคร',nav_myplan:'แพ็กของฉัน',
+      nav_pricing:'เครดิต',nav_billing:'ซื้อเครดิต',nav_myplan:'ยอดของฉัน',
       pricing_title:'แพ็กเทรนเนอร์',pricing_sub:'ดูแลลูกเทรนเป็นระบบ — ส่งแผน รับการบ้าน ติดตามผล และให้ IU MATE ช่วยลดงานทุกวัน',
       personal_title:'สำหรับผู้ใช้ทั่วไป',personal_sub:'ไม่ใช่เทรนเนอร์? Personal ใช้ฟรี 100% · AI เป็นเครดิต (แจกฟรี 10 ครั้งแรก · ซื้อแพ็กเสริมได้)',
       /* ⭐ 2569-07-30 · ยกเลิก "ทดลองฟรี 30 วัน" แล้ว (ตรงกับ src/views/PricingView.vue: ยืนยันอีเมล → รับ Coach Pro)
@@ -226,7 +226,7 @@
       how_title:'เริ่มยังไง',how1:'<b>เริ่มใช้ในแอป</b> — เปิดแอป IUFIT → เปิดโหมดโค้ช → ยืนยันอีเมลเพื่อรับ Coach Pro ในช่วงเปิดตัว (ไม่ต้องใส่บัตร)',how2:'<b>พร้อมสมัครจริง</b> — กด “สมัคร” เลือกแพ็ก/รอบบิล แล้วชำระเงิน (หรือทักไลน์)',how3:'<b>ปลดล็อกอัตโนมัติ</b> — เปิดแอปด้วยบัญชีเดิม แพ็กจะเปิดให้เอง ลูกเทรนและข้อมูลอยู่ครบ',
       note_soft:'ค่าแพ็กเป็นการสมัครใช้ซอฟต์แวร์ IUFIT ผ่านเว็บไซต์ · ค่าเทรนระหว่างลูกเทรนกับโค้ชโอนตรงผ่าน PromptPay ของโค้ช (IUFIT ไม่ถือเงินแทน)',
       store_note_t:'เปิดในแอป',store_note_m:'การสมัคร/ชำระเงินทำผ่านเว็บไซต์หรือ LINE · ในแอปดูสถานะแพ็กของคุณได้',
-      billing_title:'สมัครแพ็ก',acct_prefix:'บัญชี: ',acct_bind:' · แพ็กจะผูกกับบัญชีนี้',acct_login:'เข้าสู่ระบบในแอปด้วยอีเมล/LINE เพื่อให้แพ็กปลดล็อกอัตโนมัติ',
+      billing_title:'ซื้อเครดิต AI',acct_prefix:'บัญชี: ',acct_bind:' · เครดิตจะผูกกับบัญชีอีเมลที่ยืนยันแล้ว',acct_login:'เข้าสู่ระบบในแอปด้วยอีเมล/LINE แล้วกลับมาที่หน้านี้',
       pick_plan:'เลือกแพ็ก',clients_unit:' คน',pay_method:'วิธีชำระเงิน',pm_card:'💳 บัตรเครดิต/เดบิต',pm_pp:'📱 PromptPay',pm_pp_soon:'เร็ว ๆ นี้',
       card_name:'ชื่อบนบัตร',card_name_ph:'ชื่อ-สกุล',card_num:'หมายเลขบัตร',card_exp:'หมดอายุ (ดด/ปป)',card_cvv:'CVV',pay_btn:'ชำระเงิน',
       secure_note:'🔒 ข้อมูลบัตรถูกเข้ารหัสและส่งตรงให้ Omise · IUFIT ไม่เก็บเลขบัตร',
@@ -249,7 +249,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
          (เน็ตหลุด · worker ตอบ 5xx · ก้อน JSON อ่านไม่ออก) ⇒ เงินอาจถูกตัดไปแล้วจริง ๆ
          ห้ามมีคำว่า "ไม่สำเร็จ" และห้ามชวนให้จ่ายซ้ำเด็ดขาด — หน้านี้จึงไม่มีปุ่มลองใหม่ */
       res_unknown_t:'ยังไม่ทราบผลการชำระเงิน',res_unknown_m:'คำขอถูกส่งออกไปแล้วแต่คำตอบไม่กลับมา · เงินอาจถูกตัดไปแล้ว 🔴 กรุณาอย่าเพิ่งกดจ่ายซ้ำ — ทักไลน์มาแจ้งเรา เราตรวจให้ได้ทันทีและคืนเงินให้ถ้าซ้ำ',
-      go_myplan:'ไปหน้าแพ็กของฉัน',retry:'ลองชำระอีกครั้ง',line_help:'ทักไลน์ขอความช่วยเหลือ',
+      go_myplan:'ดูยอดเครดิต',retry:'ลองชำระอีกครั้ง',line_help:'ทักไลน์ขอความช่วยเหลือ',
       myplan_title:'แพ็กของฉัน',acct_hint:'เปิดหน้านี้บนอุปกรณ์เดียวกับที่ใช้แอป เพื่อดูสถานะแพ็กของคุณ',
       cur_label:'แพ็กปัจจุบัน',trial_left:'ทดลองฟรี · เหลือ {d} วัน · ไม่ต้องใส่บัตร',expires_on:'หมดอายุ {date}',days_more:' · อีก {d} วัน',one_client:'ดูแลลูกเทรนได้ 3 คน',
       pill_trial:'TRIAL',pill_active:'ACTIVE',pill_free:'FREE',trial_name:'Trainer Pro (ทดลอง)',free_name:'Trainer Free',
@@ -296,8 +296,15 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       /* ข้อความหน้าสำเร็จของ "เครดิต" ต้องต่างจาก "แพ็ก" — คนละสินค้า คนละสิ่งที่ได้รับ
          เดิมใช้ข้อความเดียวกัน ⇒ ซื้อเครดิตแล้วขึ้นว่า "แพ็กของคุณเปิดใช้งานแล้ว" ซึ่งไม่จริง */
       cr_success_m:'เครดิตถูกเติมเข้าบัญชีของคุณแล้ว · เปิดแอป IUFIT ด้วยบัญชีเดิม ยอดเครดิตจะอัปเดตอัตโนมัติ',
+      wal_title:'เครดิต AI คงเหลือ',
+      wal_loading:'กำลังอ่านยอด…',
+      wal_no_acct:'ยังไม่พบบัญชีที่ผูกกับ LINE OA — เปิดแอป IUFIT ล็อกอินด้วย LINE หรืออีเมลก่อน',
+      wal_scan:'สแกนอาหารเหลือ',
+      wal_analyze:'วิเคราะห์เหลือ',
+      wal_locked:'ยังอ่านยอดไม่ได้ — ยืนยันอีเมลในแอปเพื่อปลดล็อกเครดิต AI',
+      wal_unavailable:'อ่านยอดเครดิตไม่ได้ตอนนี้ — ลองใหม่ในอีกสักครู่',
       need_login_t:'ต้องเข้าสู่ระบบก่อนชำระเงิน',
-      need_login_m:'เราต้องรู้ว่าจะเปิดแพ็กให้บัญชีไหน · กรุณาเปิดแอป IUFIT แล้วเข้าสู่ระบบ จากนั้นกลับมาที่หน้านี้อีกครั้ง',
+      need_login_m:'เราต้องรู้ว่าจะเติมเครดิตให้บัญชีไหน · กรุณาเปิดแอป IUFIT แล้วเข้าสู่ระบบ จากนั้นกลับมาที่หน้านี้อีกครั้ง',
       pay_checking:'กำลังตรวจสอบผลการชำระเงิน…',
       pay_paid_t:'ชำระเงินสำเร็จ',
       pay_paid_m:'แพ็กของคุณเปิดใช้งานแล้ว',
@@ -364,7 +371,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       testmode_m:'หน้านี้กำลังใช้คีย์ทดสอบของ Omise · รับได้เฉพาะบัตรทดสอบเท่านั้น บัตรจริงจะถูกปฏิเสธ · ถ้าคุณเห็นข้อความนี้บนเว็บจริง กรุณาแจ้งเราทาง LINE'
     },
     en:{
-      nav_pricing:'Pricing',nav_billing:'Subscribe',nav_myplan:'My plan',
+      nav_pricing:'Credits',nav_billing:'Buy credits',nav_myplan:'My balance',
       pricing_title:'Trainer plans',pricing_sub:'Coach clients systematically — send plans, collect homework, track results, and let IU MATE cut your daily work.',
       personal_title:'For individuals',personal_sub:'Not a coach? Personal is 100% free · AI runs on credits (10 free to start · add-on packs available).',
       /* ⭐ 2569-07-30 · 30-day free trial was cancelled — keep the keys (pricing.html calls them), change the copy */
@@ -380,7 +387,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       how_title:'How to start',how1:'<b>Start in the app</b> — open IUFIT → turn on coach mode → verify your email to get Coach Pro during the launch period (no card).',how2:'<b>Ready to subscribe</b> — tap “Subscribe”, pick a plan & cycle, then pay (or chat on LINE).',how3:'<b>Auto-unlock</b> — open the app with the same account; your plan activates automatically, clients & data intact.',
       note_soft:'Plan fees are a subscription to IUFIT software via the website · Client↔coach payments transfer directly via the coach PromptPay (IUFIT does not hold funds).',
       store_note_t:'Opened in the app',store_note_m:'Subscription/payment is done on the website or LINE · in the app you can view your plan status.',
-      billing_title:'Subscribe',acct_prefix:'Account: ',acct_bind:' · your plan links to this account',acct_login:'Sign in inside the app with email/LINE so your plan unlocks automatically.',
+      billing_title:'Buy AI credits',acct_prefix:'Account: ',acct_bind:' · credits link to your verified e-mail',acct_login:'Sign in inside the app with e-mail/LINE, then return here.',
       pick_plan:'Choose a plan',clients_unit:' clients',pay_method:'Payment method',pm_card:'💳 Credit/Debit card',pm_pp:'📱 PromptPay',pm_pp_soon:'coming soon',
       card_name:'Name on card',card_name_ph:'Full name',card_num:'Card number',card_exp:'Expiry (MM/YY)',card_cvv:'CVV',pay_btn:'Pay',
       secure_note:'🔒 Card details are encrypted and sent directly to Omise · IUFIT never stores your card.',
@@ -394,7 +401,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       res_failed_t:'Payment failed',res_failed_m:'No charge was made · try again, or chat on LINE for help.',
       /* คู่ภาษาอังกฤษของ `res_unknown_*` — ความหมายต้องตรงกันเป๊ะ: ไม่ทราบผล ไม่ใช่ล้มเหลว */
       res_unknown_t:'Payment result unknown',res_unknown_m:'Your request was sent but no answer came back · your card may already have been charged. 🔴 Please do not pay again — message us on LINE and we will check right away and refund any duplicate.',
-      go_myplan:'Go to My plan',retry:'Try paying again',line_help:'Chat on LINE for help',
+      go_myplan:'View credit balance',retry:'Try paying again',line_help:'Chat on LINE for help',
       myplan_title:'My plan',acct_hint:'Open this page on the same device as the app to see your plan status.',
       cur_label:'Current plan',trial_left:'Free trial · {d} days left · no card',expires_on:'Expires {date}',days_more:' · {d} days left',one_client:'3 clients',
       pill_trial:'TRIAL',pill_active:'ACTIVE',pill_free:'FREE',trial_name:'Trainer Pro (trial)',free_name:'Trainer Free',
@@ -433,8 +440,15 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       cr_tab_plan:'Coach plans',
       cr_tab_credit:'AI credits',
       cr_success_m:'Your credits have been added · open IUFIT with the same account and the balance updates automatically.',
+      wal_title:'AI credit balance',
+      wal_loading:'Loading balance…',
+      wal_no_acct:'No LINE OA–linked account found — open IUFIT and sign in with LINE or e-mail first',
+      wal_scan:'Food scans left',
+      wal_analyze:'Analyses left',
+      wal_locked:'Balance locked — verify your e-mail in the app to unlock AI credits',
+      wal_unavailable:'Can’t read your credit balance right now — try again in a moment',
       need_login_t:'Please sign in before paying',
-      need_login_m:'We need to know which account to activate. Open the IUFIT app, sign in, then come back to this page.',
+      need_login_m:'We need to know which account to credit. Open the IUFIT app, sign in, then come back to this page.',
       pay_checking:'Checking your payment…',
       pay_paid_t:'Payment successful',
       pay_paid_m:'Your plan is now active.',
@@ -527,6 +541,42 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
 
   function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function accountKey(){var s=appState();try{if(s.lineId)return 'line:'+s.lineId;if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0)return s.fbuid;if(s.emailId)return 'email:'+s.emailId;}catch(e){}return '';}
+  /**
+   * uid สำหรับกระเป๋าเครดิต AI — ต้องเป็น `email:…` (iufit-gym)
+   * บัญชีที่ผูก LINE OA ไว้แต่ยืนยันอีเมลแล้ว ⇒ ใช้ fbuid/emailId ไม่ใช่ line:
+   */
+  function walletUid(){
+    var s=appState();
+    try{
+      if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0)return s.fbuid;
+      if(s.emailId)return 'email:'+s.emailId;
+    }catch(e){}
+    return '';
+  }
+  /** บัญชีที่ใช้ตอนซื้อเครดิต — เหมือน walletUid (ห้ามส่ง line: ไป /charge) */
+  function creditAccountKey(){return walletUid();}
+  var GYM_ENDPOINT='https://iufit-gym.ar-weerapong.workers.dev';
+  /** อ่านยอดเครดิตจาก gym worker — cb({ok,scan,analyze,locked}) */
+  function fetchWallet(cb){
+    var uid=walletUid();
+    if(!uid){cb({ok:false,locked:true,scan:0,analyze:0});return;}
+    fetch(GYM_ENDPOINT+'/credit/wallet',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({uid:uid})
+    }).then(function(r){return r.json();}).then(function(j){
+      if(!j||j.verified===false){cb({ok:false,locked:true,scan:0,analyze:0});return;}
+      var b=j.bal||j;
+      var scan=0,analyze=0;
+      if(typeof b.scan==='number'||typeof b.analyze==='number'){
+        scan=Number(b.scan)||0;analyze=Number(b.analyze)||0;
+      }else{
+        var free=b.free||{},paid=b.paid||{};
+        scan=(Number(free.scan)||0)+(Number(paid.scan)||0);
+        analyze=(Number(free.analyze)||0)+(Number(paid.analyze)||0);
+      }
+      cb({ok:true,locked:false,scan:scan,analyze:analyze});
+    }).catch(function(){cb({ok:false,locked:false,scan:0,analyze:0});});
+  }
 
   /* ===== ยืนยันตัวตนกับ worker (ใช้ session ที่แอปสร้างไว้แล้ว) =====================
      ⭐ 2569-07-31 · ต่อกับ **ระบบล็อกอินเดิม** ไม่ได้ประดิษฐ์กลไกใหม่
@@ -634,7 +684,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   function planKeyOf(raw,fallback){
     var k=''+(raw||'');
     if(getPlan(k)||getCredit(k))return k;
-    return fallback||'pro';
+    return fallback||'credit_m';
   }
 
   window.IUFIT_BILLING={
@@ -645,6 +695,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     CREDIT_PACKS:CREDIT_PACKS, getCredit:getCredit, isCredit:isCredit,
     planSub:planSub, planFeats:planFeats, planBadge:planBadge,
     appState:appState, accountKey:accountKey, accountLabel:accountLabel,
+    walletUid:walletUid, creditAccountKey:creditAccountKey, fetchWallet:fetchWallet,
     authToken:authToken, canSelfServe:canSelfServe,
     currentPlanKey:currentPlanKey, planExpiry:planExpiry,
     trialDaysLeft:trialDaysLeft, trialActive:trialActive, trialExpired:trialExpired,
