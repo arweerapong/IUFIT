@@ -652,7 +652,9 @@
 /* v1256 = ย่อรูปสแกน 512px/0.65 (ลดโอกาสค้าง) + timeout UX จาก v1255 */
 /* v1257 = ชื่อเมนู "โหมดกีฬา" + ไอคอนแจ้งเตือน native จาก JS (smallIcon) */
 /* v1258 = เอาหมวดเครื่องมือออกจากอุปกรณ์ของฉัน · วัดหัวใจอยู่ที่ /watch · ค้นหาอยู่หมวดอุปกรณ์ */
-const CACHE = 'iufit-v1272-daily-ritual'
+/* v1273 = นาฬิกา hub IA (เกียร์→devices · SpO2 เต็มจอ · ตัดเชื่อมออกจาก hub) + พักโหมดโค้ชไม่ค้าง
+   + ตั้งค่า/billing เครดิต AI · HomeHero/Mate feedback */
+const CACHE = 'iufit-v1273-watch-hub-ia'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
