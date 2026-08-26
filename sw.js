@@ -655,7 +655,8 @@
 /* v1280 = แยกแผน/บันทึกการฝึก+อาหาร · กีฬาจับเวลาจาก Band → sport_* อัตโนมัติไม่ซ้อน wear_*
    · toast กินตามแผน · เมนูที่กินแล้วบน /food/log */
 /* v1285 = วัดชีพจร/SpO2 แบบ MeasureHeart + หน้า SportLive อนิเมชันเรียลไทม์ตาม handoff */
-const CACHE = 'iufit-v1285-watch-sport-live-anim'
+/* v1286 = ช่องเซตตารางฝึกพอดีกรอบ + รายละเอียดท่าไปหน้าคลัง + IU Mate ใช้ชื่อท่าอังกฤษ */
+const CACHE = 'iufit-v1286-workout-sets-mate-en'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
