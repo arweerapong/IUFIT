@@ -654,7 +654,7 @@
 /* v1258 = เอาหมวดเครื่องมือออกจากอุปกรณ์ของฉัน · วัดหัวใจอยู่ที่ /watch · ค้นหาอยู่หมวดอุปกรณ์ */
 /* v1273 = นาฬิกา hub IA (เกียร์→devices · SpO2 เต็มจอ · ตัดเชื่อมออกจาก hub) + พักโหมดโค้ชไม่ค้าง
    + ตั้งค่า/billing เครดิต AI · HomeHero/Mate feedback */
-const CACHE = 'iufit-v1273-watch-hub-ia'
+const CACHE = 'iufit-v1275-sleep-goal-hr'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
