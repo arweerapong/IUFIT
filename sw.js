@@ -654,7 +654,8 @@
 /* v1258 = เอาหมวดเครื่องมือออกจากอุปกรณ์ของฉัน · วัดหัวใจอยู่ที่ /watch · ค้นหาอยู่หมวดอุปกรณ์ */
 /* v1280 = แยกแผน/บันทึกการฝึก+อาหาร · กีฬาจับเวลาจาก Band → sport_* อัตโนมัติไม่ซ้อน wear_*
    · toast กินตามแผน · เมนูที่กินแล้วบน /food/log */
-const CACHE = 'iufit-v1284-hero-btn-stretch-fix'
+/* v1285 = วัดชีพจร/SpO2 แบบ MeasureHeart + หน้า SportLive อนิเมชันเรียลไทม์ตาม handoff */
+const CACHE = 'iufit-v1285-watch-sport-live-anim'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
