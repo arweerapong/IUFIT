@@ -114,6 +114,12 @@
      ถ้าเปลี่ยนแค่ที่นี่ ปุ่มจะกดได้แต่ server ปฏิเสธ ⇒ ผู้ใช้เห็น "ชำระเงินไม่สำเร็จ" */
   var PLANS_OPEN=false;
 
+  /* ⭐ 2569-08-27 · พร้อมเพย์บนหน้า billing = โอนตรงเข้าเบอร์รับของ IUFIT
+     ไม่ผ่าน Omise (ไม่โดนค่าคอมมิชชัน) · บัตรเครดิต/เดบิตยังตัดผ่าน Omise ตามเดิม
+     เบอร์ตั้งต้น = เบอร์ติดต่อที่ยื่น Omise แล้ว · แก้ได้จากศูนย์แอดมิน (`/ops/billing`) */
+  var PROMPTPAY_OPEN=true;
+  var PROMPTPAY_DEFAULT='0993959266';
+
   /* Cloudflare Worker `iufit-omise` — สร้าง charge ฝั่ง server (ที่เก็บ secret key)
      ⭐ 2569-07-31 · ซอร์สอยู่ในรีโปแล้วที่ `workers/iufit-omise/src/index.js`
         (คอมเมนต์เดิมเขียนว่า "ไม่อยู่ในโปรเจกต์นี้" ซึ่งล้าสมัยไปแล้ว) */
@@ -125,6 +131,7 @@
      🔴 ต่างจาก secret key ของ Omise (`skey_…`) โดยสิ้นเชิง — **ตัวนั้นห้ามอยู่ในไฟล์นี้เด็ดขาด**
      ใช้ทำอย่างเดียว: ต่ออายุ id token ของผู้ใช้เพื่อเอาไปยืนยันตัวตนกับ worker */
   var FB_KEY='AIzaSyBX7njtAb7n6uN1JG_e5QSq2Gkor8Ji4cc';
+  var FB_DB='https://iufit-9dea7-default-rtdb.asia-southeast1.firebasedatabase.app';
   var LINE_URL='https://line.me/R/ti/p/@987qyznd';
   /* ===== ข้อมูลติดต่อผู้ให้บริการ (แสดงต่อสาธารณะ) =====
      ⭐ 2569-07-30 · เจ้าของตัดสินใจใหม่ (เพื่อปลดข้อจำกัดบัญชี Omise: โอนยอดถูกระงับ / บังคับ 3DS / จำกัด 3,000 บ.)
@@ -217,7 +224,7 @@
       /* why4_* ถูกเรียกจาก pricing.html บรรทัด T('w4t','why4_t') แต่เดิม "ไม่มีคีย์" ⇒ หน้าเว็บโชว์คำว่า why4_t/why4_m ดิบ ๆ
          ข้อความด้านล่างอ้างฟีเจอร์ที่มีจริงเท่านั้น (my-plan.html: แจ้งเตือนก่อนหมดอายุ rem_paid_* + หน้าแพ็กของฉัน) */
       why4_t:'ต่ออายุไม่หลุด',why4_m:'มีแจ้งเตือนก่อนแพ็กหมดอายุ และหน้า “แพ็กของฉัน” ให้ดูสถานะ/ต่ออายุได้เอง',
-      faq_title:'คำถามที่พบบ่อย',faq1_q:'จ่ายเงินยังไงบ้าง?',faq1_a:'เลือกแพ็ก → ชำระผ่านบัตรเครดิต/เดบิตด้วยระบบ Omise ที่ปลอดภัย → เปิดแอปด้วยบัญชีเดิม แพ็กปลดล็อกอัตโนมัติ',faq2_q:'ทำไมในแอปไม่มีปุ่มซื้อ?',faq2_a:'ตามนโยบาย Google Play การสมัครแพ็กซอฟต์แวร์ทำผ่านเว็บนี้ (นอกแอป) · ส่วนค่าคอร์สเทรนตัวต่อตัว (บริการจริงระหว่างคุณกับลูกเทรน) จ่าย PromptPay ในแอปได้ปกติ',faq3_q:'ต่ออายุ / ยกเลิกยังไง?',faq3_a:'ต่ออายุที่หน้านี้เมื่อใกล้หมดอายุ (มีแจ้งเตือนล่วงหน้า) · ยกเลิกได้ทุกเมื่อ ไม่มีสัญญาผูกมัด · ข้อมูลลูกเทรนไม่หายแม้ลดแพ็ก',faq4_q:'1 แพ็กใช้ได้กี่เครื่อง?',faq4_a:'ใช้ได้ตามจำนวนที่กำหนดต่อแพ็ก · ย้ายเครื่องได้โดยติดต่อทีมงาน',faq5_q:'มีรับประกันคืนเงินไหม?',faq5_a:'เนื่องจากเป็นบริการดิจิทัลที่เปิดใช้ทันที เมื่อชำระแล้วโดยหลักจะไม่คืนเงิน · <b>ยกเว้นชำระผิดพลาดหรือซ้ำซ้อน ขอคืนได้ภายใน 7 วัน</b> นับจากวันที่ชำระ (ดูนโยบายการยกเลิกและคืนเงิน)',
+      faq_title:'คำถามที่พบบ่อย',faq1_q:'จ่ายเงินยังไงบ้าง?',faq1_a:'เลือกแพ็ก → จ่ายด้วยบัตรเครดิต/เดบิตผ่าน Omise (เครดิตเข้าอัตโนมัติ) หรือโอนพร้อมเพย์เข้าเบอร์รับของ IUFIT โดยตรงแล้วทักไลน์พร้อมรหัสอ้างอิงเพื่อให้เติมเครดิต',faq2_q:'ทำไมในแอปไม่มีปุ่มซื้อ?',faq2_a:'ตามนโยบาย Google Play การสมัครแพ็กซอฟต์แวร์ทำผ่านเว็บนี้ (นอกแอป) · ส่วนค่าคอร์สเทรนตัวต่อตัว (บริการจริงระหว่างคุณกับลูกเทรน) จ่าย PromptPay ในแอปได้ปกติ',faq3_q:'ต่ออายุ / ยกเลิกยังไง?',faq3_a:'ต่ออายุที่หน้านี้เมื่อใกล้หมดอายุ (มีแจ้งเตือนล่วงหน้า) · ยกเลิกได้ทุกเมื่อ ไม่มีสัญญาผูกมัด · ข้อมูลลูกเทรนไม่หายแม้ลดแพ็ก',faq4_q:'1 แพ็กใช้ได้กี่เครื่อง?',faq4_a:'ใช้ได้ตามจำนวนที่กำหนดต่อแพ็ก · ย้ายเครื่องได้โดยติดต่อทีมงาน',faq5_q:'มีรับประกันคืนเงินไหม?',faq5_a:'เนื่องจากเป็นบริการดิจิทัลที่เปิดใช้ทันที เมื่อชำระแล้วโดยหลักจะไม่คืนเงิน · <b>ยกเว้นชำระผิดพลาดหรือซ้ำซ้อน ขอคืนได้ภายใน 7 วัน</b> นับจากวันที่ชำระ (ดูนโยบายการยกเลิกและคืนเงิน)',
       launch:'🎉 ช่วงเปิดตัว: ทุกแพ็กใช้ฟรีถึง 31 ธ.ค. 2026 · ราคาด้านล่างเป็นราคาหลังช่วงเปิดตัว · สนใจแพ็กทักไลน์ได้เลย',
       monthly:'รายเดือน',yearly:'รายปี · ประหยัด 2 เดือน',launch_price:'ฟรีถึง 31 ธ.ค. 2026',per_mo:'/เดือน',per_yr:'/ปี',
       current_plan:'แพ็กปัจจุบัน',choose_plan:'เลือกแพ็กนี้',contact:'ติดต่อสอบถาม',manage_web:'จัดการแพ็กผ่านเว็บ/ไลน์',cta_line:'สนใจแพ็ก → ทักไลน์',
@@ -228,8 +235,20 @@
       store_note_t:'เปิดในแอป',store_note_m:'การสมัคร/ชำระเงินทำผ่านเว็บไซต์หรือ LINE · ในแอปดูสถานะแพ็กของคุณได้',
       billing_title:'ซื้อเครดิต AI',acct_prefix:'บัญชี: ',acct_bind:' · เครดิตจะผูกกับบัญชีอีเมลที่ยืนยันแล้ว',acct_login:'เข้าสู่ระบบในแอปด้วยอีเมล/LINE แล้วกลับมาที่หน้านี้',
       pick_plan:'เลือกแพ็ก',clients_unit:' คน',pay_method:'วิธีชำระเงิน',pm_card:'💳 บัตรเครดิต/เดบิต',pm_pp:'📱 PromptPay',pm_pp_soon:'เร็ว ๆ นี้',
+      pp_btn:'สร้าง QR พร้อมเพย์',
+      pp_hint:'โอนเข้าเบอร์รับของ IUFIT โดยตรง ไม่ผ่าน Omise · หลังโอนแล้วทักไลน์พร้อมรหัสอ้างอิงเพื่อให้เติมเครดิต',
+      pp_wait_t:'สแกน QR เพื่อโอนพร้อมเพย์',
+      pp_wait_m:'เปิดแอปธนาคารแล้วสแกน · เงินเข้าเบอร์รับของ IUFIT ตรง ๆ ไม่มีค่าคอมมิชชันของตัวกลาง',
+      pp_expire:'QR ระบุยอดให้แล้ว · โอนแล้วอย่าปิดหน้านี้ จนกว่าจะทักไลน์แจ้งรหัสอ้างอิง',
+      pp_ref:'รหัสอ้างอิง',
+      pp_line_after:'ทักไลน์หลังโอน · แนบรหัสอ้างอิงนี้',
+      pp_direct_note:'เส้นทางนี้ไม่ตัดผ่าน Omise',
+      pp_copy:'คัดลอกรหัส',
+      pp_copy_ok:'คัดลอกรหัสแล้ว',
+      pp_back:'เลือกวิธีจ่ายใหม่',
       card_name:'ชื่อบนบัตร',card_name_ph:'ชื่อ-สกุล',card_num:'หมายเลขบัตร',card_exp:'หมดอายุ (ดด/ปป)',card_cvv:'CVV',pay_btn:'ชำระเงิน',
       secure_note:'🔒 ข้อมูลบัตรถูกเข้ารหัสและส่งตรงให้ Omise · IUFIT ไม่เก็บเลขบัตร',
+      secure_note_pp:'เงินเข้าเบอร์พร้อมเพย์ของ IUFIT โดยตรง · IUFIT ไม่เก็บเลขบัญชีธนาคารของคุณ',
       omise_soon_t:'ระบบชำระออนไลน์กำลังเปิดให้บริการ',omise_soon_m:'จองราคาเปิดตัวไว้ก่อนได้ — ราคานี้จะถูกล็อกให้คุณ แล้วแอดมินช่วยเปิดแพ็กให้ทันที',
       /* ⭐ 2569-07-30 · ถอด book_line / reserve_local ออก — ไม่มีปุ่มเรียกแล้ว
          (มีไว้ตอนยังไม่มีช่องทางจ่ายจริง · ตอนนี้เหลือทางเดียวคือชำระผ่าน Omise) */
@@ -379,7 +398,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       trust_pay:'Secure payments by Omise',trust_pp:'Credit/debit cards accepted',trust_ssl:'SSL encrypted',
       why_title:'Why coaches choose IUFIT',why1_t:'All in one app',why1_m:'Send meal/workout plans, review homework, chat, and track clients',why2_t:'IU MATE cuts your work',why2_m:'Draft menus/programs, summarize homework and at-risk clients',why3_t:'Clients pay nothing',why3_m:'Invite by QR — they join on your seats, no purchase needed',
       why4_t:'Never miss a renewal',why4_m:'Reminders before your plan expires, plus a “My plan” page to check status and renew yourself',
-      faq_title:'FAQ',faq1_q:'How do I pay?',faq1_a:'Pick a plan → pay by credit/debit card via secure Omise → open the app with the same account and your plan unlocks automatically.',faq2_q:'Why is there no buy button in the app?',faq2_a:'Per Google Play policy, software plans are purchased on this website (outside the app). One-on-one PT fees (a real service between you and your client) can still be paid via PromptPay inside the app.',faq3_q:'How do I renew / cancel?',faq3_a:'Renew here when your plan is about to expire (you get reminders) · cancel anytime, no contract · client data is never lost even if you downgrade.',faq4_q:'How many devices per plan?',faq4_a:'Each plan allows a set number of devices · contact us to move devices.',faq5_q:'Is there a refund guarantee?',faq5_a:'Because this is a digital service activated immediately, fees are generally non-refundable once paid · <b>except for incorrect or duplicate payments, which you can claim within 7 days</b> of the payment date (see the cancellation &amp; refund policy).',
+      faq_title:'FAQ',faq1_q:'How do I pay?',faq1_a:'Pick a plan → pay by credit/debit card via Omise (credits are added automatically), or transfer via PromptPay straight to IUFIT’s number then message LINE with the reference so we can add credits.',faq2_q:'Why is there no buy button in the app?',faq2_a:'Per Google Play policy, software plans are purchased on this website (outside the app). One-on-one PT fees (a real service between you and your client) can still be paid via PromptPay inside the app.',faq3_q:'How do I renew / cancel?',faq3_a:'Renew here when your plan is about to expire (you get reminders) · cancel anytime, no contract · client data is never lost even if you downgrade.',faq4_q:'How many devices per plan?',faq4_a:'Each plan allows a set number of devices · contact us to move devices.',faq5_q:'Is there a refund guarantee?',faq5_a:'Because this is a digital service activated immediately, fees are generally non-refundable once paid · <b>except for incorrect or duplicate payments, which you can claim within 7 days</b> of the payment date (see the cancellation &amp; refund policy).',
       launch:'🎉 Launch period: all plans are free through 31 Dec 2026 · prices below apply after launch · chat on LINE if interested.',
       monthly:'Monthly',yearly:'Yearly · save 2 months',launch_price:'Free until 31 Dec 2026',per_mo:'/mo',per_yr:'/yr',
       current_plan:'Current plan',choose_plan:'Choose this plan',contact:'Contact us',manage_web:'Manage on web / LINE',cta_line:'Interested? Chat on LINE',
@@ -389,8 +408,20 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       store_note_t:'Opened in the app',store_note_m:'Subscription/payment is done on the website or LINE · in the app you can view your plan status.',
       billing_title:'Buy AI credits',acct_prefix:'Account: ',acct_bind:' · credits link to your verified e-mail',acct_login:'Sign in inside the app with e-mail/LINE, then return here.',
       pick_plan:'Choose a plan',clients_unit:' clients',pay_method:'Payment method',pm_card:'💳 Credit/Debit card',pm_pp:'📱 PromptPay',pm_pp_soon:'coming soon',
+      pp_btn:'Create PromptPay QR',
+      pp_hint:'Pay straight to IUFIT’s PromptPay number — not via Omise. After transferring, message us on LINE with the reference code so we can add your credits.',
+      pp_wait_t:'Scan to pay with PromptPay',
+      pp_wait_m:'Open your bank app and scan · funds go directly to IUFIT, with no gateway commission.',
+      pp_expire:'The QR already includes the amount · after you transfer, keep this page open until you message LINE with the reference code.',
+      pp_ref:'Reference',
+      pp_line_after:'Message LINE after paying · include this reference',
+      pp_direct_note:'This path does not go through Omise',
+      pp_copy:'Copy reference',
+      pp_copy_ok:'Reference copied',
+      pp_back:'Choose another payment method',
       card_name:'Name on card',card_name_ph:'Full name',card_num:'Card number',card_exp:'Expiry (MM/YY)',card_cvv:'CVV',pay_btn:'Pay',
       secure_note:'🔒 Card details are encrypted and sent directly to Omise · IUFIT never stores your card.',
+      secure_note_pp:'Funds go directly to IUFIT’s PromptPay · we never see your bank account number.',
       omise_soon_t:'Online payment is opening soon',omise_soon_m:'Reserve the launch price now — it will be locked for you and our team activates your plan right away.',
 
       order_total:'Total',equiv:'Equivalent',
@@ -687,10 +718,53 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     return fallback||'credit_m';
   }
 
+  /* PromptPay EMVCo — สูตรเดียวกับ `services/courseTrack.ts` `promptPayPayload`
+     เบอร์ 10 หลัก / บัตร 13 / e-Wallet 15 เท่านั้นที่แอปธนาคารโอนได้ */
+  function ppDigits(s){return String(s||'').replace(/[^0-9]/g,'');}
+  function ppValid(s){var n=ppDigits(s).length;return n===10||n===13||n===15;}
+  function ppTLV(id,v){var x=''+v;return id+('00'+x.length).slice(-2)+x;}
+  function ppCRC(x){
+    var crc=0xffff,i,j;
+    for(i=0;i<x.length;i++){
+      crc^=(x.charCodeAt(i)&0xff)<<8;
+      for(j=0;j<8;j++)crc=crc&0x8000?((crc<<1)^0x1021)&0xffff:(crc<<1)&0xffff;
+    }
+    return ('000'+crc.toString(16).toUpperCase()).slice(-4);
+  }
+  function ppTarget(id){
+    var s=ppDigits(id);
+    if(s.length>=15)return ppTLV('03',s);
+    if(s.length>=13)return ppTLV('02',s);
+    if(s.charAt(0)==='0')s=s.slice(1);
+    return ppTLV('01','0066'+s);
+  }
+  function promptPayPayload(id,amount){
+    var dyn=+amount>0;
+    var m=ppTLV('00','A000000677010111')+ppTarget(id);
+    var p=ppTLV('00','01')+ppTLV('01',dyn?'12':'11')+ppTLV('29',m)+ppTLV('53','764')+(dyn?ppTLV('54',(+amount).toFixed(2)):'')+ppTLV('58','TH')+'6304';
+    return p+ppCRC(p);
+  }
+
+  var _merchant={open:PROMPTPAY_OPEN,number:PROMPTPAY_DEFAULT};
+  function merchantPay(){return {open:!!_merchant.open,number:ppDigits(_merchant.number)};}
+  function merchantPayOpen(){var m=merchantPay();return PROMPTPAY_OPEN&&m.open&&ppValid(m.number);}
+  function applyBillingOps(j){
+    if(!j||typeof j!=='object')return;
+    if(typeof j.promptpayOn==='boolean')_merchant.open=j.promptpayOn;
+    if(typeof j.promptpay==='string'&&ppValid(j.promptpay))_merchant.number=ppDigits(j.promptpay);
+  }
+  function loadMerchantPay(cb){
+    fetch(FB_DB+'/ops/billing.json',{cache:'no-store'})
+      .then(function(r){return r.json();})
+      .then(function(j){applyBillingOps(j);if(cb)cb(merchantPay());})
+      .catch(function(){if(cb)cb(merchantPay());});
+  }
+
   window.IUFIT_BILLING={
     PLATFORM:PLATFORM, IS_STORE:IS_STORE, LANG:LANG, t:t, setLang:setLang,
     OMISE_READY:OMISE_READY, OMISE_PUBLIC_KEY:OMISE_PUBLIC_KEY, CHARGE_ENDPOINT:CHARGE_ENDPOINT, LINE_URL:LINE_URL,
     YEARLY_OPEN:YEARLY_OPEN, PLANS_OPEN:PLANS_OPEN, OMISE_TEST_MODE:OMISE_TEST_MODE,
+    PROMPTPAY_OPEN:PROMPTPAY_OPEN, PROMPTPAY_DEFAULT:PROMPTPAY_DEFAULT,
     PLANS:PLANS, ADDON:ADDON, getPlan:getPlan, price:price, fmt:fmt,
     CREDIT_PACKS:CREDIT_PACKS, getCredit:getCredit, isCredit:isCredit,
     planSub:planSub, planFeats:planFeats, planBadge:planBadge,
@@ -701,6 +775,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     trialDaysLeft:trialDaysLeft, trialActive:trialActive, trialExpired:trialExpired,
     paidActive:paidActive, daysUntil:daysUntil, reminderTier:reminderTier, today:today, qs:qs,
     esc:esc, planKeyOf:planKeyOf,
+    ppDigits:ppDigits, ppValid:ppValid, promptPayPayload:promptPayPayload,
+    merchantPay:merchantPay, merchantPayOpen:merchantPayOpen, loadMerchantPay:loadMerchantPay,
     CONTACT:CONTACT, contactRowsHtml:contactRowsHtml, footerHtml:footerHtml, docHref:docHref
   };
 })();

@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI credits · IUFIT</title>
 <meta name="description" content="Buy IUFIT AI scan & analyse credits via Omise">
-<link rel="stylesheet" href="billing.css?v=v108">
+<link rel="stylesheet" href="billing.css?v=v109">
 </head>
 <body>
 <div class="wrap">
@@ -52,7 +52,8 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v117"></script>
+<script src="billing-common.js?v=v118"></script>
+<script src="pp-qr.js?v=v1"></script>
 <script>
 var B=window.IUFIT_BILLING;
 /* 🔴 2569-08-02 · XSS สะท้อน — `?plan=` เคยไหลดิบ ๆ ลง `innerHTML` ที่ `showResult()`
@@ -66,7 +67,7 @@ document.getElementById('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
 document.getElementById('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
 T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
 
-function pickPlan(k){PLAN=k;renderPlanPick();renderSummary();renderPay();}
+function pickPlan(k){PLAN=k;window.__ppWait=false;renderPlanPick();renderSummary();renderPay();}
 function renderPlanPick(){
   var el=document.getElementById('planPick');
   var ch='';
@@ -108,27 +109,38 @@ function renderWallet(){
   });
 }
 function renderPay(){
+  if(window.__ppWait)return;
   var body=document.getElementById('payBody');
   var soon=!B.OMISE_READY, h='';
   var amt='฿'+B.fmt(B.getCredit(PLAN).price);
+  var ppOn=B.merchantPayOpen();
+  if(PM==='pp'&&!ppOn)PM='card';
   /* เครดิตต้องเป็นบัญชีอีเมลที่ยืนยันแล้ว */
   var crBlocked=(B.creditAccountKey().indexOf('email:')!==0);
   if(crBlocked)h+='<div class="bn warn" style="margin:0 0 10px"><b>'+B.t('cr_need_email_t')+'</b>'+B.t('cr_need_email_m')+'</div>';
   var yrLocked=crBlocked;
-  if(soon)h+='<div class="bn warn" style="margin:0 0 10px"><b>'+B.t('omise_soon_t')+'</b>'+B.t('omise_soon_m')+'</div>';
-  h+='<div class="pm"><button id="pm-card" class="on" onclick="setPM(\'card\')">'+B.t('pm_card')+'</button>'
-    +'<button id="pm-pp" disabled aria-disabled="true" style="opacity:.45;cursor:not-allowed">'+B.t('pm_pp')+' · '+B.t('pm_pp_soon')+'</button></div>';
+  if(soon&&PM==='card')h+='<div class="bn warn" style="margin:0 0 10px"><b>'+B.t('omise_soon_t')+'</b>'+B.t('omise_soon_m')+'</div>';
+  h+='<div class="pm"><button id="pm-card" class="'+(PM==='card'?'on':'')+'" onclick="setPM(\'card\')">'+B.t('pm_card')+'</button>';
+  if(ppOn){
+    h+='<button id="pm-pp" class="'+(PM==='pp'?'on':'')+'" onclick="setPM(\'pp\')">'+B.t('pm_pp')+'</button></div>';
+  }else{
+    h+='<button id="pm-pp" disabled aria-disabled="true" style="opacity:.45;cursor:not-allowed">'+B.t('pm_pp')+' · '+B.t('pm_pp_soon')+'</button></div>';
+  }
   var dis=yrLocked?' disabled':'', fOp=yrLocked?';opacity:.5':'';
   h+='<div id="cardForm" class="'+(PM==='card'?'':'hide')+'" style="pointer-events:'+(yrLocked?'none':'auto')+fOp+'"><div class="field"><label>'+B.t('card_name')+'</label><input id="card-name"'+dis+' placeholder="'+B.t('card_name_ph')+'"></div><div class="field"><label>'+B.t('card_num')+'</label><input id="card-num"'+dis+' inputmode="numeric" placeholder="0000 0000 0000 0000"></div><div style="display:flex;gap:10px"><div class="field" style="flex:1"><label>'+B.t('card_exp')+'</label><input id="card-exp"'+dis+' placeholder="MM/YY"></div><div class="field" style="flex:1"><label>'+B.t('card_cvv')+'</label><input id="card-cvv"'+dis+' inputmode="numeric" placeholder="123"></div></div></div>';
+  if(PM==='pp')h+='<p class="note" id="ppHint" style="margin:0 0 10px">'+B.t('pp_hint')+'</p>';
   h+='<label style="display:flex;gap:9px;align-items:flex-start;margin:12px 0;font-size:12px;line-height:1.5;cursor:'+(yrLocked?'not-allowed':'pointer')+';color:var(--navy)'+fOp+'"><input type="checkbox" id="agree"'+dis+' onchange="var b=document.getElementById(\'payBtn\');if(b&&!window.__yrLocked){b.disabled=!this.checked;b.style.opacity=this.checked?1:.5;}" style="margin-top:2px;flex:none"><span>'+B.t('consent_refund')+' — <a class="blue" href="refund.html?lang='+B.LANG+'" target="_blank" rel="noopener">'+B.t('nav_refund')+'</a></span></label>';
-  h+='<button id="payBtn" class="btn pri" disabled style="opacity:.5" onclick="payNow()">'+B.t('pay_btn')+' '+amt+'</button>';
-  h+='<p class="note" style="margin-top:10px">'+B.t('secure_note')+'</p>';
+  h+='<button id="payBtn" class="btn pri" disabled style="opacity:.5" onclick="payNow()">'+(PM==='pp'?B.t('pp_btn'):B.t('pay_btn'))+' '+amt+'</button>';
+  h+='<p class="note" style="margin-top:10px">'+(PM==='pp'?B.t('secure_note_pp'):B.t('secure_note'))+'</p>';
   h+='<div style="margin-top:14px;padding:12px 14px;background:#f6f9ff;border:1px solid var(--line);border-radius:12px"><b style="font-size:12.5px;color:var(--navy);display:block;margin-bottom:7px">'+B.t('contact_title')+'</b>'+B.contactRowsHtml()+'</div>';
   body.innerHTML=h;
   window.__yrLocked=yrLocked;
 }
-/* กันไว้อีกชั้น: payNow() รองรับเฉพาะบัตร ⇒ ไม่ยอมให้ PM กลายเป็นค่าอื่นแม้ถูกเรียกจากที่อื่น */
-function setPM(){PM='card';renderPay();}
+function setPM(m){
+  window.__ppWait=false;
+  PM=(m==='pp'&&B.merchantPayOpen())?'pp':'card';
+  renderPay();
+}
 /* ⭐ 2569-07-30 · ถอด `reserveLocal()` ออก — ปุ่ม "จองราคานี้ไว้ในเครื่อง"
    มันแค่เขียน localStorage แล้วเด้ง alert · ไม่ได้จองอะไรจริง ไม่มีผลผูกพันฝั่งเรา
    ⇒ ทำให้ผู้ใช้เข้าใจผิดว่าล็อกราคาไว้แล้ว · ตอนนี้มีช่องทางจ่ายจริงแล้วจึงไม่ต้องมี */
@@ -150,8 +162,57 @@ function setPaying(on){
   b.disabled=on;
   b.style.opacity=on?.6:1;
 }
-/* payNow() รองรับ **บัตรเท่านั้น** — Omise.createToken('card',...) + POST {token} ไป CHARGE_ENDPOINT/charge
-   ถ้าจะเพิ่ม PromptPay ต้องเพิ่ม branch สร้าง source (type:'promptpay') และ backend ต้องคืน QR/สถานะรอชำระด้วย */
+function ppRef(){
+  return 'IU'+Date.now().toString(36).toUpperCase()+Math.floor(Math.random()*36).toString(36).toUpperCase();
+}
+function qrSvg(payload){
+  try{
+    if(!window.IUQR||!window.IUQR.matrix)return '';
+    var m=window.IUQR.matrix(payload);
+    var d=window.IUQR.path(m,4);
+    var n=m.length+8;
+    return '<svg class="pp-qr" viewBox="0 0 '+n+' '+n+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PromptPay QR"><path d="'+d+'"/></svg>';
+  }catch(e){return '';}
+}
+function copyPpRef(){
+  var el=document.getElementById('ppRefVal');
+  var v=el?el.textContent:'';
+  if(!v)return;
+  function ok(){alert(B.t('pp_copy_ok'));}
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(v).then(ok).catch(function(){try{window.prompt(B.t('pp_ref'),v);}catch(e){}});
+  }else{
+    try{window.prompt(B.t('pp_ref'),v);}catch(e){}
+  }
+}
+function backFromPp(){
+  window.__ppWait=false;
+  PM='pp';
+  renderPay();
+}
+function showDirectPp(){
+  window.__ppWait=true;
+  var c=B.getCredit(PLAN);
+  var amt=c?c.price:0;
+  var phone=B.merchantPay().number;
+  var ref=ppRef();
+  var payload=B.promptPayPayload(phone,amt);
+  var svg=qrSvg(payload);
+  var body=document.getElementById('payBody');
+  var h='<div class="pp-wait"><b>'+B.t('pp_wait_t')+'</b>'
+    +'<p class="note">'+B.t('pp_wait_m')+'</p>'
+    +'<p class="note pp-direct">'+B.t('pp_direct_note')+'</p>'
+    +(svg||('<p class="note">PromptPay '+B.esc(phone)+'</p>'))
+    +'<div class="pp-amt">฿'+B.fmt(amt)+'</div>'
+    +'<div class="pp-ref-row"><span>'+B.t('pp_ref')+'</span><code id="ppRefVal">'+B.esc(ref)+'</code>'
+    +'<button type="button" class="btn ghost" onclick="copyPpRef()">'+B.t('pp_copy')+'</button></div>'
+    +'<p class="note">'+B.t('pp_expire')+'</p>'
+    +'<a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('pp_line_after')+'</a>'
+    +'<button type="button" class="btn ghost" style="margin-top:8px" onclick="backFromPp()">'+B.t('pp_back')+'</button></div>';
+  if(body)body.innerHTML=h;
+  setPaying(false);
+}
+/* payNow() · บัตร = Omise token + POST /charge · พร้อมเพย์ = QR โอนตรง ห้ามยิง /charge */
 function payNow(){
   /* กันการกดซ้อนตั้งแต่บรรทัดแรก — ครอบคลุมกรณีปุ่มถูกปลด disabled จาก devtools ด้วย */
   if(PAYING)return;
@@ -160,6 +221,12 @@ function payNow(){
   if(B.creditAccountKey().indexOf('email:')!==0){alert(B.t('cr_need_email_t')+'\n\n'+B.t('cr_need_email_m'));return;}
   if(!B.creditAccountKey()){alert(B.t('need_login_t')+'\n\n'+B.t('need_login_m'));try{window.open('open.html','_blank');}catch(x){}return;}
   var ag=document.getElementById('agree');if(ag&&!ag.checked){alert(B.t('consent_req'));return;}
+  if(PM==='pp'){
+    if(!B.merchantPayOpen()){alert(B.t('pm_pp_soon'));return;}
+    setPaying(true);
+    showDirectPp();
+    return;
+  }
   if(!B.OMISE_READY){try{window.open(B.LINE_URL,'_blank');}catch(x){}return;}
   setPaying(true);
   loadOmise(function(){
@@ -283,6 +350,7 @@ function pollStatus(ref){
   document.getElementById('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl+B.t('acct_bind')):B.t('acct_login');
   renderWallet();
   renderPlanPick();renderSummary();renderPay();
+  B.loadMerchantPay(function(){if(!window.__ppWait && !PAYING)renderPay();});
 })();
 try{var _f=document.getElementById('foot');if(_f)_f.innerHTML=B.footerHtml();}catch(e){}
 </script>

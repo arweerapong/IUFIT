@@ -92,6 +92,14 @@ a.blue{color:var(--blue);font-weight:700}
 .pm{display:flex;gap:10px;margin:8px 0 14px}
 .pm button{flex:1;border:1.5px solid var(--line-strong);background:#fff;border-radius:12px;padding:13px;font-weight:800;font-size:13.5px;cursor:pointer;font-family:inherit;color:var(--ink)}
 .pm button.on{border-color:var(--blue);background:#eef4ff;color:var(--blue)}
+.pp-wait{text-align:center;padding:8px 0 4px}
+.pp-wait>b{display:block;font-size:16px;color:var(--navy);margin:0 0 8px}
+.pp-qr{width:min(240px,72vw);height:auto;display:block;margin:12px auto;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px}
+.pp-qr path{fill:#10233F}
+.pp-amt{font-size:22px;font-weight:850;color:var(--navy);margin:8px 0 10px}
+.pp-ref-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:center;margin:8px 0 12px;font-size:13px;color:var(--navy)}
+.pp-ref-row code{font-family:ui-monospace,Consolas,monospace;font-size:15px;font-weight:800;letter-spacing:.04em;background:#eef4ff;border-radius:8px;padding:6px 10px}
+.pp-direct{color:var(--amber);font-weight:700}
 .result{text-align:center;padding:30px 18px}
 .result .ic{width:64px;height:64px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:34px;margin-bottom:10px}
 .result.success .ic{background:#eafaf0;color:var(--green)}
