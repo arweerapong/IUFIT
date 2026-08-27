@@ -656,7 +656,8 @@
    · toast กินตามแผน · เมนูที่กินแล้วบน /food/log */
 /* v1285 = วัดชีพจร/SpO2 แบบ MeasureHeart + หน้า SportLive อนิเมชันเรียลไทม์ตาม handoff */
 /* v1286 = ช่องเซตตารางฝึกพอดีกรอบ + รายละเอียดท่าไปหน้าคลัง + IU Mate ใช้ชื่อท่าอังกฤษ */
-const CACHE = 'iufit-v1286-workout-sets-mate-en'
+/* v1287 = การ์ดแผนวันนี้ว่าง → จัดตารางอาหารไป /food/plan · บันทึกท่ามีปุ่มเปิดตารางอย่างเดียว */
+const CACHE = 'iufit-v1287-plan-empty-to-sched'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
