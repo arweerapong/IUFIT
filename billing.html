@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>AI credits · IUFIT</title>
 <meta name="description" content="Buy IUFIT AI scan & analyse credits via Omise">
-<link rel="stylesheet" href="billing.css?v=v109">
+<link rel="stylesheet" href="billing.css?v=v110">
 </head>
 <body>
 <div class="wrap">
@@ -52,8 +52,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v118"></script>
-<script src="pp-qr.js?v=v1"></script>
+<script src="billing-common.js?v=v119"></script>
 <script>
 var B=window.IUFIT_BILLING;
 /* 🔴 2569-08-02 · XSS สะท้อน — `?plan=` เคยไหลดิบ ๆ ลง `innerHTML` ที่ `showResult()`
@@ -67,7 +66,7 @@ document.getElementById('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
 document.getElementById('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
 T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
 
-function pickPlan(k){PLAN=k;window.__ppWait=false;renderPlanPick();renderSummary();renderPay();}
+function pickPlan(k){PLAN=k;stopPpPoll();window.__ppWait=false;renderPlanPick();renderSummary();renderPay();}
 function renderPlanPick(){
   var el=document.getElementById('planPick');
   var ch='';
@@ -113,7 +112,7 @@ function renderPay(){
   var body=document.getElementById('payBody');
   var soon=!B.OMISE_READY, h='';
   var amt='฿'+B.fmt(B.getCredit(PLAN).price);
-  var ppOn=B.merchantPayOpen();
+  var ppOn=B.omisePpOpen();
   if(PM==='pp'&&!ppOn)PM='card';
   /* เครดิตต้องเป็นบัญชีอีเมลที่ยืนยันแล้ว */
   var crBlocked=(B.creditAccountKey().indexOf('email:')!==0);
@@ -137,8 +136,9 @@ function renderPay(){
   window.__yrLocked=yrLocked;
 }
 function setPM(m){
+  stopPpPoll();
   window.__ppWait=false;
-  PM=(m==='pp'&&B.merchantPayOpen())?'pp':'card';
+  PM=(m==='pp'&&B.omisePpOpen())?'pp':'card';
   renderPay();
 }
 /* ⭐ 2569-07-30 · ถอด `reserveLocal()` ออก — ปุ่ม "จองราคานี้ไว้ในเครื่อง"
@@ -162,17 +162,11 @@ function setPaying(on){
   b.disabled=on;
   b.style.opacity=on?.6:1;
 }
-function ppRef(){
-  return 'IU'+Date.now().toString(36).toUpperCase()+Math.floor(Math.random()*36).toString(36).toUpperCase();
-}
-function qrSvg(payload){
-  try{
-    if(!window.IUQR||!window.IUQR.matrix)return '';
-    var m=window.IUQR.matrix(payload);
-    var d=window.IUQR.path(m,4);
-    var n=m.length+8;
-    return '<svg class="pp-qr" viewBox="0 0 '+n+' '+n+'" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PromptPay QR"><path d="'+d+'"/></svg>';
-  }catch(e){return '';}
+function omiseQrUrl(u){
+  if(typeof u!=='string')return '';
+  if(u.indexOf('https://')!==0)return '';
+  if(/[\s<>"']/.test(u))return '';
+  return u;
 }
 function copyPpRef(){
   var el=document.getElementById('ppRefVal');
@@ -186,45 +180,94 @@ function copyPpRef(){
   }
 }
 function backFromPp(){
+  stopPpPoll();
   window.__ppWait=false;
   PM='pp';
   renderPay();
 }
-function showDirectPp(){
+var ppPollOn=false, ppPollTimer;
+function stopPpPoll(){
+  ppPollOn=false;
+  if(ppPollTimer){clearTimeout(ppPollTimer);ppPollTimer=null;}
+}
+function pollPp(ref){
+  var tries=0, MAX=60; // 60 × 5 วิ = 5 นาที — สแกนแอปธนาคารใช้เวลานานกว่า 3DS
+  var note=document.getElementById('ppPollNote');
+  stopPpPoll();
+  ppPollOn=true;
+  (function tick(){
+    if(!ppPollOn)return;
+    tries++;
+    fetch(B.CHARGE_ENDPOINT+'/status?ref='+encodeURIComponent(ref))
+      .then(function(r){return r.json();})
+      .then(function(j){
+        if(!ppPollOn)return;
+        if(j.state==='paid'){location.href='billing.html?lang='+B.LANG+'&result=success';return;}
+        if(j.state==='failed'){location.href='billing.html?lang='+B.LANG+'&result=failed';return;}
+        if(note)note.textContent=B.t(j.charged===true?'pay_charged_m':'pp_poll');
+        if(tries>=MAX){if(note)note.textContent=B.t('pp_expire');return;}
+        ppPollTimer=setTimeout(tick,5000);
+      })
+      .catch(function(){
+        if(!ppPollOn)return;
+        if(tries<MAX)ppPollTimer=setTimeout(tick,5000);
+        else if(note)note.textContent=B.t('pp_expire');
+      });
+  })();
+}
+function showOmisePp(j){
   window.__ppWait=true;
   var c=B.getCredit(PLAN);
   var amt=c?c.price:0;
-  var phone=B.merchantPay().number;
-  var ref=ppRef();
-  var payload=B.promptPayPayload(phone,amt);
-  var svg=qrSvg(payload);
+  var qr=omiseQrUrl(j&&j.qr);
+  var ref=(j&&j.ref)?String(j.ref):'';
   var body=document.getElementById('payBody');
   var h='<div class="pp-wait"><b>'+B.t('pp_wait_t')+'</b>'
     +'<p class="note">'+B.t('pp_wait_m')+'</p>'
     +'<p class="note pp-direct">'+B.t('pp_direct_note')+'</p>'
-    +(svg||('<p class="note">PromptPay '+B.esc(phone)+'</p>'))
+    +(qr?('<img class="pp-qr" src="'+qr+'" alt="PromptPay QR" width="240" height="240">'):('<p class="note">'+B.t('res_pending_m')+'</p>'))
     +'<div class="pp-amt">฿'+B.fmt(amt)+'</div>'
-    +'<div class="pp-ref-row"><span>'+B.t('pp_ref')+'</span><code id="ppRefVal">'+B.esc(ref)+'</code>'
-    +'<button type="button" class="btn ghost" onclick="copyPpRef()">'+B.t('pp_copy')+'</button></div>'
+    +(ref?('<div class="pp-ref-row"><span>'+B.t('pp_ref')+'</span><code id="ppRefVal">'+B.esc(ref)+'</code>'
+    +'<button type="button" class="btn ghost" onclick="copyPpRef()">'+B.t('pp_copy')+'</button></div>'):'')
+    +'<p class="note" id="ppPollNote">'+B.t('pp_poll')+'</p>'
     +'<p class="note">'+B.t('pp_expire')+'</p>'
     +'<a class="btn line" href="'+B.LINE_URL+'" target="_blank" rel="noopener">'+B.t('pp_line_after')+'</a>'
     +'<button type="button" class="btn ghost" style="margin-top:8px" onclick="backFromPp()">'+B.t('pp_back')+'</button></div>';
   if(body)body.innerHTML=h;
   setPaying(false);
+  if(ref)pollPp(ref);
 }
-/* payNow() · บัตร = Omise token + POST /charge · พร้อมเพย์ = QR โอนตรง ห้ามยิง /charge */
+function applyChargeResp(j){
+  if(j&&j.error==='duplicate_pending'){setPaying(false);alert(B.t('pay_dup_t')+'\n\n'+B.t('pay_dup_m'));return;}
+  if(j&&j.error==='duplicate_recent'){setPaying(false);alert(B.t('pay_recent_t')+'\n\n'+B.t('pay_recent_m'));return;}
+  if(j&&j.error==='rate_limited'){setPaying(false);alert(B.t('pay_rate_t')+'\n\n'+B.t('pay_rate_m'));return;}
+  /* PromptPay · ต้องอยู่หน้า QR จนกว่าจะโอน · ห้ามพาไป result=pending ซึ่งซ่อน QR */
+  if(j&&j.qr){showOmisePp(j);return;}
+  if(j&&j.authorize_uri){location.href=j.authorize_uri;return;}
+  var _ref=(j&&j.ref)?('&ref='+encodeURIComponent(j.ref)):'';
+  var _st=(j&&j.status)?String(j.status):'';
+  var _res=(_st==='successful')?'success'
+    :(_st==='pending')?'pending'
+    :(j&&j.error)?'failed'
+    :(_st==='failed'||_st==='expired'||_st==='reversed')?'failed'
+    :'unknown';
+  location.href='billing.html?lang='+B.LANG+'&result='+_res+((_res==='pending'||_res==='unknown')?_ref:'');
+}
+/* payNow() · บัตร = Omise token + POST /charge · พร้อมเพย์ = worker สร้าง QR Omise แล้ว webhook เติมเครดิต */
 function payNow(){
   /* กันการกดซ้อนตั้งแต่บรรทัดแรก — ครอบคลุมกรณีปุ่มถูกปลด disabled จาก devtools ด้วย */
   if(PAYING)return;
-  var isCr=true;
   /* เครดิตเติมเข้ากระเป๋าที่ผูกกับอีเมล ⇒ ใช้ creditAccountKey ไม่ใช่ line: */
   if(B.creditAccountKey().indexOf('email:')!==0){alert(B.t('cr_need_email_t')+'\n\n'+B.t('cr_need_email_m'));return;}
   if(!B.creditAccountKey()){alert(B.t('need_login_t')+'\n\n'+B.t('need_login_m'));try{window.open('open.html','_blank');}catch(x){}return;}
   var ag=document.getElementById('agree');if(ag&&!ag.checked){alert(B.t('consent_req'));return;}
   if(PM==='pp'){
-    if(!B.merchantPayOpen()){alert(B.t('pm_pp_soon'));return;}
+    if(!B.omisePpOpen()){alert(B.t('pm_pp_soon'));return;}
+    if(!B.OMISE_READY){try{window.open(B.LINE_URL,'_blank');}catch(x){}return;}
     setPaying(true);
-    showDirectPp();
+    fetch(B.CHARGE_ENDPOINT+'/charge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'promptpay',plan:PLAN,cycle:'once',account:B.creditAccountKey()})})
+      .then(function(r){return r.json();}).then(applyChargeResp)
+      .catch(function(){location.href='billing.html?lang='+B.LANG+'&result=unknown';});
     return;
   }
   if(!B.OMISE_READY){try{window.open(B.LINE_URL,'_blank');}catch(x){}return;}
@@ -235,19 +278,7 @@ function payNow(){
     Omise.createToken('card',{name:document.getElementById('card-name').value,number:(document.getElementById('card-num').value||'').replace(/\s/g,''),expiration_month:(exp[0]||'').trim(),expiration_year:('20'+(exp[1]||'').trim()).slice(-4),security_code:document.getElementById('card-cvv').value},function(status,resp){
       if(status!==200){setPaying(false);alert(resp.message||'card error');return;}
       fetch(B.CHARGE_ENDPOINT+'/charge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:resp.id,plan:PLAN,cycle:'once',account:B.creditAccountKey()})})
-        .then(function(r){return r.json();}).then(function(j){
-          if(j&&j.error==='duplicate_pending'){setPaying(false);alert(B.t('pay_dup_t')+'\n\n'+B.t('pay_dup_m'));return;}
-          if(j&&j.error==='duplicate_recent'){setPaying(false);alert(B.t('pay_recent_t')+'\n\n'+B.t('pay_recent_m'));return;}
-          if(j&&j.error==='rate_limited'){setPaying(false);alert(B.t('pay_rate_t')+'\n\n'+B.t('pay_rate_m'));return;}
-          if(j&&j.authorize_uri){location.href=j.authorize_uri;return;}
-          var _ref=(j&&j.ref)?('&ref='+encodeURIComponent(j.ref)):'';
-          var _st=(j&&j.status)?String(j.status):'';
-          var _res=(_st==='successful')?'success'
-            :(_st==='pending')?'pending'
-            :(j&&j.error)?'failed'
-            :(_st==='failed'||_st==='expired'||_st==='reversed')?'failed'
-            :'unknown';
-          location.href='billing.html?lang='+B.LANG+'&result='+_res+((_res==='pending'||_res==='unknown')?_ref:'');})
+        .then(function(r){return r.json();}).then(applyChargeResp)
         .catch(function(){location.href='billing.html?lang='+B.LANG+'&result=unknown';});
     });
   });
