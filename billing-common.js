@@ -578,17 +578,61 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function accountKey(){var s=appState();try{if(s.lineId)return 'line:'+s.lineId;if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0)return s.fbuid;if(s.emailId)return 'email:'+s.emailId;}catch(e){}return '';}
   /**
-   * uid สำหรับกระเป๋าเครดิต AI — ต้องเป็น `email:<sha256>` (iufit-gym)
-   * ใช้เฉพาะ `S.fbuid` ที่ขึ้นต้น `email:` · ห้าม `email:`+อีเมลดิบ · ห้าม devId/anon
+   * uid สำหรับกระเป๋าเครดิต AI — `email:<sha256>` เท่านั้น (iufit-gym · Omise credit)
+   * ⭐ 2569-08-28 · ตรงกับ `core/accountKey.creditWalletUid` + resolve จาก `emailId`
    */
+  var _creditUidResolved='';
+  function normalizeEmailForUid(em){return String(em||'').trim().toLowerCase();}
+  function isEmailVerifiedForCredits(s){
+    try{
+      if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0)return true;
+      var em=normalizeEmailForUid(s.emailId);
+      return !!em&&em.indexOf('@')>0;
+    }catch(e){return false;}
+  }
+  function sha256hex(s){
+    return crypto.subtle.digest('SHA-256',new TextEncoder().encode(s)).then(function(buf){
+      return Array.from(new Uint8Array(buf)).map(function(b){return b.toString(16).padStart(2,'0');}).join('');
+    });
+  }
+  function emailUidFromAddress(email){
+    var n=normalizeEmailForUid(email);
+    if(!n||n.indexOf('@')<1)return Promise.resolve('');
+    return sha256hex(n).then(function(h){return 'email:'+h;});
+  }
+  function patchCreditUid(uid){
+    if(!uid)return;
+    _creditUidResolved=uid;
+    try{
+      var s=appState();
+      if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0)return;
+      s.fbuid=uid;
+      localStorage.setItem('iufit',JSON.stringify(s));
+    }catch(e){}
+  }
+  function resolveCreditWalletUid(cb){
+    var s=appState();
+    try{
+      if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0){_creditUidResolved=s.fbuid;cb(s.fbuid);return;}
+    }catch(e){}
+    if(_creditUidResolved){cb(_creditUidResolved);return;}
+    if(!isEmailVerifiedForCredits(s)){cb('');return;}
+    emailUidFromAddress(s.emailId).then(function(uid){
+      if(uid)patchCreditUid(uid);
+      cb(uid||'');
+    }).catch(function(){cb('');});
+  }
+  /** sync — ใช้หลัง `initCreditIdentity` หรือเมื่อ `fbuid` พร้อมแล้ว */
   function walletUid(){
     var s=appState();
     try{
       if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0)return s.fbuid;
     }catch(e){}
-    return '';
+    return _creditUidResolved||'';
   }
-  /** บัญชีที่ใช้ตอนซื้อเครดิต — เหมือน walletUid (ห้ามส่ง line: ไป /charge) */
+  /** เรียกก่อน render หน้าเครดิต — resolve uid จาก `emailId` แล้ว sync ลง localStorage */
+  function initCreditIdentity(cb){resolveCreditWalletUid(function(uid){if(cb)cb(uid);});}
+  /** บัญชีที่ใช้ตอนซื้อเครดิต — เหมือน walletUid */
   function creditAccountKey(){return walletUid();}
   var GYM_ENDPOINT='https://iufit-gym.ar-weerapong.workers.dev';
   /** อ่านยอดเครดิตจาก gym worker — cb({ok,scan,analyze,locked}) */
@@ -635,9 +679,14 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   function authToken(cb){
     var s=appState();
     if(_tok&&Date.now()<_tokExp-60000){cb(_tok);return;}
-    var tok=s._fbtok||'',exp=+(s._fbexp||0);
+    var tok='',exp=0,rt='';
+    var vt=s.vueAuthTok;
+    if(vt&&typeof vt==='object'&&!Array.isArray(vt)){
+      tok=vt.idToken||'';exp=+(vt.expiresAt||0);rt=vt.refreshToken||'';
+    }
+    if(!tok){tok=s._fbtok||'';exp=+(s._fbexp||0);}
+    if(!rt){rt=s._fbrt||'';}
     if(tok&&Date.now()<exp-60000){_tok=tok;_tokExp=exp;cb(tok);return;}
-    var rt=s._fbrt||'';
     if(!rt){cb('');return;}
     fetch('https://securetoken.googleapis.com/v1/token?key='+encodeURIComponent(FB_KEY),{
       method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},
@@ -649,7 +698,10 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   }
   /* จัดการแพ็กเองบนเว็บได้ไหม — ต้องเป็นบัญชีอีเมลที่มี Firebase session อยู่จริง
      บัญชี LINE ล้วนไม่มี session แบบนี้ ⇒ ต้องไปทางแอดมิน (ทักไลน์) และหน้าเว็บต้องบอกตรง ๆ */
-  function canSelfServe(){var s=appState();return accountKey().indexOf('email:')===0&&!!(s._fbtok||s._fbrt);}
+  function canSelfServe(){
+    var s=appState();
+    return isEmailVerifiedForCredits(s)&&!!(s._fbtok||s._fbrt||(s.vueAuthTok&&s.vueAuthTok.refreshToken)||(s.vueAuthTok&&s.vueAuthTok.idToken));
+  }
   function accountLabel(){var s=appState();return s.lineName||s.emailId||(s.users&&s.users[0]&&s.users[0].name)||'';}
   /* ══════════════════════════════════════════════════════════════════════════════════
      🔴 2569-08-03 (F3) · เกณฑ์ตัดชั้นจากจำนวนที่นั่ง — **ต้องมาจากจำนวนที่นั่งที่ขายจริง**
@@ -779,7 +831,9 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     CREDIT_PACKS:CREDIT_PACKS, getCredit:getCredit, isCredit:isCredit,
     planSub:planSub, planFeats:planFeats, planBadge:planBadge,
     appState:appState, accountKey:accountKey, accountLabel:accountLabel,
-    walletUid:walletUid, creditAccountKey:creditAccountKey, fetchWallet:fetchWallet, creditShow:creditShow,
+    walletUid:walletUid, creditAccountKey:creditAccountKey, isEmailVerifiedForCredits:isEmailVerifiedForCredits,
+    initCreditIdentity:initCreditIdentity, resolveCreditWalletUid:resolveCreditWalletUid,
+    fetchWallet:fetchWallet, creditShow:creditShow,
     authToken:authToken, canSelfServe:canSelfServe,
     currentPlanKey:currentPlanKey, planExpiry:planExpiry,
     trialDaysLeft:trialDaysLeft, trialActive:trialActive, trialExpired:trialExpired,

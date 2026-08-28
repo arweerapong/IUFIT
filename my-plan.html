@@ -22,7 +22,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v121"></script>
+<script src="billing-common.js?v=v122"></script>
 <script>
 var B=window.IUFIT_BILLING;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
@@ -33,16 +33,36 @@ T('h-title','wal_title');
 
 function render(){
   var lbl=B.accountLabel();
-  var uid=B.walletUid();
-  document.getElementById('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl):(uid?'':B.t('wal_no_acct'));
+  document.getElementById('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl):(B.walletUid()?'':B.t('wal_no_acct'));
   var card=document.getElementById('statusCard');
-  if(!uid){
-    card.innerHTML='<div class="bn warn" style="margin:0"><b>'+B.t(lbl?'wal_locked':'wal_no_acct')+'</b></div>';
+  if(!B.isEmailVerifiedForCredits(B.appState())){
+    card.innerHTML='<div class="bn warn" style="margin:0"><b>'+B.t('cr_need_email_t')+'</b><span style="display:block;margin-top:6px;font-weight:500">'+B.t('cr_need_email_m')+'</span></div>';
     document.getElementById('actions').innerHTML=
       '<a class="btn pri" href="billing.html?lang='+B.LANG+'">'+B.t('nav_billing')+'</a>'+
       '<a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('nav_pricing')+'</a>';
     return;
   }
+  var uid=B.walletUid();
+  if(!uid){
+    card.innerHTML='<div class="psub" style="margin:0">'+B.t('wal_loading')+'</div>';
+    B.resolveCreditWalletUid(function(resolved){
+      if(!resolved){
+        card.innerHTML='<div class="bn warn" style="margin:0"><b>'+B.t('wal_locked')+'</b></div>';
+        return;
+      }
+      loadWallet(card);
+    });
+    document.getElementById('actions').innerHTML=
+      '<a class="btn pri" href="billing.html?lang='+B.LANG+'">'+B.t('nav_billing')+'</a>'+
+      '<a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('nav_pricing')+'</a>';
+    return;
+  }
+  loadWallet(card);
+  document.getElementById('actions').innerHTML=
+    '<a class="btn pri" href="billing.html?lang='+B.LANG+'">'+B.t('nav_billing')+'</a>'+
+    '<a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('nav_pricing')+'</a>';
+}
+function loadWallet(card){
   card.innerHTML='<div class="psub" style="margin:0">'+B.t('wal_loading')+'</div>';
   B.fetchWallet(function(w){
     var h='';
@@ -57,11 +77,8 @@ function render(){
     }
     card.innerHTML=h;
   });
-  document.getElementById('actions').innerHTML=
-    '<a class="btn pri" href="billing.html?lang='+B.LANG+'">'+B.t('nav_billing')+'</a>'+
-    '<a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('nav_pricing')+'</a>';
 }
-render();
+B.initCreditIdentity(function(){ render(); });
 document.getElementById('foot').innerHTML=B.footerHtml();
 </script>
 </body>
