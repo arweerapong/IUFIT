@@ -578,14 +578,13 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
   function accountKey(){var s=appState();try{if(s.lineId)return 'line:'+s.lineId;if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0)return s.fbuid;if(s.emailId)return 'email:'+s.emailId;}catch(e){}return '';}
   /**
-   * uid สำหรับกระเป๋าเครดิต AI — ต้องเป็น `email:…` (iufit-gym)
-   * บัญชีที่ผูก LINE OA ไว้แต่ยืนยันอีเมลแล้ว ⇒ ใช้ fbuid/emailId ไม่ใช่ line:
+   * uid สำหรับกระเป๋าเครดิต AI — ต้องเป็น `email:<sha256>` (iufit-gym)
+   * ใช้เฉพาะ `S.fbuid` ที่ขึ้นต้น `email:` · ห้าม `email:`+อีเมลดิบ · ห้าม devId/anon
    */
   function walletUid(){
     var s=appState();
     try{
       if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0)return s.fbuid;
-      if(s.emailId)return 'email:'+s.emailId;
     }catch(e){}
     return '';
   }
