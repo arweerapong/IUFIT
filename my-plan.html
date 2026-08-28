@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My AI credits · IUFIT</title>
 <meta name="description" content="Your IUFIT AI credit balance linked to LINE OA / e-mail">
-<link rel="stylesheet" href="billing.css?v=v109">
+<link rel="stylesheet" href="billing.css?v=v110">
 </head>
 <body>
 <div class="wrap">
@@ -22,7 +22,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v119"></script>
+<script src="billing-common.js?v=v120"></script>
 <script>
 var B=window.IUFIT_BILLING;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
@@ -48,8 +48,8 @@ function render(){
     var h='';
     if(w&&w.ok){
       h+='<div class="psub" style="margin:0">'+B.t('wal_title')+'</div>';
-      h+='<div class="pname" style="font-size:22px;margin-top:6px">'+w.scan+' <span style="font-size:13px;font-weight:700;color:var(--muted)">'+B.t('cr_scan')+'</span></div>';
-      h+='<div class="pname" style="font-size:22px;margin-top:4px">'+w.analyze+' <span style="font-size:13px;font-weight:700;color:var(--muted)">'+B.t('cr_analyze')+'</span></div>';
+      h+='<div class="pname" style="font-size:22px;margin-top:6px">'+B.esc(B.creditShow(w.scan,w.unlimited))+' <span style="font-size:13px;font-weight:700;color:var(--muted)">'+B.t('cr_scan')+'</span></div>';
+      h+='<div class="pname" style="font-size:22px;margin-top:4px">'+B.esc(B.creditShow(w.analyze,w.unlimited))+' <span style="font-size:13px;font-weight:700;color:var(--muted)">'+B.t('cr_analyze')+'</span></div>';
     }else if(w&&w.locked){
       h+='<div class="bn warn" style="margin:0"><b>'+B.t('wal_locked')+'</b></div>';
     }else{

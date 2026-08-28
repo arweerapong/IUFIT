@@ -322,6 +322,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       wal_no_acct:'ยังไม่พบบัญชีที่ผูกกับ LINE OA — เปิดแอป IUFIT ล็อกอินด้วย LINE หรืออีเมลก่อน',
       wal_scan:'สแกนอาหารเหลือ',
       wal_analyze:'วิเคราะห์เหลือ',
+      wal_unlimited:'ไม่จำกัด',
       wal_locked:'ยังอ่านยอดไม่ได้ — ยืนยันอีเมลในแอปเพื่อปลดล็อกเครดิต AI',
       wal_unavailable:'อ่านยอดเครดิตไม่ได้ตอนนี้ — ลองใหม่ในอีกสักครู่',
       need_login_t:'ต้องเข้าสู่ระบบก่อนชำระเงิน',
@@ -479,6 +480,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       wal_no_acct:'No LINE OA–linked account found — open IUFIT and sign in with LINE or e-mail first',
       wal_scan:'Food scans left',
       wal_analyze:'Analyses left',
+      wal_unlimited:'Unlimited',
       wal_locked:'Balance locked — verify your e-mail in the app to unlock AI credits',
       wal_unavailable:'Can’t read your credit balance right now — try again in a moment',
       need_login_t:'Please sign in before paying',
@@ -608,8 +610,12 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
         scan=(Number(free.scan)||0)+(Number(paid.scan)||0);
         analyze=(Number(free.analyze)||0)+(Number(paid.analyze)||0);
       }
-      cb({ok:true,locked:false,scan:scan,analyze:analyze});
+      var unlimited=b.unlimited===true||b.unlimited===1||b.unlimited==='true'||j.unlimited===true||j.unlimited===1||j.unlimited==='true';
+      cb({ok:true,locked:false,scan:scan,analyze:analyze,unlimited:unlimited});
     }).catch(function(){cb({ok:false,locked:false,scan:0,analyze:0});});
+  }
+  function creditShow(n, unlimited){
+    return unlimited ? t('wal_unlimited') : String(n||0);
   }
 
   /* ===== ยืนยันตัวตนกับ worker (ใช้ session ที่แอปสร้างไว้แล้ว) =====================
@@ -774,7 +780,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     CREDIT_PACKS:CREDIT_PACKS, getCredit:getCredit, isCredit:isCredit,
     planSub:planSub, planFeats:planFeats, planBadge:planBadge,
     appState:appState, accountKey:accountKey, accountLabel:accountLabel,
-    walletUid:walletUid, creditAccountKey:creditAccountKey, fetchWallet:fetchWallet,
+    walletUid:walletUid, creditAccountKey:creditAccountKey, fetchWallet:fetchWallet, creditShow:creditShow,
     authToken:authToken, canSelfServe:canSelfServe,
     currentPlanKey:currentPlanKey, planExpiry:planExpiry,
     trialDaysLeft:trialDaysLeft, trialActive:trialActive, trialExpired:trialExpired,

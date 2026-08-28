@@ -52,7 +52,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v119"></script>
+<script src="billing-common.js?v=v120"></script>
 <script>
 var B=window.IUFIT_BILLING;
 /* 🔴 2569-08-02 · XSS สะท้อน — `?plan=` เคยไหลดิบ ๆ ลง `innerHTML` ที่ `showResult()`
@@ -97,8 +97,8 @@ function renderWallet(){
     var lines=[];
     if(lbl)lines.push(B.t('acct_prefix')+lbl);
     if(w&&w.ok){
-      lines.push(B.t('wal_scan')+': '+w.scan+' '+B.t('cr_unit'));
-      lines.push(B.t('wal_analyze')+': '+w.analyze+' '+B.t('cr_unit'));
+      lines.push(B.t('wal_scan')+': '+B.creditShow(w.scan,w.unlimited)+(w.unlimited?'':' '+B.t('cr_unit')));
+      lines.push(B.t('wal_analyze')+': '+B.creditShow(w.analyze,w.unlimited)+(w.unlimited?'':' '+B.t('cr_unit')));
     }else if(w&&w.locked){
       lines.push(B.t('wal_locked'));
     }else{
