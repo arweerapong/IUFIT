@@ -665,7 +665,7 @@
 /* v1295 = พร้อมเพย์หน้าซื้อเครดิตผ่าน Omise (worker สร้าง QR · webhook เติมเครดิต) */
 /* v1303 = อายุขั้นต่ำ 9 + เครดิต pricing refresh */
 /* v1304 = sleep i18n hints + overnight sleep fallback + sport live pipe */
-const CACHE = 'iufit-v1305-spo2-sync-sport-ledger'
+const CACHE = 'iufit-v1306-watch-switch-timeouts'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
