@@ -663,7 +663,9 @@
 /* v1293 = ด่าน verify:all ทั้ง 95 ชุดเขียว (โหมดโค้ชในทดสอบ · D7 · ปุ่มตารางฝึก) */
 /* v1294 = ส่งอายุจากวันเกิดลงสายรัด · สั่นสายเข้า 2 / ข้อความ 1 · สไลด์เป้ากีฬา · วงกดค้างปุ่มบันทึก */
 /* v1295 = พร้อมเพย์หน้าซื้อเครดิตผ่าน Omise (worker สร้าง QR · webhook เติมเครดิต) */
-const CACHE = 'iufit-v1303-age-credits-pricing'
+/* v1303 = อายุขั้นต่ำ 9 + เครดิต pricing refresh */
+/* v1304 = sleep i18n hints + overnight sleep fallback + sport live pipe */
+const CACHE = 'iufit-v1304-sleep-hints-sport-live'
 
 /* เปลือกแอปที่ชื่อไฟล์คงที่ (ชื่อ hash ของ /assets/* เก็บตอน runtime แทน)
 
