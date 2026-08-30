@@ -92,7 +92,7 @@
         ⇒ ชั้น 1-2 คือ UX · ชั้น 3 คือความปลอดภัย · ห้ามถอดชั้นไหนออกโดยคิดว่าซ้ำซ้อน
 
      เปิดคืนเมื่อ Omise ปลดเพดานแล้ว: เปลี่ยนเป็น true ที่นี่ที่เดียว
-     (และอย่าลืมขยับ `MAX_THB_PER_CHARGE` ใน `workers/iufit-omise/src/index.js` ให้สอดคล้อง) */
+     (และอย่าลืมขยับ `MAX_THB_PER_CHARGE` ใน `worker-omise-billing-ห้ามแชร์.js` ให้สอดคล้อง) */
   var YEARLY_OPEN=false;
 
   /* 🔴 2569-08-01 · **แพ็กโค้ชยังไม่เปิดขาย — แต่เครดิต AI ซื้อได้** (คำสั่งเจ้าของ)
@@ -122,8 +122,8 @@
   var PROMPTPAY_DEFAULT='0993959266';
 
   /* Cloudflare Worker `iufit-omise` — สร้าง charge ฝั่ง server (ที่เก็บ secret key)
-     ⭐ 2569-07-31 · ซอร์สอยู่ในรีโปแล้วที่ `workers/iufit-omise/src/index.js`
-        (คอมเมนต์เดิมเขียนว่า "ไม่อยู่ในโปรเจกต์นี้" ซึ่งล้าสมัยไปแล้ว) */
+     ⭐ ซอร์ส deploy: `ห้ามแชร์(local-only)/1-workers-deploy-Cloudflare/worker-omise-billing-ห้ามแชร์.js`
+        (ไม่เก็บสำเนาใน git ของ iufit-vue อีกแล้ว — เหมือน gym / line-log) */
   var CHARGE_ENDPOINT='https://iufit-omise.ar-weerapong.workers.dev';
 
   /* Firebase Web API key — **สาธารณะโดยการออกแบบ** (Google เรียกว่า "ตัวระบุโปรเจกต์")
@@ -555,7 +555,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   ];
   var ADDON={clients:5,mo:99};
   /* ===== แพ็กเครดิต AI — ซื้อครั้งเดียวจบ ไม่มีรอบบิล =====
-     ⚠️ ตัวเลขต้องตรงกับ **3 ที่**: `core/pricing/pricing.js` · `workers/iufit-omise` (PRICES)
+     ⚠️ ตัวเลขต้องตรงกับ **3 ที่**: `core/pricing/pricing.js` · `worker-omise-billing-ห้ามแชร์.js` (PRICES)
         และ `CR_PACKS` ใน worker `iufit-gym` ซึ่งเป็นคนเติมยอดจริง
         ⇒ แก้ราคาหรือจำนวนต้องไล่ครบทั้งสาม ไม่งั้นยอดที่โชว์กับที่ได้จริงไม่ตรงกัน
 

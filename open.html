@@ -31,7 +31,7 @@ p{color:#6B7890;font-size:14px;line-height:1.6;margin:4px 0 18px}
 </div>
 <script>
 /* ===== ตั้งค่า ===== */
-var APP_URL='https://iufit.com';
+var APP_BASE='https://iufit.com';
 var ANDROID_PKG='com.iufit.twa';
 var PLAY_URL='https://play.google.com/store/apps/details?id=com.iufit.twa';   /* Play Store — Android intent เปิดแอปที่ติดตั้งก่อน · ไม่มีค่อยไปสโตร์ */
 /* ================= */
@@ -41,6 +41,12 @@ var isAndroid=/Android/i.test(ua);
 var isIOS=/iPhone|iPad|iPod/i.test(ua)||(/Macintosh/.test(ua)&&'ontouchend' in document);
 var isStandalone=(window.navigator.standalone===true)||(window.matchMedia&&matchMedia('(display-mode: standalone)').matches);
 var escaped=/openExternalBrowser=1/i.test(location.search)||/[?&]extb=1/i.test(location.search);
+/* ส่งต่อพารามิเตอร์จาก LINE (เช่น ?add=menu) เข้าแอป — ตัดแค่แฟล็กเด้งเบราว์เซอร์ */
+var _qs=new URLSearchParams(location.search||'');
+_qs.delete('openExternalBrowser'); _qs.delete('extb');
+var _qstr=_qs.toString();
+var APP_URL=APP_BASE+(_qstr?('?'+_qstr):'');
+var APP_PATH='iufit.com'+(_qstr?('?'+_qstr):'');
 var msg=document.getElementById('msg'),btns=document.getElementById('btns'),hint=document.getElementById('hint');
 function b(cls,txt,href,onclick){var a=document.createElement('a');a.className='btn '+cls;a.innerHTML=txt;if(href)a.href=href;if(onclick)a.onclick=onclick;btns.appendChild(a);return a;}
 
@@ -55,7 +61,7 @@ if(isLine && !escaped){
 /* ขั้นที่ 2: อยู่ในเบราว์เซอร์จริงแล้ว -> เปิดแอปตามระบบ */
 else if(isAndroid){
   var fallback=PLAY_URL||APP_URL;
-  var intent='intent://iufit.com/#Intent;scheme=https;package='+ANDROID_PKG+';S.browser_fallback_url='+encodeURIComponent(fallback)+';end';
+  var intent='intent://'+APP_PATH+'#Intent;scheme=https;package='+ANDROID_PKG+';S.browser_fallback_url='+encodeURIComponent(fallback)+';end';
   msg.textContent='กำลังเปิดแอป IUFIT…';
   setTimeout(function(){try{location.href=intent;}catch(e){location.href=fallback;}},250);
   b('pri','เปิดแอป IUFIT',null,function(){location.href=intent;return false;});
