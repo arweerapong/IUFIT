@@ -665,7 +665,13 @@
 /* v1295 = เธเธฃเนเธญเธกเน€เธเธขเนเธซเธเนเธฒเธเธทเนเธญเน€เธเธฃเธ”เธดเธ•เธเนเธฒเธ Omise (worker เธชเธฃเนเธฒเธ QR ยท webhook เน€เธ•เธดเธกเน€เธเธฃเธ”เธดเธ•) */
 /* v1303 = เธญเธฒเธขเธธเธเธฑเนเธเธ•เนเธณ 9 + เน€เธเธฃเธ”เธดเธ• pricing refresh */
 /* v1304 = sleep i18n hints + overnight sleep fallback + sport live pipe */
-const CACHE = 'iufit-v1314-calout-sport-line'
+/* v1315 = Cal Out handoff closeout: home-card row label "เผาผลาญ" -> "จากการขยับ" (owner's
+   decision, option ก) to match wmEnergy's ddKcalFromMove ยท dot background token fixed
+   --brand -> --surface-brand (verify:csstokens fill/text rule) ยท added user.addBackExercise
+   (defaults false, no UI yet) so the GOAL-calIn(+calOut) contract does not need to change later */
+/* v1318 = Cal Out: session kcal cal->kcal on sport history + by-activity display ·
+   7-day chart avg/peak caption/pill bars/today label align to handoff mock */
+const CACHE = 'iufit-v1318-calout-session-kcal'
 
 /* เน€เธเธฅเธทเธญเธเนเธญเธเธ—เธตเนเธเธทเนเธญเนเธเธฅเนเธเธเธ—เธตเน (เธเธทเนเธญ hash เธเธญเธ /assets/* เน€เธเนเธเธ•เธญเธ runtime เนเธ—เธ)
 
