@@ -311,7 +311,11 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       cr_pick:'เลือกแพ็กเครดิต',
       cr_once:'ชำระครั้งเดียว',
       cr_need_email_t:'แพ็กเครดิตต้องใช้บัญชีที่ยืนยันอีเมลแล้ว',
-      cr_need_email_m:'เครดิตผูกกับบัญชีอีเมล · กรุณาเข้าสู่ระบบด้วยอีเมลและยืนยันอีเมลในแอปก่อน แล้วกลับมาที่หน้านี้',
+      cr_need_email_m:'เครดิตผูกกับบัญชีอีเมล · กรุณาเข้าสู่ระบบด้วยอีเมลและยืนยันอีเมลในแอปก่อน แล้วกลับมาที่หน้านี้ — ถ้าเปิดจาก LINE ให้แตะ “เปิดในเบราว์เซอร์” ก่อน (localStorage ใน LINE กับ Safari/Chrome คนละที่)',
+      cr_need_browser_t:'เปิดหน้าชำระเงินในเบราว์เซอร์',
+      cr_need_browser_m:'LINE in-app browser อ่านบัญชีที่ยืนยันในแอปไม่ได้ · กำลังเปิดในเบราว์เซอร์จริง — ถ้าไม่เด้ง ให้แตปุ่มด้านล่าง',
+      cr_bad_uid_t:'บัญชีเครดิตยังไม่พร้อม',
+      cr_bad_uid_m:'ระบบยังผูกกระเป๋าเครดิตกับอีเมลที่ยืนยันไม่ได้ · เปิดแอป → ยืนยันอีเมล → แล้วเปิดหน้านี้จากเบราว์เซอร์อีกครั้ง (ไม่ใช่ใน LINE)',
       cr_tab_plan:'แพ็กโค้ช',
       cr_tab_credit:'เครดิต AI',
       /* ข้อความหน้าสำเร็จของ "เครดิต" ต้องต่างจาก "แพ็ก" — คนละสินค้า คนละสิ่งที่ได้รับ
@@ -471,7 +475,11 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       cr_pick:'Choose a credit pack',
       cr_once:'One-time payment',
       cr_need_email_t:'Credit packs require an e-mail verified account',
-      cr_need_email_m:'Credits are tied to your e-mail account. Please sign in with e-mail and verify it in the app, then come back to this page.',
+      cr_need_email_m:'Credits are tied to your e-mail account. Sign in with e-mail and verify it in the app, then return here — if you opened this from LINE, tap “Open in browser” first (LINE WebView and Safari/Chrome do not share the same login storage).',
+      cr_need_browser_t:'Open checkout in your browser',
+      cr_need_browser_m:'LINE’s in-app browser cannot see the verified account from the app. Opening in your real browser — if it does not jump, tap the button below.',
+      cr_bad_uid_t:'Credit wallet not ready',
+      cr_bad_uid_m:'We could not bind a credit wallet to your verified e-mail. Open the app → verify e-mail → then open this page again from a real browser (not inside LINE).',
       cr_tab_plan:'Coach plans',
       cr_tab_credit:'AI credits',
       cr_success_m:'Your credits have been added · open IUFIT with the same account and the balance updates automatically.',
@@ -580,12 +588,15 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   /**
    * uid สำหรับกระเป๋าเครดิต AI — `email:<sha256>` เท่านั้น (iufit-gym · Omise credit)
    * ⭐ 2569-08-28 · ตรงกับ `core/accountKey.creditWalletUid` + resolve จาก `emailId`
+   * ⭐ 2569-09-01 · รับเฉพาะ `email:` + 64 hex เท่านั้น · ห้าม prefix หลวม (hash ตัดขาดผ่านเกตเดิมแล้วโดน Omise ปฏิเสธ)
    */
   var _creditUidResolved='';
+  var _EMAIL_UID_RE=/^email:[a-f0-9]{64}$/i;
+  function isCanonEmailUid(uid){return _EMAIL_UID_RE.test(String(uid||'').trim());}
   function normalizeEmailForUid(em){return String(em||'').trim().toLowerCase();}
   function isEmailVerifiedForCredits(s){
     try{
-      if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0)return true;
+      if(isCanonEmailUid(s.fbuid))return true;
       var em=normalizeEmailForUid(s.emailId);
       return !!em&&em.indexOf('@')>0;
     }catch(e){return false;}
@@ -601,11 +612,11 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     return sha256hex(n).then(function(h){return 'email:'+h;});
   }
   function patchCreditUid(uid){
-    if(!uid)return;
+    if(!isCanonEmailUid(uid))return;
     _creditUidResolved=uid;
     try{
       var s=appState();
-      if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0)return;
+      if(isCanonEmailUid(s.fbuid))return;
       s.fbuid=uid;
       localStorage.setItem('iufit',JSON.stringify(s));
     }catch(e){}
@@ -613,11 +624,12 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   function resolveCreditWalletUid(cb){
     var s=appState();
     try{
-      if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0){_creditUidResolved=s.fbuid;cb(s.fbuid);return;}
+      if(isCanonEmailUid(s.fbuid)){_creditUidResolved=s.fbuid;cb(s.fbuid);return;}
     }catch(e){}
-    if(_creditUidResolved){cb(_creditUidResolved);return;}
-    if(!isEmailVerifiedForCredits(s)){cb('');return;}
-    emailUidFromAddress(s.emailId).then(function(uid){
+    if(isCanonEmailUid(_creditUidResolved)){cb(_creditUidResolved);return;}
+    var em=normalizeEmailForUid(s&&s.emailId);
+    if(!em||em.indexOf('@')<1){cb('');return;}
+    emailUidFromAddress(em).then(function(uid){
       if(uid)patchCreditUid(uid);
       cb(uid||'');
     }).catch(function(){cb('');});
@@ -626,9 +638,9 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   function walletUid(){
     var s=appState();
     try{
-      if(s.fbuid&&(''+s.fbuid).indexOf('email:')===0)return s.fbuid;
+      if(isCanonEmailUid(s.fbuid))return s.fbuid;
     }catch(e){}
-    return _creditUidResolved||'';
+    return isCanonEmailUid(_creditUidResolved)?_creditUidResolved:'';
   }
   /** เรียกก่อน render หน้าเครดิต — resolve uid จาก `emailId` แล้ว sync ลง localStorage */
   function initCreditIdentity(cb){resolveCreditWalletUid(function(uid){if(cb)cb(uid);});}
@@ -822,6 +834,19 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       .catch(function(){if(cb)cb(merchantPay());});
   }
 
+  /** เปิดใน LINE in-app browser ไหม — คนละ localStorage กับ Safari/Chrome ที่ยืนยันอีเมลในแอป */
+  function isInLineWebView(){
+    try{return /Line\//i.test(navigator.userAgent||'');}catch(e){return false;}
+  }
+  /** URL เด้งออก LINE แล้วกลับมาหน้าเดิม (allowlist plan/lang เท่านั้น) */
+  function billingExternalUrl(plan,lang){
+    var q=[];
+    if(plan)q.push('plan='+encodeURIComponent(String(plan)));
+    if(lang)q.push('lang='+encodeURIComponent(String(lang)==='en'?'en':'th'));
+    q.push('openExternalBrowser=1');
+    var base=location.origin+location.pathname;
+    return base+'?'+q.join('&');
+  }
   window.IUFIT_BILLING={
     PLATFORM:PLATFORM, IS_STORE:IS_STORE, LANG:LANG, t:t, setLang:setLang,
     OMISE_READY:OMISE_READY, OMISE_PUBLIC_KEY:OMISE_PUBLIC_KEY, CHARGE_ENDPOINT:CHARGE_ENDPOINT, LINE_URL:LINE_URL,
@@ -832,6 +857,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     planSub:planSub, planFeats:planFeats, planBadge:planBadge,
     appState:appState, accountKey:accountKey, accountLabel:accountLabel,
     walletUid:walletUid, creditAccountKey:creditAccountKey, isEmailVerifiedForCredits:isEmailVerifiedForCredits,
+    isCanonEmailUid:isCanonEmailUid, isInLineWebView:isInLineWebView, billingExternalUrl:billingExternalUrl,
     initCreditIdentity:initCreditIdentity, resolveCreditWalletUid:resolveCreditWalletUid,
     fetchWallet:fetchWallet, creditShow:creditShow,
     authToken:authToken, canSelfServe:canSelfServe,

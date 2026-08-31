@@ -44,9 +44,17 @@ var escaped=/openExternalBrowser=1/i.test(location.search)||/[?&]extb=1/i.test(l
 /* ส่งต่อพารามิเตอร์จาก LINE (เช่น ?add=menu) เข้าแอป — ตัดแค่แฟล็กเด้งเบราว์เซอร์ */
 var _qs=new URLSearchParams(location.search||'');
 _qs.delete('openExternalBrowser'); _qs.delete('extb');
+/* ⭐ 2569-09-01 · `next=billing` → เปิดหน้าซื้อเครดิตหลังเด้งออก LINE (allowlist เท่านั้น) */
+var _next=_qs.get('next')||'';
+_qs.delete('next');
+var _plan=_qs.get('plan')||'credit_m';
+var _lang=_qs.get('lang')||'th';
 var _qstr=_qs.toString();
 var APP_URL=APP_BASE+(_qstr?('?'+_qstr):'');
 var APP_PATH='iufit.com'+(_qstr?('?'+_qstr):'');
+var BILLING_URL=APP_BASE+'/billing.html?plan='+encodeURIComponent(_plan)+'&lang='+encodeURIComponent(_lang==='en'?'en':'th');
+var DEST_URL=(_next==='billing')?BILLING_URL:APP_URL;
+var DEST_PATH=(_next==='billing')?('iufit.com/billing.html?plan='+encodeURIComponent(_plan)+'&lang='+encodeURIComponent(_lang==='en'?'en':'th')):APP_PATH;
 var msg=document.getElementById('msg'),btns=document.getElementById('btns'),hint=document.getElementById('hint');
 function b(cls,txt,href,onclick){var a=document.createElement('a');a.className='btn '+cls;a.innerHTML=txt;if(href)a.href=href;if(onclick)a.onclick=onclick;btns.appendChild(a);return a;}
 
@@ -60,27 +68,27 @@ if(isLine && !escaped){
 }
 /* ขั้นที่ 2: อยู่ในเบราว์เซอร์จริงแล้ว -> เปิดแอปตามระบบ */
 else if(isAndroid){
-  var fallback=PLAY_URL||APP_URL;
-  var intent='intent://'+APP_PATH+'#Intent;scheme=https;package='+ANDROID_PKG+';S.browser_fallback_url='+encodeURIComponent(fallback)+';end';
-  msg.textContent='กำลังเปิดแอป IUFIT…';
+  var fallback=PLAY_URL||DEST_URL;
+  var intent='intent://'+DEST_PATH+'#Intent;scheme=https;package='+ANDROID_PKG+';S.browser_fallback_url='+encodeURIComponent(fallback)+';end';
+  msg.textContent=(_next==='billing')?'กำลังเปิดหน้าซื้อเครดิต…':'กำลังเปิดแอป IUFIT…';
   setTimeout(function(){try{location.href=intent;}catch(e){location.href=fallback;}},250);
-  b('pri','เปิดแอป IUFIT',null,function(){location.href=intent;return false;});
+  b('pri',(_next==='billing')?'เปิดหน้าซื้อเครดิต':'เปิดแอป IUFIT',null,function(){location.href=intent;return false;});
   if(PLAY_URL)b('dark','ดาวน์โหลดจาก Play Store',PLAY_URL);
-  b('ghost','เปิดบนเว็บแทน',APP_URL);
+  b('ghost','เปิดบนเว็บแทน',DEST_URL);
   hint.innerHTML='ถ้ายังไม่เปิด แตะปุ่มด้านบน (ต้องติดตั้งแอป IUFIT ไว้ก่อน)';
 }
 else if(isIOS){
-  if(isStandalone){ location.href=APP_URL; }
+  if(isStandalone){ location.href=DEST_URL; }
   else {
-    msg.innerHTML='เปิด IUFIT บน iPhone/iPad';
-    b('pri','เปิด IUFIT เลย',APP_URL);
+    msg.innerHTML=(_next==='billing')?'เปิดหน้าซื้อเครดิต':'เปิด IUFIT บน iPhone/iPad';
+    b('pri',(_next==='billing')?'เปิดหน้าซื้อเครดิตเลย':'เปิด IUFIT เลย',DEST_URL);
     hint.innerHTML='<div class="steps">📱 <b>อยากให้เปิดเต็มจอเหมือนแอป?</b> iOS ทำผ่านการเพิ่มไอคอนลงหน้าจอ (ทำครั้งเดียว):<br>1. แตะปุ่ม <b>แชร์</b> ด้านล่าง Safari<br>2. เลือก <b>เพิ่มลงในหน้าจอโฮม</b><br>3. ครั้งต่อไปเปิดจาก <b>ไอคอน IUFIT</b> บนหน้าจอ = เต็มจอเหมือนแอป<br><br><span style="color:#b06">หมายเหตุ: iOS ไม่อนุญาตให้ลิงก์เปิด PWA ที่ติดตั้งแล้วโดยตรง จึงต้องเปิดจากไอคอนหน้าจอ</span></div>';
   }
 }
 else{
-  msg.textContent='กำลังเปิด IUFIT…';
-  setTimeout(function(){location.href=APP_URL;},400);
-  b('pri','เปิด IUFIT',APP_URL);
+  msg.textContent=(_next==='billing')?'กำลังเปิดหน้าซื้อเครดิต…':'กำลังเปิด IUFIT…';
+  setTimeout(function(){location.href=DEST_URL;},200);
+  b('pri',(_next==='billing')?'เปิดหน้าซื้อเครดิต':'เปิด IUFIT',DEST_URL);
 }
 </script>
 </body>

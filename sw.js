@@ -669,9 +669,10 @@
    decision, option ก) to match wmEnergy's ddKcalFromMove ยท dot background token fixed
    --brand -> --surface-brand (verify:csstokens fill/text rule) ยท added user.addBackExercise
    (defaults false, no UI yet) so the GOAL-calIn(+calOut) contract does not need to change later */
-/* v1318 = Cal Out: session kcal cal->kcal on sport history + by-activity display ·
-   7-day chart avg/peak caption/pill bars/today label align to handoff mock */
-const CACHE = 'iufit-v1318-calout-session-kcal'
+/* v1319 = LINE OA PromptPay email gate + food-scan waitUntil budget · meal reco ask-slot ·
+   chart rounded-rect bars app-wide · hero day summary → /results/today · vibe every-N ·
+   home remaining kcal via energyBudget when addBack */
+const CACHE = 'iufit-v1319-lineoa-scan-billing-bars'
 
 /* เน€เธเธฅเธทเธญเธเนเธญเธเธ—เธตเนเธเธทเนเธญเนเธเธฅเนเธเธเธ—เธตเน (เธเธทเนเธญ hash เธเธญเธ /assets/* เน€เธเนเธเธ•เธญเธ runtime เนเธ—เธ)
 
