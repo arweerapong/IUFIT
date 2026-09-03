@@ -672,7 +672,7 @@
 /* v1319 = LINE OA PromptPay email gate + food-scan waitUntil budget · meal reco ask-slot ·
    chart rounded-rect bars app-wide · hero day summary → /results/today · vibe every-N ·
    home remaining kcal via energyBudget when addBack */
-const CACHE = 'iufit-v1327-line-credit-canon'
+const CACHE = 'iufit-v1328-admin-ai-control'
 
 /* เน€เธเธฅเธทเธญเธเนเธญเธเธ—เธตเนเธเธทเนเธญเนเธเธฅเนเธเธเธ—เธตเน (เธเธทเนเธญ hash เธเธญเธ /assets/* เน€เธเนเธเธ•เธญเธ runtime เนเธ—เธ)
 
