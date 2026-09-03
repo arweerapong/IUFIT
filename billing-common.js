@@ -254,7 +254,9 @@
       how_title:'เริ่มยังไง',how1:'<b>เริ่มใช้ในแอป</b> — เปิดแอป IUFIT → เปิดโหมดโค้ช → ยืนยันอีเมลเพื่อรับ Coach Pro ในช่วงเปิดตัว (ไม่ต้องใส่บัตร)',how2:'<b>พร้อมสมัครจริง</b> — กด “สมัคร” เลือกแพ็ก/รอบบิล แล้วชำระเงิน (หรือทักไลน์)',how3:'<b>ปลดล็อกอัตโนมัติ</b> — เปิดแอปด้วยบัญชีเดิม แพ็กจะเปิดให้เอง ลูกเทรนและข้อมูลอยู่ครบ',
       note_soft:'ค่าแพ็กเป็นการสมัครใช้ซอฟต์แวร์ IUFIT ผ่านเว็บไซต์ · ค่าเทรนระหว่างลูกเทรนกับโค้ชโอนตรงผ่าน PromptPay ของโค้ช (IUFIT ไม่ถือเงินแทน)',
       store_note_t:'เปิดในแอป',store_note_m:'การสมัคร/ชำระเงินทำผ่านเว็บไซต์หรือ LINE · ในแอปดูสถานะแพ็กของคุณได้',
-      billing_title:'ซื้อเครดิต AI',acct_prefix:'บัญชี: ',acct_bind:' · เครดิตจะผูกกับบัญชีอีเมลที่ยืนยันแล้ว',acct_login:'กรอกอีเมลที่ยืนยันในแอปด้านล่าง แล้วเลือกแพ็กชำระได้เลย',
+      billing_title:'ซื้อเครดิต AI',acct_prefix:'บัญชี: ',acct_bind:' · เครดิตจะผูกกับบัญชีอีเมลที่ยืนยันแล้ว',acct_login:'กำลังตรวจบัญชีที่ผูกกับแอป…',
+      acct_oa:'บัญชีที่ผูกกับแอปผ่าน LINE',
+      cr_email_other:'ใช้เมลอื่น',
       pick_plan:'เลือกแพ็ก',clients_unit:' คน',pay_method:'วิธีชำระเงิน',pm_card:'💳 บัตรเครดิต/เดบิต',pm_pp:'📱 PromptPay',pm_pp_soon:'เร็ว ๆ นี้',
       pp_btn:'สร้าง QR พร้อมเพย์',
       pp_hint:'สแกน QR PromptPay ผ่าน Omise · เมื่อโอนสำเร็จ เครดิตเข้าอัตโนมัติ ไม่ต้องทักไลน์',
@@ -331,10 +333,10 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       cr_unit:'ครั้ง',
       cr_pick:'เลือกแพ็กเครดิต',
       cr_once:'ชำระครั้งเดียว',
-      cr_need_email_t:'กรอกอีเมลที่ผูกกับแอป',
-      cr_need_email_m:'เครดิตเข้าอีเมลที่ยืนยันในแอป IUFIT · กรอกเมลเดียวกันด้านบนแล้วจ่ายได้เลย ไม่ต้องเปิดแอป',
-      cr_email_lbl:'อีเมลที่ผูกกับแอป',
-      cr_email_hint:'ใช้เมลเดียวกับที่ยืนยันในแอป IUFIT · หลังจ่ายสำเร็จ เครดิตเข้ากระเป๋านี้',
+      cr_need_email_t:'ยังไม่เจอบัญชีที่ผูกแอป',
+      cr_need_email_m:'พิมพ์ «ยอดของฉัน» หรือ «ซื้อเครดิต» ในแชท LINE OA เพื่อใช้บัญชีที่ผูกแอปเลย ไม่ต้องกรอกเมล · หรือกรอกเมลที่ยืนยันในแอปด้านบน',
+      cr_email_lbl:'อีเมลที่ผูกกับแอป (สำรอง)',
+      cr_email_hint:'ปกติ LINE ตรวจบัญชีที่ผูกแอปให้เอง · กรอกเมลเฉพาะเมื่อต้องการใช้บัญชีอื่น',
       cr_need_browser_t:'ซื้อเครดิตใน LINE OA',
       cr_need_browser_m:'เลือกแพ็กด้านบน แล้วจ่ายด้วยบัตรหรือพร้อมเพย์ได้ในหน้านี้',
       cr_bad_uid_t:'บัญชียังไม่พร้อมรับเครดิต',
@@ -346,7 +348,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       cr_success_m:'เครดิตถูกเติมเข้าบัญชีของคุณแล้ว · เปิดแอป IUFIT ด้วยบัญชีเดิม ยอดเครดิตจะอัปเดตอัตโนมัติ',
       wal_title:'เครดิต AI คงเหลือ',
       wal_loading:'กำลังอ่านยอด…',
-      wal_no_acct:'กรอกอีเมลที่ยืนยันในแอปด้านบน เพื่อดูยอดและเติมเครดิตเข้ากระเป๋านั้น',
+      wal_no_acct:'พิมพ์ «ยอดของฉัน» ในแชท LINE เพื่อดูยอดบัญชีที่ผูกแอป · หรือกรอกเมลที่ยืนยันในแอปด้านบน',
+      wal_oa_hint:'พิมพ์ «ยอดของฉัน» ในแชท LINE OA — บอทจะโชว์ยอดบัญชีที่ผูกแอปทันที ไม่ต้องกรอกเมล',
       wal_scan:'สแกนอาหารเหลือ',
       wal_analyze:'วิเคราะห์เหลือ',
       wal_unlimited:'ไม่จำกัด',
@@ -436,7 +439,9 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       how_title:'How to start',how1:'<b>Start in the app</b> — open IUFIT → turn on coach mode → verify your email to get Coach Pro during the launch period (no card).',how2:'<b>Ready to subscribe</b> — tap “Subscribe”, pick a plan & cycle, then pay (or chat on LINE).',how3:'<b>Auto-unlock</b> — open the app with the same account; your plan activates automatically, clients & data intact.',
       note_soft:'Plan fees are a subscription to IUFIT software via the website · Client↔coach payments transfer directly via the coach PromptPay (IUFIT does not hold funds).',
       store_note_t:'Opened in the app',store_note_m:'Subscription/payment is done on the website or LINE · in the app you can view your plan status.',
-      billing_title:'Buy AI credits',acct_prefix:'Account: ',acct_bind:' · credits link to your verified e-mail',acct_login:'Enter the e-mail you verified in the app below, then pick a pack and pay.',
+      billing_title:'Buy AI credits',acct_prefix:'Account: ',acct_bind:' · credits link to your verified e-mail',acct_login:'Looking up the account linked to your app…',
+      acct_oa:'App account linked via LINE',
+      cr_email_other:'Use a different e-mail',
       pick_plan:'Choose a plan',clients_unit:' clients',pay_method:'Payment method',pm_card:'💳 Credit/Debit card',pm_pp:'📱 PromptPay',pm_pp_soon:'coming soon',
       pp_btn:'Create PromptPay QR',
       pp_hint:'Scan the Omise PromptPay QR · credits are added automatically when the transfer succeeds — no LINE message needed.',
@@ -498,10 +503,10 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       cr_unit:'',
       cr_pick:'Choose a credit pack',
       cr_once:'One-time payment',
-      cr_need_email_t:'Enter the e-mail linked to your app',
-      cr_need_email_m:'Credits go to the e-mail you verified in IUFIT · type that same address above and pay here — no need to open the app.',
-      cr_email_lbl:'E-mail linked to the app',
-      cr_email_hint:'Use the same address you verified in IUFIT · after payment, credits land in that wallet.',
+      cr_need_email_t:'Linked app account not found yet',
+      cr_need_email_m:'Type “my credits” or “buy credits” in the LINE OA chat to use the account already linked to your app — no e-mail needed. Or type the verified address above.',
+      cr_email_lbl:'E-mail linked to the app (fallback)',
+      cr_email_hint:'LINE normally detects the linked app account · type an e-mail only to use a different wallet.',
       cr_need_browser_t:'Buy credits in LINE OA',
       cr_need_browser_m:'Pick a pack above, then pay by card or PromptPay on this page.',
       cr_bad_uid_t:'Wallet not ready',
@@ -511,7 +516,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       cr_success_m:'Your credits have been added · open IUFIT with the same account and the balance updates automatically.',
       wal_title:'AI credit balance',
       wal_loading:'Loading balance…',
-      wal_no_acct:'Enter the e-mail you verified in the app above to see the balance and add credits to that wallet',
+      wal_no_acct:'Type “my credits” in the LINE chat to see the linked app wallet · or enter the verified e-mail above',
+      wal_oa_hint:'Type “my credits” in the LINE OA chat — the bot shows the linked app balance immediately, no e-mail needed',
       wal_scan:'Food scans left',
       wal_analyze:'Analyses left',
       wal_unlimited:'Unlimited',
@@ -618,12 +624,22 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
    */
   var _creditUidResolved='';
   var _EMAIL_UID_RE=/^email:[a-f0-9]{64}$/i;
+  var PAY_EMAIL_KEY='iufit_pay_email';
+  var LINE_LOG_ENDPOINT='https://iufit-line-log.ar-weerapong.workers.dev';
   function isCanonEmailUid(uid){return _EMAIL_UID_RE.test(String(uid||'').trim());}
   function normalizeEmailForUid(em){return String(em||'').trim().toLowerCase();}
+  function rememberedPayEmail(){
+    try{return normalizeEmailForUid(localStorage.getItem(PAY_EMAIL_KEY)||'');}catch(e){return '';}
+  }
+  function persistPayEmail(em){
+    var n=normalizeEmailForUid(em);
+    if(!n||n.indexOf('@')<1)return;
+    try{localStorage.setItem(PAY_EMAIL_KEY,n);}catch(e){}
+  }
   function isEmailVerifiedForCredits(s){
     try{
       if(isCanonEmailUid(s.fbuid))return true;
-      var em=normalizeEmailForUid(s.emailId);
+      var em=normalizeEmailForUid(s.emailId)||rememberedPayEmail();
       return !!em&&em.indexOf('@')>0;
     }catch(e){return false;}
   }
@@ -647,13 +663,18 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       localStorage.setItem('iufit',JSON.stringify(s));
     }catch(e){}
   }
+  function creditEmailHint(s){
+    s=s||appState();
+    var em=normalizeEmailForUid(s&&s.emailId)||rememberedPayEmail();
+    return (em&&em.indexOf('@')>0)?em:'';
+  }
   function resolveCreditWalletUid(cb){
     var s=appState();
     try{
       if(isCanonEmailUid(s.fbuid)){_creditUidResolved=s.fbuid;cb(s.fbuid);return;}
     }catch(e){}
     if(isCanonEmailUid(_creditUidResolved)){cb(_creditUidResolved);return;}
-    var em=normalizeEmailForUid(s&&s.emailId);
+    var em=creditEmailHint(s);
     if(!em||em.indexOf('@')<1){cb('');return;}
     emailUidFromAddress(em).then(function(uid){
       if(uid)patchCreditUid(uid);
@@ -663,17 +684,31 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   function rememberPayEmail(em){
     var n=normalizeEmailForUid(em);
     if(!n||n.indexOf('@')<1)return;
+    persistPayEmail(n);
     try{
       var s=appState();
       if(isCanonEmailUid(s.fbuid)&&normalizeEmailForUid(s.emailId)===n){
         emailUidFromAddress(n).then(function(uid){if(uid)patchCreditUid(uid);});
         return;
       }
-      if(isCanonEmailUid(s.fbuid))return;
-      s.emailId=n;
-      localStorage.setItem('iufit',JSON.stringify(s));
+      if(!isCanonEmailUid(s.fbuid)){
+        s.emailId=n;
+        localStorage.setItem('iufit',JSON.stringify(s));
+      }
     }catch(e){}
     emailUidFromAddress(n).then(function(uid){if(uid)patchCreditUid(uid);});
+  }
+  function applyOaToken(t,cb){
+    t=String(t||'').trim();
+    if(!t||t.length>400){if(cb)cb('');return;}
+    fetch(LINE_LOG_ENDPOINT+'/oa/credit-session',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({t:t})
+    }).then(function(r){return r.json();}).then(function(j){
+      var uid=(j&&j.ok&&j.uid)?String(j.uid):'';
+      if(isCanonEmailUid(uid)){patchCreditUid(uid);if(cb)cb(uid);return;}
+      if(cb)cb('');
+    }).catch(function(){if(cb)cb('');});
   }
   /** sync — ใช้หลัง `initCreditIdentity` หรือเมื่อ `fbuid` พร้อมแล้ว */
   function walletUid(){
@@ -683,8 +718,22 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     }catch(e){}
     return isCanonEmailUid(_creditUidResolved)?_creditUidResolved:'';
   }
-  /** เรียกก่อน render หน้าเครดิต — resolve uid จาก `emailId` แล้ว sync ลง localStorage */
-  function initCreditIdentity(cb){resolveCreditWalletUid(function(uid){if(cb)cb(uid);});}
+  /** เรียกก่อน render หน้าเครดิต — `?oa=` จาก LINE บอท · แล้วค่อย emailId / เมลที่จำไว้ */
+  function initCreditIdentity(cb){
+    var oa=qs('oa');
+    if(oa){
+      applyOaToken(oa,function(uid){
+        if(uid){if(cb)cb(uid);return;}
+        resolveCreditWalletUid(function(u){if(cb)cb(u);});
+      });
+      return;
+    }
+    resolveCreditWalletUid(function(uid){if(cb)cb(uid);});
+  }
+  function lineOaCreditMsgUrl(text){
+    var msg=encodeURIComponent(text||'ยอดของฉัน');
+    return 'https://line.me/R/oaMessage/%40987qyznd/?'+msg;
+  }
   /** บัญชีที่ใช้ตอนซื้อเครดิต — เหมือน walletUid */
   function creditAccountKey(){return walletUid();}
   var GYM_ENDPOINT='https://iufit-gym.ar-weerapong.workers.dev';
@@ -755,7 +804,13 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     var s=appState();
     return isEmailVerifiedForCredits(s)&&!!(s._fbtok||s._fbrt||(s.vueAuthTok&&s.vueAuthTok.refreshToken)||(s.vueAuthTok&&s.vueAuthTok.idToken));
   }
-  function accountLabel(){var s=appState();return s.lineName||s.emailId||(s.users&&s.users[0]&&s.users[0].name)||'';}
+  function accountLabel(){
+    var s=appState();
+    var em=creditEmailHint(s);
+    if(em)return em;
+    if(walletUid())return t('acct_oa');
+    return s.lineName||(s.users&&s.users[0]&&s.users[0].name)||'';
+  }
   /* ══════════════════════════════════════════════════════════════════════════════════
      🔴 2569-08-03 (F3) · เกณฑ์ตัดชั้นจากจำนวนที่นั่ง — **ต้องมาจากจำนวนที่นั่งที่ขายจริง**
      ══════════════════════════════════════════════════════════════════════════════════
@@ -898,6 +953,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     walletUid:walletUid, creditAccountKey:creditAccountKey, isEmailVerifiedForCredits:isEmailVerifiedForCredits,
     isCanonEmailUid:isCanonEmailUid, isInLineWebView:isInLineWebView, billingExternalUrl:billingExternalUrl,
     emailUidFromAddress:emailUidFromAddress, rememberPayEmail:rememberPayEmail,
+    rememberedPayEmail:rememberedPayEmail, applyOaToken:applyOaToken, creditEmailHint:creditEmailHint,
+    lineOaCreditMsgUrl:lineOaCreditMsgUrl,
     initCreditIdentity:initCreditIdentity, resolveCreditWalletUid:resolveCreditWalletUid,
     fetchWallet:fetchWallet, creditShow:creditShow,
     authToken:authToken, canSelfServe:canSelfServe,

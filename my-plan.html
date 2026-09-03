@@ -22,7 +22,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v125"></script>
+<script src="billing-common.js?v=v126"></script>
 <script>
 var B=window.IUFIT_BILLING;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
@@ -35,26 +35,12 @@ function render(){
   var lbl=B.accountLabel();
   document.getElementById('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl):(B.walletUid()?'':B.t('wal_no_acct'));
   var card=document.getElementById('statusCard');
-  if(!B.isEmailVerifiedForCredits(B.appState())){
-    card.innerHTML='<div class="bn warn" style="margin:0"><b>'+B.t('cr_need_email_t')+'</b><span style="display:block;margin-top:6px;font-weight:500">'+B.t('cr_need_email_m')+'</span></div>';
-    document.getElementById('actions').innerHTML=
-      '<a class="btn pri" href="billing.html?lang='+B.LANG+'">'+B.t('nav_billing')+'</a>'+
-      '<a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('nav_pricing')+'</a>';
-    return;
-  }
   var uid=B.walletUid();
   if(!uid){
-    card.innerHTML='<div class="psub" style="margin:0">'+B.t('wal_loading')+'</div>';
-    B.resolveCreditWalletUid(function(resolved){
-      if(!resolved){
-        card.innerHTML='<div class="bn warn" style="margin:0"><b>'+B.t('wal_locked')+'</b></div>';
-        return;
-      }
-      loadWallet(card);
-    });
+    card.innerHTML='<div class="bn warn" style="margin:0"><b>'+B.t('cr_need_email_t')+'</b><span style="display:block;margin-top:6px;font-weight:500">'+B.t('wal_oa_hint')+'</span></div>';
     document.getElementById('actions').innerHTML=
-      '<a class="btn pri" href="billing.html?lang='+B.LANG+'">'+B.t('nav_billing')+'</a>'+
-      '<a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('nav_pricing')+'</a>';
+      '<a class="btn pri" href="'+B.esc(B.lineOaCreditMsgUrl(B.LANG==='en'?'my credits':'ยอดของฉัน'))+'">'+B.t('wal_title')+'</a>'+
+      '<a class="btn ghost" style="margin-top:8px" href="billing.html?lang='+B.LANG+'">'+B.t('nav_billing')+'</a>';
     return;
   }
   loadWallet(card);

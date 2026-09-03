@@ -36,7 +36,11 @@
     <label class="field" style="margin:0" for="pay-email"><span id="lbl-email"></span></label>
     <input id="pay-email" type="email" inputmode="email" autocomplete="email" style="width:100%;border:1.5px solid var(--line-strong);border-radius:11px;padding:11px 13px;font-size:14.5px;font-family:inherit;margin-top:6px">
     <p class="note" id="email-hint" style="margin:8px 0 0"></p>
+    <a class="blue" id="oa-credit-link" href="#" style="display:block;margin-top:10px;font-size:13px;font-weight:700"></a>
   </div>
+  <p class="note" id="email-other-wrap" style="margin:-6px 0 14px;display:none">
+    <button type="button" id="email-other" class="btn ghost" style="width:auto;padding:7px 12px;font-size:12.5px"></button>
+  </p>
   <!-- ยอดเครดิต AI ของบัญชีที่ผูก LINE OA / อีเมลในแอป -->
   <div class="card" id="walletCard" style="margin-bottom:14px">
     <b style="font-size:14px;color:var(--navy)" id="wal-h"></b>
@@ -58,7 +62,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v125"></script>
+<script src="billing-common.js?v=v126"></script>
 <script>
 var B=window.IUFIT_BILLING;
 /* ⭐ 2569-09-03 · ซื้อเครดิตใน LINE OA ได้เลย (เลือกแพ็ก + Omise บัตร/พร้อมเพย์)
@@ -402,24 +406,53 @@ function pollStatus(ref){
     }
     return;
   }
+  function syncAcctLine(){
+    var em=document.getElementById('pay-email');
+    var lbl=B.accountLabel()||(em&&em.value)||'';
+    document.getElementById('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl+B.t('acct_bind')):B.t('acct_login');
+  }
+  function syncEmailCard(){
+    var known=!!B.walletUid();
+    var card=document.getElementById('emailCard');
+    var other=document.getElementById('email-other-wrap');
+    var em=document.getElementById('pay-email');
+    var hint=B.creditEmailHint();
+    if(em&&hint&&!em.value)em.value=hint;
+    if(card)card.style.display=known?'none':'';
+    if(other)other.style.display=known?'':'none';
+    syncAcctLine();
+  }
   B.initCreditIdentity(function(){
     document.getElementById('checkout').classList.remove('hide');
     T('co-h','billing_title');T('pm-h','pay_method');T('lbl-pick','cr_pick');T('co-note','secure_note');T('wal-h','wal_title');
     T('lbl-email','cr_email_lbl');T('email-hint','cr_email_hint');
-    var s=B.appState();
+    var otherBtn=document.getElementById('email-other');
+    if(otherBtn){
+      otherBtn.textContent=B.t('cr_email_other');
+      otherBtn.onclick=function(){
+        var card=document.getElementById('emailCard');
+        var wrap=document.getElementById('email-other-wrap');
+        if(card)card.style.display='';
+        if(wrap)wrap.style.display='none';
+        try{var el=document.getElementById('pay-email');if(el){el.readOnly=false;el.focus();}}catch(e){}
+      };
+    }
+    var oaLink=document.getElementById('oa-credit-link');
+    if(oaLink){
+      oaLink.textContent=B.t('wal_oa_hint');
+      oaLink.href=B.lineOaCreditMsgUrl(B.LANG==='en'?'my credits':'ยอดของฉัน');
+    }
     var em=document.getElementById('pay-email');
     if(em){
-      if(s.emailId)em.value=s.emailId;
       if(B.walletUid())em.readOnly=true;
       em.onblur=function(){
         var v=em.value||'';
         if(!v)return;
         B.rememberPayEmail(v);
-        B.initCreditIdentity(function(){renderWallet();});
+        B.initCreditIdentity(function(){syncEmailCard();renderWallet();});
       };
     }
-    var lbl=B.accountLabel()||(em&&em.value)||'';
-    document.getElementById('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl+B.t('acct_bind')):B.t('acct_login');
+    syncEmailCard();
     renderWallet();
     renderPlanPick();renderSummary();renderPay();
     B.loadMerchantPay(function(){if(!window.__ppWait && !PAYING)renderPay();});

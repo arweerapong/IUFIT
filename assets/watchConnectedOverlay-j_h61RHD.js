@@ -1,0 +1,1 @@
+import{d as r,r as o}from"./vendor-DnypbDIA.js";const u=r("watchConnectedOverlay",()=>{const t=o(null);function a(e){t.value={deviceName:(e.deviceName||"").trim()||"—",battery:e.battery!=null&&e.battery>=0?Math.min(100,Math.round(e.battery)):null}}function n(){t.value=null}return{payload:t,show:a,dismiss:n}});export{u};
