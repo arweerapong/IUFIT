@@ -25,18 +25,12 @@
 <div id="storeGuard" class="hide">
   <h1 id="sg-h"></h1>
   <div class="bn info"><b id="sg-t"></b><span id="sg-m"></span></div>
-  <a class="btn pri" id="sg-web" href="billing.html" target="_blank" rel="noopener"></a>
   <a class="btn line" id="sg-line" href="https://line.me/R/ti/p/@987qyznd" target="_blank" rel="noopener"></a>
 </div>
 
 <div id="checkout" class="hide">
   <h1 id="co-h"></h1>
   <p class="sub" id="acctLine"></p>
-  <div class="card" id="emailCard" style="margin-bottom:14px">
-    <label class="field" style="margin:0" for="pay-email"><span id="lbl-email"></span></label>
-    <input id="pay-email" type="email" inputmode="email" autocomplete="email" style="width:100%;border:1.5px solid var(--line-strong);border-radius:11px;padding:11px 13px;font-size:14.5px;font-family:inherit;margin-top:6px">
-    <p class="note" id="email-hint" style="margin:8px 0 0"></p>
-  </div>
   <!-- ยอดเครดิต AI ของบัญชีที่ผูก LINE OA / อีเมลในแอป -->
   <div class="card" id="walletCard" style="margin-bottom:14px">
     <b style="font-size:14px;color:var(--navy)" id="wal-h"></b>
@@ -58,11 +52,21 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v125"></script>
+<script src="billing-common.js?v=v123"></script>
 <script>
 var B=window.IUFIT_BILLING;
-/* ⭐ 2569-09-03 · ซื้อเครดิตใน LINE OA ได้เลย (เลือกแพ็ก + Omise บัตร/พร้อมเพย์)
-   ห้ามเด้ง open.html / TWA — localStorage คนละที่กับแอป ⇒ ให้กรอกอีเมลที่ผูกกับแอป */
+/* ⭐ 2569-09-01 · ใน LINE WebView localStorage คนละที่กับแอป ⇒ ต้องเด้งเบราว์เซอร์จริงก่อนอ่านบัญชี */
+var _BILLING_LINE_ESCAPE=false;
+(function(){
+  var escaped=/openExternalBrowser=1/i.test(location.search)||/[?&]extb=1/i.test(location.search);
+  if(B.isInLineWebView() && !escaped){
+    _BILLING_LINE_ESCAPE=true;
+    var dest=B.billingExternalUrl(B.qs('plan')||'credit_m', B.LANG);
+    document.body.innerHTML='<div class="wrap" style="padding:28px 18px;text-align:center"><h1 style="font-size:18px;color:#0a1f4d">'+B.t('cr_need_browser_t')+'</h1><p style="color:#6B7890;line-height:1.55">'+B.t('cr_need_browser_m')+'</p><p style="margin-top:16px"><a class="btn pri" style="display:inline-block;background:#1150C8;color:#fff;text-decoration:none;font-weight:800;border-radius:13px;padding:14px 18px" href="'+dest+'">'+B.t('cr_need_browser_t')+'</a></p></div>';
+    setTimeout(function(){location.href=dest;},180);
+  }
+})();
+if(!_BILLING_LINE_ESCAPE){
 /* 🔴 2569-08-02 · XSS สะท้อน — `?plan=` เคยไหลดิบ ๆ ลง `innerHTML` ที่ `showResult()`
    ⇒ `planKeyOf()` ยอมรับเฉพาะรหัสที่อยู่ใน `CREDIT_PACKS` · นอกนั้นตกเป็นแพ็กกลาง */
 var YR=false, PLAN=B.planKeyOf(B.qs('plan'),'credit_m'), PM='card';
@@ -122,8 +126,10 @@ function renderPay(){
   var amt='฿'+B.fmt(B.getCredit(PLAN).price);
   var ppOn=B.omisePpOpen();
   if(PM==='pp'&&!ppOn)PM='card';
-  /* อีเมลกรอกที่การ์ดด้านบน — ไม่ล็อกฟอร์มจ่ายเพราะ LINE WebView ไม่มี session ของแอป */
-  var yrLocked=false;
+  /* เครดิตต้องเป็นบัญชีอีเมลที่ยืนยันแล้ว — ตรงกับแอป (`emailId` หรือ `fbuid` แบบ email:) */
+  var crBlocked=!B.isEmailVerifiedForCredits(B.appState());
+  if(crBlocked)h+='<div class="bn warn" style="margin:0 0 10px"><b>'+B.t('cr_need_email_t')+'</b>'+B.t('cr_need_email_m')+'</div>';
+  var yrLocked=crBlocked;
   if(soon&&PM==='card')h+='<div class="bn warn" style="margin:0 0 10px"><b>'+B.t('omise_soon_t')+'</b>'+B.t('omise_soon_m')+'</div>';
   h+='<div class="pm"><button id="pm-card" class="'+(PM==='card'?'on':'')+'" onclick="setPM(\'card\')">'+B.t('pm_card')+'</button>';
   if(ppOn){
@@ -247,7 +253,7 @@ function applyChargeResp(j){
   if(j&&(j.error==='credit_needs_email_uid'||j.error==='bad_account')){
     setPaying(false);
     alert(B.t('cr_bad_uid_t')+'\n\n'+B.t('cr_bad_uid_m'));
-    try{var em=document.getElementById('pay-email');if(em)em.focus();}catch(x){}
+    try{window.open(B.billingExternalUrl(PLAN,B.LANG),'_blank');}catch(x){}
     return;
   }
   if(j&&j.error==='duplicate_pending'){setPaying(false);alert(B.t('pay_dup_t')+'\n\n'+B.t('pay_dup_m'));return;}
@@ -268,20 +274,18 @@ function applyChargeResp(j){
 /* payNow() · บัตร = Omise token + POST /charge · พร้อมเพย์ = worker สร้าง QR Omise แล้ว webhook เติมเครดิต */
 function payNow(){
   if(PAYING)return;
+  if(B.isInLineWebView()){
+    alert(B.t('cr_need_browser_t')+'\n\n'+B.t('cr_need_browser_m'));
+    try{location.href=B.billingExternalUrl(PLAN,B.LANG);}catch(x){}
+    return;
+  }
   B.resolveCreditWalletUid(function(acct){
-    if(acct&&B.isCanonEmailUid(acct)){payNowWithAccount(acct);return;}
-    var typed=(document.getElementById('pay-email')||{}).value||'';
-    B.emailUidFromAddress(typed).then(function(uid){
-      if(!uid||!B.isCanonEmailUid(uid)){
-        alert(B.t('cr_need_email_t')+'\n\n'+B.t('cr_need_email_m'));
-        try{var el=document.getElementById('pay-email');if(el)el.focus();}catch(e){}
-        return;
-      }
-      B.rememberPayEmail(typed);
-      payNowWithAccount(uid);
-    }).catch(function(){
+    if(!acct||!B.isCanonEmailUid(acct)){
       alert(B.t('cr_need_email_t')+'\n\n'+B.t('cr_need_email_m'));
-    });
+      try{window.open('open.html?next=billing&plan='+encodeURIComponent(PLAN)+'&lang='+encodeURIComponent(B.LANG),'_blank');}catch(x){}
+      return;
+    }
+    payNowWithAccount(acct);
   });
 }
 function payNowWithAccount(acct){
@@ -391,34 +395,11 @@ function pollStatus(ref){
     if(res==='return'||res==='pending'||res==='unknown'){var rf=B.qs('ref'); if(rf)pollStatus(rf);}
     return;
   }
-  if(B.IS_STORE){
-    document.getElementById('storeGuard').classList.remove('hide');
-    T('sg-h','billing_title');T('sg-t','store_guard_t');T('sg-m','store_guard_m');
-    document.getElementById('sg-line').innerHTML=B.t('line_btn');
-    var sgw=document.getElementById('sg-web');
-    if(sgw){
-      sgw.textContent=B.t('line_btn');
-      sgw.href=B.LINE_URL;
-    }
-    return;
-  }
+  if(B.IS_STORE){document.getElementById('storeGuard').classList.remove('hide');T('sg-h','billing_title');T('sg-t','store_guard_t');T('sg-m','store_guard_m');document.getElementById('sg-line').innerHTML=B.t('line_btn');return;}
   B.initCreditIdentity(function(){
     document.getElementById('checkout').classList.remove('hide');
     T('co-h','billing_title');T('pm-h','pay_method');T('lbl-pick','cr_pick');T('co-note','secure_note');T('wal-h','wal_title');
-    T('lbl-email','cr_email_lbl');T('email-hint','cr_email_hint');
-    var s=B.appState();
-    var em=document.getElementById('pay-email');
-    if(em){
-      if(s.emailId)em.value=s.emailId;
-      if(B.walletUid())em.readOnly=true;
-      em.onblur=function(){
-        var v=em.value||'';
-        if(!v)return;
-        B.rememberPayEmail(v);
-        B.initCreditIdentity(function(){renderWallet();});
-      };
-    }
-    var lbl=B.accountLabel()||(em&&em.value)||'';
+    var lbl=B.accountLabel();
     document.getElementById('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl+B.t('acct_bind')):B.t('acct_login');
     renderWallet();
     renderPlanPick();renderSummary();renderPay();
@@ -426,6 +407,7 @@ function pollStatus(ref){
   });
 })();
 try{var _f=document.getElementById('foot');if(_f)_f.innerHTML=B.footerHtml();}catch(e){}
+} /* !_BILLING_LINE_ESCAPE */
 </script>
 </body>
 </html>
