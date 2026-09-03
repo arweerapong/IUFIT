@@ -58,16 +58,8 @@ var DEST_PATH=(_next==='billing')?('iufit.com/billing.html?plan='+encodeURICompo
 var msg=document.getElementById('msg'),btns=document.getElementById('btns'),hint=document.getElementById('hint');
 function b(cls,txt,href,onclick){var a=document.createElement('a');a.className='btn '+cls;a.innerHTML=txt;if(href)a.href=href;if(onclick)a.onclick=onclick;btns.appendChild(a);return a;}
 
-/* ⭐ 2569-09-03 · ซื้อเครดิต = หน้าเว็บ billing.html ใน LINE/เบราว์เซอร์ปัจจุบัน
-   ห้ามเด้งออก LINE แล้ว intent เข้า TWA (com.iufit.twa) — นั่นคือพาเข้าแอปซึ่งจ่ายไม่ได้ */
-if(_next==='billing'){
-  msg.textContent='กำลังเปิดหน้าซื้อเครดิต…';
-  setTimeout(function(){location.href=BILLING_URL;},150);
-  b('pri','เปิดหน้าซื้อเครดิต',BILLING_URL);
-  hint.innerHTML='เลือกแพ็กแล้วจ่ายบัตรหรือพร้อมเพย์ได้เลย · เครดิตเข้าอีเมลที่ผูกกับแอป';
-}
-/* ขั้นที่ 1: ถ้าเปิดใน in-app browser ของ LINE -> บังคับเด้งออกเบราว์เซอร์จริงก่อน (เปิดแอปอย่างเดียว) */
-else if(isLine && !escaped){
+/* ขั้นที่ 1: ถ้าเปิดใน in-app browser ของ LINE -> บังคับเด้งออกเบราว์เซอร์จริงก่อน */
+if(isLine && !escaped){
   msg.textContent='กำลังเปิดในเบราว์เซอร์…';
   var self=location.origin+location.pathname+(location.search?location.search+'&':'?')+'openExternalBrowser=1';
   setTimeout(function(){location.href=self;},120);

@@ -4,33 +4,13 @@
 (function(){
   'use strict';
 
-  /**
-   * ⭐ 2569-09-03 · ห้ามอ่าน `iufit_plat` อย่างเดียวแล้วสรุปว่า "อยู่ในแอปสโตร์"
-   * TWA กับ Chrome บนเครื่องเดียวกัน **ใช้ localStorage ของ iufit.com ร่วมกัน**
-   * ⇒ เปิด `billing.html` ในแท็บเบราว์เซอร์จริงแล้วยังเจอ latch `twa` → โชว์ storeGuard
-   *   ("ไปเปิดในเบราว์เซอร์") ทั้งที่ผู้ใช้อยู่ในเบราว์เซอร์แล้ว = ไม่มีหน้าซื้อเครดิต
-   * ด่านสโตร์ใช้ได้เฉพาะตอนเปลือกนี้เป็นแอปจริง: `?twa=1` · referrer android-app ·
-   * **และ** display-mode standalone/fullscreen คู่กับ latch
-   */
-  function isStandaloneShell(){
-    try{
-      if(navigator&&navigator.standalone===true)return true;
-      var mm=(typeof window!=='undefined'&&window.matchMedia)?window.matchMedia.bind(window):null;
-      if(!mm)return false;
-      if(mm('(display-mode: standalone)').matches)return true;
-      if(mm('(display-mode: fullscreen)').matches)return true;
-    }catch(e){}
-    return false;
-  }
   function detectPlatform(){
     try{
-      var q=location.search||'';
-      if(/[?&]twa=1(?:&|$)/.test(q))return 'android_play_store';
-      if((document.referrer||'').indexOf('android-app://')===0)return 'android_play_store';
-      if(!isStandaloneShell())return 'web';
       var p=localStorage.getItem('iufit_plat');
+      if(p==='twa')return 'android_play_store';
       if(p==='ios')return 'ios_app_store';
-      if(p==='twa'||p==='app')return 'android_play_store';
+      if(/[?&]twa=1/.test(location.search||''))return 'android_play_store';
+      if((document.referrer||'').indexOf('android-app://')===0)return 'android_play_store';
     }catch(e){}
     return 'web';
   }
@@ -254,7 +234,7 @@
       how_title:'เริ่มยังไง',how1:'<b>เริ่มใช้ในแอป</b> — เปิดแอป IUFIT → เปิดโหมดโค้ช → ยืนยันอีเมลเพื่อรับ Coach Pro ในช่วงเปิดตัว (ไม่ต้องใส่บัตร)',how2:'<b>พร้อมสมัครจริง</b> — กด “สมัคร” เลือกแพ็ก/รอบบิล แล้วชำระเงิน (หรือทักไลน์)',how3:'<b>ปลดล็อกอัตโนมัติ</b> — เปิดแอปด้วยบัญชีเดิม แพ็กจะเปิดให้เอง ลูกเทรนและข้อมูลอยู่ครบ',
       note_soft:'ค่าแพ็กเป็นการสมัครใช้ซอฟต์แวร์ IUFIT ผ่านเว็บไซต์ · ค่าเทรนระหว่างลูกเทรนกับโค้ชโอนตรงผ่าน PromptPay ของโค้ช (IUFIT ไม่ถือเงินแทน)',
       store_note_t:'เปิดในแอป',store_note_m:'การสมัคร/ชำระเงินทำผ่านเว็บไซต์หรือ LINE · ในแอปดูสถานะแพ็กของคุณได้',
-      billing_title:'ซื้อเครดิต AI',acct_prefix:'บัญชี: ',acct_bind:' · เครดิตจะผูกกับบัญชีอีเมลที่ยืนยันแล้ว',acct_login:'กรอกอีเมลที่ยืนยันในแอปด้านล่าง แล้วเลือกแพ็กชำระได้เลย',
+      billing_title:'ซื้อเครดิต AI',acct_prefix:'บัญชี: ',acct_bind:' · เครดิตจะผูกกับบัญชีอีเมลที่ยืนยันแล้ว',acct_login:'เข้าสู่ระบบในแอปด้วยอีเมล/LINE แล้วกลับมาที่หน้านี้',
       pick_plan:'เลือกแพ็ก',clients_unit:' คน',pay_method:'วิธีชำระเงิน',pm_card:'💳 บัตรเครดิต/เดบิต',pm_pp:'📱 PromptPay',pm_pp_soon:'เร็ว ๆ นี้',
       pp_btn:'สร้าง QR พร้อมเพย์',
       pp_hint:'สแกน QR PromptPay ผ่าน Omise · เมื่อโอนสำเร็จ เครดิตเข้าอัตโนมัติ ไม่ต้องทักไลน์',
@@ -275,8 +255,7 @@
       /* ⭐ 2569-07-30 · ถอด book_line / reserve_local ออก — ไม่มีปุ่มเรียกแล้ว
          (มีไว้ตอนยังไม่มีช่องทางจ่ายจริง · ตอนนี้เหลือทางเดียวคือชำระผ่าน Omise) */
       order_total:'ยอดชำระ',equiv:'เทียบเท่า',
-      store_guard_t:'ซื้อเครดิตทาง LINE',store_guard_m:'แอปจากสโตร์เปิดหน้าชำระเงินในแอปไม่ได้ · ทักไลน์ IUFIT แล้วเลือกแพ็ก จ่ายบัตรหรือพร้อมเพย์ — เครดิตเข้าอีเมลที่ผูกกับแอป',
-      store_guard_btn:'ทักไลน์ซื้อเครดิต',
+      store_guard_t:'สมัครผ่านเว็บหรือ LINE',store_guard_m:'การชำระเงินทำนอกแอป · เปิด iufit.com/billing.html ในเบราว์เซอร์ หรือทักไลน์เพื่อสมัคร — เปิดแอปด้วยบัญชีเดิมแล้วแพ็กจะปลดล็อกให้อัตโนมัติ',
       line_btn:'💬 ทักไลน์ @987qyznd',
       res_success_t:'ชำระเงินสำเร็จ',/* ⭐ 2569-07-30 (รอบสอง) · คืนข้อความ "อัตโนมัติ" แล้ว — ตอนนี้**เป็นจริง**
    worker เขียน entitlement ลง Firebase `/entitlements/{key}` ทันทีที่ webhook ยืนยันว่าจ่ายสำเร็จ
@@ -331,14 +310,12 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       cr_unit:'ครั้ง',
       cr_pick:'เลือกแพ็กเครดิต',
       cr_once:'ชำระครั้งเดียว',
-      cr_need_email_t:'กรอกอีเมลที่ผูกกับแอป',
-      cr_need_email_m:'เครดิตเข้าอีเมลที่ยืนยันในแอป IUFIT · กรอกเมลเดียวกันด้านบนแล้วจ่ายได้เลย ไม่ต้องเปิดแอป',
-      cr_email_lbl:'อีเมลที่ผูกกับแอป',
-      cr_email_hint:'ใช้เมลเดียวกับที่ยืนยันในแอป IUFIT · หลังจ่ายสำเร็จ เครดิตเข้ากระเป๋านี้',
-      cr_need_browser_t:'ซื้อเครดิตใน LINE OA',
-      cr_need_browser_m:'เลือกแพ็กด้านบน แล้วจ่ายด้วยบัตรหรือพร้อมเพย์ได้ในหน้านี้',
-      cr_bad_uid_t:'บัญชียังไม่พร้อมรับเครดิต',
-      cr_bad_uid_m:'กรอกอีเมลที่ยืนยันในแอปให้ถูกต้อง · เครดิตจะเข้ากระเป๋าของเมลนั้นหลังจ่ายสำเร็จ',
+      cr_need_email_t:'แพ็กเครดิตต้องใช้บัญชีที่ยืนยันอีเมลแล้ว',
+      cr_need_email_m:'เครดิตผูกกับบัญชีอีเมล · กรุณาเข้าสู่ระบบด้วยอีเมลและยืนยันอีเมลในแอปก่อน แล้วกลับมาที่หน้านี้ — ถ้าเปิดจาก LINE ให้แตะ “เปิดในเบราว์เซอร์” ก่อน (localStorage ใน LINE กับ Safari/Chrome คนละที่)',
+      cr_need_browser_t:'เปิดหน้าชำระเงินในเบราว์เซอร์',
+      cr_need_browser_m:'LINE in-app browser อ่านบัญชีที่ยืนยันในแอปไม่ได้ · กำลังเปิดในเบราว์เซอร์จริง — ถ้าไม่เด้ง ให้แตปุ่มด้านล่าง',
+      cr_bad_uid_t:'บัญชีเครดิตยังไม่พร้อม',
+      cr_bad_uid_m:'ระบบยังผูกกระเป๋าเครดิตกับอีเมลที่ยืนยันไม่ได้ · เปิดแอป → ยืนยันอีเมล → แล้วเปิดหน้านี้จากเบราว์เซอร์อีกครั้ง (ไม่ใช่ใน LINE)',
       cr_tab_plan:'แพ็กโค้ช',
       cr_tab_credit:'เครดิต AI',
       /* ข้อความหน้าสำเร็จของ "เครดิต" ต้องต่างจาก "แพ็ก" — คนละสินค้า คนละสิ่งที่ได้รับ
@@ -346,7 +323,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       cr_success_m:'เครดิตถูกเติมเข้าบัญชีของคุณแล้ว · เปิดแอป IUFIT ด้วยบัญชีเดิม ยอดเครดิตจะอัปเดตอัตโนมัติ',
       wal_title:'เครดิต AI คงเหลือ',
       wal_loading:'กำลังอ่านยอด…',
-      wal_no_acct:'กรอกอีเมลที่ยืนยันในแอปด้านบน เพื่อดูยอดและเติมเครดิตเข้ากระเป๋านั้น',
+      wal_no_acct:'ยังไม่พบบัญชีที่ผูกกับ LINE OA — เปิดแอป IUFIT ล็อกอินด้วย LINE หรืออีเมลก่อน',
       wal_scan:'สแกนอาหารเหลือ',
       wal_analyze:'วิเคราะห์เหลือ',
       wal_unlimited:'ไม่จำกัด',
@@ -436,7 +413,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       how_title:'How to start',how1:'<b>Start in the app</b> — open IUFIT → turn on coach mode → verify your email to get Coach Pro during the launch period (no card).',how2:'<b>Ready to subscribe</b> — tap “Subscribe”, pick a plan & cycle, then pay (or chat on LINE).',how3:'<b>Auto-unlock</b> — open the app with the same account; your plan activates automatically, clients & data intact.',
       note_soft:'Plan fees are a subscription to IUFIT software via the website · Client↔coach payments transfer directly via the coach PromptPay (IUFIT does not hold funds).',
       store_note_t:'Opened in the app',store_note_m:'Subscription/payment is done on the website or LINE · in the app you can view your plan status.',
-      billing_title:'Buy AI credits',acct_prefix:'Account: ',acct_bind:' · credits link to your verified e-mail',acct_login:'Enter the e-mail you verified in the app below, then pick a pack and pay.',
+      billing_title:'Buy AI credits',acct_prefix:'Account: ',acct_bind:' · credits link to your verified e-mail',acct_login:'Sign in inside the app with e-mail/LINE, then return here.',
       pick_plan:'Choose a plan',clients_unit:' clients',pay_method:'Payment method',pm_card:'💳 Credit/Debit card',pm_pp:'📱 PromptPay',pm_pp_soon:'coming soon',
       pp_btn:'Create PromptPay QR',
       pp_hint:'Scan the Omise PromptPay QR · credits are added automatically when the transfer succeeds — no LINE message needed.',
@@ -456,8 +433,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       omise_soon_t:'Online payment is opening soon',omise_soon_m:'Reserve the launch price now — it will be locked for you and our team activates your plan right away.',
 
       order_total:'Total',equiv:'Equivalent',
-      store_guard_t:'Buy credits on LINE',store_guard_m:'The store app cannot open checkout inside itself · message IUFIT on LINE, pick a pack, and pay by card or PromptPay — credits go to the e-mail linked to your app.',
-      store_guard_btn:'Buy on LINE',
+      store_guard_t:'Subscribe on web or LINE',store_guard_m:'Payment happens outside the app · open iufit.com/billing.html in a browser or chat on LINE — open the app with the same account and your plan unlocks automatically.',
       line_btn:'💬 Chat on LINE @987qyznd',
       res_success_t:'Payment successful',res_success_m:'Your plan is active · open IUFIT with the same account and it unlocks automatically within seconds.',
       res_pending_t:'Awaiting payment confirmation',res_pending_m:'We are waiting for the payment result (e.g. 3-D Secure confirmation with your bank) · once done, your plan activates automatically.',
@@ -498,20 +474,18 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       cr_unit:'',
       cr_pick:'Choose a credit pack',
       cr_once:'One-time payment',
-      cr_need_email_t:'Enter the e-mail linked to your app',
-      cr_need_email_m:'Credits go to the e-mail you verified in IUFIT · type that same address above and pay here — no need to open the app.',
-      cr_email_lbl:'E-mail linked to the app',
-      cr_email_hint:'Use the same address you verified in IUFIT · after payment, credits land in that wallet.',
-      cr_need_browser_t:'Buy credits in LINE OA',
-      cr_need_browser_m:'Pick a pack above, then pay by card or PromptPay on this page.',
-      cr_bad_uid_t:'Wallet not ready',
-      cr_bad_uid_m:'Enter the e-mail you verified in the app · credits will go to that wallet after payment succeeds.',
+      cr_need_email_t:'Credit packs require an e-mail verified account',
+      cr_need_email_m:'Credits are tied to your e-mail account. Sign in with e-mail and verify it in the app, then return here — if you opened this from LINE, tap “Open in browser” first (LINE WebView and Safari/Chrome do not share the same login storage).',
+      cr_need_browser_t:'Open checkout in your browser',
+      cr_need_browser_m:'LINE’s in-app browser cannot see the verified account from the app. Opening in your real browser — if it does not jump, tap the button below.',
+      cr_bad_uid_t:'Credit wallet not ready',
+      cr_bad_uid_m:'We could not bind a credit wallet to your verified e-mail. Open the app → verify e-mail → then open this page again from a real browser (not inside LINE).',
       cr_tab_plan:'Coach plans',
       cr_tab_credit:'AI credits',
       cr_success_m:'Your credits have been added · open IUFIT with the same account and the balance updates automatically.',
       wal_title:'AI credit balance',
       wal_loading:'Loading balance…',
-      wal_no_acct:'Enter the e-mail you verified in the app above to see the balance and add credits to that wallet',
+      wal_no_acct:'No LINE OA–linked account found — open IUFIT and sign in with LINE or e-mail first',
       wal_scan:'Food scans left',
       wal_analyze:'Analyses left',
       wal_unlimited:'Unlimited',
@@ -659,21 +633,6 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       if(uid)patchCreditUid(uid);
       cb(uid||'');
     }).catch(function(){cb('');});
-  }
-  function rememberPayEmail(em){
-    var n=normalizeEmailForUid(em);
-    if(!n||n.indexOf('@')<1)return;
-    try{
-      var s=appState();
-      if(isCanonEmailUid(s.fbuid)&&normalizeEmailForUid(s.emailId)===n){
-        emailUidFromAddress(n).then(function(uid){if(uid)patchCreditUid(uid);});
-        return;
-      }
-      if(isCanonEmailUid(s.fbuid))return;
-      s.emailId=n;
-      localStorage.setItem('iufit',JSON.stringify(s));
-    }catch(e){}
-    emailUidFromAddress(n).then(function(uid){if(uid)patchCreditUid(uid);});
   }
   /** sync — ใช้หลัง `initCreditIdentity` หรือเมื่อ `fbuid` พร้อมแล้ว */
   function walletUid(){
@@ -879,12 +838,14 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   function isInLineWebView(){
     try{return /Line\//i.test(navigator.userAgent||'');}catch(e){return false;}
   }
-  /** URL หน้าซื้อเครดิตในเบราว์เซอร์/LINE ปัจจุบัน — ห้ามผ่าน open.html (intent เข้า TWA) */
+  /** URL เด้งออก LINE แล้วกลับมาหน้าเดิม (allowlist plan/lang เท่านั้น) */
   function billingExternalUrl(plan,lang){
-    var pk=planKeyOf(plan,'credit_m');
-    var q=['plan='+encodeURIComponent(pk),'lang='+encodeURIComponent(String(lang)==='en'?'en':'th')];
-    var origin=(location.origin&&location.origin!=='null')?location.origin:'https://iufit.com';
-    return origin+'/billing.html?'+q.join('&');
+    var q=[];
+    if(plan)q.push('plan='+encodeURIComponent(String(plan)));
+    if(lang)q.push('lang='+encodeURIComponent(String(lang)==='en'?'en':'th'));
+    q.push('openExternalBrowser=1');
+    var base=location.origin+location.pathname;
+    return base+'?'+q.join('&');
   }
   window.IUFIT_BILLING={
     PLATFORM:PLATFORM, IS_STORE:IS_STORE, LANG:LANG, t:t, setLang:setLang,
@@ -897,7 +858,6 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     appState:appState, accountKey:accountKey, accountLabel:accountLabel,
     walletUid:walletUid, creditAccountKey:creditAccountKey, isEmailVerifiedForCredits:isEmailVerifiedForCredits,
     isCanonEmailUid:isCanonEmailUid, isInLineWebView:isInLineWebView, billingExternalUrl:billingExternalUrl,
-    emailUidFromAddress:emailUidFromAddress, rememberPayEmail:rememberPayEmail,
     initCreditIdentity:initCreditIdentity, resolveCreditWalletUid:resolveCreditWalletUid,
     fetchWallet:fetchWallet, creditShow:creditShow,
     authToken:authToken, canSelfServe:canSelfServe,
