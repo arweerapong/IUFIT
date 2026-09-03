@@ -25,6 +25,7 @@
 <div id="storeGuard" class="hide">
   <h1 id="sg-h"></h1>
   <div class="bn info"><b id="sg-t"></b><span id="sg-m"></span></div>
+  <a class="btn pri" id="sg-web" href="billing.html" target="_blank" rel="noopener"></a>
   <a class="btn line" id="sg-line" href="https://line.me/R/ti/p/@987qyznd" target="_blank" rel="noopener"></a>
 </div>
 
@@ -52,7 +53,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v123"></script>
+<script src="billing-common.js?v=v124"></script>
 <script>
 var B=window.IUFIT_BILLING;
 /* ⭐ 2569-09-01 · ใน LINE WebView localStorage คนละที่กับแอป ⇒ ต้องเด้งเบราว์เซอร์จริงก่อนอ่านบัญชี */
@@ -395,7 +396,17 @@ function pollStatus(ref){
     if(res==='return'||res==='pending'||res==='unknown'){var rf=B.qs('ref'); if(rf)pollStatus(rf);}
     return;
   }
-  if(B.IS_STORE){document.getElementById('storeGuard').classList.remove('hide');T('sg-h','billing_title');T('sg-t','store_guard_t');T('sg-m','store_guard_m');document.getElementById('sg-line').innerHTML=B.t('line_btn');return;}
+  if(B.IS_STORE){
+    document.getElementById('storeGuard').classList.remove('hide');
+    T('sg-h','billing_title');T('sg-t','store_guard_t');T('sg-m','store_guard_m');
+    document.getElementById('sg-line').innerHTML=B.t('line_btn');
+    var sgw=document.getElementById('sg-web');
+    if(sgw){
+      sgw.textContent=B.t('store_guard_btn');
+      sgw.href='billing.html?plan='+encodeURIComponent(PLAN)+'&lang='+encodeURIComponent(B.LANG);
+    }
+    return;
+  }
   B.initCreditIdentity(function(){
     document.getElementById('checkout').classList.remove('hide');
     T('co-h','billing_title');T('pm-h','pay_method');T('lbl-pick','cr_pick');T('co-note','secure_note');T('wal-h','wal_title');

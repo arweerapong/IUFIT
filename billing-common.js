@@ -4,13 +4,33 @@
 (function(){
   'use strict';
 
+  /**
+   * ⭐ 2569-09-03 · ห้ามอ่าน `iufit_plat` อย่างเดียวแล้วสรุปว่า "อยู่ในแอปสโตร์"
+   * TWA กับ Chrome บนเครื่องเดียวกัน **ใช้ localStorage ของ iufit.com ร่วมกัน**
+   * ⇒ เปิด `billing.html` ในแท็บเบราว์เซอร์จริงแล้วยังเจอ latch `twa` → โชว์ storeGuard
+   *   ("ไปเปิดในเบราว์เซอร์") ทั้งที่ผู้ใช้อยู่ในเบราว์เซอร์แล้ว = ไม่มีหน้าซื้อเครดิต
+   * ด่านสโตร์ใช้ได้เฉพาะตอนเปลือกนี้เป็นแอปจริง: `?twa=1` · referrer android-app ·
+   * **และ** display-mode standalone/fullscreen คู่กับ latch
+   */
+  function isStandaloneShell(){
+    try{
+      if(navigator&&navigator.standalone===true)return true;
+      var mm=(typeof window!=='undefined'&&window.matchMedia)?window.matchMedia.bind(window):null;
+      if(!mm)return false;
+      if(mm('(display-mode: standalone)').matches)return true;
+      if(mm('(display-mode: fullscreen)').matches)return true;
+    }catch(e){}
+    return false;
+  }
   function detectPlatform(){
     try{
-      var p=localStorage.getItem('iufit_plat');
-      if(p==='twa')return 'android_play_store';
-      if(p==='ios')return 'ios_app_store';
-      if(/[?&]twa=1/.test(location.search||''))return 'android_play_store';
+      var q=location.search||'';
+      if(/[?&]twa=1(?:&|$)/.test(q))return 'android_play_store';
       if((document.referrer||'').indexOf('android-app://')===0)return 'android_play_store';
+      if(!isStandaloneShell())return 'web';
+      var p=localStorage.getItem('iufit_plat');
+      if(p==='ios')return 'ios_app_store';
+      if(p==='twa'||p==='app')return 'android_play_store';
     }catch(e){}
     return 'web';
   }
@@ -255,7 +275,8 @@
       /* ⭐ 2569-07-30 · ถอด book_line / reserve_local ออก — ไม่มีปุ่มเรียกแล้ว
          (มีไว้ตอนยังไม่มีช่องทางจ่ายจริง · ตอนนี้เหลือทางเดียวคือชำระผ่าน Omise) */
       order_total:'ยอดชำระ',equiv:'เทียบเท่า',
-      store_guard_t:'สมัครผ่านเว็บหรือ LINE',store_guard_m:'การชำระเงินทำนอกแอป · เปิด iufit.com/billing.html ในเบราว์เซอร์ หรือทักไลน์เพื่อสมัคร — เปิดแอปด้วยบัญชีเดิมแล้วแพ็กจะปลดล็อกให้อัตโนมัติ',
+      store_guard_t:'ซื้อเครดิตในเบราว์เซอร์',store_guard_m:'แอปจากสโตร์เปิดหน้าชำระเงินในแอปไม่ได้ · แตะปุ่มด้านล่างเพื่อเปิดหน้าซื้อเครดิตในเบราว์เซอร์ — ใช้บัญชีเดิมแล้วเครดิตจะเข้ากระเป๋าให้อัตโนมัติ',
+      store_guard_btn:'เปิดหน้าซื้อเครดิต',
       line_btn:'💬 ทักไลน์ @987qyznd',
       res_success_t:'ชำระเงินสำเร็จ',/* ⭐ 2569-07-30 (รอบสอง) · คืนข้อความ "อัตโนมัติ" แล้ว — ตอนนี้**เป็นจริง**
    worker เขียน entitlement ลง Firebase `/entitlements/{key}` ทันทีที่ webhook ยืนยันว่าจ่ายสำเร็จ
@@ -433,7 +454,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       omise_soon_t:'Online payment is opening soon',omise_soon_m:'Reserve the launch price now — it will be locked for you and our team activates your plan right away.',
 
       order_total:'Total',equiv:'Equivalent',
-      store_guard_t:'Subscribe on web or LINE',store_guard_m:'Payment happens outside the app · open iufit.com/billing.html in a browser or chat on LINE — open the app with the same account and your plan unlocks automatically.',
+      store_guard_t:'Buy credits in your browser',store_guard_m:'The store app cannot open checkout inside itself · tap the button below to buy AI credits in your browser — use the same account and credits appear in your wallet automatically.',
+      store_guard_btn:'Open credit checkout',
       line_btn:'💬 Chat on LINE @987qyznd',
       res_success_t:'Payment successful',res_success_m:'Your plan is active · open IUFIT with the same account and it unlocks automatically within seconds.',
       res_pending_t:'Awaiting payment confirmation',res_pending_m:'We are waiting for the payment result (e.g. 3-D Secure confirmation with your bank) · once done, your plan activates automatically.',
@@ -839,13 +861,16 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     try{return /Line\//i.test(navigator.userAgent||'');}catch(e){return false;}
   }
   /** URL เด้งออก LINE แล้วกลับมาหน้าเดิม (allowlist plan/lang เท่านั้น) */
+  /** URL เด้งออก LINE in-app browser — ต้องเป็น `open.html` (หน้าแรกที่ LINE เปิด)
+   *  ไม่ใช่ billing.html?openExternalBrowser=1 ซึ่งตอนอยู่ *ใน* WebView ของ LINE แล้ว
+   *  พารามิเตอร์นี้ไม่ทำงาน ⇒ ค้างที่ข้อความ "ไปเบราว์เซอร์" โดยไม่มีหน้าซื้อ */
   function billingExternalUrl(plan,lang){
-    var q=[];
-    if(plan)q.push('plan='+encodeURIComponent(String(plan)));
-    if(lang)q.push('lang='+encodeURIComponent(String(lang)==='en'?'en':'th'));
-    q.push('openExternalBrowser=1');
-    var base=location.origin+location.pathname;
-    return base+'?'+q.join('&');
+    var q=['next=billing','openExternalBrowser=1'];
+    var pk=planKeyOf(plan,'credit_m');
+    q.push('plan='+encodeURIComponent(pk));
+    q.push('lang='+encodeURIComponent(String(lang)==='en'?'en':'th'));
+    var origin=(location.origin&&location.origin!=='null')?location.origin:'https://iufit.com';
+    return origin+'/open.html?'+q.join('&');
   }
   window.IUFIT_BILLING={
     PLATFORM:PLATFORM, IS_STORE:IS_STORE, LANG:LANG, t:t, setLang:setLang,

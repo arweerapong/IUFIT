@@ -672,7 +672,7 @@
 /* v1319 = LINE OA PromptPay email gate + food-scan waitUntil budget ยท meal reco ask-slot ยท
    chart rounded-rect bars app-wide ยท hero day summary โ’ /results/today ยท vibe every-N ยท
    home remaining kcal via energyBudget when addBack */
-const CACHE = 'iufit-v1330-coach-dm-chat'
+const CACHE = 'iufit-v1334-personal-internal-beta'
 
 /* เน€เธโฌเน€เธยเน€เธเธ…เน€เธเธ—เน€เธเธเน€เธยเน€เธยเน€เธเธเน€เธยเน€เธโ€”เน€เธเธ•เน€เธยเน€เธยเน€เธเธ—เน€เธยเน€เธเธเน€เธยเน€เธยเน€เธเธ…เน€เธยเน€เธยเน€เธยเน€เธโ€”เน€เธเธ•เน€เธย (เน€เธยเน€เธเธ—เน€เธยเน€เธเธ hash เน€เธยเน€เธเธเน€เธย /assets/* เน€เธโฌเน€เธยเน€เธยเน€เธยเน€เธโ€ขเน€เธเธเน€เธย runtime เน€เธยเน€เธโ€”เน€เธย)
 
