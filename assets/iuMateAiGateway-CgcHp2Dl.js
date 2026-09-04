@@ -1,0 +1,15 @@
+import{aN as f,aO as y,aP as T}from"./index-BL0w1-oG.js";import{D as l,E as d,v as S,c as g}from"./responseValidator-BvZSNsH5.js";import"./vendor-BpU7Vbpv.js";const p={type:"OBJECT",properties:{message:{type:"STRING"},intent:{type:"STRING"},promptVersion:{type:"STRING"},engineVersion:{type:"STRING"},model:{type:"STRING"},warnings:{type:"ARRAY",items:{type:"STRING"}},cards:{type:"ARRAY",items:{type:"OBJECT",properties:{kind:{type:"STRING"},title:{type:"STRING"},body:{type:"STRING"}},required:["kind","title","body"]}}},required:["message","intent","promptVersion"]};function R(e){if(e instanceof T){if(e.code==="no_credits")return"no_credits";if(e.code==="verify_email")return"verify_email";if(e.code==="ai_timeout"||e.code==="timeout")return"ai_timeout"}return"ai_timeout"}function _(e){const i=g(e.locale,[String(e.intent).startsWith("coach_")?"coach-v1":"personal-v1","training-v1","nutrition-v1"]),c=JSON.stringify(e.contextSummary),a=e.consent.sendUserText&&e.userText?`
+User message:
+${e.userText}`:`
+(User text not consented — answer from context only.)`,m=e.recentTurns&&e.recentTurns.length?`
+Recent turns:
+${e.recentTurns.map(o=>`${o.role}: ${o.text}`).join(`
+`)}`:"",t=e.conversationSummary?`
+Conversation summary:
+${e.conversationSummary}`:"";return`${i}
+
+Return ONLY JSON matching the schema. message must be ${e.locale==="th"?"Thai":"English"}.
+promptVersion must be "${e.promptVersion}". engineVersion must be "${d}".
+intent should be "${e.intent}".
+Context summary JSON:
+${c}`+t+m+a}function x(e={}){const i=e.enabled===!0,c=e.modelLabel||"gemini-via-worker";async function a(t){if(!i)return{ok:!1,refused:"disabled_by_flag"};if(t.userText&&!t.consent.sendUserText)return{ok:!1,refused:"no_consent"};const o=_(t),r=t.modelRoute==="vision"?void 0:t.modelRoute;try{const s=e.transport?await e.transport({prompt:o,schema:p,route:r}):await f(o,p,y,r),n=s.json??(s.text?N(s.text):null);if(!n)return{ok:!1,refused:"ai_timeout",errors:["unreadable"]};typeof n.promptVersion!="string"&&(n.promptVersion=t.promptVersion||l),typeof n.engineVersion!="string"&&(n.engineVersion=d),typeof s.model=="string"&&s.model?n.model=s.model:typeof n.model!="string"&&(n.model=c);const u=S(n);return!u.ok||!u.response?{ok:!1,refused:"ai_timeout",errors:u.errors}:{ok:!0,response:u.response}}catch(s){return{ok:!1,refused:R(s)}}}return{id:"mate-gateway-proxy",available(){return i},async run(t){if(!i)return{ok:!1,refused:"disabled_by_flag"};if(t.userText&&!t.consent.sendUserText)return{ok:!1,refused:"no_consent"};const o={intent:"unknown",contextSummary:t.consent.sendHealthFacts?t.facts:{},locale:t.locale,nowIso:t.nowIso,consent:t.consent,userText:t.userText,promptVersion:l,modelTier:"simple",modelRoute:"simple"},r=await a(o);return r.ok?{ok:!0,text:r.response.message,proposals:r.response.proposedActions??[]}:{ok:!1,refused:r.refused}},generateStructuredResponse:a}}function N(e){try{return JSON.parse(e)}catch{return null}}const k=x({enabled:!1});export{k as DisabledMateAiGateway,x as createMateAiGateway};
