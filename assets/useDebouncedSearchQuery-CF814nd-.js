@@ -1,0 +1,1 @@
+import{w as i,q as s,s as c,r as n}from"./vendor-BpU7Vbpv.js";function w(a=200,u=""){const o=n(u),e=n(u);let r=0;return i(o,t=>{if(window.clearTimeout(r),!String(t).trim()){e.value=t;return}r=window.setTimeout(()=>{e.value=t},a)}),s()&&c(()=>window.clearTimeout(r)),{query:o,filterQuery:e}}export{w as u};
