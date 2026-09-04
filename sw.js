@@ -674,7 +674,7 @@
    home remaining kcal via energyBudget when addBack */
 /* Admin AI Control mutations/config always hit cross-origin gym Worker (never SW-cached).
    SPA shell for /admin/ai-control still uses shared navigate policy — policy data is live API only. */
-const CACHE = 'iufit-v1348-sched-name-detail'
+const CACHE = 'iufit-v1349-chat-focus-ring'
 
 /* เน€เธโฌเน€เธยเน€เธเธ…เน€เธเธ—เน€เธเธเน€เธยเน€เธยเน€เธเธเน€เธยเน€เธโ€”เน€เธเธ•เน€เธยเน€เธยเน€เธเธ—เน€เธยเน€เธเธเน€เธยเน€เธยเน€เธเธ…เน€เธยเน€เธยเน€เธยเน€เธโ€”เน€เธเธ•เน€เธย (เน€เธยเน€เธเธ—เน€เธยเน€เธเธ hash เน€เธยเน€เธเธเน€เธย /assets/* เน€เธโฌเน€เธยเน€เธยเน€เธยเน€เธโ€ขเน€เธเธเน€เธย runtime เน€เธยเน€เธโ€”เน€เธย)
 
