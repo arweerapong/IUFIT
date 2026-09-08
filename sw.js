@@ -674,7 +674,14 @@
    home remaining kcal via energyBudget when addBack */
 /* Admin AI Control mutations/config always hit cross-origin gym Worker (never SW-cached).
    SPA shell for /admin/ai-control still uses shared navigate policy — policy data is live API only. */
-const CACHE = 'iufit-v1372-coach-phase6'
+/* v1373 = retroactive logging (food + workout follow the day cursor) · rest timer reads the
+   wall clock so screen-off no longer eats time · band side button (mapping / camera shutter /
+   app shortcut, admin-only until proven on hardware) · coach chat chrome · missions hold.
+   🔴 บทเรียน 2569-09-07: หกคอมมิตแรกของวันนี้ **ลืมขยับเลขนี้** ⇒ deploy ขึ้นจริง
+   ไฟล์ใหม่อยู่บนเซิร์ฟเวอร์ครบ แต่เครื่องที่ติดตั้งแล้วยัง served ของเก่าจากแคชเดิม
+   เพราะชื่อแคชไม่เปลี่ยน ⇒ SW ไม่ไปหยิบ index.html ใหม่ ⇒ แผนที่ chunk ยังเป็นของเก่า
+   ⇒ **ขยับเลขนี้ทุกครั้งที่ deploy ของที่ผู้ใช้ต้องเห็น** ไม่งั้น deploy แล้วเหมือนไม่ได้ deploy */
+const CACHE = 'iufit-v1374-g1-auth-bodycomp-auditfixes'
 
 /* เน€เธโฌเน€เธยเน€เธเธ…เน€เธเธ—เน€เธเธเน€เธยเน€เธยเน€เธเธเน€เธยเน€เธโ€”เน€เธเธ•เน€เธยเน€เธยเน€เธเธ—เน€เธยเน€เธเธเน€เธยเน€เธยเน€เธเธ…เน€เธยเน€เธยเน€เธยเน€เธโ€”เน€เธเธ•เน€เธย (เน€เธยเน€เธเธ—เน€เธยเน€เธเธ hash เน€เธยเน€เธเธเน€เธย /assets/* เน€เธโฌเน€เธยเน€เธยเน€เธยเน€เธโ€ขเน€เธเธเน€เธย runtime เน€เธยเน€เธโ€”เน€เธย)
 
