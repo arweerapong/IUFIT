@@ -1,0 +1,1 @@
+const t=new Set(["sleep","spo2"]),r=new Set(["stress"]);function s(e){return e.suspect?"dbSuspect":e.healthConnect&&(e.metric==="spo2"||e.metric==="stress")?"pgBandOnly":e.isToday?t.has(e.metric)?"pgEmptyTodaySleep":r.has(e.metric)?"pgEmptyTodayHrv":"pgEmptyToday":"pgEmptyDay"}export{s as w};
