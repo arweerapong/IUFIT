@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>AI credits · IUFIT</title>
-<meta name="description" content="IUFIT AI credit packs — scan food photos and analyse with AI">
+<title>ราคาและแพ็ก · IUFIT</title>
+<meta name="description" content="IUFIT — แพ็กโค้ช/เทรนเนอร์ (รายเดือน/รายปี) และแพ็กเครดิต AI · IUFIT coach plans (monthly/yearly) and AI credit packs">
 <link rel="stylesheet" href="billing.css?v=v110">
 </head>
 <body>
@@ -13,7 +13,23 @@
   <a class="logo" href="https://iufit.com">IU<span>FIT</span></a>
   <span id="langtog" style="font-size:12px;font-weight:800;color:var(--muted);cursor:pointer"></span>
 </div>
-<div class="nav"><a class="on" id="n-pr" href="pricing.html"></a><a id="n-bl" href="billing.html"></a><a id="n-mp" href="my-plan.html"></a></div>
+<div class="nav"><a id="n-ob" href="onboarding.html"></a><a class="on" id="n-pr" href="pricing.html"></a><a id="n-bl" href="billing.html"></a><a id="n-mp" href="my-plan.html"></a></div>
+
+<!-- ══════════ แพ็กโค้ช/เทรนเนอร์ · รายเดือน | รายปี ══════════
+     ⭐ 2569-09-11 · ส่วนนี้ใหม่ — `B.PLANS` มี `mo`/`yr` ครบอยู่แล้วแต่ไม่เคยถูกวาดที่ไหน
+     รายปี = **ดูได้ จ่ายไม่ได้** ตามการตัดสินใจของเจ้าของ 2569-07-30 (รอบสอง) -->
+<h1 id="pl-title"></h1>
+<p class="sub" id="pl-sub"></p>
+
+<div class="nav" id="cycTog" role="group" aria-label="รอบบิล / billing cycle">
+  <a href="#" id="cyc-mo" class="on"></a><a href="#" id="cyc-yr"></a>
+</div>
+
+<div id="yrNote" class="bn info hide"><b id="yr-t"></b><span id="yr-m"></span></div>
+<div class="grid" id="planGrid"></div>
+<p class="note" id="pl-soon" style="margin-top:2px"></p>
+
+<hr style="border:none;border-top:1px solid var(--line, #e6ebf5);margin:26px 0 18px">
 
 <h1 id="h-title"></h1>
 <p class="sub" id="h-sub"></p>
@@ -26,13 +42,13 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v127"></script>
+<script src="billing-common.js?v=v128"></script>
 <script>
 var B=window.IUFIT_BILLING;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
 document.getElementById('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
 document.getElementById('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
-T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
+T('n-ob','ob_title');T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
 T('h-title','cr_title');T('h-sub','cr_sub');
 T('tr-pay','trust_pay');T('tr-ssl','trust_ssl');
 T('p-note','note_soft');
@@ -40,6 +56,87 @@ if(B.IS_STORE){
   document.getElementById('storeNote').classList.remove('hide');
   T('sn-t','store_guard_t');T('sn-m','store_guard_m');
 }
+/* ══════════ แพ็กโค้ช ══════════
+   🔴 กติกาของส่วนนี้
+     · ราคาทุกตัวมาจาก `B.PLANS` เท่านั้น — ห้ามพิมพ์เลขซ้ำในไฟล์นี้
+       (ตารางราคาอยู่ห้าที่แล้ว และเคยเลื่อนจากกันจนลูกค้า Growth ฿799 เห็นว่าตัวเองเป็น
+        Pro ฿599 — ดูคอมเมนต์ `currentPlanKey()` ใน billing-common.js)
+     · รายปี = **แสดงราคาเท่านั้น ไม่มีปุ่มจ่าย** · ด่านจริงอยู่ที่ worker (`MAX_THB_PER_CHARGE`)
+     · ปุ่มสมัครขึ้นเฉพาะเมื่อ `B.PLANS_OPEN` และเป็นรอบรายเดือน และไม่ได้อยู่ในแอปสโตร์
+       ⇒ วันนี้ `PLANS_OPEN=false` ⇒ ไม่มีปุ่ม และจอบอกตรง ๆ ว่าให้ทัก LINE
+       (จอที่มีปุ่มแต่กดไม่ได้ แย่กว่าจอที่ไม่มีปุ่มแล้วบอกทางอื่น) */
+var YR=false;
+function planPriceHtml(p){
+  if(p.contact)return '<div style="font-size:20px;font-weight:850;color:var(--navy);margin-top:8px">'+B.t('pl_contact')+'</div>';
+  var v=B.price(p,YR);
+  if(!v)return '<div style="font-size:20px;font-weight:850;color:var(--blue);margin-top:8px">฿0</div>'
+    +'<div class="psub">'+B.t('launch_price')+'</div>';
+  return '<div style="font-size:20px;font-weight:850;color:var(--blue);margin-top:8px">฿'+B.fmt(v)
+    +'<span style="font-size:12px;font-weight:700;color:var(--muted)">'+B.t(YR?'per_yr':'per_mo')+'</span></div>';
+}
+/**
+ * ⭐ 2569-09-11 · **ยอดที่เกินเพดานต่อรายการ ⇒ ปุ่มต้องกดไม่ได้ พร้อมบอกเหตุผล**
+ * ══════════════════════════════════════════════════════════════════════════════════════
+ * เจ้าของสั่ง: "ส่วนที่เกิน 1,000 บาททำให้ปุ่มกดไม่ได้ไว้ก่อน"
+ * ⇒ เงื่อนไขการโชว์ปุ่มมีสี่ชั้น และ **ทุกชั้นที่บล็อกต้องบอกเหตุผล** ไม่ใช่ซ่อนเงียบ ๆ:
+ *     1. `PLANS_OPEN=false`  → ยังไม่เปิดขายในเว็บ  (ข้อความ `pl_web_soon` ด้านล่างตาราง)
+ *     2. `IS_STORE`          → บิลด์สโตร์ห้ามมีลิงก์จ่ายนอกแอป (กฎ Play/App Store)
+ *     3. `p.contact`         → ยิม = ติดต่อ IUFIT ไม่ใช่กดซื้อ
+ *     4. `B.overCap(v)`      → **ใหม่** ยอดเกินเพดานของช่องทางจ่ายเงิน
+ * 🔴 ชั้นที่ 4 ต่างจากสามชั้นแรกตรงที่ **ราคาขึ้นจอแล้ว** ⇒ ผู้ใช้เห็นของที่ซื้อไม่ได้
+ *   ⇒ ปุ่มจาง + ประโยคบอกว่าทำไม ดีกว่าปุ่มหาย (ปุ่มหาย = เขาคิดว่าเว็บพัง แล้วกดซ้ำ)
+ *   ⇒ และดีกว่าปล่อยให้กดแล้วโดนปฏิเสธที่ปลายทาง ซึ่งทิ้งยอด pending ค้างบนบัตรเขา
+ * ⚠️ ด่านจริงยังอยู่ที่ worker (`MAX_THB_PER_CHARGE`) — ตรงนี้คือชั้นที่ผู้ใช้เห็นเท่านั้น
+ */
+function payCtaHtml(p){
+  if(p.contact)return '';
+  var v=B.price(p,YR);
+  if(!(v>0))return '';
+  if(B.overCap(v)){
+    return '<button class="btn" type="button" disabled aria-disabled="true"'
+      +' style="margin-top:12px;opacity:.55;cursor:not-allowed">'+B.t('ob_cta_sub')+'</button>'
+      +'<div class="psub" style="margin-top:6px;color:var(--warn,#b45309)">'+B.capNote(v)+'</div>';
+  }
+  if(!B.PLANS_OPEN||YR||B.IS_STORE)return '';
+  /* 🔴 2569-09-11 · ปุ่มนี้เคยพาไป `billing.html?plan=<แพ็กโค้ช>` — และ `billing.html`
+     **ขายเฉพาะเครดิต**: `planKeyOf()` ของมันโยนรหัสที่ไม่ใช่แพ็กเครดิตทิ้งแล้วตกเป็น
+     `credit_m` ⇒ คนกด "สมัคร Trainer Pro" แล้วไปโผล่หน้าซื้อเครดิต ฿139 เงียบ ๆ
+     ตอนที่ `PLANS_OPEN=false` ปุ่มนี้ไม่เคยขึ้น จึงไม่มีใครเจอ — พอเปิดขายมันคือกับดักทันที
+     ⇒ แพ็กต้องไปที่โฟลว `onboarding.html` ซึ่งเป็นที่เดียวที่ขายแพ็กได้จริง */
+  return '<a class="btn pri" style="margin-top:12px" href="onboarding.html?plan='+encodeURIComponent(p.k)
+    +'&lang='+B.LANG+'">'+B.t('ob_cta_sub')+'</a>';
+}
+function renderPlans(){
+  var h='';
+  B.PLANS.forEach(function(p){
+    var feats=(B.LANG==='en'&&p.featsEn)?p.featsEn:p.feats;
+    h+='<div class="card" style="padding:16px'+(p.hot?';outline:2px solid var(--blue)':'')+'">'
+      +(p.badge?'<span class="psub" style="font-weight:800;color:var(--blue)">'+((B.LANG==='en'&&p.badgeEn)?p.badgeEn:p.badge)+'</span>':'')
+      +'<b style="font-size:16px;color:var(--navy);display:block">'+p.name+'</b>'
+      +'<div class="psub" style="margin-top:4px">'+B.planSub(p)+'</div>'
+      +planPriceHtml(p)
+      +(p.clients?'<div class="psub" style="margin-top:6px">'+B.t('pl_clients')+' '+p.clients+'</div>':'')
+      +'<ul class="psub" style="margin:10px 0 0;padding-left:18px">'
+      +(feats||[]).map(function(f){return '<li>'+f+'</li>';}).join('')
+      +'</ul>'
+      +payCtaHtml(p)
+      +'</div>';
+  });
+  document.getElementById('planGrid').innerHTML=h;
+  /* การ์ดแจ้งรายปี — ขึ้นเฉพาะตอนเลือกรายปี (ตำแหน่งเดิมตามที่ออกแบบไว้ 2569-07-30) */
+  var yn=document.getElementById('yrNote');
+  if(YR&&!B.YEARLY_OPEN){yn.classList.remove('hide');T('yr-t','yr_soon_t');T('yr-m','pl_yr_view');}
+  else yn.classList.add('hide');
+  document.getElementById('cyc-mo').className=YR?'':'on';
+  document.getElementById('cyc-yr').className=YR?'on':'';
+  document.getElementById('pl-soon').innerHTML=B.PLANS_OPEN?'':B.t('pl_web_soon');
+}
+T('pl-title','pl_title');T('pl-sub','pl_sub');
+T('cyc-mo','monthly');T('cyc-yr','yearly');
+document.getElementById('cyc-mo').onclick=function(e){e.preventDefault();YR=false;renderPlans();};
+document.getElementById('cyc-yr').onclick=function(e){e.preventDefault();YR=true;renderPlans();};
+renderPlans();
+
 var g=document.getElementById('grid');
 var h='';
 B.CREDIT_PACKS.forEach(function(c){

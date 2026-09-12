@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>สมัคร IUFIT · IUFIT</title>
+<meta name="description" content="IUFIT — เลือกแพ็ก เครดิต AI และชำระเงิน จบในหน้าเดียว · Pick a plan, AI credits and pay in one flow">
+<link rel="stylesheet" href="billing.css?v=v110">
+<style>
+  /* ── โฟลวจ่ายเงิน 4 ก้าว · ใช้โทเคนของ billing.css ล้วน ห้ามมีสีสด ─────────────── */
+  .ob-wrap{max-width:880px;margin:0 auto;padding:20px 16px 60px}
+  .ob-modes{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 18px}
+  .ob-mode{min-width:148px;flex:1 1 148px;padding:9px 14px;border-radius:14px;cursor:pointer;text-align:left;
+    font-family:inherit;border:1.5px solid var(--line-strong);background:var(--card);color:var(--ink)}
+  .ob-mode.on{border:0;background:var(--navy);color:#fff}
+  .ob-mode b{display:block;font-size:13px;font-weight:800;line-height:1.4}
+  .ob-mode span{display:block;font-size:11px;line-height:1.5;opacity:.82}
+  .ob-frame{max-width:420px;margin:0 auto;background:var(--bg);border:1px solid var(--line);
+    border-radius:26px;overflow:hidden;display:flex;flex-direction:column}
+  .ob-head{flex:none;background:var(--card);border-bottom:1px solid var(--line)}
+  .ob-headrow{display:flex;align-items:center;gap:6px;padding:12px 14px 8px}
+  .ob-back{flex:none;width:44px;height:44px;margin-left:-8px;border:0;background:transparent;color:var(--blue);
+    font-size:19px;cursor:pointer;font-family:inherit}
+  .ob-back[disabled]{opacity:.3;cursor:not-allowed}
+  .ob-h{flex:1;min-width:0;font-size:18px;font-weight:800;color:var(--navy);letter-spacing:-.01em}
+  .ob-sn{flex:none;font-size:12px;font-weight:700;color:var(--muted)}
+  .ob-bars{display:flex;gap:4px;padding:0 14px 11px}
+  .ob-bars i{flex:1;height:4px;border-radius:999px;background:var(--line);display:block}
+  .ob-bars i.on{background:var(--blue)}
+  .ob-body{padding:14px}
+  .ob-t{font-size:16px;font-weight:800;line-height:1.5;color:var(--navy)}
+  .ob-m{margin-top:4px;font-size:12.5px;line-height:1.7;color:var(--muted)}
+  .ob-box{margin-top:14px;background:var(--card);border:1px solid var(--line-strong);border-radius:18px;padding:15px 16px}
+  .ob-seatn{font-size:38px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1.1}
+  .ob-seatu{font-size:14px;color:var(--muted);margin-left:6px}
+  .ob-range{width:100%;margin-top:8px;accent-color:var(--blue);height:44px}
+  .ob-seatends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:-6px}
+  .ob-pick{position:relative}
+  .ob-pickflag{position:absolute;top:-10px;left:16px;padding:3px 10px;border-radius:999px;background:var(--blue);
+    font-size:11px;font-weight:800;color:#fff}
+  .ob-row{display:flex;align-items:center;gap:11px;width:100%;min-height:62px;padding:11px 14px;margin-bottom:8px;
+    border-radius:16px;cursor:pointer;text-align:left;font-family:inherit;background:var(--card);
+    border:1.5px solid var(--line-strong)}
+  .ob-row.on{border:1.5px solid var(--blue);box-shadow:0 8px 22px -14px rgba(7,30,74,.5)}
+  .ob-dot{flex:none;width:20px;height:20px;border-radius:999px;border:1.5px solid var(--line-strong);background:#fff}
+  .ob-row.on .ob-dot{border:6px solid var(--blue)}
+  .ob-rowmain{flex:1;min-width:0}
+  .ob-rowmain b{display:block;font-size:14.5px;font-weight:800;line-height:1.45;color:var(--ink)}
+  .ob-rowmain span{display:block;font-size:11.5px;line-height:1.55;color:var(--muted)}
+  .ob-rowmoney{flex:none;font-size:16px;font-weight:800;color:var(--navy);white-space:nowrap}
+  .ob-price{font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-.02em}
+  .ob-price span{font-size:12px;font-weight:700;color:var(--muted)}
+  .ob-crbox{display:flex;align-items:center;gap:8px;margin-top:11px;padding:9px 11px;border-radius:12px;background:var(--bg)}
+  .ob-crbox span{flex:1;min-width:0;font-size:12px;line-height:1.55;color:var(--muted)}
+  .ob-crbox b{flex:none;font-size:14px;font-weight:800;color:var(--navy)}
+  .ob-do{list-style:none;margin:11px 0 0;padding:11px 0 0;border-top:1px solid var(--line);font-size:12.5px}
+  .ob-do li{display:flex;justify-content:space-between;gap:10px;padding:2px 0;color:var(--ink)}
+  .ob-do b{font-weight:800;color:var(--navy);white-space:nowrap}
+  .ob-feats{margin:11px 0 0;padding:11px 0 0;border-top:1px solid var(--line);list-style:none}
+  .ob-feats li{display:flex;gap:9px;padding:3px 0;font-size:12.5px;line-height:1.7;color:var(--ink)}
+  .ob-feats i{flex:none;color:var(--green);font-style:normal}
+  .ob-note{margin-top:12px;padding:11px 13px;border-radius:14px;background:#eef2f8;font-size:11.5px;line-height:1.7;color:var(--ink)}
+  .ob-warn{margin-top:12px;padding:11px 13px;border-radius:14px;background:#fff7e6;border:1px solid #f3d99a;
+    font-size:12px;line-height:1.65;color:var(--amber)}
+  .ob-warn b{display:block;color:var(--amber)}
+  .ob-field{margin-top:11px}
+  .ob-field label{display:block;font-size:12px;font-weight:800;color:var(--ink)}
+  .ob-field input{width:100%;margin-top:6px;min-height:48px;padding:0 13px;border:1.5px solid var(--line-strong);
+    border-radius:14px;background:#fff;font-family:inherit;font-size:14.5px;color:var(--ink)}
+  .ob-two{display:flex;gap:9px}
+  .ob-two > div{flex:1}
+  .ob-foot{flex:none;padding:11px 14px 14px;background:var(--card);border-top:1px solid var(--line)}
+  .ob-line{display:flex;gap:10px;padding:1px 0;font-size:11.5px;line-height:1.6}
+  .ob-line span{flex:1;min-width:0;color:var(--muted)}
+  .ob-line b{flex:none;font-weight:700;color:var(--ink)}
+  .ob-total{display:flex;align-items:baseline;gap:10px;margin:6px 0 4px;padding-top:7px;border-top:1px solid var(--line)}
+  .ob-total span{flex:1;min-width:0;font-size:12.5px;font-weight:800;color:var(--navy)}
+  .ob-total b{flex:none;font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-.02em}
+  .ob-next{font-size:11.5px;line-height:1.6;color:var(--muted);margin:0 0 9px}
+  .ob-cta{width:100%;min-height:52px;border:0;border-radius:18px;background:var(--blue);color:#fff;
+    font-family:inherit;font-size:16px;font-weight:800;cursor:pointer}
+  .ob-cta[disabled]{opacity:.5;cursor:not-allowed}
+  .ob-qr{width:196px;height:196px;margin:12px auto 0;display:block;border:1px solid var(--line-strong);border-radius:14px}
+  .ob-mid{text-align:center}
+  .ob-link{background:none;border:0;padding:0;font-family:inherit;font-size:12.5px;font-weight:800;
+    color:var(--blue);cursor:pointer;text-decoration:underline}
+  @media (max-width:460px){ .ob-frame{border-radius:18px} }
+</style>
+</head>
+<body>
+<div class="ob-wrap">
+<div style="display:flex;justify-content:space-between;align-items:center">
+  <a class="logo" href="https://iufit.com">IU<span>FIT</span></a>
+  <span id="langtog" style="font-size:12px;font-weight:800;color:var(--muted);cursor:pointer"></span>
+</div>
+<div class="nav"><a class="on" id="n-ob" href="onboarding.html"></a><a id="n-pr" href="pricing.html"></a><a id="n-bl" href="billing.html"></a><a id="n-mp" href="my-plan.html"></a></div>
+
+<h1 id="ob-title"></h1>
+<p class="sub" id="ob-sub"></p>
+
+<div id="testBanner" class="hide"></div>
+<div id="storeNote" class="ob-warn hide" style="margin-top:0"><b id="sn-t"></b><span id="sn-m"></span></div>
+
+<div class="ob-modes" id="modeBar" role="group" aria-label="ทางเข้าโฟลว"></div>
+
+<div class="ob-frame">
+  <div class="ob-head">
+    <div class="ob-headrow">
+      <button type="button" class="ob-back" id="btnBack" aria-label="ย้อนกลับ">&lsaquo;</button>
+      <span class="ob-h" id="stepHead"></span>
+      <span class="ob-sn" id="stepNo"></span>
+    </div>
+    <div class="ob-bars" id="stepBars"></div>
+  </div>
+  <div class="ob-body" id="stepBody"></div>
+  <div class="ob-foot" id="stepFoot"></div>
+</div>
+
+<div class="ob-box" style="max-width:420px;margin:16px auto 0">
+  <b style="font-size:14px;color:var(--navy);display:block" id="ln-t"></b>
+  <p class="ob-m" id="ln-m"></p>
+  <a class="btn" id="ln-cta" target="_blank" rel="noopener" style="margin-top:10px"></a>
+  <p class="ob-m" id="ln-skip" style="font-size:11.5px"></p>
+</div>
+
+<p class="note" style="max-width:420px;margin:14px auto 0;text-align:center"><a class="blue" href="terms.html">Terms</a> · <a class="blue" href="privacy.html">Privacy</a> · <a class="blue" href="refund.html">Refund</a></p>
+<div id="footSlot"></div>
+</div>
+
+<script src="billing-common.js?v=v128"></script>
+<script>
+/* ══════════════════════════════════════════════════════════════════════════════════════
+   โฟลวสมัคร/จ่ายเงิน 4 ก้าว (2569-09-11) — เขียนใหม่ตามดีไซน์ที่เจ้าของส่งมา
+   ══════════════════════════════════════════════════════════════════════════════════════
+   🔴 **กติกาข้อที่หนึ่ง: ห้ามพิมพ์ตัวเลขราคา/เครดิตในไฟล์นี้**
+      ทุกตัวเลขมาจาก `B.PLANS` · `B.CREDIT_PACKS` · `B.creditTimes()` · `B.CREDIT_EXPIRY_DAYS`
+      เหตุผล: ตารางราคาอยู่สามที่แล้ว (แคตตาล็อก · หน้าเว็บ · worker รับเงิน)
+      ที่ที่สี่คือจุดที่เลขจะเลื่อนโดยไม่มีด่านไหนจับได้ — เคยเกิดจริง (Growth ฿799 เห็นตัวเองเป็น Pro ฿599)
+
+   🔴 **กติกาข้อที่สอง: หนึ่งรายการต่อการตัดเงินหนึ่งครั้ง**
+      `POST /charge` ของ worker รับ `plan` ใบเดียว ⇒ "ค่าสมาชิก + แพ็กเครดิต" ในบิลเดียว
+      **เป็นไปไม่ได้จริง** · ดีไซน์ต้นฉบับรวมสองอย่างไว้ในยอดเดียว ⇒ ถ้าทำตามตรง ๆ จะได้
+      จอที่โชว์ยอดที่ระบบตัดไม่ได้ (หรือแย่กว่า: ตัดสองรอบ สองใบเสร็จ สอง 3DS และครึ่งหนึ่งล้ม)
+      ⇒ โหมดสมัคร/ต่ออายุ: ก้าวเครดิตเป็น **ก้าวบอกว่าได้อะไร** ไม่ใช่ก้าวซื้อ
+        โหมดซื้อเครดิตอย่างเดียว: ก้าวเครดิตคือก้าวซื้อจริง
+      ⇒ แถบล่างจึงมีบรรทัดเดียวเสมอ และยอดรวมเท่ากับบรรทัดนั้นเป๊ะ
+
+   🔴 **กติกาข้อที่สาม: การตัดเงินมีอิมพลีเมนต์เดียว** — `B.checkout.*` ใน billing-common.js
+      หน้านี้ห้ามมี `fetch('…/charge')` เป็นของตัวเอง (ด่าน [ป] ตรวจ)
+
+   ⚠️ สามชั้นที่บล็อกปุ่มจ่าย และทุกชั้นต้องบอกเหตุผล **ตั้งแต่ก้าวที่เลือก ไม่ใช่ตอนกดจ่าย**
+      1. `B.IS_STORE`        บิลด์สโตร์ห้ามมีลิงก์จ่ายนอกแอป
+      2. `!B.PLANS_OPEN`     ยังไม่เปิดขายแพ็กผ่านเว็บ (เครดิตขายได้ — คนละสินค้า)
+      3. `B.overCap(v)`      ยอดเกินเพดานต่อรายการของช่องทางจ่ายเงิน */
+var B=window.IUFIT_BILLING;
+function el(id){return document.getElementById(id);}
+function T(id,k){var e=el(id);if(e)e.textContent=B.t(k);}
+function money(v){return '฿'+B.fmt(v);}
+
+/* ── สถานะเดียวของทั้งหน้า ─────────────────────────────────────────────────────── */
+var S={
+  mode:'new',            /* new | renew | credit */
+  notice:'',             /* ข้อความอธิบายตอนระบบเปลี่ยนโหมดให้เอง — ห้ามเปลี่ยนเงียบ ๆ */
+  aud:'coach',           /* me | coach — ใช้เฉพาะก้าวเลือกแพ็ก */
+  cycle:'mo',            /* mo | yr */
+  seats:0,
+  planKey:'',
+  pack:'',               /* '' = ยังไม่เลือก */
+  method:B.PROMPTPAY_DEFAULT&&B.omisePpOpen()?'pp':'card',
+  step:0,
+  agree:false,
+  paying:false,
+  qr:null,               /* {qr, ref} เมื่ออยู่หน้ารอสแกน */
+  stopPoll:null
+};
+var MODES=[
+  {k:'new',   t:'ob_m_new',    s:'ob_m_new_s'},
+  {k:'renew', t:'ob_m_renew',  s:'ob_m_renew_s'},
+  {k:'credit',t:'ob_m_credit', s:'ob_m_credit_s'}
+];
+var STEPS={ new:['size','credit','contact','pay'], renew:['credit','contact','pay'], credit:['credit','contact','pay'] };
+function steps(){return STEPS[S.mode]||STEPS.new;}
+function curStep(){var a=steps();return a[Math.min(S.step,a.length-1)];}
+
+/* งานที่เอามาโชว์ในกล่อง "เครดิตนี้ทำอะไรได้" — เรียงตามที่ผู้ใช้สนใจจริง */
+var DOES=[['food_scan','ob_do_scan'],['mate_program','ob_do_plan'],['mate_chat','ob_do_chat']];
+
+/* ── แพ็กที่กำลังถูกเลือกอยู่ ───────────────────────────────────────────────────── */
+function pickedPlan(){
+  if(S.mode==='credit')return null;
+  if(S.aud==='coach'&&S.mode==='new')return B.planBySeats(S.seats);
+  if(S.planKey)return B.getPlan(S.planKey)||null;
+  return null;
+}
+function pickedPack(){return S.pack?B.getCredit(S.pack):null;}
+
+/* ยอดของรายการเดียวที่จะตัดจริงในรอบนี้ — ดูกติกาข้อที่สองด้านบน */
+function orderItem(){
+  if(S.mode==='credit'){
+    var c=pickedPack();
+    return c?{kind:'credit',key:c.k,cycle:'once',
+            label:B.t('ob_cr_n').replace('{n}',B.fmt(c.cr))+' · '+B.t('ob_cr_once_line'),thb:c.price}:null;
+  }
+  var p=pickedPlan();
+  if(!p||p.contact)return null;
+  var v=B.price(p,S.cycle==='yr');
+  if(!(v>0))return null;
+  /* 🔴 `cycle` ที่ส่งไป `/charge` ต้องเป็น **'mo' / 'yr' เท่านั้น** — `priceOf()` ของ worker
+     เทียบตรง ๆ กับสองค่านี้ · ส่ง 'monthly'/'yearly' ไป = `unknown_plan` 400 ทุกใบ
+     (เจอตอนไล่ตรวจก่อนเปิดขาย · ถ้าเปิดขายไปก่อนจะไม่มีใครจ่ายแพ็กสำเร็จเลยสักคน
+      และหน้าจอจะบอกแค่ "ชำระเงินไม่สำเร็จ" ซึ่งชี้ไปที่บัตรของลูกค้า ไม่ใช่ที่เรา) */
+  return {kind:'plan',key:p.k,cycle:S.cycle==='yr'?'yr':'mo',
+          label:p.name+' · '+B.t(S.cycle==='yr'?'ob_cyc_yr':'ob_cyc_mo'),thb:v};
+}
+function orderTotal(){var o=orderItem();return o?o.thb:0;}
+
+/* ── สามชั้นที่บล็อกการจ่าย — คืน "เหตุผล" ไม่ใช่แค่ true/false ───────────────────
+   จอที่ปิดปุ่มโดยไม่บอกเหตุผล = จอที่ผู้ใช้คิดว่าเว็บพัง แล้วกดซ้ำ */
+function blockReason(){
+  var o=orderItem();
+  if(B.IS_STORE)return {t:B.t('store_guard_t'),m:B.t('store_guard_m')};
+  if(o&&o.kind==='plan'&&!B.PLANS_OPEN)return {t:B.t('ob_closed_t'),m:B.t('ob_closed_m')};
+  /* 🔴 รายปีมีด่านของตัวเอง — ห้ามพึ่งเพดานอย่างเดียว · `b2c_lite` รายปี ฿990 **ต่ำกว่า**
+     เพดาน ฿1,000 ⇒ ถ้าเช็กแต่เพดาน ใบนั้นใบเดียวจะหลุดออกขายตอนที่รอบปีทั้งระบบยังไม่เปิด */
+  if(o&&o.kind==='plan'&&S.cycle==='yr'&&!B.YEARLY_OPEN)return {t:B.t('ob_yr_t'),m:B.t('ob_yr_m')};
+  if(o&&B.overCap(o.thb))return {t:B.t('ob_cap_t'),m:B.t('ob_cap_m').replace('{max}',B.fmt(B.MAX_THB_PER_CHARGE))};
+  return null;
+}
+function blockHtml(){
+  var b=blockReason(); if(!b)return '';
+  return '<div class="ob-warn"><b>'+B.esc(b.t)+'</b>'+B.esc(b.m)+'</div>';
+}
+
+/* ── ก้าว 1 · เลือกแพ็ก ────────────────────────────────────────────────────────── */
+function crBoxHtml(cr,isPlan){
+  if(!(cr>0))return '';
+  var h='<div class="ob-crbox"><span>'+B.esc(B.t('ob_cr_title'))+'</span><b>'+B.fmt(cr)+' '
+    +B.esc(B.t(isPlan?'ob_cr_mo':'ob_cr_once'))+'</b></div>'
+    +'<div class="ob-m" style="margin-top:8px;font-weight:800">'+B.esc(B.t('ob_cr_does'))+'</div>'
+    +'<ul class="ob-do">';
+  for(var i=0;i<DOES.length;i++){
+    h+='<li><span>'+B.esc(B.t(DOES[i][1]))+'</span><b>'+B.fmt(B.creditTimes(cr,DOES[i][0]))+' '+B.esc(B.t('ob_times'))+'</b></li>';
+  }
+  return h+'</ul>';
+}
+function planCardHtml(p,flag){
+  var feats=(B.LANG==='en'&&p.featsEn)?p.featsEn:p.feats;
+  var h='<div class="ob-box ob-pick">'+(flag?'<span class="ob-pickflag">'+B.esc(B.t('ob_match'))+'</span>':'')
+    +'<div style="display:flex;align-items:baseline;gap:8px">'
+    +'<span style="flex:1;min-width:0;font-size:16px;font-weight:800;color:var(--navy)">'+B.esc(p.name)+'</span>';
+  if(p.contact){
+    h+='<span class="ob-price">'+B.esc(B.t('pl_contact'))+'</span></div>';
+    h+='<div class="ob-m">'+B.esc(B.t('ob_contact_m'))+'</div>';
+  }else{
+    var v=B.price(p,S.cycle==='yr');
+    h+='<span class="ob-price">'+(v?money(v):'฿0')+'<span>'+B.esc(B.t(S.cycle==='yr'?'per_yr':'per_mo'))+'</span></span></div>';
+    h+='<div class="ob-m">'+B.esc(B.planSub(p))+'</div>';
+    h+=crBoxHtml(p.cr||0,true);
+  }
+  if(feats&&feats.length){
+    h+='<ul class="ob-feats">';
+    for(var i=0;i<feats.length;i++)h+='<li><i>✓</i><span>'+B.esc(feats[i])+'</span></li>';
+    h+='</ul>';
+  }
+  return h+'</div>';
+}
+function cycleTogHtml(){
+  return '<div class="toggle" style="margin:12px 0 0" role="group" aria-label="'+B.esc(B.t('billing_cycle'))+'">'
+    +'<button type="button" data-cyc="mo" class="'+(S.cycle==='mo'?'on':'')+'">'+B.esc(B.t('monthly'))+'</button>'
+    +'<button type="button" data-cyc="yr" class="'+(S.cycle==='yr'?'on':'')+'">'+B.esc(B.t('yearly'))+'</button></div>';
+}
+function stepSize(){
+  var h=S.notice?('<div class="ob-warn">'+B.esc(S.notice)+'</div>'):'';
+  h+='<div class="toggle" role="group" aria-label="'+B.esc(B.t('ob_tab_me'))+'">'
+    +'<button type="button" data-aud="me" class="'+(S.aud==='me'?'on':'')+'">'+B.esc(B.t('ob_tab_me'))+'</button>'
+    +'<button type="button" data-aud="coach" class="'+(S.aud==='coach'?'on':'')+'">'+B.esc(B.t('ob_tab_coach'))+'</button></div>';
+  if(S.aud==='coach'){
+    var p=B.planBySeats(S.seats);
+    h+='<div class="ob-t">'+B.esc(B.t('ob_size_t'))+'</div><div class="ob-m">'+B.esc(B.t('ob_size_m'))+'</div>';
+    h+=cycleTogHtml();
+    h+='<div class="ob-box ob-mid"><div><span class="ob-seatn">'+B.fmt(S.seats)+'</span><span class="ob-seatu">'+B.esc(B.t('ob_size_unit'))+'</span></div>'
+      +'<input class="ob-range" id="seatRange" type="range" min="0" max="'+B.maxSeats()+'" step="1" value="'+S.seats+'" aria-label="'+B.esc(B.t('ob_size_t'))+'">'
+      +'<div class="ob-seatends"><span>'+B.esc(B.t('ob_size_solo'))+'</span><span>'+B.fmt(B.maxSeats())+'+</span></div></div>';
+    h+=planCardHtml(p,true);
+  }else{
+    /* ไม่มีสถานะ "ยังไม่เลือกอะไรเลย" — ปุ่มถัดไปที่เทาโดยไม่มีเหตุผลบนจอคือทางตัน
+       ⇒ ตั้งค่าเริ่มต้นเป็นใบที่เราแนะนำเอง (ผู้ใช้เปลี่ยนได้ทุกเมื่อ) */
+    if(!S.planKey||!B.getPlan(S.planKey)||B.isCoachPlan(B.getPlan(S.planKey))){
+      var dflt=B.b2cPlans().filter(function(q){return q.hot;})[0]||B.b2cPlans()[0];
+      if(dflt)S.planKey=dflt.k;
+    }
+    h+='<div class="ob-t">'+B.esc(B.t('ob_pick_t'))+'</div><div class="ob-m">'+B.esc(B.t('ob_pick_m'))+'</div>';
+    h+=cycleTogHtml();
+    var list=B.b2cPlans();
+    for(var i=0;i<list.length;i++){
+      var q=list[i], on=(S.planKey===q.k), v=B.price(q,S.cycle==='yr');
+      h+='<button type="button" class="ob-row'+(on?' on':'')+'" data-plan="'+B.esc(q.k)+'">'
+        +'<span class="ob-dot"></span><span class="ob-rowmain"><b>'+B.esc(q.name)+'</b>'
+        +'<span>'+B.esc(B.planSub(q))+'</span></span>'
+        +'<span class="ob-rowmoney">'+(v?money(v):'฿0')+'</span></button>';
+    }
+    var sel=S.planKey?B.getPlan(S.planKey):null;
+    if(sel)h+=planCardHtml(sel,false);
+  }
+  h+=blockHtml();
+  return h;
+}
+
+/* ── ก้าว 2 · เครดิต ───────────────────────────────────────────────────────────── */
+function stepCredit(){
+  var only=(S.mode==='credit');
+  var h='<div class="ob-t">'+B.esc(B.t(only?'ob_crh_only':'ob_crh_add'))+'</div>'
+    +'<div class="ob-m">'+B.esc(B.t(only?'ob_crs_only':'ob_crs_add'))+'</div>';
+  if(only){
+    var packs=B.CREDIT_PACKS;
+    h+='<div role="radiogroup" aria-label="'+B.esc(B.t('ob_topup_t'))+'" style="margin-top:14px">';
+    for(var i=0;i<packs.length;i++){
+      var c=packs[i], on=(S.pack===c.k);
+      h+='<button type="button" role="radio" aria-checked="'+(on?'true':'false')+'" class="ob-row'+(on?' on':'')+'" data-pack="'+B.esc(c.k)+'">'
+        +'<span class="ob-dot"></span><span class="ob-rowmain"><b>'+B.esc(B.t('ob_cr_n').replace('{n}',B.fmt(c.cr)))+'</b>'
+        +'<span>'+B.esc(B.t('ob_do_scan'))+' '+B.fmt(B.creditTimes(c.cr,'food_scan'))+' '+B.esc(B.t('ob_times'))+'</span></span>'
+        +'<span class="ob-rowmoney">'+money(c.price)+'</span></button>';
+    }
+    h+='</div>';
+    var sel=pickedPack();
+    if(sel)h+='<div class="ob-box">'+crBoxHtml(sel.cr,false)+'</div>';
+  }else{
+    /* โหมดสมัคร/ต่ออายุ — ก้าวนี้ **บอกว่าได้อะไร** ไม่ใช่ก้าวซื้อ (กติกาข้อที่สอง) */
+    var p=pickedPlan();
+    if(p&&(p.cr||0)>0)h+='<div class="ob-box">'+crBoxHtml(p.cr,true)+'</div>';
+    h+='<div class="ob-note">'+B.esc(B.t('ob_norollover'))+'</div>';
+    h+='<div class="ob-note">'+B.esc(B.t('ob_cr_more'))+' — <button type="button" class="ob-link" data-go="credit">'+B.esc(B.t('ob_m_credit'))+'</button></div>';
+  }
+  h+='<div class="ob-note">'+B.esc(B.t('ob_cr_rule').replace('{d}',B.fmt(B.CREDIT_EXPIRY_DAYS)))+'</div>';
+  h+=blockHtml();
+  return h;
+}
+
+/* ── ก้าว 3 · บัญชีและวิธีชำระเงิน ────────────────────────────────────────────────
+   ⚠️ ตัดก้าว "ซื้อให้อีเมลอื่น" ของดีไซน์ออกตามที่เจ้าของเคาะ — `/charge` เติมเครดิต
+      เข้าบัญชีคนจ่ายเท่านั้น · จอที่ให้กรอกอีเมลคนอื่นแล้วเครดิตไม่ไป = จอโกหก */
+function stepContact(){
+  var known=!!B.walletUid();
+  var mail=B.accountLabel()||B.creditEmailHint()||'';
+  var h='<div class="ob-t">'+B.esc(B.t('ob_mail_t'))+'</div>';
+  h+='<div class="ob-box">';
+  if(known&&mail){
+    h+='<div style="font-size:15px;font-weight:800;color:var(--navy);word-break:break-all">'+B.esc(mail)+'</div>'
+      +'<div class="ob-m">'+B.esc(B.t('ob_mail_bind'))+'</div>'
+      +'<div class="ob-note" style="margin-top:10px">'+B.esc(B.t('ob_mail_receipt'))+'</div>';
+  }else{
+    h+='<div class="ob-field"><label for="obMail">'+B.esc(B.t('ob_mail_need_t'))+'</label>'
+      +'<div class="ob-m" style="margin-top:2px">'+B.esc(B.t('ob_mail_need_m'))+'</div>'
+      +'<input id="obMail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="'+B.esc(S.email||mail||'')+'"></div>';
+  }
+  h+='</div>';
+  h+='<div class="ob-t" style="margin-top:16px;font-size:14px">'+B.esc(B.t('ob_pm_t'))+'</div>';
+  var ms=[{k:'card',t:'ob_pm_card',s:'ob_pm_card_s',on:true},
+          {k:'pp',  t:'ob_pm_pp',  s:'ob_pm_pp_s',  on:B.omisePpOpen()}];
+  h+='<div role="radiogroup" aria-label="'+B.esc(B.t('ob_pm_t'))+'" style="margin-top:8px">';
+  for(var i=0;i<ms.length;i++){
+    var m=ms[i], on=(S.method===m.k);
+    h+='<button type="button" role="radio" aria-checked="'+(on?'true':'false')+'"'+(m.on?'':' disabled aria-disabled="true" style="opacity:.5"')
+      +' class="ob-row'+(on&&m.on?' on':'')+'" data-pm="'+m.k+'">'
+      +'<span class="ob-dot"></span><span class="ob-rowmain"><b>'+B.esc(B.t(m.t))+'</b>'
+      +'<span>'+B.esc(m.on?B.t(m.s):B.t('pm_pp_soon'))+'</span></span></button>';
+  }
+  h+='</div>';
+  /* 🔴 ยินยอมนโยบายคืนเงินอยู่ที่ก้าวนี้ **ก้าวเดียว** — เพราะเป็นก้าวสุดท้ายก่อนเงินออก
+     ในทั้งสองทาง (พร้อมเพย์ยิง /charge จากก้าวนี้เลย · บัตรยิงที่ก้าวถัดไป)
+     เคยพลาด: ติ๊กอยู่หน้าใส่บัตรอย่างเดียว ⇒ ทางพร้อมเพย์ไม่เคยถูกถามเลยสักครั้ง */
+  h+='<label style="display:flex;gap:9px;align-items:flex-start;margin-top:14px;font-size:12px;line-height:1.55;color:var(--navy);cursor:pointer">'
+    +'<input type="checkbox" id="obAgree"'+(S.agree?' checked':'')+' style="margin-top:2px;flex:none"><span>'+B.t('consent_refund')
+    +' — <a class="blue" href="refund.html?lang='+B.esc(B.LANG)+'" target="_blank" rel="noopener">'+B.esc(B.t('nav_refund'))+'</a></span></label>';
+  h+=blockHtml();
+  return h;
+}
+
+/* ── ก้าว 4 · จ่ายเงิน ─────────────────────────────────────────────────────────── */
+function stepPay(){
+  var o=orderItem();
+  if(S.qr){
+    var q=S.qr;
+    var h='<div class="ob-box ob-mid"><div class="ob-price">'+money(orderTotal())+'</div>'
+      +'<div class="ob-m">'+B.esc(o?o.label:'')+'</div>';
+    h+=q.qr?('<img class="ob-qr" src="'+B.esc(q.qr)+'" alt="PromptPay QR" width="196" height="196">')
+           :('<div class="ob-m">'+B.esc(B.t('res_pending_m'))+'</div>');
+    h+='<div class="ob-m" id="ppNote">'+B.esc(B.t('pp_poll'))+'</div></div>';
+    if(q.ref)h+='<div class="ob-note">'+B.esc(B.t('pp_ref'))+' '+B.esc(q.ref)+'</div>';
+    h+='<div class="ob-note">'+B.esc(B.t('pp_expire'))+'</div>';
+    return h;
+  }
+  var h2='';
+  if(S.method==='card'){
+    h2+='<div class="ob-box"><div class="ob-t" style="font-size:15px">'+B.esc(B.t('ob_h_card'))+'</div>'
+      +'<div class="ob-field"><label for="ccName">'+B.esc(B.t('card_name'))+'</label><input id="ccName" autocomplete="cc-name" placeholder="'+B.esc(B.t('card_name_ph'))+'"></div>'
+      +'<div class="ob-field"><label for="ccNum">'+B.esc(B.t('card_num'))+'</label><input id="ccNum" inputmode="numeric" autocomplete="cc-number" placeholder="0000 0000 0000 0000"></div>'
+      +'<div class="ob-two"><div class="ob-field"><label for="ccExp">'+B.esc(B.t('card_exp'))+'</label><input id="ccExp" inputmode="numeric" autocomplete="cc-exp" placeholder="MM/YY"></div>'
+      +'<div class="ob-field"><label for="ccCvv">'+B.esc(B.t('card_cvv'))+'</label><input id="ccCvv" inputmode="numeric" autocomplete="cc-csc" placeholder="123"></div></div></div>';
+  }else{
+    h2+='<div class="ob-note">'+B.esc(B.t('pp_hint'))+'</div>';
+  }
+  h2+='<div class="ob-box"><div class="ob-t" style="font-size:14px">'+B.esc(B.t('ob_after_t'))+'</div>'
+    +'<div class="ob-m">'+B.esc(B.t('ob_after_m').replace('{mail}',B.accountLabel()||S.email||B.creditEmailHint()||B.t('ob_mail_need_t')))+'</div></div>';
+  h2+=blockHtml();
+  return h2;
+}
+
+/* ── แถบล่าง — บรรทัดรายการ · ยอดรวม · ยอดรอบหน้า · ปุ่ม ─────────────────────────
+   🔴 ยอดรวมต้องเท่าผลบวกของบรรทัดที่โชว์เสมอ (ด่าน [ป] ตรวจ) ⇒ คิดจากรายการเดียวกัน */
+/* ทางออกของก้าวแรกเมื่อแพ็กที่เลือก "ไม่มีอะไรให้จ่าย"
+   🔴 แพ็กฟรีกับแพ็กติดต่อเรา **ไม่มีบิล** ⇒ พาเดินต่อเข้าจอใส่บัตรคือพาไปทางตัน
+      (ยอด ฿0 · ปุ่มจ่ายที่ตัดอะไรไม่ได้ · และถ้าเผลอยิงจริง worker ตอบ under_minimum) */
+function exitAction(){
+  if(curStep()!=='size')return null;
+  var p=pickedPlan(); if(!p)return null;
+  if(p.contact)return {lbl:B.t('ob_cta_contact'),href:B.lineOaUrl(),blank:true};
+  if(!(B.price(p,S.cycle==='yr')>0))return {lbl:B.t('ob_cta_free'),href:'open.html?lang='+B.LANG,blank:false,note:B.t('ob_free_note')};
+  return null;
+}
+function footHtml(){
+  var o=orderItem(), cur=curStep(), total=orderTotal();
+  var ex=exitAction();
+  if(ex){
+    return (ex.note?('<p class="ob-next">'+B.esc(ex.note)+'</p>'):'')
+      +'<a class="ob-cta" style="display:flex;align-items:center;justify-content:center;text-decoration:none" id="btnNext" href="'
+      +B.esc(ex.href)+'"'+(ex.blank?' target="_blank" rel="noopener"':'')+'>'+B.esc(ex.lbl)+'</a>';
+  }
+  var h='';
+  if(o)h+='<div class="ob-line"><span>'+B.esc(o.label)+'</span><b>'+money(o.thb)+'</b></div>';
+  h+='<div class="ob-total"><span>'+B.esc(B.t('ob_total'))+'</span><b>'+money(total)+'</b></div>';
+  /* แถบล่างพูดยอดรอบหน้าเสมอ — ไม่ใช่พูดแต่ยอดวันนี้ */
+  var nx;
+  if(!o||o.kind==='credit')nx=B.t('ob_next_none');
+  else if(S.method==='pp')nx=B.t('ob_next_pp');
+  else nx=B.t('ob_next_card').replace('{v}',money(o.thb));
+  h+='<p class="ob-next">'+B.esc(nx)+'</p>';
+  /* ⚠️ ชั้นบล็อกกัดเฉพาะก้าวที่ "พาไปจ่าย" และก้าว "จ่าย" — ก้าวก่อนหน้ายังเดินดูได้
+     จอที่ล็อกตั้งแต่ก้าวแรกทำให้คนที่แค่มาดูราคาเดินต่อไม่ได้เลย ทั้งที่เรายังไม่ได้ขออะไรเขา
+     (เหตุผลยังขึ้นทุกก้าวผ่าน blockHtml — ปิดทางโดยไม่บอกเหตุผลคือสิ่งที่ห้าม ไม่ใช่การให้เดินดู) */
+  var lbl, dis=(cur==='pay'||cur==='contact')&&!!blockReason();
+  if(cur==='pay'){
+    if(S.qr){lbl=B.t('ob_cta_paid');}
+    else lbl=(S.method==='card')?B.t('ob_cta_pay').replace('{v}',money(total)):B.t('ob_cta_qr').replace('{v}',money(total));
+    if(!o)dis=true;
+  }else if(cur==='contact'){
+    /* พร้อมเพย์: ปุ่มนี้ **สร้าง QR จริง** ⇒ ป้ายต้องพูดแบบนั้น · บัตร: แค่พาไปกรอก */
+    lbl=(S.method==='card')?B.t('ob_cta_card'):B.t('ob_cta_qr').replace('{v}',money(total));
+    if(!o||!S.agree)dis=true;
+  }else if(cur==='credit'&&S.mode==='credit'&&!S.pack){
+    lbl=B.t('ob_cta_next'); dis=true;
+  }else{
+    lbl=B.t('ob_cta_next');
+    if(cur==='size'&&!orderItem())dis=true;
+  }
+  if(S.paying)lbl=B.t('pay_processing');
+  h+='<button type="button" class="ob-cta" id="btnNext"'+((dis||S.paying)?' disabled':'')+'>'+B.esc(lbl)+'</button>';
+  return h;
+}
+
+/* ── วาดทั้งจอ ─────────────────────────────────────────────────────────────────── */
+var HEADS={size:'ob_h_size',credit:'ob_h_credit',contact:'ob_h_contact'};
+function render(){
+  var a=steps(), i=Math.min(S.step,a.length-1), cur=a[i];
+  el('stepHead').textContent=(cur==='pay')?B.t(S.method==='card'?'ob_h_card':'ob_h_qr'):B.t(HEADS[cur]);
+  el('stepNo').textContent=B.t('ob_step').replace('{n}',i+1).replace('{all}',a.length);
+  var bars='';for(var n=0;n<a.length;n++)bars+='<i class="'+(n<=i?'on':'')+'"></i>';
+  el('stepBars').innerHTML=bars;
+  el('btnBack').disabled=(i===0);
+  el('stepBody').innerHTML=(cur==='size')?stepSize():(cur==='credit')?stepCredit():(cur==='contact')?stepContact():stepPay();
+  el('stepFoot').innerHTML=footHtml();
+  wire();
+}
+function renderModes(){
+  var h='';
+  for(var i=0;i<MODES.length;i++){
+    var m=MODES[i];
+    h+='<button type="button" class="ob-mode'+(S.mode===m.k?' on':'')+'" aria-pressed="'+(S.mode===m.k?'true':'false')+'" data-mode="'+m.k+'">'
+      +'<b>'+B.esc(B.t(m.t))+'</b><span>'+B.esc(B.t(m.s))+'</span></button>';
+  }
+  el('modeBar').innerHTML=h;
+  var bs=el('modeBar').querySelectorAll('[data-mode]');
+  for(var j=0;j<bs.length;j++)bs[j].onclick=function(){setMode(this.getAttribute('data-mode'));};
+}
+function setMode(k){
+  if(S.stopPoll){S.stopPoll();S.stopPoll=null;}
+  S.mode=k; S.step=0; S.qr=null; S.paying=false; S.agree=false; S.notice='';
+  if(k==='credit'&&!S.pack)S.pack=(B.CREDIT_PACKS[1]||B.CREDIT_PACKS[0]).k;
+  if(k!=='credit')S.pack='';
+  if(k==='renew'&&!S.planKey){
+    /* ต่ออายุแต่ยังไม่รู้แพ็ก — หน้าเว็บไม่มี session ของแอปเสมอไป ⇒ ถามก่อน ไม่เดา */
+    /* 🔴 "ต่ออายุ" ต้องมีแพ็กที่ **จ่ายเงิน** อยู่จริง — `currentPlanKey()` ตอบ 'free' ได้
+       ถ้ารับมาดื้อ ๆ จะได้จอต่ออายุของแพ็กฟรี: ยอด ฿0 ปุ่มกดไม่ได้ และไม่มีใครเข้าใจว่าทำไม */
+    var cp=B.currentPlanKey&&B.currentPlanKey();
+    var cpp=cp?B.getPlan(cp):null;
+    if(cpp&&!cpp.contact&&(B.price(cpp,false)>0||B.price(cpp,true)>0))S.planKey=cp;
+    else {S.mode='new'; S.aud='coach'; S.planKey=''; S.notice=B.t('ob_renew_fallback');}
+  }
+  renderModes(); render();
+}
+function go(n){
+  var a=steps();
+  var t=Math.max(0,Math.min(n,a.length-1));
+  if(t===S.step)return;
+  if(S.stopPoll){S.stopPoll();S.stopPoll=null;}
+  if(a[S.step]==='pay')S.qr=null;
+  S.step=t; render();
+}
+function wire(){
+  var body=el('stepBody'), i, n;
+  n=body.querySelectorAll('[data-aud]');
+  for(i=0;i<n.length;i++)n[i].onclick=function(){S.aud=this.getAttribute('data-aud');S.planKey='';S.agree=false;render();};
+  n=body.querySelectorAll('[data-cyc]');
+  for(i=0;i<n.length;i++)n[i].onclick=function(){S.cycle=this.getAttribute('data-cyc');render();};
+  n=body.querySelectorAll('[data-plan]');
+  for(i=0;i<n.length;i++)n[i].onclick=function(){S.planKey=this.getAttribute('data-plan');render();};
+  n=body.querySelectorAll('[data-pack]');
+  for(i=0;i<n.length;i++)n[i].onclick=function(){S.pack=this.getAttribute('data-pack');render();};
+  n=body.querySelectorAll('[data-pm]');
+  for(i=0;i<n.length;i++)n[i].onclick=function(){if(this.disabled)return;S.method=this.getAttribute('data-pm');render();};
+  n=body.querySelectorAll('[data-go]');
+  for(i=0;i<n.length;i++)n[i].onclick=function(){setMode(this.getAttribute('data-go'));};
+  var r=el('seatRange');
+  if(r)r.oninput=function(){S.seats=Number(this.value)||0;render();try{el('seatRange').focus();}catch(e){}};
+  var mi=el('obMail');
+  if(mi)mi.onblur=function(){S.email=this.value||'';};
+  var ac=el('obAgree');
+  if(ac)ac.onchange=function(){S.agree=!!this.checked;el('stepFoot').innerHTML=footHtml();wire();};
+  var nb=el('btnNext'); if(nb&&nb.tagName==='BUTTON')nb.onclick=onNext;
+}
+el('btnBack').onclick=function(){go(S.step-1);};
+
+/* ── กดปุ่มหลัก ────────────────────────────────────────────────────────────────── */
+function onNext(){
+  var cur=curStep();
+  /* พร้อมเพย์สร้าง QR ตั้งแต่ก้าวก่อนหน้า แล้วก้าวจ่ายคือจอ QR — ตามดีไซน์
+     (ถ้าปล่อยให้กดที่ก้าวจ่ายอีกที ป้ายปุ่มเดียวกันจะปรากฏสองครั้งโดยครั้งแรกไม่ทำอะไร) */
+  if(cur==='contact'&&S.method==='pp'){payNow();return;}
+  if(cur!=='pay'){go(S.step+1);return;}
+  if(S.qr)return;              /* อยู่หน้ารอสแกน — ปุ่มเป็นแค่คำยืนยัน ไม่ยิงซ้ำ */
+  payNow();
+}
+/* 🔴 กันกดจ่ายซ้ำ — **ชั้นที่ 1 จาก 2** · ด่านจริงคือล็อก pending: ใน KV ฝั่ง worker
+   ห้ามถอดชั้นไหนออกโดยคิดว่าซ้ำซ้อน — คนละหน้าที่กัน */
+function setPaying(on){S.paying=on;el('stepFoot').innerHTML=footHtml();wire();}
+function payNow(){
+  if(S.paying)return;
+  var o=orderItem(); if(!o)return;
+  if(blockReason())return;
+  if(!S.agree){alert(B.t('consent_req'));go(steps().indexOf('contact'));return;}
+  B.resolveCreditWalletUid(function(acct){
+    if(acct&&B.isCanonEmailUid(acct)){payWith(acct,o);return;}
+    var typed=(el('obMail')||{}).value||S.email||'';
+    B.emailUidFromAddress(typed).then(function(uid){
+      if(!uid||!B.isCanonEmailUid(uid)){needEmail();return;}
+      B.rememberPayEmail(typed);
+      payWith(uid,o);
+    }).catch(needEmail);
+  });
+}
+function needEmail(){
+  alert(B.t('cr_need_email_t')+'\n\n'+B.t('cr_need_email_m'));
+  go(steps().indexOf('contact'));
+  try{var e=el('obMail');if(e)e.focus();}catch(x){}
+}
+function payWith(acct,o){
+  if(!B.OMISE_READY){try{window.open(B.LINE_URL,'_blank');}catch(x){}return;}
+  setPaying(true);
+  var body={plan:o.key,cycle:o.cycle,account:acct};
+  if(S.method==='pp'){
+    if(!B.omisePpOpen()){setPaying(false);alert(B.t('pm_pp_soon'));return;}
+    B.checkout.payPromptPay(body,onCharge);
+    return;
+  }
+  B.checkout.payCard({
+    name:(el('ccName')||{}).value||'', number:(el('ccNum')||{}).value||'',
+    exp:(el('ccExp')||{}).value||'',   cvv:(el('ccCvv')||{}).value||''
+  },body,onCharge,function(msg){setPaying(false);alert(msg);});
+}
+function onCharge(act){
+  if(act.kind==='error'){setPaying(false);alert(B.t(act.t)+'\n\n'+B.t(act.m));return;}
+  if(act.kind==='redirect'){location.href=act.url;return;}
+  if(act.kind==='qr'){
+    setPaying(false);
+    S.qr={qr:act.qr,ref:act.ref};
+    S.step=steps().indexOf('pay');
+    render();
+    if(act.ref)S.stopPoll=B.checkout.pollPromptPay(act.ref,{
+      paid:function(){location.href='onboarding.html?lang='+B.LANG+'&result=success';},
+      failed:function(){location.href='onboarding.html?lang='+B.LANG+'&result=failed';},
+      charged:function(){var n=el('ppNote');if(n)n.textContent=B.t('pay_charged_m');},
+      expire:function(){var n=el('ppNote');if(n)n.textContent=B.t('pp_expire');}
+    });
+    return;
+  }
+  var q='onboarding.html?lang='+B.LANG+'&result='+act.result;
+  if((act.result==='pending'||act.result==='unknown')&&act.ref)q+='&ref='+encodeURIComponent(act.ref);
+  location.href=q;
+}
+
+/* ── จอผลลัพธ์ (กลับจาก 3DS หรือจบพร้อมเพย์) ───────────────────────────────────
+   🔴 `return`/`unknown` ไม่ได้แปลว่าจ่ายสำเร็จหรือไม่สำเร็จ — ผลจริงมาทาง webhook
+      ⇒ หน้าตาแบบ "กำลังตรวจสอบ" ไม่ใช่กากบาทแดง (กากบาทแดง = คำสั่งกลาย ๆ ว่าให้จ่ายใหม่) */
+function showResult(kind){
+  var map={success:'✓',pending:'⏳','return':'⏳',unknown:'⚠️',failed:'✕'}[kind];
+  if(!map)return false;
+  if(kind==='return')kind='pending';
+  var frame=document.querySelector('.ob-frame');
+  el('modeBar').innerHTML='';
+  frame.innerHTML='<div class="ob-body ob-mid"><div style="font-size:38px">'+map+'</div>'
+    +'<h2 style="font-size:19px;color:var(--navy);margin:6px 0 4px">'+B.esc(B.t('res_'+kind+'_t'))+'</h2>'
+    +'<p class="ob-m" id="resMsg">'+B.esc(kind==='success'?B.t('cr_success_m'):B.t('res_'+kind+'_m'))+'</p>'
+    +'<a class="btn pri" style="margin-top:12px" href="my-plan.html?lang='+B.esc(B.LANG)+'">'+B.esc(B.t('go_myplan'))+'</a>'
+    +(kind!=='success'?'<a class="btn line" style="margin-top:8px" href="'+B.esc(B.LINE_URL)+'" target="_blank" rel="noopener">'+B.esc(B.t('line_help'))+'</a>':'')
+    +'<p class="ob-m" id="resPoll"></p></div>';
+  if(kind==='pending'||kind==='unknown'){
+    var rf=B.qs('ref');
+    if(rf){
+      el('resPoll').textContent=B.t('pay_checking');
+      B.checkout.pollCharge(rf,{
+        paid:function(){location.href='onboarding.html?lang='+B.LANG+'&result=success';},
+        failed:function(){location.href='onboarding.html?lang='+B.LANG+'&result=failed';},
+        charged:function(){el('resMsg').textContent=B.t('pay_charged_m');el('resPoll').textContent=B.t('pay_charged_m');},
+        giveUp:function(seen){el('resPoll').textContent=B.t(seen?'pay_slow_paid':'pay_slow');}
+      });
+    }
+  }
+  return true;
+}
+
+/* ── บูต ───────────────────────────────────────────────────────────────────────── */
+T('ob-title','ob_title');T('ob-sub','ob_sub');
+T('n-ob','ob_title');T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
+T('ln-t','ob_line_t');T('ln-m','ob_line_m');T('ln-cta','ob_line_cta');T('ln-skip','ob_line_skip');
+/* href ของปุ่มเพิ่มเพื่อนมาจาก B.lineOaUrl() เท่านั้น — ห้ามพิมพ์ URL LINE ลงไฟล์นี้ */
+el('ln-cta').href=B.lineOaUrl();
+el('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
+el('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
+el('footSlot').innerHTML=B.footerHtml();
+if(B.OMISE_TEST_MODE){var tb=el('testBanner');tb.className='ob-warn';tb.innerHTML='<b>'+B.esc(B.t('testmode_t'))+'</b>'+B.esc(B.t('testmode_m'));}
+if(B.IS_STORE){el('storeNote').classList.remove('hide');T('sn-t','store_guard_t');T('sn-m','store_guard_m');}
+
+(function boot(){
+  var res=B.qs('result');
+  if(res&&showResult(res))return;
+  S.seats=Math.min(B.maxSeats(),20);
+  /* มาจากปุ่มในหน้าราคา (`onboarding.html?plan=…`) — รับเฉพาะรหัสที่อยู่ในตารางจริง
+     🔴 ห้ามเอาค่าดิบไปใช้: `?plan=` เคยเป็นช่อง XSS สะท้อนใน billing.html มาแล้ว
+        ⇒ ที่นี่ไม่ได้เอาไปวาด แต่เอาไปเปิดตาราง ⇒ ถ้าไม่เจอก็ทิ้งไปเงียบ ๆ ไม่ตกเป็นใบอื่น
+        (ตกเป็นใบอื่น = พาคนไปสมัครแพ็กที่เขาไม่ได้กด ซึ่งแย่กว่าไม่พาไปไหนเลย) */
+  var want=B.getPlan(B.qs('plan')||'');
+  if(want&&!want.contact){
+    S.mode='new';
+    if(B.isCoachPlan(want)){S.aud='coach';S.seats=B.seatsOf(want);}
+    else {S.aud='me';S.planKey=want.k;}
+  }
+  renderModes();
+  B.initCreditIdentity(function(){render();});
+  render();
+  B.loadMerchantPay(function(){if(!S.paying&&!S.qr)render();});
+})();
+</script>
+</body>
+</html>

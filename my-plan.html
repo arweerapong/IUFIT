@@ -13,7 +13,7 @@
   <a class="logo" href="https://iufit.com">IU<span>FIT</span></a>
   <span id="langtog" style="font-size:12px;font-weight:800;color:var(--muted);cursor:pointer"></span>
 </div>
-<div class="nav"><a id="n-pr" href="pricing.html"></a><a id="n-bl" href="billing.html"></a><a class="on" id="n-mp" href="my-plan.html"></a></div>
+<div class="nav"><a id="n-ob" href="onboarding.html"></a><a id="n-pr" href="pricing.html"></a><a id="n-bl" href="billing.html"></a><a class="on" id="n-mp" href="my-plan.html"></a></div>
 
 <h1 id="h-title"></h1>
 <p class="sub" id="acctLine"></p>
@@ -22,13 +22,13 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v127"></script>
+<script src="billing-common.js?v=v128"></script>
 <script>
 var B=window.IUFIT_BILLING;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
 document.getElementById('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
 document.getElementById('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
-T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
+T('n-ob','ob_title');T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
 T('h-title','wal_title');
 
 function render(){

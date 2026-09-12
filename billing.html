@@ -13,7 +13,7 @@
   <a class="logo" href="https://iufit.com">IU<span>FIT</span></a>
   <span id="langtog" style="font-size:12px;font-weight:800;color:var(--muted);cursor:pointer"></span>
 </div>
-<div class="nav"><a id="n-pr" href="pricing.html"></a><a class="on" id="n-bl" href="billing.html"></a><a id="n-mp" href="my-plan.html"></a></div>
+<div class="nav"><a id="n-ob" href="onboarding.html"></a><a id="n-pr" href="pricing.html"></a><a class="on" id="n-bl" href="billing.html"></a><a id="n-mp" href="my-plan.html"></a></div>
 
 <!-- 🔴 แถบเตือนโหมดทดสอบ — เติมจากสคริปต์ท้ายไฟล์
      มีไว้เพื่อให้ "ปล่อยขึ้นจริงทั้งที่ยังเป็นคีย์ test" เห็นได้ทันทีตั้งแต่วินาทีแรก
@@ -62,7 +62,7 @@
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v127"></script>
+<script src="billing-common.js?v=v128"></script>
 <script>
 var B=window.IUFIT_BILLING;
 /* ⭐ 2569-09-03 · ซื้อเครดิตใน LINE OA ได้เลย (เลือกแพ็ก + Omise บัตร/พร้อมเพย์)
@@ -76,7 +76,7 @@ if(!B.isCredit(PLAN))PLAN=B.CREDIT_PACKS[1].k;
 function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
 document.getElementById('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
 document.getElementById('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
-T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
+T('n-ob','ob_title');T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
 
 function pickPlan(k){PLAN=k;stopPpPoll();window.__ppWait=false;renderPlanPick();renderSummary();renderPay();}
 function renderPlanPick(){
@@ -154,7 +154,10 @@ function setPM(m){
 /* ⭐ 2569-07-30 · ถอด `reserveLocal()` ออก — ปุ่ม "จองราคานี้ไว้ในเครื่อง"
    มันแค่เขียน localStorage แล้วเด้ง alert · ไม่ได้จองอะไรจริง ไม่มีผลผูกพันฝั่งเรา
    ⇒ ทำให้ผู้ใช้เข้าใจผิดว่าล็อกราคาไว้แล้ว · ตอนนี้มีช่องทางจ่ายจริงแล้วจึงไม่ต้องมี */
-function loadOmise(cb){if(window.Omise){cb();return;}var s=document.createElement('script');s.src='https://cdn.omise.co/omise.js';s.onload=cb;s.onerror=function(){setPaying(false);alert('Omise load failed');};document.head.appendChild(s);}
+/* 🪦 2569-09-11 · `loadOmise` / `omiseQrUrl` / `applyChargeResp` / `pollPp` / `pollStatus`
+   ย้ายไปอยู่ `B.checkout.*` ใน billing-common.js — เพราะ `onboarding.html` ต้องจ่ายเงินได้
+   ด้วย และการก๊อปตรรกะเรื่องเงินไปไว้สองที่คือวิธีที่หน้าหนึ่งได้แพตช์แล้วอีกหน้าไม่ได้
+   ด่าน [ป] ห้ามไม่ให้หน้าไหนมี `fetch('…/charge')` เป็นของตัวเองอีก */
 /* 🔴 2569-07-31 · กันกดจ่ายซ้ำ — **ชั้นที่ 1 จาก 2**
    ═══════════════════════════════════════════════════════════════════════════
    createToken + สร้าง charge ใช้เวลาหลายวินาที · ปุ่มเดิมกดรัวได้ตลอดช่วงนั้น
@@ -172,12 +175,7 @@ function setPaying(on){
   b.disabled=on;
   b.style.opacity=on?.6:1;
 }
-function omiseQrUrl(u){
-  if(typeof u!=='string')return '';
-  if(u.indexOf('https://')!==0)return '';
-  if(/[\s<>"']/.test(u))return '';
-  return u;
-}
+
 function copyPpRef(){
   var el=document.getElementById('ppRefVal');
   var v=el?el.textContent:'';
@@ -195,41 +193,27 @@ function backFromPp(){
   PM='pp';
   renderPay();
 }
-var ppPollOn=false, ppPollTimer;
+var ppPollOn=false, ppStop=null;
 function stopPpPoll(){
   ppPollOn=false;
-  if(ppPollTimer){clearTimeout(ppPollTimer);ppPollTimer=null;}
+  if(ppStop){ppStop();ppStop=null;}
 }
 function pollPp(ref){
-  var tries=0, MAX=60; // 60 × 5 วิ = 5 นาที — สแกนแอปธนาคารใช้เวลานานกว่า 3DS
   var note=document.getElementById('ppPollNote');
   stopPpPoll();
   ppPollOn=true;
-  (function tick(){
-    if(!ppPollOn)return;
-    tries++;
-    fetch(B.CHARGE_ENDPOINT+'/status?ref='+encodeURIComponent(ref))
-      .then(function(r){return r.json();})
-      .then(function(j){
-        if(!ppPollOn)return;
-        if(j.state==='paid'){location.href='billing.html?lang='+B.LANG+'&result=success';return;}
-        if(j.state==='failed'){location.href='billing.html?lang='+B.LANG+'&result=failed';return;}
-        if(note)note.textContent=B.t(j.charged===true?'pay_charged_m':'pp_poll');
-        if(tries>=MAX){if(note)note.textContent=B.t('pp_expire');return;}
-        ppPollTimer=setTimeout(tick,5000);
-      })
-      .catch(function(){
-        if(!ppPollOn)return;
-        if(tries<MAX)ppPollTimer=setTimeout(tick,5000);
-        else if(note)note.textContent=B.t('pp_expire');
-      });
-  })();
+  ppStop=B.checkout.pollPromptPay(ref,{
+    paid:function(){location.href='billing.html?lang='+B.LANG+'&result=success';},
+    failed:function(){location.href='billing.html?lang='+B.LANG+'&result=failed';},
+    charged:function(){if(note)note.textContent=B.t('pay_charged_m');},
+    expire:function(){if(note)note.textContent=B.t('pp_expire');}
+  });
 }
 function showOmisePp(j){
   window.__ppWait=true;
   var c=B.getCredit(PLAN);
   var amt=c?c.price:0;
-  var qr=omiseQrUrl(j&&j.qr);
+  var qr=B.checkout.safeHttpsUrl(j&&j.qr);
   var ref=(j&&j.ref)?String(j.ref):'';
   var body=document.getElementById('payBody');
   var h='<div class="pp-wait"><b>'+B.t('pp_wait_t')+'</b>'
@@ -248,26 +232,18 @@ function showOmisePp(j){
   if(ref)pollPp(ref);
 }
 function applyChargeResp(j){
-  if(j&&(j.error==='credit_needs_email_uid'||j.error==='bad_account')){
+  var act=B.checkout.classifyCharge(j);
+  if(act.kind==='error'){
     setPaying(false);
-    alert(B.t('cr_bad_uid_t')+'\n\n'+B.t('cr_bad_uid_m'));
-    try{var em=document.getElementById('pay-email');if(em)em.focus();}catch(x){}
+    alert(B.t(act.t)+'\n\n'+B.t(act.m));
+    if(act.code==='email'){try{var em=document.getElementById('pay-email');if(em)em.focus();}catch(x){}}
     return;
   }
-  if(j&&j.error==='duplicate_pending'){setPaying(false);alert(B.t('pay_dup_t')+'\n\n'+B.t('pay_dup_m'));return;}
-  if(j&&j.error==='duplicate_recent'){setPaying(false);alert(B.t('pay_recent_t')+'\n\n'+B.t('pay_recent_m'));return;}
-  if(j&&j.error==='rate_limited'){setPaying(false);alert(B.t('pay_rate_t')+'\n\n'+B.t('pay_rate_m'));return;}
   /* PromptPay · ต้องอยู่หน้า QR จนกว่าจะโอน · ห้ามพาไป result=pending ซึ่งซ่อน QR */
-  if(j&&j.qr){showOmisePp(j);return;}
-  if(j&&j.authorize_uri){location.href=j.authorize_uri;return;}
-  var _ref=(j&&j.ref)?('&ref='+encodeURIComponent(j.ref)):'';
-  var _st=(j&&j.status)?String(j.status):'';
-  var _res=(_st==='successful')?'success'
-    :(_st==='pending')?'pending'
-    :(j&&j.error)?'failed'
-    :(_st==='failed'||_st==='expired'||_st==='reversed')?'failed'
-    :'unknown';
-  location.href='billing.html?lang='+B.LANG+'&result='+_res+((_res==='pending'||_res==='unknown')?_ref:'');
+  if(act.kind==='qr'){showOmisePp(j);return;}
+  if(act.kind==='redirect'){location.href=act.url;return;}
+  var _ref=(act.result==='pending'||act.result==='unknown')&&act.ref?('&ref='+encodeURIComponent(act.ref)):'';
+  location.href='billing.html?lang='+B.LANG+'&result='+act.result+_ref;
 }
 /* payNow() · บัตร = Omise token + POST /charge · พร้อมเพย์ = worker สร้าง QR Omise แล้ว webhook เติมเครดิต */
 function payNow(){
@@ -294,23 +270,19 @@ function payNowWithAccount(acct){
     if(!B.omisePpOpen()){alert(B.t('pm_pp_soon'));return;}
     if(!B.OMISE_READY){try{window.open(B.LINE_URL,'_blank');}catch(x){}return;}
     setPaying(true);
-    fetch(B.CHARGE_ENDPOINT+'/charge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({source:'promptpay',plan:PLAN,cycle:'once',account:acct})})
-      .then(function(r){return r.json();}).then(applyChargeResp)
-      .catch(function(){location.href='billing.html?lang='+B.LANG+'&result=unknown';});
+    B.checkout.payPromptPay({plan:PLAN,cycle:'once',account:acct},function(act,j){applyChargeResp(j||act);});
     return;
   }
   if(!B.OMISE_READY){try{window.open(B.LINE_URL,'_blank');}catch(x){}return;}
   setPaying(true);
-  loadOmise(function(){
-    try{Omise.setPublicKey(B.OMISE_PUBLIC_KEY);}catch(e){}
-    var exp=(document.getElementById('card-exp').value||'').split('/');
-    Omise.createToken('card',{name:document.getElementById('card-name').value,number:(document.getElementById('card-num').value||'').replace(/\s/g,''),expiration_month:(exp[0]||'').trim(),expiration_year:('20'+(exp[1]||'').trim()).slice(-4),security_code:document.getElementById('card-cvv').value},function(status,resp){
-      if(status!==200){setPaying(false);alert(resp.message||'card error');return;}
-      fetch(B.CHARGE_ENDPOINT+'/charge',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:resp.id,plan:PLAN,cycle:'once',account:acct})})
-        .then(function(r){return r.json();}).then(applyChargeResp)
-        .catch(function(){location.href='billing.html?lang='+B.LANG+'&result=unknown';});
-    });
-  });
+  B.checkout.payCard({
+    name:(document.getElementById('card-name')||{}).value||'',
+    number:(document.getElementById('card-num')||{}).value||'',
+    exp:(document.getElementById('card-exp')||{}).value||'',
+    cvv:(document.getElementById('card-cvv')||{}).value||''
+  },{plan:PLAN,cycle:'once',account:acct},
+  function(act,j){applyChargeResp(j||act);},
+  function(msg){setPaying(false);alert(msg);});
 }
 function showResult(kind){
   var el=document.getElementById('resultPanel');el.classList.remove('hide');
@@ -356,37 +328,23 @@ function showResult(kind){
       ไม่ครบ/ล้มเหลว เราต้องไม่ถอนคำพูดที่ว่า "เงินถูกตัดแล้ว" กลับไปเป็น "ยังไม่รู้ผล" */
 function pollStatus(ref){
   var box=document.getElementById('resultPanel'); if(!box)return;
-  var tries=0, MAX=20, chargedSeen=false; // 20 × 3 วิ = 60 วิ
   var note=document.createElement('p');
   note.style.cssText='font-size:12.5px;color:var(--muted);margin:10px auto 0;max-width:320px';
   note.textContent=B.t('pay_checking');
   var card=box.querySelector('.result'); if(card)card.appendChild(note);
-  /* เขียนหัวข้อ/คำอธิบายของการ์ดใหม่ให้ตรงความจริง — ใช้ textContent ล้วน ไม่แตะ innerHTML
-     (ค่าที่เอามาเขียนเป็นคำแปลของเราเอง แต่กติกาของหน้านี้คือไม่เปิดทาง XSS เพิ่มแม้แต่ทางเดียว) */
-  function sayCharged(){
-    if(chargedSeen)return; chargedSeen=true;
-    if(card){
-      var h=card.querySelector('h2'); if(h)h.textContent=B.t('pay_charged_t');
-      var s=card.querySelector('.sub'); if(s)s.textContent=B.t('pay_charged_m');
-    }
-    note.textContent=B.t('pay_charged_m');
-  }
-  function giveUpNote(){ note.textContent=B.t(chargedSeen?'pay_slow_paid':'pay_slow'); }
-  (function tick(){
-    tries++;
-    fetch(B.CHARGE_ENDPOINT+'/status?ref='+encodeURIComponent(ref))
-      .then(function(r){return r.json();})
-      .then(function(j){
-        if(j.state==='paid'){location.href='billing.html?lang='+B.LANG+'&result=success';return;}
-        /* `charged:true` + `failed` เกิดพร้อมกันไม่ได้ (worker ตอบ failed เฉพาะตอน
-           `status==='failed'` ซึ่งแปลว่าไม่มีเงินออก) ⇒ ลำดับนี้ปลอดภัย */
-        if(j.state==='failed'){location.href='billing.html?lang='+B.LANG+'&result=failed';return;}
-        if(j.charged===true)sayCharged();
-        if(tries>=MAX){giveUpNote();return;}
-        setTimeout(tick,3000);
-      })
-      .catch(function(){ if(tries<MAX)setTimeout(tick,3000); else giveUpNote(); });
-  })();
+  /* เขียนหัวข้อ/คำอธิบายของการ์ดใหม่ให้ตรงความจริง — ใช้ textContent ล้วน ไม่แตะ innerHTML */
+  B.checkout.pollCharge(ref,{
+    paid:function(){location.href='billing.html?lang='+B.LANG+'&result=success';},
+    failed:function(){location.href='billing.html?lang='+B.LANG+'&result=failed';},
+    charged:function(){
+      if(card){
+        var h=card.querySelector('h2'); if(h)h.textContent=B.t('pay_charged_t');
+        var sb=card.querySelector('.sub'); if(sb)sb.textContent=B.t('pay_charged_m');
+      }
+      note.textContent=B.t('pay_charged_m');
+    },
+    giveUp:function(seen){note.textContent=B.t(seen?'pay_slow_paid':'pay_slow');}
+  });
 }
 (function(){
   var res=B.qs('result');

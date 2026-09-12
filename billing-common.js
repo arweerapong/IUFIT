@@ -117,7 +117,9 @@
 
   /* 🔴 2569-08-01 · **แพ็กโค้ชยังไม่เปิดขาย — แต่เครดิต AI ซื้อได้** (คำสั่งเจ้าของ)
      ═══════════════════════════════════════════════════════════════════════════
-     เหตุผล: หน้าขายประกาศไว้ว่า **"ฟรีถึง 31 ธ.ค. 2026 · ราคาด้านล่างเป็นราคาหลังจากนั้น"**
+     เหตุผล (ตอนนั้น): หน้าขายประกาศไว้ว่า **"ฟรีถึง 31 ธ.ค. 2026 · ราคาด้านล่างเป็นราคาหลังจากนั้น"**
+     🪦 2569-09-11 · คำประกาศนั้นถูกยกเลิกแล้ว — ไม่มีของฟรีถึงสิ้นปีอีก · เหตุผลที่ยัง
+        ปิดการจ่ายในแอปคือ **ระบบยังไม่พร้อม** ไม่ใช่ "ยังฟรีอยู่" (สองอย่างนี้คนละเรื่อง)
      ถ้าเก็บเงินค่าแพ็กตอนนี้ = เก็บเงินสวนกับสิ่งที่ประกาศเอง ⇒ ลูกค้าขอเงินคืนได้เต็ม ๆ
 
      ⭐ เจ้าของเลือก **ไม่แก้ข้อความหน้าขาย** แต่ปิดที่ปุ่มแทน — คำประกาศจึงยังเป็นจริงอยู่
@@ -130,9 +132,35 @@
         2. `payNow()`    — ปฏิเสธตั้งแต่บรรทัดแรก (กันคนปลด disabled ใน devtools)
         3. **worker**    — `/charge` ปฏิเสธ `kind!=='credit'` (ด่านจริง · ยิง API ตรงข้ามหน้าเว็บได้)
 
-     เปิดขายเมื่อไหร่: เปลี่ยนเป็น true ที่นี่ **และ** ปลดด่านใน worker พร้อมกัน
-     ถ้าเปลี่ยนแค่ที่นี่ ปุ่มจะกดได้แต่ server ปฏิเสธ ⇒ ผู้ใช้เห็น "ชำระเงินไม่สำเร็จ" */
-  var PLANS_OPEN=false;
+     ⭐ 2569-09-11 · **เจ้าของสั่งเปิดขายแล้ว** ⇒ ธงนี้เป็น true
+     🔴 ธงนี้เปิดอย่างเดียวไม่พอ — ต้องตั้ง `PLANS_OPEN=true` ใน env ของ `worker-omise-billing`
+        พร้อมกัน · ปลดข้างเดียวแล้วผลคือ:
+          เว็บ true / worker false ⇒ ปุ่มกดได้ แต่ถูกปฏิเสธ `plans_not_open` = จอโกหก
+          เว็บ false / worker true ⇒ ปุ่มเทาแต่ API เปิดโล่ง = ปิดไว้แค่หน้าฉาก
+     🔴 **ด่านฝั่ง worker ห้ามลบทิ้ง** — ให้ตั้ง env เป็น true แทน จะได้ปิดกลับได้ใน 1 นาที
+        ถ้ามีปัญหา โดยไม่ต้อง deploy โค้ดใหม่ (ด่าน [ผ5] บังคับให้ด่านนั้นยังอยู่)
+     ⚠️ รอบรายปียัง **ไม่** เปิดตาม — ดู `YEARLY_OPEN` ข้างบน (คนละธง คนละเหตุผล:
+        รายปีติดเพดานต่อรายการของ Omise ไม่ใช่ติดว่าระบบไม่พร้อม) */
+  var PLANS_OPEN=true;
+
+  /* ═══════════════════════════════════════════════════════════════════════════════════
+     ⭐ 2569-09-11 · เพดานต่อรายการของช่องทางจ่ายเงิน — **ปุ่มที่เกินต้องกดไม่ได้**
+     ═══════════════════════════════════════════════════════════════════════════════════
+     Omise ให้เพดาน ฿1,000/รายการ (กำลังขอเพิ่มเป็น 10,000) ⇒ ราคารายปีทุกใบเกินหมด
+     ⇒ เจ้าของสั่ง: **ส่วนที่เกิน 1,000 ทำให้ปุ่มกดไม่ได้ไว้ก่อน**
+     🔴 ทำไมต้องกันที่ปุ่ม ไม่ใช่ปล่อยให้ยิงแล้วโดนปฏิเสธ:
+       ผู้ใช้ที่กดแล้วถูกปฏิเสธที่ปลายทางไม่รู้ว่าทำไม · เขาจะกดซ้ำ เปลี่ยนบัตร แล้วโทรมาถาม
+       และบางรายจะเห็นยอด pending ค้างบนบัตรตัวเอง ⇒ ปุ่มที่กดไม่ได้ **พร้อมเหตุผล**
+       ซื่อสัตย์กว่าเสมอ (กฎบ้าน: จอที่สัญญาสิ่งที่ทำไม่ได้ = จอโกหก)
+     ⚠️ **ด่านจริงยังอยู่ที่ worker** (`MAX_THB_PER_CHARGE`) — ตรงนี้คือชั้นที่ผู้ใช้เห็น
+        ยิง API ตรงข้ามหน้าเว็บได้เสมอ ⇒ หน้าเว็บกันไม่ได้ และไม่ได้ตั้งใจจะกัน
+     ⚠️ ตัวเลขนี้ต้องตรงกับ `core/pricing.PAYMENT.maxThbPerCharge` และ env ของ worker
+        ⇒ ขยับเพดานกับ Omise แล้วต้องขยับ **สามที่** */
+  var MAX_THB_PER_CHARGE=1000;
+  /** ราคานี้เกินเพดานต่อรายการไหม (0/ว่าง = ไม่เกิน — ของฟรีกับ "ติดต่อเรา" ไม่ใช่การจ่าย) */
+  function overCap(thb){var n=Number(thb)||0;return n>MAX_THB_PER_CHARGE;}
+  /** เหตุผลที่ปุ่มกดไม่ได้ — ต้องขึ้นข้าง ๆ ปุ่มเสมอ ไม่ใช่แค่ทำปุ่มจาง */
+  function capNote(thb){return overCap(thb)?t('cap_over').replace('{max}',fmt(MAX_THB_PER_CHARGE)):'';}
 
   /* ⭐ 2569-08-28 · พร้อมเพย์บนหน้าซื้อเครดิต = Omise PromptPay
      worker สร้าง source ด้วยยอดจากตารางราคา → คืน QR → webhook เติมเครดิต
@@ -175,6 +203,12 @@
     line:'@987qyznd'
   };
   function isTodo(v){return /^__/.test(''+v);}
+
+  /* 🔴 ลิงก์เพิ่มเพื่อน LINE OA — แหล่งเดียวคือ CONTACT.line
+     เคยพลาด: onboarding.html ใส่ href="https://lin.ee/" ไว้เป็นตัวยึด ⇒ ปุ่ม
+     "เพิ่มเพื่อน" พาไปหน้าเปล่าของ LINE ผู้ใช้ที่กดตามขั้นตอนจะผูกบัญชีไม่ได้เลย
+     และ grep หาไม่เจอเพราะมันเป็น URL ที่ "ดูถูก" · ห้ามพิมพ์ URL LINE ที่อื่นอีก */
+  function lineOaUrl(){ return 'https://line.me/R/ti/p/' + CONTACT.line; }
   function contactRowsHtml(){
     /* เบอร์โทร: ถ้ายังเป็นตัวยึดให้แสดงเป็นข้อความล้วน (ไม่ทำ tel: ที่ชี้ไปไหนไม่ได้) */
     var phoneCell=isTodo(CONTACT.phone)?CONTACT.phone
@@ -246,8 +280,99 @@
          ข้อความด้านล่างอ้างฟีเจอร์ที่มีจริงเท่านั้น (my-plan.html: แจ้งเตือนก่อนหมดอายุ rem_paid_* + หน้าแพ็กของฉัน) */
       why4_t:'ต่ออายุไม่หลุด',why4_m:'มีแจ้งเตือนก่อนแพ็กหมดอายุ และหน้า “แพ็กของฉัน” ให้ดูสถานะ/ต่ออายุได้เอง',
       faq_title:'คำถามที่พบบ่อย',faq1_q:'จ่ายเงินยังไงบ้าง?',faq1_a:'เลือกแพ็ก → จ่ายด้วยบัตรเครดิต/เดบิต หรือสแกน PromptPay ผ่าน Omise · เครดิตเข้าอัตโนมัติเมื่อโอนสำเร็จ',faq2_q:'ทำไมในแอปไม่มีปุ่มซื้อ?',faq2_a:'ตามนโยบาย Google Play การสมัครแพ็กซอฟต์แวร์ทำผ่านเว็บนี้ (นอกแอป) · ส่วนค่าคอร์สเทรนตัวต่อตัว (บริการจริงระหว่างคุณกับลูกเทรน) จ่าย PromptPay ในแอปได้ปกติ',faq3_q:'ต่ออายุ / ยกเลิกยังไง?',faq3_a:'ต่ออายุที่หน้านี้เมื่อใกล้หมดอายุ (มีแจ้งเตือนล่วงหน้า) · ยกเลิกได้ทุกเมื่อ ไม่มีสัญญาผูกมัด · ข้อมูลลูกเทรนไม่หายแม้ลดแพ็ก',faq4_q:'1 แพ็กใช้ได้กี่เครื่อง?',faq4_a:'ใช้ได้ตามจำนวนที่กำหนดต่อแพ็ก · ย้ายเครื่องได้โดยติดต่อทีมงาน',faq5_q:'มีรับประกันคืนเงินไหม?',faq5_a:'เนื่องจากเป็นบริการดิจิทัลที่เปิดใช้ทันที เมื่อชำระแล้วโดยหลักจะไม่คืนเงิน · <b>ยกเว้นชำระผิดพลาดหรือซ้ำซ้อน ขอคืนได้ภายใน 7 วัน</b> นับจากวันที่ชำระ (ดูนโยบายการยกเลิกและคืนเงิน)',
-      launch:'🎉 ช่วงเปิดตัว: ทุกแพ็กใช้ฟรีถึง 31 ธ.ค. 2026 · ราคาด้านล่างเป็นราคาหลังช่วงเปิดตัว · สนใจแพ็กทักไลน์ได้เลย',
-      monthly:'รายเดือน',yearly:'รายปี · ประหยัด 2 เดือน',launch_price:'ฟรีถึง 31 ธ.ค. 2026',per_mo:'/เดือน',per_yr:'/ปี',
+      /* 🪦 2569-09-11 · เดิมประกาศว่า "ทุกแพ็กฟรีถึง 31 ธ.ค. 2026" — ของฟรีก้อนนั้นถูกยกเลิกแล้ว
+         (`core/entitlements.LAUNCH_FREE_UNTIL` = null) ⇒ จอห้ามขายของที่ไม่มีแล้ว */
+      launch:'ราคารวม VAT แล้ว · ยกเลิกได้ทุกเมื่อ · ระบบชำระเงินในแอปยังไม่เปิด — สนใจแพ็กทักไลน์ได้เลย',
+      cap_over:'ยอดนี้เกินเพดาน ฿{max} ต่อรายการของช่องทางชำระเงิน — ยังกดจ่ายไม่ได้ · ทักไลน์เพื่อให้เราช่วยจัดให้',
+      monthly:'รายเดือน',yearly:'รายปี · ประหยัด 2 เดือน',launch_price:'',per_mo:'/เดือน',per_yr:'/ปี',
+      /* ⭐ 2569-09-11 · คีย์ของ "หน้าแสดงราคาแพ็กโค้ช" บน pricing.html
+         `PLANS` มี `mo`/`yr` ครบมาตั้งแต่ต้น แต่ **ไม่เคยถูกวาดที่ไหนเลย** —
+         pricing.html วนแค่ `CREDIT_PACKS` ⇒ ราคาสูงสุดที่สาธารณะเห็นคือ ฿549
+         ⇒ ผู้ให้บริการชำระเงินไม่มีหลักฐานว่าเราต้องการเพดานสูงกว่านั้น
+         🔴 `pl_yr_view` เขียนแบบ **ไม่ระบุวันที่** โดยตั้งใจ — คีย์ `yr_soon_m` เดิม
+            สัญญาไว้ว่า "1 มกราคม 2570" ซึ่งเป็นคำสัญญาที่ยังยืนยันไม่ได้ ⇒ ไม่เอาขึ้นจอ
+            (ถ้าจะประกาศวันจริง เปลี่ยนมาใช้ `yr_soon_m` ได้ทันที) */
+      pl_title:'แพ็กโค้ช / เทรนเนอร์',
+      pl_sub:'ดูแลลูกเทรนเป็นระบบ · เลือกได้ทั้งรอบรายเดือนและรายปี',
+      pl_clients:'ลูกเทรน',
+      pl_contact:'ติดต่อเรา',
+      pl_yr_view:'ตอนนี้แสดงราคารายปีเพื่อเปรียบเทียบเท่านั้น · การชำระแบบรายปียังไม่เปิดให้บริการ',
+      pl_web_soon:'ยังไม่เปิดให้สมัครผ่านเว็บไซต์ — ทักแอดมินทาง LINE เพื่อสมัครหรือสอบถามแพ็ก',
+      /* ── หน้า onboarding รวม (เลือกแพ็ก → ผูก LINE → ชำระเงิน) · 2569-09-11 ──
+         🔴 คีย์ชุดนี้ **ห้ามมีตัวเลขราคา/เครดิตฝังอยู่** — ทุกตัวเลขบนจอต้องมาจาก
+            `B.PLANS` / `B.CREDIT_PACKS` / `B.creditTimes()` เท่านั้น
+            เหตุผล: ตารางราคาอยู่สามที่แล้ว (แคตตาล็อก · หน้าเว็บ · worker) การเพิ่ม
+            ที่ที่สี่ในคำแปลคือวิธีที่เลขจะเลื่อนจากกันโดยไม่มีด่านไหนจับได้ */
+      ob_title:'สมัคร IUFIT',
+      ob_sub:'เลือกแพ็ก → เครดิต → ยืนยันบัญชี → ชำระเงิน',
+      /* 🪦 2569-09-11 · คีย์ ob_s1/ob_s2/ob_s3 (สามขั้นตอนแบบเลื่อนหน้าเดียว) ถูกแทนด้วย
+         โฟลว 4 ก้าวตามดีไซน์ที่เจ้าของส่งมา · ob_free_t/ob_free_m ถูกถอดพร้อมกันเพราะ
+         การ์ดแพลนฟรีบอกเรื่องเดียวกันอยู่แล้วในก้าวแรก (พูดสองที่ = วันหนึ่งจะเลื่อนจากกัน) */
+      ob_m_new:'สมัครใหม่', ob_m_new_s:'ยังไม่เคยมีแพ็ก',
+      ob_m_renew:'ต่ออายุ', ob_m_renew_s:'มีแพ็กอยู่แล้ว',
+      ob_m_credit:'ซื้อเครดิตอย่างเดียว', ob_m_credit_s:'ไม่แตะค่าสมาชิก',
+      ob_tab_me:'สำหรับตัวเอง', ob_tab_coach:'สำหรับโค้ช',
+      ob_h_size:'เลือกแพ็ก', ob_h_credit:'เครดิต AI', ob_h_contact:'บัญชีและวิธีชำระเงิน',
+      ob_h_card:'ข้อมูลบัตร', ob_h_qr:'สแกนเพื่อชำระ',
+      ob_step:'ก้าว {n}/{all}', ob_back:'ย้อนกลับ',
+      ob_size_t:'ตอนนี้ดูแลลูกเทรนกี่คน',
+      ob_size_m:'เลื่อนให้ตรงกับจำนวนจริง แล้วเราจะเด้งแพ็กที่พอดีให้',
+      ob_size_solo:'ใช้เองคนเดียว', ob_size_unit:'คน', ob_match:'ตรงกับคุณ',
+      ob_pick_t:'เลือกแพ็กที่ใช่',
+      ob_pick_m:'ทุกแพ็กมีเครดิต AI รายเดือนให้ · เติมเพิ่มได้ทุกเมื่อ',
+      ob_cr_title:'เครดิต AI ที่ได้',
+      ob_cr_mo:'ต่อเดือน', ob_cr_once:'ครั้งเดียว',
+      ob_cr_does:'เครดิตนี้ทำอะไรได้',
+      ob_do_scan:'สแกนรูปอาหาร', ob_do_plan:'จัดโปรแกรม/แผนอาหาร',
+      ob_do_chat:'ถาม-ตอบ IU MATE', ob_do_trend:'วิเคราะห์แนวโน้ม', ob_do_menu:'แจกแจงเมนูจากข้อความ',
+      ob_times:'ครั้ง',
+      ob_crh_add:'อยากได้เครดิต AI เพิ่มไหม', ob_crh_only:'เติมเครดิต AI เท่าไร',
+      ob_crs_add:'แพ็กที่เลือกมีเครดิตรายเดือนให้อยู่แล้ว · ก้อนนี้คือซื้อเพิ่มจ่ายครั้งเดียว ข้ามได้',
+      ob_crs_only:'เครดิตเข้าบัญชีทันทีที่ชำระเงินสำเร็จ · ไม่มีการตัดซ้ำเดือนหน้า',
+      ob_cr_skip:'ยังไม่เอาตอนนี้', ob_cr_skip_s:'ซื้อเพิ่มทีหลังได้ทุกเมื่อ',
+      ob_cr_n:'เครดิต {n}', ob_cr_once_line:'จ่ายครั้งเดียว',
+      ob_cr_more:'อยากได้มากกว่านี้ ซื้อเพิ่มแยกรายการได้',
+      /* ป้ายรอบบิลบนบรรทัดบิล — สั้นล้วน · `yearly` มีคำโฆษณา "ประหยัด 2 เดือน" ติดมาด้วย
+         ซึ่งอยู่บนปุ่มเลือกได้ แต่บนบรรทัดใบเสร็จมันคือเสียงรบกวน */
+      ob_cyc_mo:'รายเดือน', ob_cyc_yr:'รายปี',
+      ob_cta_free:'เริ่มใช้ฟรี — ไม่ต้องจ่าย', ob_cta_contact:'ติดต่อ IUFIT',
+      ob_cta_sub:'สมัครแพ็กนี้',
+      ob_yr_t:'รอบรายปียังชำระผ่านเว็บไม่ได้', ob_yr_m:'ดูราคาเทียบได้ · ตอนนี้สมัครได้เฉพาะรายเดือน · ต้องการรายปีทักไลน์ได้เลย',
+      ob_free_note:'แพ็กนี้ไม่มีค่าใช้จ่าย ⇒ ไม่มีอะไรให้ชำระ · เปิดแอปแล้วใช้ได้เลย',
+      ob_renew_fallback:'เครื่องนี้ยังไม่พบแพ็กที่จ่ายเงินอยู่ — พาไปที่ “สมัครใหม่” ให้แทน · ถ้าคุณมีแพ็กอยู่แล้ว เปิดจากในแอปจะเห็นแพ็กของคุณ',
+      /* 🔴 ดีไซน์ต้นฉบับเขียนว่า "เครดิตซื้อเพิ่มไม่หมดอายุ" — ของจริงหมดอายุ ⇒ แก้ตามของจริง
+         ตัวเลขวันมาจาก `CREDIT_EXPIRY_DAYS` ซึ่งด่านบังคับให้เท่า core/credits.EXPIRY_DAYS */
+      ob_cr_rule:'เครดิตที่ซื้อเพิ่มใช้ได้ {d} วันนับจากใช้ครั้งแรก · ถูกใช้ทีหลังเครดิตของแพลนเสมอ',
+      ob_norollover:'เครดิตของแพลนไม่ทบเดือน · เครดิตที่ซื้อเองไม่หายเมื่อลดแพลน',
+      ob_mail_t:'เครดิตจะเข้าบัญชีนี้',
+      ob_mail_bind:'อีเมลนี้ผูกกับแอป IUFIT ของคุณอยู่แล้ว',
+      ob_mail_receipt:'ใบเสร็จส่งไปที่อีเมลเดียวกัน',
+      ob_mail_need_t:'กรอกอีเมลที่ผูกกับแอป',
+      ob_mail_need_m:'เครดิตจะเข้าบัญชีของอีเมลนี้ · กรอกผิด = เครดิตไปอยู่บัญชีอื่น',
+      ob_pm_t:'วิธีชำระเงิน',
+      ob_pm_card:'บัตรเครดิต / เดบิต', ob_pm_card_s:'ยืนยันผ่าน 3D Secure ทุกครั้ง',
+      ob_pm_pp:'พร้อมเพย์', ob_pm_pp_s:'จ่ายครั้งเดียว · ต่ออายุอัตโนมัติไม่ได้ ต้องกลับมาจ่ายเอง',
+      ob_total:'รวมวันนี้',
+      ob_next_none:'จ่ายครั้งเดียว · ไม่มีการตัดซ้ำเดือนหน้า',
+      ob_next_card:'รอบถัดไปตัดบัตร {v} · เครดิตที่ซื้อเพิ่มไม่ตัดซ้ำ',
+      ob_next_pp:'พร้อมเพย์ตัดครั้งเดียว — ต้องกลับมาจ่ายเองก่อนหมดอายุ',
+      ob_cta_next:'ถัดไป', ob_cta_skip:'ข้ามไปก่อน',
+      ob_cta_card:'ไปหน้าใส่บัตร', ob_cta_qr:'สร้าง QR พร้อมเพย์ {v}',
+      ob_cta_pay:'จ่าย {v}', ob_cta_paid:'ฉันโอนแล้ว',
+      ob_after_t:'หลังจ่ายแล้วต้องทำอะไรต่อไหม',
+      ob_after_m:'ไม่ต้อง — ระบบอัปเดตให้เอง · ใบเสร็จส่งไปที่ {mail} · ปิดจอนี้ได้ การชำระเงินไม่ถูกยกเลิก',
+      ob_closed_t:'ยังไม่เปิดขายแพ็กผ่านเว็บ',
+      ob_closed_m:'ตอนนี้ซื้อได้เฉพาะเครดิต AI · แพ็กรายเดือนทักไลน์เพื่อให้เราเปิดให้',
+      ob_cap_t:'ยอดนี้เกินเพดานต่อรายการ',
+      ob_cap_m:'ช่องทางชำระเงินจำกัด ฿{max} ต่อรายการ · ทักไลน์เพื่อให้เราช่วยจัดให้',
+      ob_acct_plan:'แพ็กปัจจุบัน', ob_acct_credit:'เครดิตคงเหลือ',
+      ob_contact_t:'ยิม / สตูดิโอ', ob_contact_m:'จำนวนที่นั่งและราคาจัดให้ตามจริง — ติดต่อ IUFIT',
+      ob_line_t:'ผูก LINE OA',
+      ob_line_m:'ผูกแล้วพิมพ์มื้ออาหารหรือส่งรูปเข้า LINE ได้เลย ข้อมูลเข้าแอปให้อัตโนมัติ',
+      ob_line_cta:'เปิด LINE OA',
+      ob_line_skip:'ข้ามไปก่อน — ผูกทีหลังในแอปได้',
+      ob_topup_t:'เติมเครดิตเพิ่ม',
+      ob_topup_m:'ซื้อครั้งเดียวจบ ไม่มีรอบบิล · ใช้ตอนโควตาหมดกลางเดือน',
       current_plan:'แพ็กปัจจุบัน',choose_plan:'เลือกแพ็กนี้',contact:'ติดต่อสอบถาม',manage_web:'จัดการแพ็กผ่านเว็บ/ไลน์',cta_line:'สนใจแพ็ก → ทักไลน์',
       addon_title:'➕ Add-on · เพิ่มลูกเทรน',addon_desc:'ขยายจำนวนลูกเทรนได้โดยไม่ต้องเปลี่ยนแพ็ก (Starter & Pro)',addon_price:'+5 ลูกเทรน = ฿99/เดือน',addon_eg:'เช่น Pro ฿599 + add-on ฿99 = ฿698/เดือน ดูแลได้ 25 คน',
       /* ⭐ 2569-07-30 · how1 เดิมโฆษณา "ทดลองฟรี 30 วัน" ซึ่งยกเลิกแล้ว · คีย์ถูกเรียกที่ pricing.html T('hw-1','how1') ⇒ เปลี่ยนข้อความ */
@@ -322,8 +447,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       yr_soon_m:'จะเปิดให้บริการวันที่ 1 มกราคม 2570 · ระหว่างนี้เลือกชำระแบบรายเดือนได้ตามปกติ',
       /* แพ็กโค้ชยังไม่เปิดขาย — ต้องบอก "ยังไม่ต้องจ่าย" ไม่ใช่ "ระบบขัดข้อง"
          เพราะสิ่งที่เกิดขึ้นคือของฟรี ไม่ใช่ความผิดพลาด */
-      pl_free_t:'ตอนนี้ยังไม่ต้องจ่าย ',
-      pl_free_m:'ทุกแพ็กใช้ฟรีถึง 31 ธ.ค. 2569 · ราคาที่เห็นคือราคาหลังจากนั้น เราจะแจ้งล่วงหน้าก่อนเริ่มเก็บเงิน',
+      pl_free_t:'ระบบชำระเงินในแอปยังไม่เปิด ',
+      pl_free_m:'ราคาที่เห็นคือราคาจริงรวม VAT แล้ว · ตอนนี้สมัครผ่านการทักไลน์ เราจะเปิดให้จ่ายในแอปเมื่อพร้อม',
       pl_free_btn:'ใช้ฟรีอยู่แล้ว ไม่ต้องชำระเงิน',
       pl_free_cr:'ถ้าต้องการเครดิต AI เพิ่ม เลือกแท็บ "เครดิต AI" ด้านบนได้เลย',
       cr_title:'แพ็กเครดิต AI',
@@ -432,8 +557,80 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       why_title:'Why coaches choose IUFIT',why1_t:'All in one app',why1_m:'Send meal/workout plans, review homework, chat, and track clients',why2_t:'IU MATE cuts your work',why2_m:'Draft menus/programs, summarize homework and at-risk clients',why3_t:'Clients pay nothing',why3_m:'Invite by QR — they join on your seats, no purchase needed',
       why4_t:'Never miss a renewal',why4_m:'Reminders before your plan expires, plus a “My plan” page to check status and renew yourself',
       faq_title:'FAQ',faq1_q:'How do I pay?',faq1_a:'Pick a plan → pay by credit/debit card or scan PromptPay via Omise · credits are added automatically when the transfer succeeds.',faq2_q:'Why is there no buy button in the app?',faq2_a:'Per Google Play policy, software plans are purchased on this website (outside the app). One-on-one PT fees (a real service between you and your client) can still be paid via PromptPay inside the app.',faq3_q:'How do I renew / cancel?',faq3_a:'Renew here when your plan is about to expire (you get reminders) · cancel anytime, no contract · client data is never lost even if you downgrade.',faq4_q:'How many devices per plan?',faq4_a:'Each plan allows a set number of devices · contact us to move devices.',faq5_q:'Is there a refund guarantee?',faq5_a:'Because this is a digital service activated immediately, fees are generally non-refundable once paid · <b>except for incorrect or duplicate payments, which you can claim within 7 days</b> of the payment date (see the cancellation &amp; refund policy).',
-      launch:'🎉 Launch period: all plans are free through 31 Dec 2026 · prices below apply after launch · chat on LINE if interested.',
-      monthly:'Monthly',yearly:'Yearly · save 2 months',launch_price:'Free until 31 Dec 2026',per_mo:'/mo',per_yr:'/yr',
+      /* 🪦 see th — the year-end free grant was cancelled 2569-09-11 */
+      launch:'Prices include VAT · cancel any time · in-app payment is not open yet — message us on LINE if interested.',
+      cap_over:'This amount is over the ฿{max} per-transaction cap of our payment provider — payment is not available yet · message us on LINE and we will arrange it.',
+      monthly:'Monthly',yearly:'Yearly · save 2 months',launch_price:'',per_mo:'/mo',per_yr:'/yr',
+      pl_title:'Coach / trainer plans',
+      pl_sub:'Coach your clients properly · monthly or yearly billing',
+      pl_clients:'clients',
+      pl_contact:'Contact us',
+      pl_yr_view:'Yearly prices are shown for comparison only · yearly billing is not available yet',
+      pl_web_soon:'Not available for signup on the website yet — message us on LINE to subscribe or ask about plans',
+      /* ── unified onboarding page · see th for why no numbers live in these keys ── */
+      ob_title:'Subscribe to IUFIT',
+      ob_sub:'Plan → credits → confirm account → pay',
+      ob_m_new:'New subscription', ob_m_new_s:'No plan yet',
+      ob_m_renew:'Renew', ob_m_renew_s:'Already on a plan',
+      ob_m_credit:'Credits only', ob_m_credit_s:'Membership untouched',
+      ob_tab_me:'For myself', ob_tab_coach:'For coaches',
+      ob_h_size:'Choose a plan', ob_h_credit:'AI credits', ob_h_contact:'Account & payment method',
+      ob_h_card:'Card details', ob_h_qr:'Scan to pay',
+      ob_step:'Step {n}/{all}', ob_back:'Back',
+      ob_size_t:'How many clients do you coach right now?',
+      ob_size_m:'Slide to your real number and we will surface the plan that fits',
+      ob_size_solo:'Just myself', ob_size_unit:'clients', ob_match:'Fits you',
+      ob_pick_t:'Pick the plan that fits',
+      ob_pick_m:'Every plan includes monthly AI credits · top up any time',
+      ob_cr_title:'AI credits included',
+      ob_cr_mo:'per month', ob_cr_once:'one-time',
+      ob_cr_does:'What these credits do',
+      ob_do_scan:'Food photo scans', ob_do_plan:'Programs / meal plans',
+      ob_do_chat:'IU MATE questions', ob_do_trend:'Trend analyses', ob_do_menu:'Menu breakdowns',
+      ob_times:'',
+      ob_crh_add:'Want extra AI credits?', ob_crh_only:'How many AI credits?',
+      ob_crs_add:'Your plan already includes monthly credits · this is a one-off top-up, skippable',
+      ob_crs_only:'Credits land in your account the moment payment succeeds · nothing recurs next month',
+      ob_cr_skip:'Not right now', ob_cr_skip_s:'You can top up any time later',
+      ob_cr_n:'{n} credits', ob_cr_once_line:'one-time',
+      ob_cr_more:'Need more? Buy a top-up as a separate order',
+      ob_cyc_mo:'monthly', ob_cyc_yr:'yearly',
+      ob_cta_free:'Start free — nothing to pay', ob_cta_contact:'Contact IUFIT',
+      ob_cta_sub:'Subscribe to this plan',
+      ob_yr_t:'Yearly billing is not available on the web yet', ob_yr_m:'Compare the prices here · monthly is what you can subscribe to right now · message us on LINE for yearly',
+      ob_free_note:'This plan costs nothing ⇒ there is nothing to check out · just open the app',
+      ob_renew_fallback:'No paid plan found on this device — showing “New subscription” instead · if you already have a plan, open this from inside the app',
+      ob_cr_rule:'Credits you buy stay usable for {d} days from first use · they are always spent after plan credits',
+      ob_norollover:'Plan credits do not roll over · credits you buy are never lost on downgrade',
+      ob_mail_t:'Credits go to this account',
+      ob_mail_bind:'This email is already linked to your IUFIT app',
+      ob_mail_receipt:'The receipt goes to the same address',
+      ob_mail_need_t:'Enter the email linked to your app',
+      ob_mail_need_m:'Credits land in this email account · a typo sends them to someone else',
+      ob_pm_t:'Payment method',
+      ob_pm_card:'Credit / debit card', ob_pm_card_s:'Always confirmed with 3D Secure',
+      ob_pm_pp:'PromptPay', ob_pm_pp_s:'One-off payment · cannot auto-renew, you come back and pay',
+      ob_total:'Total today',
+      ob_next_none:'One-off payment · nothing recurs next month',
+      ob_next_card:'Next cycle charges {v} · top-up credits never recur',
+      ob_next_pp:'PromptPay is one-off — come back and pay before it expires',
+      ob_cta_next:'Next', ob_cta_skip:'Skip for now',
+      ob_cta_card:'Enter card details', ob_cta_qr:'Create PromptPay QR {v}',
+      ob_cta_pay:'Pay {v}', ob_cta_paid:'I have transferred',
+      ob_after_t:'Anything to do after paying?',
+      ob_after_m:'No — it updates itself · receipt sent to {mail} · you can close this screen, the payment stands',
+      ob_closed_t:'Plans are not on sale on the website yet',
+      ob_closed_m:'Only AI credits can be bought right now · message us on LINE for a monthly plan',
+      ob_cap_t:'This amount is over the per-transaction cap',
+      ob_cap_m:'Our payment provider caps each transaction at ฿{max} · message us on LINE and we will arrange it',
+      ob_acct_plan:'Current plan', ob_acct_credit:'Credits left',
+      ob_contact_t:'Gym / studio', ob_contact_m:'Seats and pricing are arranged to fit — contact IUFIT',
+      ob_line_t:'Link LINE OA',
+      ob_line_m:'Once linked you can log meals or send photos straight from LINE — everything lands in the app',
+      ob_line_cta:'Open LINE OA',
+      ob_line_skip:'Skip for now — you can link it later in the app',
+      ob_topup_t:'Top up credits',
+      ob_topup_m:'One-off purchase, no billing cycle · for when your monthly allowance runs out',
       current_plan:'Current plan',choose_plan:'Choose this plan',contact:'Contact us',manage_web:'Manage on web / LINE',cta_line:'Interested? Chat on LINE',
       addon_title:'➕ Add-on · more clients',addon_desc:'Expand your client limit without changing plan (Starter & Pro).',addon_price:'+5 clients = ฿99/mo',addon_eg:'e.g. Pro ฿599 + add-on ฿99 = ฿698/mo for 25 clients',
       how_title:'How to start',how1:'<b>Start in the app</b> — open IUFIT → turn on coach mode → verify your email to get Coach Pro during the launch period (no card).',how2:'<b>Ready to subscribe</b> — tap “Subscribe”, pick a plan & cycle, then pay (or chat on LINE).',how3:'<b>Auto-unlock</b> — open the app with the same account; your plan activates automatically, clients & data intact.',
@@ -492,8 +689,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       contact_title:'Service provider contact',c_name:'Business owner',c_addr:'Address',c_addr_show:'▾ Show business address',c_phone:'Phone',c_hours:'Business hours',c_email:'Email',c_line:'LINE',
       yr_soon_t:'Yearly billing is not available yet ',
       yr_soon_m:'It opens on 1 January 2027. In the meantime, monthly billing works as usual.',
-      pl_free_t:'No payment needed right now ',
-      pl_free_m:'Every plan is free through 31 Dec 2026. The prices shown apply after that — we will tell you before any charge begins.',
+      pl_free_t:'In-app payment is not open yet ',
+      pl_free_m:'The prices shown are the real prices, VAT included · subscribe by messaging us on LINE for now — in-app payment opens when it is ready.',
       pl_free_btn:'Already free — no payment needed',
       pl_free_cr:'Need more AI credits? Switch to the "AI credits" tab above.',
       cr_title:'AI credit packs',
@@ -579,21 +776,65 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     {k:'free',name:'Free',sub:'ผู้ใช้ทั่วไป + เทรนเนอร์ลองระบบ',subEn:'General users & trial coaches',clients:3,mo:0,yr:0,
      feats:['ลูกเทรน 3 คน','เครื่องมือโค้ชเต็ม (จำกัดแค่จำนวน)','IU MATE ฟรีไม่อั้น','เครดิต AI 10 ครั้ง (ครั้งเดียว)'],featsEn:['3 clients','Full coach tools (limited by count)','IU MATE free unlimited','AI credits 10 (one-time)']},
     {k:'personal_pro',name:'Personal',sub:'ผู้ใช้ทั่วไป — ฟรี 100%',subEn:'For individuals — 100% free',badge:'ฟรี',badgeEn:'Free',clients:0,mo:0,yr:0,
-     feats:['ใช้ฟรีทุกฟีเจอร์หลัก','IU MATE ฟรีไม่อั้น','เครดิต AI แจกฟรี 10 ครั้งแรก','ซื้อเครดิตเพิ่มได้'],featsEn:['All core features free','IU MATE free unlimited','10 free AI credits to start','Buy more credit packs']},
+     feats:['ใช้ฟรีทุกฟีเจอร์หลัก','IU MATE ฟรีไม่อั้น','เครดิต AI แจกฟรี 90 เครดิต (สแกนได้ 10 ครั้ง)','ซื้อเครดิตเพิ่มได้'],featsEn:['All core features free','IU MATE free unlimited','90 free AI credits (10 scans)','Buy more credit packs']},
+    /* ⭐ 2569-09-11 · **แพลนรายเดือนฝั่งผู้ใช้ทั่วไป — ของที่หายไปจากแคตตาล็อกมาตลอด**
+       เดิมมี subscription เฉพาะฝั่งโค้ช/ยิม ⇒ ผู้ใช้ทั่วไปมีแต่ซื้อเครดิตเป็นก้อน
+       ⇒ รายได้ทำนายไม่ได้ · ARPU ถูกกำหนดโดยความถี่ซื้อที่เราคุมไม่ได้ · และคนที่ตั้งใจ
+         จะจ่ายทุกเดือนไม่มีที่ให้จ่าย
+       🔴 รหัสต้องมี prefix `b2c_` — `pro` ชนกับ "Trainer Pro ฿599" ของฝั่งโค้ช
+         (เคยเป็นบั๊กจริงมาแล้วรอบ `currentPlanKey()`) ⇒ ห้ามใช้คีย์เปล่า
+       ⚠️ `cr` = เครดิตที่แถมมาต่อเดือน · **ไม่ทบเดือน** ⇒ ต้องเขียนบนการ์ดให้ชัด
+          ไม่ใช่ซ่อนในเงื่อนไข (ผู้ใช้ที่เพิ่งรู้ตอนสิ้นเดือน = ผู้ใช้ที่รู้สึกถูกโกง)
+       ⚠️ ตัวเลขต้องตรงกับ `core/pricing.B2C_PLANS` และ `CR_PLAN_CREDITS` ใน worker */
+    {k:'b2c_lite',name:'Lite',sub:'สแกน 1 มื้อ/วัน',subEn:'One meal a day',b2c:1,mo:99,yr:990,cr:350,
+     feats:['เครดิต AI 350/เดือน','สแกนอาหารได้ 38 ครั้ง/เดือน','IU MATE ฟรีไม่อั้น (ฝั่งกติกาในเครื่อง)','ฟีเจอร์หลักครบทุกอย่าง','เครดิตไม่ทบเดือน'],
+     featsEn:['350 AI credits / month','38 food scans a month','IU MATE free unlimited (on-device)','All core features','Credits do not roll over']},
+    {k:'b2c_plus',name:'Plus',sub:'สแกน 2 มื้อ/วัน + จัดแผน',subEn:'Two meals a day + planning',b2c:1,hot:1,badge:'แนะนำ',badgeEn:'Recommended',mo:199,yr:1990,cr:750,
+     feats:['เครดิต AI 750/เดือน','สแกนอาหารได้ 83 ครั้ง/เดือน','จัดโปรแกรม/แผนอาหารได้ 68 ครั้ง','ถาม-ตอบ IU MATE ได้ 250 ครั้ง','ฟีเจอร์หลักครบทุกอย่าง','เครดิตไม่ทบเดือน'],
+     featsEn:['750 AI credits / month','83 food scans a month','68 program or meal plans','250 IU MATE questions','All core features','Credits do not roll over']},
+    {k:'b2c_pro',name:'Pro',sub:'สแกนทุกมื้อ + จัดแผนบ่อย',subEn:'Every meal + frequent planning',b2c:1,mo:349,yr:3490,cr:1500,
+     feats:['เครดิต AI 1,500/เดือน','สแกนอาหารได้ 166 ครั้ง/เดือน','จัดโปรแกรม/แผนอาหารได้ 136 ครั้ง','ถาม-ตอบ IU MATE ได้ 500 ครั้ง','ฟีเจอร์หลักครบทุกอย่าง','เครดิตไม่ทบเดือน'],
+     featsEn:['1,500 AI credits / month','166 food scans a month','136 program or meal plans','500 IU MATE questions','All core features','Credits do not roll over']},
     {k:'starter',name:'Trainer Starter',sub:'เริ่มดูแลลูกเทรน 10 คนแบบเป็นระบบ',subEn:'Coach up to 10 clients',clients:10,mo:399,yr:3990,
-     feats:['ลูกเทรน 10 คน','ส่งแผนอาหาร / แผนฝึก','รับ-ตรวจการบ้าน','แชทกับลูกเทรน','ดู progress รายคน','IU MATE ฟรีไม่อั้น','เครื่องมือโค้ชเต็ม (จำกัดแค่จำนวน)','สแกนอาหาร AI ใช้เครดิต (ฟรี 10 ครั้งตอนสมัคร)'],
-     featsEn:['10 clients','Send meal & workout plans','Receive & review homework','Chat with clients','Per-client progress','IU MATE free unlimited','Full coach tools (limited by count)','AI food scan uses credits (10 free on signup)']},
+     cr:300,
+     feats:['ลูกเทรน 10 คน','เครดิต AI 300/เดือน (30 ต่อที่นั่ง)','ส่งแผนอาหาร / แผนฝึก','รับ-ตรวจการบ้าน','แชทกับลูกเทรน','ดู progress รายคน','IU MATE ฟรีไม่อั้น','เครื่องมือโค้ชเต็ม (จำกัดแค่จำนวน)'],
+     featsEn:['10 clients','300 AI credits / month (30 per seat)','Send meal & workout plans','Receive & review homework','Chat with clients','Per-client progress','IU MATE free unlimited','Full coach tools (limited by count)']},
     {k:'pro',name:'Trainer Pro',sub:'สำหรับเทรนเนอร์ที่ใช้งานจริง',subEn:'For working coaches',hot:1,badge:'แนะนำ',badgeEn:'Recommended',clients:20,mo:599,yr:5990,
-     feats:['ลูกเทรน 20 คน','ทุกอย่างใน Starter','กลุ่ม + ภารกิจ + leaderboard','สรุปลูกเทรนที่น่าห่วง','สรุปการบ้านหลายรายการ','IU MATE ฟรีไม่อั้น','ประวัติ/รายงานเต็ม (ไม่ gate)','Progress report + share card'],
-     featsEn:['20 clients','Everything in Starter','Groups + missions + leaderboard','At-risk client summary','Batch homework summary','IU MATE free unlimited','Full history/reports (no gate)','Progress report + share card']},
+     cr:600,
+     feats:['ลูกเทรน 20 คน','เครดิต AI 600/เดือน (30 ต่อที่นั่ง)','ทุกอย่างใน Starter','กลุ่ม + ภารกิจ + leaderboard','สรุปลูกเทรนที่น่าห่วง','สรุปการบ้านหลายรายการ','IU MATE ฟรีไม่อั้น','ประวัติ/รายงานเต็ม (ไม่ gate)','Progress report + share card'],
+     featsEn:['20 clients','600 AI credits / month (30 per seat)','Everything in Starter','Groups + missions + leaderboard','At-risk client summary','Batch homework summary','IU MATE free unlimited','Full history/reports (no gate)','Progress report + share card']},
     {k:'growth',name:'Trainer Growth',sub:'สำหรับโค้ชออนไลน์ลูกเทรนเยอะ',subEn:'For online coaches with many clients',clients:30,mo:799,yr:7990,
-     feats:['ลูกเทรน 30 คน','ทุกอย่างใน Pro','ผู้ช่วย 1 คน (เร็ว ๆ นี้)','จัดการกลุ่มได้ถึง 10 กลุ่ม','รายงานลูกเทรนละเอียดขึ้น','ระบบต่ออายุ / Payment Tracker','Priority support'],
-     featsEn:['30 clients','Everything in Pro','1 assistant seat (soon)','Up to 10 groups','Detailed client reports','Renewal / Payment Tracker','Priority support']},
+     cr:900,
+     feats:['ลูกเทรน 30 คน','เครดิต AI 900/เดือน (30 ต่อที่นั่ง)','ทุกอย่างใน Pro','ผู้ช่วย 1 คน (เร็ว ๆ นี้)','จัดการกลุ่มได้ถึง 10 กลุ่ม','รายงานลูกเทรนละเอียดขึ้น','ระบบต่ออายุ / Payment Tracker','Priority support'],
+     featsEn:['30 clients','900 AI credits / month (30 per seat)','Everything in Pro','1 assistant seat (soon)','Up to 10 groups','Detailed client reports','Renewal / Payment Tracker','Priority support']},
     {k:'studio',name:'Studio',sub:'ฟิตเนส สตูดิโอ ทีม หรือองค์กร',subEn:'Gyms, studios, teams & orgs',contact:1,clients:'100+',
      feats:['หลายเทรนเนอร์ / หลายกลุ่ม','รองรับลูกเทรนจำนวนมาก','Team dashboard','รายงานภาพรวมทีม','ระบบจัดการสิทธิ์แอดมิน','ปรับแพ็กตามการใช้งานจริง'],
      featsEn:['Multiple coaches / groups','Many clients','Team dashboard','Team-wide reports','Admin role management','Custom to your usage']}
   ];
   var ADDON={clients:5,mo:99};
+
+  /* ══ ตัวช่วยของโฟลว onboarding — **อ่านจาก PLANS ตัวจริงเสมอ ห้ามพิมพ์เกณฑ์เอง** ══
+     🔴 เคยพลาดแบบนี้มาแล้วที่อื่น: หน้าจอเขียนเกณฑ์ "ไม่เกิน 20 คน = Pro" ไว้เอง
+        พอ `clients` ของ Pro เปลี่ยนเป็น 25 หน้าจอยังเด้ง Pro ที่ 20 ⇒ แนะผิดเงียบ ๆ */
+  var CREDIT_EXPIRY_DAYS=365;   /* ต้องเท่า core/credits.EXPIRY_DAYS — ด่าน [ป] บังคับ */
+  function isCoachPlan(p){return !p.b2c&&p.k!=='personal_pro';}
+  function coachPlans(){return PLANS.filter(isCoachPlan);}
+  function b2cPlans(){return PLANS.filter(function(p){return !isCoachPlan(p);});}
+  /** จำนวนที่นั่งของแพ็กเป็นตัวเลข — `clients` เป็น '100+' ได้ ⇒ ดึงเลขออกมา */
+  function seatsOf(p){
+    var c=p&&p.clients;
+    if(typeof c==='number')return c;
+    var m=String(c==null?'':c).match(/\d+/);
+    return m?Number(m[0]):0;
+  }
+  function seatLadder(){return coachPlans().slice().sort(function(a,b){return seatsOf(a)-seatsOf(b);});}
+  function maxSeats(){var L=seatLadder();return L.length?seatsOf(L[L.length-1]):0;}
+  /** แพ็กที่เล็กที่สุดที่รับจำนวนนี้ไหว · เกินทุกใบที่ขายเอง ⇒ ใบที่ต้องติดต่อ */
+  function planBySeats(n){
+    var L=seatLadder(), i;
+    for(i=0;i<L.length;i++){if(!L[i].contact&&Number(n)<=seatsOf(L[i]))return L[i];}
+    return L.length?L[L.length-1]:null;
+  }
   /* ===== แพ็กเครดิต AI — ซื้อครั้งเดียวจบ ไม่มีรอบบิล =====
      ⚠️ ตัวเลขต้องตรงกับ **3 ที่**: `core/pricing/pricing.js` · `worker-omise-billing-ห้ามแชร์.js` (PRICES)
         และ `CR_PACKS` ใน worker `iufit-gym` ซึ่งเป็นคนเติมยอดจริง
@@ -601,11 +842,26 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
 
      🔴 ซื้อได้เฉพาะบัญชีที่ยืนยันอีเมลแล้ว — `iufit-gym` ผูกกระเป๋ากับ uid รูป `email:…`
         บัญชี LINE ล้วนเติมไม่เข้า ⇒ ต้องกันตั้งแต่หน้าเว็บ ไม่ใช่ตัดเงินแล้วค่อยรู้ */
+  /* ⭐ 2569-09-11 · **แพ็กเติมเครดิต (top-up) ชุดใหม่ — เครดิตก้อนเดียว**
+     ══════════════════════════════════════════════════════════════════════════════════
+     ของเดิมเป็นสามถัง (`scan`/`analyze`) ⇒ คนสแกนล้วนถือ analyze ค้างที่ใช้ไม่ได้
+     ⇒ กระเป๋าใน `core/credits` v6 เป็นก้อนเดียวแล้ว ⇒ แพ็กก็ต้องขายเป็นเครดิตตรง ๆ
+     🔴 **ต่อเครดิตของ top-up ต้องแพงกว่าแพลนทุกใบเสมอ** — top-up คือความสะดวก
+        ตอนโควตาหมดกลางเดือน · แพลนคือของที่คุ้มกว่า = สิ่งที่เราต้องการให้เลือก
+        (ด่าน `verify-pricing [ฐ6]` ตรึงไว้ · ถ้ากลับหัวเมื่อไหร่ ไม่มีใครสมัครแพลน)
+     ⚠️ รหัสเปลี่ยนจาก `credit_*` เป็น `cr_*` โดยตั้งใจ — **แพ็กเก่ายังต้องลงยอดได้**
+        สำหรับใบที่จ่ายเงินก่อน deploy แต่ webhook มาถึงหลัง (worker รับทั้งสองชุด)
+     ⚠️ ตัวเลขต้องตรงกับ `core/pricing.PACKS_B` และ `CR_PACKS_CR` ใน worker */
   var CREDIT_PACKS=[
-    {k:'credit_s',name:'S',price:159,scan:100,analyze:100},
-    {k:'credit_m',name:'M',price:289,scan:250,analyze:300},
-    {k:'credit_l',name:'L',price:549,scan:500,analyze:600}
+    {k:'cr_s',name:'S',price:59,cr:150},
+    {k:'cr_m',name:'M',price:139,cr:400,hot:1},
+    {k:'cr_l',name:'L',price:319,cr:1000}
   ];
+  /* น้ำหนักต่อหนึ่งครั้ง — ต้องเท่ากับ `core/credits.ACTION_W` และ `core/pricing.creditWeight()`
+     ใช้เฉพาะ "แปลเครดิตเป็นจำนวนครั้ง" บนจอ ⇒ ผู้ใช้ไม่ต้องหารเอง (เขาจะเดาต่ำกว่าจริงเสมอ) */
+  var CREDIT_W={food_scan:9,menu_analyze:2,mate_chat:3,mate_reasoning:7,mate_program:11};
+  /** เครดิตเท่านี้ ทำงานนี้ได้กี่ครั้ง */
+  function creditTimes(cr,action){var w=CREDIT_W[action];return (w>0)?Math.floor((cr||0)/w):0;}
   function getCredit(k){for(var i=0;i<CREDIT_PACKS.length;i++)if(CREDIT_PACKS[i].k===k)return CREDIT_PACKS[i];return null;}
   function isCredit(k){return !!getCredit(k);}
   function getPlan(k){for(var i=0;i<PLANS.length;i++)if(PLANS[i].k===k)return PLANS[i];return null;}
@@ -941,12 +1197,183 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     var origin=(location.origin&&location.origin!=='null')?location.origin:'https://iufit.com';
     return origin+'/billing.html?'+q.join('&');
   }
+
+  /* ══════════════════════════════════════════════════════════════════════════════════
+     เครื่องจ่ายเงิน — **อิมพลีเมนต์เดียวของระบบ** (ประตูเดียว)
+     ══════════════════════════════════════════════════════════════════════════════════
+     🔴 ก่อนหน้านี้ตรรกะทั้งก้อนนี้อยู่ใน `billing.html` ที่เดียว · พอ `onboarding.html`
+        ต้องจ่ายเงินได้ด้วย ทางที่ง่ายคือก๊อปมาวาง — และนั่นคือจุดที่หน้าหนึ่งได้แพตช์
+        เรื่องเงินแล้วอีกหน้าไม่ได้ (เคสจริงที่กลัว: กันกดซ้ำ · แยก "เงินออกแล้ว" ออกจาก
+        "ยังไม่รู้ผล") ⇒ ย้ายมาไว้ที่นี่ ทั้งสองหน้าต้องเรียกจากที่นี่เท่านั้น
+        ด่าน `[ป]` ใน verify-pricing ห้ามไม่ให้หน้าไหนมี `/charge` เป็นของตัวเอง
+
+     ⚠️ ที่นี่ **ไม่วาดจอ** — คืนแต่ "ต้องทำอะไรต่อ" ให้หน้าเป็นคนวาด
+        เพราะสองหน้าหน้าตาไม่เหมือนกัน แต่การตัดสินใจเรื่องเงินต้องเหมือนกันเป๊ะ */
+
+  var CHARGE_POLL_MS=3000, CHARGE_POLL_MAX=20;   /* 20 × 3 วิ = 60 วิ  (หลัง 3DS) */
+  var PP_POLL_MS=5000,     PP_POLL_MAX=60;       /* 60 × 5 วิ = 5 นาที (สแกนแอปธนาคารช้ากว่า) */
+
+  /** URL ที่ยอมให้พาผู้ใช้ออกไป — https ล้วน ห้ามมีช่องว่าง/เครื่องหมายคำพูด
+      (กัน `javascript:` และ open-redirect ถ้าวันหนึ่งฝั่ง server ส่งค่าเพี้ยนมา) */
+  function safeHttpsUrl(u){
+    if(typeof u!=='string')return '';
+    if(u.indexOf('https://')!==0)return '';
+    if(/[\s<>"']/.test(u))return '';
+    return u;
+  }
+  function loadOmise(cb,onFail){
+    if(window.Omise){cb();return;}
+    var sc=document.createElement('script');
+    sc.src='https://cdn.omise.co/omise.js';
+    sc.onload=cb;
+    sc.onerror=function(){if(onFail)onFail();};
+    document.head.appendChild(sc);
+  }
+
+  /**
+   * แปลคำตอบของ `POST /charge` เป็น "ต้องทำอะไรต่อ" — **ที่เดียวในระบบ**
+   * คืน {kind:'error'|'qr'|'redirect'|'result', ...}
+   * 🔴 ลำดับสำคัญ: เช็ก error ก่อน qr ก่อน authorize_uri — worker ตอบ error พร้อม ref ได้
+   */
+  function classifyCharge(j){
+    var e=(j&&j.error)?String(j.error):'';
+    if(e==='credit_needs_email_uid'||e==='bad_account'||e==='no_account')
+      return {kind:'error',code:'email',t:'cr_bad_uid_t',m:'cr_bad_uid_m'};
+    if(e==='duplicate_pending') return {kind:'error',code:e,t:'pay_dup_t',m:'pay_dup_m'};
+    if(e==='duplicate_recent')  return {kind:'error',code:e,t:'pay_recent_t',m:'pay_recent_m'};
+    if(e==='rate_limited')      return {kind:'error',code:e,t:'pay_rate_t',m:'pay_rate_m'};
+    if(e==='plans_not_open')    return {kind:'error',code:e,t:'ob_closed_t',m:'ob_closed_m'};
+    if(e==='over_limit')        return {kind:'error',code:e,t:'ob_cap_t',m:'ob_cap_m'};
+    if(j&&j.qr)            return {kind:'qr',qr:safeHttpsUrl(j.qr),ref:(j&&j.ref)?String(j.ref):''};
+    if(j&&j.authorize_uri){
+      var au=safeHttpsUrl(j.authorize_uri);
+      /* URL 3DS ที่ไม่ใช่ https = พาไปไม่ได้ · ตกเป็น "ไม่รู้ผล" ไม่ใช่ "จ่ายไม่ผ่าน"
+         เพราะ charge ถูกสร้างไปแล้วจริง — บอกว่า failed จะทำให้ลูกค้ากดจ่ายซ้ำ */
+      if(au)return {kind:'redirect',url:au};
+      return {kind:'result',result:'unknown',ref:(j&&j.ref)?String(j.ref):''};
+    }
+    var st=(j&&j.status)?String(j.status):'';
+    var res=(st==='successful')?'success'
+      :(st==='pending')?'pending'
+      :(e)?'failed'
+      :(st==='failed'||st==='expired'||st==='reversed')?'failed'
+      :'unknown';
+    return {kind:'result',result:res,ref:(j&&j.ref)?String(j.ref):''};
+  }
+
+  /** ยิง POST /charge แล้วส่งผลที่ถอดความแล้วกลับไป
+      🔴 เครือข่ายล้ม ≠ จ่ายไม่ผ่าน — คำขออาจถึง server แล้ว ⇒ 'unknown' เท่านั้น */
+  function postCharge(body,cb){
+    fetch(CHARGE_ENDPOINT+'/charge',{method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify(body)})
+      .then(function(r){return r.json();})
+      .then(function(j){cb(classifyCharge(j),j);})
+      .catch(function(){cb({kind:'result',result:'unknown',ref:''},null);});
+  }
+
+  /** บัตร: สร้าง token ฝั่งเบราว์เซอร์ (เลขบัตรไม่เคยผ่านเซิร์ฟเวอร์เรา) แล้วค่อยยิง /charge */
+  function payCard(card,body,cb,onCardErr){
+    loadOmise(function(){
+      try{Omise.setPublicKey(OMISE_PUBLIC_KEY);}catch(e){}
+      var exp=String(card.exp||'').split('/');
+      Omise.createToken('card',{
+        name:card.name||'',
+        number:String(card.number||'').replace(/\s/g,''),
+        expiration_month:(exp[0]||'').trim(),
+        expiration_year:('20'+(exp[1]||'').trim()).slice(-4),
+        security_code:card.cvv||''
+      },function(status,resp){
+        if(status!==200){if(onCardErr)onCardErr((resp&&resp.message)||'card error');return;}
+        var b={};for(var k in body)if(Object.prototype.hasOwnProperty.call(body,k))b[k]=body[k];
+        b.token=resp.id;
+        postCharge(b,cb);
+      });
+    },function(){if(onCardErr)onCardErr('omise_load_failed');});
+  }
+  /** พร้อมเพย์: worker สร้าง source เอง — **ห้ามส่ง src_… จากเบราว์เซอร์** (ยอดอาจไม่ตรงแพ็ก) */
+  function payPromptPay(body,cb){
+    var b={};for(var k in body)if(Object.prototype.hasOwnProperty.call(body,k))b[k]=body[k];
+    b.source='promptpay';
+    postCharge(b,cb);
+  }
+
+  /**
+   * วนถามผลหลังกลับจาก 3DS
+   * on: {paid, failed, charged, giveUp}
+   * 🔴 `charged` ยิงครั้งเดียวและไม่ถอนคืน — พอรู้ว่าเงินออกจากบัตรแล้ว ห้ามกลับไปพูดว่า
+   *    "ยังไม่รู้ผล" อีก ไม่งั้นลูกค้าที่จ่ายสำเร็จจะอ่านว่าไม่ผ่านแล้วไปกดจ่ายซ้ำ
+   * คืนฟังก์ชันสำหรับหยุด (ต้องหยุดเมื่อผู้ใช้ออกจากจอ ไม่งั้นวนต่อเบื้องหลัง)
+   */
+  function pollCharge(ref,on){
+    var tries=0, live=true, chargedSeen=false, timer=null;
+    on=on||{};
+    function done(){live=false;if(timer){clearTimeout(timer);timer=null;}}
+    (function tick(){
+      if(!live)return;
+      tries++;
+      fetch(CHARGE_ENDPOINT+'/status?ref='+encodeURIComponent(ref))
+        .then(function(r){return r.json();})
+        .then(function(j){
+          if(!live)return;
+          if(j.state==='paid'){done();if(on.paid)on.paid(j);return;}
+          if(j.state==='failed'){done();if(on.failed)on.failed(j);return;}
+          if(j.charged===true&&!chargedSeen){chargedSeen=true;if(on.charged)on.charged(j);}
+          if(tries>=CHARGE_POLL_MAX){done();if(on.giveUp)on.giveUp(chargedSeen);return;}
+          timer=setTimeout(tick,CHARGE_POLL_MS);
+        })
+        .catch(function(){
+          if(!live)return;
+          if(tries<CHARGE_POLL_MAX)timer=setTimeout(tick,CHARGE_POLL_MS);
+          else {done();if(on.giveUp)on.giveUp(chargedSeen);}
+        });
+    })();
+    return done;
+  }
+  /** วนถามผลพร้อมเพย์ — ช้ากว่าและนานกว่า 3DS เพราะผู้ใช้ต้องสลับไปแอปธนาคาร */
+  function pollPromptPay(ref,on){
+    var tries=0, live=true, chargedSeen=false, timer=null;
+    on=on||{};
+    function done(){live=false;if(timer){clearTimeout(timer);timer=null;}}
+    (function tick(){
+      if(!live)return;
+      tries++;
+      fetch(CHARGE_ENDPOINT+'/status?ref='+encodeURIComponent(ref))
+        .then(function(r){return r.json();})
+        .then(function(j){
+          if(!live)return;
+          if(j.state==='paid'){done();if(on.paid)on.paid(j);return;}
+          if(j.state==='failed'){done();if(on.failed)on.failed(j);return;}
+          if(j.charged===true&&!chargedSeen){chargedSeen=true;if(on.charged)on.charged(j);}
+          if(tries>=PP_POLL_MAX){done();if(on.expire)on.expire();return;}
+          timer=setTimeout(tick,PP_POLL_MS);
+        })
+        .catch(function(){
+          if(!live)return;
+          if(tries<PP_POLL_MAX)timer=setTimeout(tick,PP_POLL_MS);
+          else {done();if(on.expire)on.expire();}
+        });
+    })();
+    return done;
+  }
+
+  var CHECKOUT={
+    safeHttpsUrl:safeHttpsUrl, loadOmise:loadOmise, classifyCharge:classifyCharge,
+    postCharge:postCharge, payCard:payCard, payPromptPay:payPromptPay,
+    pollCharge:pollCharge, pollPromptPay:pollPromptPay,
+    CHARGE_POLL_MS:CHARGE_POLL_MS, CHARGE_POLL_MAX:CHARGE_POLL_MAX,
+    PP_POLL_MS:PP_POLL_MS, PP_POLL_MAX:PP_POLL_MAX
+  };
+
   window.IUFIT_BILLING={
     PLATFORM:PLATFORM, IS_STORE:IS_STORE, LANG:LANG, t:t, setLang:setLang,
     OMISE_READY:OMISE_READY, OMISE_PUBLIC_KEY:OMISE_PUBLIC_KEY, CHARGE_ENDPOINT:CHARGE_ENDPOINT, LINE_URL:LINE_URL,
     YEARLY_OPEN:YEARLY_OPEN, PLANS_OPEN:PLANS_OPEN, OMISE_TEST_MODE:OMISE_TEST_MODE,
     PROMPTPAY_OPEN:PROMPTPAY_OPEN, PROMPTPAY_DEFAULT:PROMPTPAY_DEFAULT,
     PLANS:PLANS, ADDON:ADDON, getPlan:getPlan, price:price, fmt:fmt,
+    CREDIT_EXPIRY_DAYS:CREDIT_EXPIRY_DAYS, isCoachPlan:isCoachPlan, coachPlans:coachPlans, b2cPlans:b2cPlans,
+    seatsOf:seatsOf, maxSeats:maxSeats, planBySeats:planBySeats,
+    CREDIT_W:CREDIT_W, creditTimes:creditTimes,
+    MAX_THB_PER_CHARGE:MAX_THB_PER_CHARGE, overCap:overCap, capNote:capNote,
     CREDIT_PACKS:CREDIT_PACKS, getCredit:getCredit, isCredit:isCredit,
     planSub:planSub, planFeats:planFeats, planBadge:planBadge,
     appState:appState, accountKey:accountKey, accountLabel:accountLabel,
@@ -965,6 +1392,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     ppDigits:ppDigits, ppValid:ppValid, promptPayPayload:promptPayPayload,
     merchantPay:merchantPay, merchantPayOpen:merchantPayOpen, loadMerchantPay:loadMerchantPay,
     omisePpOpen:omisePpOpen,
-    CONTACT:CONTACT, contactRowsHtml:contactRowsHtml, footerHtml:footerHtml, docHref:docHref
+    checkout:CHECKOUT,
+    CONTACT:CONTACT, lineOaUrl:lineOaUrl, contactRowsHtml:contactRowsHtml, footerHtml:footerHtml, docHref:docHref
   };
 })();

@@ -45,10 +45,11 @@ code{background:#f1f5f9;padding:1px 6px;border-radius:5px;font-size:12px}
     <div class="muted" style="margin-top:5px">รหัสที่ได้ → ส่งให้โค้ชกรอกในแอป IUFIT</div>
   </div>
   <div class="card"><h2>👥 โค้ชในยิม</h2><div id="trList"><span class="muted">…</span></div></div>
-  <div class="card"><h2>🔑 คีย์ AI ของยิม (ไม่บังคับ)</h2>
-    <input id="gymAiKey" type="password" placeholder="คีย์ Gemini ของยิม"><div style="margin-top:8px"><button class="btn ghost sm" onclick="setGymKey()">บันทึกคีย์</button></div>
-    <div class="muted" style="margin-top:4px">ตั้งแล้วลูกเทรนของยิมสแกนอาหารด้วย AI ได้ (ยิมออกค่า AI)</div>
-  </div>
+  <!-- 🪦 2569-09-11 · การ์ด "คีย์ AI ของยิม" ถูกถอดทั้งใบ
+     `/gym/setkey` ตอบ 410 Gone แล้ว (เส้นคีย์ของยิม/เทรนเนอร์ถูกปิดทั้งระบบ —
+     ใครตั้งคีย์เองได้ = ใครก็ยกระดับสิทธิ์ AI ของตัวเองได้) ⇒ ปุ่มนี้กดแล้วขึ้น error เสมอ
+     ห้ามสร้างกลับ · AI ของยิมใช้คีย์กลางผ่าน entitlement เท่านั้น -->
+
 </div>
 </div>
 <script>
@@ -62,7 +63,6 @@ async function load(){var j=await api('/gym/trainers?gymId='+encodeURIComponent(
 async function addTrainer(){var name=$('#atName').value.trim();var lim=+$('#atLimit').value||window._ceil||10;try{var j=await api('/gym/trainer/add',{method:'POST',body:JSON.stringify({gymId:GID,name:name,clientLimit:lim})});msg('สร้างรหัส '+j.trainerCode+' แล้ว — ส่งให้โค้ช','ok');$('#atName').value='';$('#atLimit').value='';load();}catch(e){msg(e.message,'err');}}
 async function setLimit(code,v){try{await api('/gym/trainer/limit',{method:'POST',body:JSON.stringify({gymId:GID,code:code,clientLimit:+v||1})});msg('ตั้งลิมิต '+code+' = '+v,'ok');}catch(e){msg(e.message,'err');load();}}
 async function delTrainer(code){if(!confirm('ลบรหัส '+code+'? โค้ชจะหลุดสิทธิ์ (ลูกเทรน/ประวัติไม่หาย)'))return;try{await api('/gym/trainer/del',{method:'POST',body:JSON.stringify({gymId:GID,code:code})});msg('ลบ '+code+' แล้ว','ok');load();}catch(e){msg(e.message,'err');}}
-async function setGymKey(){var k=$('#gymAiKey').value.trim();if(!k)return;try{await api('/gym/setkey',{method:'POST',body:JSON.stringify({gymId:GID,aiKey:k})});msg('บันทึกคีย์ AI แล้ว','ok');$('#gymAiKey').value='';}catch(e){msg(e.message,'err');}}
 function esc(s){return (''+(s==null?'':s)).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
 try{var sv=JSON.parse(localStorage.getItem('iufit_gym')||'null');if(sv&&sv.GID)$('#gymId').value=sv.GID;}catch(e){}
 </script></body></html>
