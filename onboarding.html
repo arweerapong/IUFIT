@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>สมัคร IUFIT · IUFIT</title>
+<title>แพ็กเกจ IUFIT · IUFIT</title>
 <meta name="description" content="IUFIT — เลือกแพ็ก เครดิต AI และชำระเงิน จบในหน้าเดียว · Pick a plan, AI credits and pay in one flow">
 <link rel="stylesheet" href="billing.css?v=v110">
 <style>
@@ -15,23 +15,27 @@
   .ob-mode.on{border:0;background:var(--navy);color:#fff}
   .ob-mode b{display:block;font-size:13px;font-weight:800;line-height:1.4}
   .ob-mode span{display:block;font-size:11px;line-height:1.5;opacity:.82}
-  .ob-frame{max-width:420px;margin:0 auto;background:var(--bg);border:1px solid var(--line);
+  .ob-frame{max-width:420px;margin:0 auto;background:#f6f8fc;border:1px solid #dfe9fb;
     border-radius:26px;overflow:hidden;display:flex;flex-direction:column}
+  /* เงาสามชั้นของ prototype ใช้แทนเส้นขอบการ์ด (เขียนตรงใน .ob-box ด้านล่าง)
+     ชั้นแรกเป็น hairline แบบ inset ⇒ ขอบยังอยู่ครบสำหรับคนที่เปิดคอนทราสต์สูง/forced-colors
+     แต่ไม่กินพื้นที่และไม่แย่งสายตาเหมือนเส้น 1px จริง */
   .ob-head{flex:none;background:var(--card);border-bottom:1px solid var(--line)}
   .ob-headrow{display:flex;align-items:center;gap:6px;padding:12px 14px 8px}
   .ob-back{flex:none;width:44px;height:44px;margin-left:-8px;border:0;background:transparent;color:var(--blue);
     font-size:19px;cursor:pointer;font-family:inherit}
   .ob-back[disabled]{opacity:.3;cursor:not-allowed}
-  .ob-h{flex:1;min-width:0;font-size:18px;font-weight:800;color:var(--navy);letter-spacing:-.01em}
+  .ob-h{flex:1;min-width:0;font-size:19px;font-weight:800;color:var(--navy);letter-spacing:-.01em}
   .ob-sn{flex:none;font-size:12px;font-weight:700;color:var(--muted)}
   .ob-bars{display:flex;gap:4px;padding:0 14px 11px}
   .ob-bars i{flex:1;height:4px;border-radius:999px;background:var(--line);display:block}
   .ob-bars i.on{background:var(--blue)}
   .ob-body{padding:14px}
-  .ob-t{font-size:16px;font-weight:800;line-height:1.5;color:var(--navy)}
+  .ob-t{font-size:17px;font-weight:800;line-height:1.5;color:var(--navy)}
   .ob-m{margin-top:4px;font-size:12.5px;line-height:1.7;color:var(--muted)}
-  .ob-box{margin-top:14px;background:var(--card);border:1px solid var(--line-strong);border-radius:18px;padding:15px 16px}
-  .ob-seatn{font-size:38px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1.1}
+  .ob-box{margin-top:14px;background:var(--card);border-radius:18px;padding:15px 16px;
+    box-shadow:inset 0 0 0 1px rgba(12,26,58,.05),0 1px 2px rgba(12,26,58,.05),0 10px 26px -16px rgba(12,26,58,.4)}
+  .ob-seatn{font-size:40px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1.1}
   .ob-seatu{font-size:14px;color:var(--muted);margin-left:6px}
   .ob-range{width:100%;margin-top:8px;accent-color:var(--blue);height:44px}
   .ob-seatends{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-top:-6px}
@@ -41,6 +45,9 @@
   .ob-row{display:flex;align-items:center;gap:11px;width:100%;min-height:62px;padding:11px 14px;margin-bottom:8px;
     border-radius:16px;cursor:pointer;text-align:left;font-family:inherit;background:var(--card);
     border:1.5px solid var(--line-strong)}
+  /* ⚠️ แถวที่กดได้ **ต้องคงเส้นขอบ --line-strong ไว้** ห้ามเปลี่ยนไปใช้เงาแบบการ์ด
+     WCAG 1.4.11 บังคับขอบของตัวควบคุม ≥ 3:1 · เงา rgba(12,26,58,.05) ได้ราว 1.05:1
+     (การ์ดใช้เงาได้เพราะการ์ดไม่ใช่ตัวควบคุม — แถวนี้กดแล้วเลือกแพ็ก จึงคนละเกณฑ์) */
   .ob-row.on{border:1.5px solid var(--blue);box-shadow:0 8px 22px -14px rgba(7,30,74,.5)}
   .ob-dot{flex:none;width:20px;height:20px;border-radius:999px;border:1.5px solid var(--line-strong);background:#fff}
   .ob-row.on .ob-dot{border:6px solid var(--blue)}
@@ -50,7 +57,7 @@
   .ob-rowmoney{flex:none;font-size:16px;font-weight:800;color:var(--navy);white-space:nowrap}
   .ob-price{font-size:22px;font-weight:800;color:var(--navy);letter-spacing:-.02em}
   .ob-price span{font-size:12px;font-weight:700;color:var(--muted)}
-  .ob-crbox{display:flex;align-items:center;gap:8px;margin-top:11px;padding:9px 11px;border-radius:12px;background:var(--bg)}
+  .ob-crbox{display:flex;align-items:center;gap:8px;margin-top:11px;padding:9px 11px;border-radius:12px;background:#ecf1fb}
   .ob-crbox span{flex:1;min-width:0;font-size:12px;line-height:1.55;color:var(--muted)}
   .ob-crbox b{flex:none;font-size:14px;font-weight:800;color:var(--navy)}
   .ob-do{list-style:none;margin:11px 0 0;padding:11px 0 0;border-top:1px solid var(--line);font-size:12.5px}
@@ -59,7 +66,7 @@
   .ob-feats{margin:11px 0 0;padding:11px 0 0;border-top:1px solid var(--line);list-style:none}
   .ob-feats li{display:flex;gap:9px;padding:3px 0;font-size:12.5px;line-height:1.7;color:var(--ink)}
   .ob-feats i{flex:none;color:var(--green);font-style:normal}
-  .ob-note{margin-top:12px;padding:11px 13px;border-radius:14px;background:#eef2f8;font-size:11.5px;line-height:1.7;color:var(--ink)}
+  .ob-note{margin-top:12px;padding:11px 13px;border-radius:14px;background:#ecf1fb;font-size:11.5px;line-height:1.7;color:var(--ink)}
   .ob-warn{margin-top:12px;padding:11px 13px;border-radius:14px;background:#fff7e6;border:1px solid #f3d99a;
     font-size:12px;line-height:1.65;color:var(--amber)}
   .ob-warn b{display:block;color:var(--amber)}
@@ -82,6 +89,13 @@
   .ob-cta[disabled]{opacity:.5;cursor:not-allowed}
   .ob-qr{width:196px;height:196px;margin:12px auto 0;display:block;border:1px solid var(--line-strong);border-radius:14px}
   .ob-mid{text-align:center}
+  /* ชิปรอบบิลแบบ prototype: padding 4px · radius 14px · พื้น #ecf1fb
+     🔴 ระยะล่างเขียนไว้ตรงนี้ ห้ามกลับไปใส่ inline `margin:12px 0 0` — shorthand จะล้างมันทิ้ง */
+  .ob-cyc{margin:12px 0 16px;padding:4px;gap:4px;border-radius:14px;background:#ecf1fb}
+  .ob-cyc button{position:relative;border-radius:11px}
+  .ob-cyctag{margin-left:6px;padding:2px 7px;border-radius:999px;background:var(--green);color:#fff;
+    font-size:10px;font-weight:800;font-style:normal;letter-spacing:0}
+  .ob-cyctag.soon{background:#e6ebf4;color:var(--muted)}
   .ob-link{background:none;border:0;padding:0;font-family:inherit;font-size:12.5px;font-weight:800;
     color:var(--blue);cursor:pointer;text-decoration:underline}
   @media (max-width:460px){ .ob-frame{border-radius:18px} }
@@ -93,7 +107,9 @@
   <a class="logo" href="https://iufit.com">IU<span>FIT</span></a>
   <span id="langtog" style="font-size:12px;font-weight:800;color:var(--muted);cursor:pointer"></span>
 </div>
-<div class="nav"><a class="on" id="n-ob" href="onboarding.html"></a><a id="n-pr" href="pricing.html"></a><a id="n-bl" href="billing.html"></a><a id="n-mp" href="my-plan.html"></a></div>
+<!-- 🪦 2569-09-14 · n-pr (pricing) + n-bl (billing) ถูกถอดจาก nav ตามคำสั่งเจ้าของ
+     ทั้งสองหน้าซ้ำซ้อนกับหน้านี้ — ตอนนี้ redirect เข้ามาที่นี่แทน (ไฟล์ยังอยู่ กันลิงก์เก่าตาย) -->
+<div class="nav"><a class="on" id="n-ob" href="onboarding.html"></a><a id="n-mp" href="my-plan.html"></a></div>
 
 <h1 id="ob-title"></h1>
 <p class="sub" id="ob-sub"></p>
@@ -116,18 +132,17 @@
   <div class="ob-foot" id="stepFoot"></div>
 </div>
 
-<div class="ob-box" style="max-width:420px;margin:16px auto 0">
-  <b style="font-size:14px;color:var(--navy);display:block" id="ln-t"></b>
-  <p class="ob-m" id="ln-m"></p>
-  <a class="btn" id="ln-cta" target="_blank" rel="noopener" style="margin-top:10px"></a>
-  <p class="ob-m" id="ln-skip" style="font-size:11.5px"></p>
-</div>
+<!-- 🪦 2569-09-14 · การ์ด "ผูก LINE OA" ถูกถอดออกจากหน้านี้ตามคำสั่งเจ้าของ
+     เหตุผล: หน้านี้คือหน้า "เลือกแพ็ก + จ่ายเงิน" การ์ดผูกบัญชีท้ายจอไม่ได้อยู่ในโฟลวซื้อ
+     ของเดิมไม่ได้หายไปไหน — ย้ายไปเป็นบรรทัดสิทธิ์ "บันทึกอาหารผ่าน LINE OA" ในทุกแพ็ก
+     (PLANS[].feats ใน billing-common.js) เพื่อตอบคำถามที่คนถามจริง คือ
+     "ถ้าเครดิตหมด แอปยังทำอะไรได้บ้าง" ไม่ใช่ "จะผูก LINE ยังไง" -->
 
 <p class="note" style="max-width:420px;margin:14px auto 0;text-align:center"><a class="blue" href="terms.html">Terms</a> · <a class="blue" href="privacy.html">Privacy</a> · <a class="blue" href="refund.html">Refund</a></p>
 <div id="footSlot"></div>
 </div>
 
-<script src="billing-common.js?v=v128"></script>
+<script src="billing-common.js?v=v129"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════════════════════════════
    โฟลวสมัคร/จ่ายเงิน 4 ก้าว (2569-09-11) — เขียนใหม่ตามดีไซน์ที่เจ้าของส่งมา
@@ -179,7 +194,12 @@ var MODES=[
   {k:'credit',t:'ob_m_credit', s:'ob_m_credit_s'}
 ];
 var STEPS={ new:['size','credit','contact','pay'], renew:['credit','contact','pay'], credit:['credit','contact','pay'] };
-function steps(){return STEPS[S.mode]||STEPS.new;}
+function steps(){
+  /* ต่ออายุที่ยังไม่รู้ว่าแพ็กไหน ต้องมีก้าวเลือกแพ็กก่อน ไม่งั้นก้าวแรกจะเป็นจอเครดิต
+     ของแพ็กที่ยังไม่มีใครเลือก = ยอด ฿0 ปุ่มเทาโดยไม่มีเหตุผลบนจอ */
+  if(S.mode==='renew'&&!S.planKey)return ['size','credit','contact','pay'];
+  return STEPS[S.mode]||STEPS.new;
+}
 function curStep(){var a=steps();return a[Math.min(S.step,a.length-1)];}
 
 /* งานที่เอามาโชว์ในกล่อง "เครดิตนี้ทำอะไรได้" — เรียงตามที่ผู้ใช้สนใจจริง */
@@ -188,7 +208,7 @@ var DOES=[['food_scan','ob_do_scan'],['mate_program','ob_do_plan'],['mate_chat',
 /* ── แพ็กที่กำลังถูกเลือกอยู่ ───────────────────────────────────────────────────── */
 function pickedPlan(){
   if(S.mode==='credit')return null;
-  if(S.aud==='coach'&&S.mode==='new')return B.planBySeats(S.seats);
+  if(S.aud==='coach'&&(S.mode==='new'||S.mode==='renew'))return B.planBySeats(S.seats);
   if(S.planKey)return B.getPlan(S.planKey)||null;
   return null;
 }
@@ -265,9 +285,18 @@ function planCardHtml(p,flag){
   return h+'</div>';
 }
 function cycleTogHtml(){
-  return '<div class="toggle" style="margin:12px 0 0" role="group" aria-label="'+B.esc(B.t('billing_cycle'))+'">'
+  /* 🔴 `margin:12px 0 0` แบบย่อทับ `margin-bottom:18px` ของ .toggle ใน billing.css จนเหลือ 0
+     ⇒ ชิปไปแปะติดการ์ดแพ็กพอดี · ต้องเขียนระยะล่างมาเองเมื่อใช้ shorthand */
+  /* ⚠️ ป้ายบนชิปรายปีต้องพูดตามธงจริง — `YEARLY_OPEN=false` อยู่ ⇒ ห้ามติดป้าย "ประหยัด"
+     ล่อให้กดแล้วไปเจอกล่องแดงว่ายังไม่เปิด (จอที่สัญญาสิ่งที่ทำไม่ได้ = จอโกหก) */
+  /* ⚠️ ชิปใช้ `cyc_yr_plain` ('รายปี') ไม่ใช่ `yearly` — `yearly` มีคำว่า "· ประหยัด 2 เดือน"
+     ติดมาในตัว ใช้ที่นี่จะได้ "รายปี · ประหยัด 2 เดือน [ประหยัด 2 เดือน]" ซ้อนกันเอง
+     (`yearly` ยังใช้ที่อื่นตามเดิม เช่น บรรทัดรายการในบิลและหน้าเครดิตของฉัน — ห้ามไปแก้ตัวมัน) */
+  var tag=B.YEARLY_OPEN?B.t('ob_cyc_save'):B.t('ob_cyc_soon');
+  return '<div class="toggle ob-cyc" role="group" aria-label="'+B.esc(B.t('billing_cycle'))+'">'
     +'<button type="button" data-cyc="mo" class="'+(S.cycle==='mo'?'on':'')+'">'+B.esc(B.t('monthly'))+'</button>'
-    +'<button type="button" data-cyc="yr" class="'+(S.cycle==='yr'?'on':'')+'">'+B.esc(B.t('yearly'))+'</button></div>';
+    +'<button type="button" data-cyc="yr" class="'+(S.cycle==='yr'?'on':'')+'">'+B.esc(B.t('cyc_yr_plain'))
+    +(tag?'<i class="ob-cyctag'+(B.YEARLY_OPEN?'':' soon')+'">'+B.esc(tag)+'</i>':'')+'</button></div>';
 }
 function stepSize(){
   var h=S.notice?('<div class="ob-warn">'+B.esc(S.notice)+'</div>'):'';
@@ -278,10 +307,12 @@ function stepSize(){
     var p=B.planBySeats(S.seats);
     h+='<div class="ob-t">'+B.esc(B.t('ob_size_t'))+'</div><div class="ob-m">'+B.esc(B.t('ob_size_m'))+'</div>';
     h+=cycleTogHtml();
-    h+='<div class="ob-box ob-mid"><div><span class="ob-seatn">'+B.fmt(S.seats)+'</span><span class="ob-seatu">'+B.esc(B.t('ob_size_unit'))+'</span></div>'
+    /* ⚠️ step ต้องเป็น 1 ไม่ใช่ 5 อย่างใน prototype — บันไดแพ็กของเรามีขั้น "3 คน" อยู่
+       step 5 จะทำให้เลือก 3 ไม่ได้เลย และคนที่มีลูกเทรน 3 คนจะถูกดันขึ้นใบ 10 คน */
+    h+='<div class="ob-box ob-mid"><div><span class="ob-seatn" id="seatN">'+B.fmt(S.seats)+'</span><span class="ob-seatu">'+B.esc(B.t('ob_size_unit'))+'</span></div>'
       +'<input class="ob-range" id="seatRange" type="range" min="0" max="'+B.maxSeats()+'" step="1" value="'+S.seats+'" aria-label="'+B.esc(B.t('ob_size_t'))+'">'
       +'<div class="ob-seatends"><span>'+B.esc(B.t('ob_size_solo'))+'</span><span>'+B.fmt(B.maxSeats())+'+</span></div></div>';
-    h+=planCardHtml(p,true);
+    h+='<div id="seatPick">'+planCardHtml(p,true)+'</div>';
   }else{
     /* ไม่มีสถานะ "ยังไม่เลือกอะไรเลย" — ปุ่มถัดไปที่เทาโดยไม่มีเหตุผลบนจอคือทางตัน
        ⇒ ตั้งค่าเริ่มต้นเป็นใบที่เราแนะนำเอง (ผู้ใช้เปลี่ยนได้ทุกเมื่อ) */
@@ -491,10 +522,14 @@ function setMode(k){
     /* ต่ออายุแต่ยังไม่รู้แพ็ก — หน้าเว็บไม่มี session ของแอปเสมอไป ⇒ ถามก่อน ไม่เดา */
     /* 🔴 "ต่ออายุ" ต้องมีแพ็กที่ **จ่ายเงิน** อยู่จริง — `currentPlanKey()` ตอบ 'free' ได้
        ถ้ารับมาดื้อ ๆ จะได้จอต่ออายุของแพ็กฟรี: ยอด ฿0 ปุ่มกดไม่ได้ และไม่มีใครเข้าใจว่าทำไม */
+    /* 🔴 2569-09-14 · ของเดิมตรงนี้สั่ง `S.mode='new'` = สลับโหมดทิ้งทั้งที่ผู้ใช้เพิ่งกด 'ต่ออายุ'
+       ผลบนจอคือ **ชิปที่กดไม่ติดสี** ชิปเดิมยังติดอยู่ — ผู้ใช้อ่านว่า "ปุ่มเสีย" แล้วกดซ้ำ
+       ⇒ อยู่ในโหมด renew ต่อไป แล้วแทรกก้าว "เลือกแพ็กที่จะต่อ" เข้าไปแทน (ดู steps())
+         ไม่รู้ว่าแพ็กไหน = ถาม ไม่ใช่เปลี่ยนโหมดให้เอง */
     var cp=B.currentPlanKey&&B.currentPlanKey();
     var cpp=cp?B.getPlan(cp):null;
     if(cpp&&!cpp.contact&&(B.price(cpp,false)>0||B.price(cpp,true)>0))S.planKey=cp;
-    else {S.mode='new'; S.aud='coach'; S.planKey=''; S.notice=B.t('ob_renew_fallback');}
+    else {S.planKey=''; S.notice=B.t('ob_renew_pick');}
   }
   renderModes(); render();
 }
@@ -521,11 +556,33 @@ function wire(){
   n=body.querySelectorAll('[data-go]');
   for(i=0;i<n.length;i++)n[i].onclick=function(){setMode(this.getAttribute('data-go'));};
   var r=el('seatRange');
-  if(r)r.oninput=function(){S.seats=Number(this.value)||0;render();try{el('seatRange').focus();}catch(e){}};
+  if(r){
+    /* 🔴 ห้ามเรียก render() ใน oninput — render() เขียน stepBody.innerHTML ใหม่ทั้งก้อน
+       ซึ่งทำลายตัว <input type=range> ที่นิ้วกำลังลากอยู่ เบราว์เซอร์จึงหยุดส่ง input event
+       ต่อ ⇒ แถบกระตุกเป็นช่วง ๆ และต้องปล่อยแล้วลากใหม่ (ของเดิมถึงต้อง .focus() ตามหลัง
+       ซึ่งแก้อาการไม่ได้ เพราะ element คนละตัวกับที่นิ้วจับอยู่แล้ว)
+       ⇒ ระหว่างลาก แตะเฉพาะ 3 จุดที่เปลี่ยนจริง: ตัวเลข · การ์ดแพ็ก · แถบล่าง
+         แล้วค่อย render() เต็มตอนปล่อยนิ้ว (change) */
+    var raf=0;
+    r.oninput=function(){
+      S.seats=Number(this.value)||0;
+      if(raf)return;                         /* รวมหลาย event ใน 1 เฟรม */
+      raf=requestAnimationFrame(function(){
+        raf=0;
+        var sn=el('seatN'); if(sn)sn.textContent=B.fmt(S.seats);
+        var pk=el('seatPick'); if(pk)pk.innerHTML=planCardHtml(B.planBySeats(S.seats),true);
+        el('stepFoot').innerHTML=footHtml(); wireFoot();
+      });
+    };
+    r.onchange=function(){S.seats=Number(this.value)||0;render();};
+  }
   var mi=el('obMail');
   if(mi)mi.onblur=function(){S.email=this.value||'';};
   var ac=el('obAgree');
   if(ac)ac.onchange=function(){S.agree=!!this.checked;el('stepFoot').innerHTML=footHtml();wire();};
+  wireFoot();
+}
+function wireFoot(){
   var nb=el('btnNext'); if(nb&&nb.tagName==='BUTTON')nb.onclick=onNext;
 }
 el('btnBack').onclick=function(){go(S.step-1);};
@@ -629,11 +686,9 @@ function showResult(kind){
 }
 
 /* ── บูต ───────────────────────────────────────────────────────────────────────── */
-T('ob-title','ob_title');T('ob-sub','ob_sub');
-T('n-ob','ob_title');T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
-T('ln-t','ob_line_t');T('ln-m','ob_line_m');T('ln-cta','ob_line_cta');T('ln-skip','ob_line_skip');
+T('ob-title','nav_packs');T('ob-sub','ob_sub');
+T('n-ob','nav_packs');T('n-mp','nav_myplan');
 /* href ของปุ่มเพิ่มเพื่อนมาจาก B.lineOaUrl() เท่านั้น — ห้ามพิมพ์ URL LINE ลงไฟล์นี้ */
-el('ln-cta').href=B.lineOaUrl();
 el('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
 el('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
 el('footSlot').innerHTML=B.footerHtml();
@@ -648,13 +703,24 @@ if(B.IS_STORE){el('storeNote').classList.remove('hide');T('sn-t','store_guard_t'
      🔴 ห้ามเอาค่าดิบไปใช้: `?plan=` เคยเป็นช่อง XSS สะท้อนใน billing.html มาแล้ว
         ⇒ ที่นี่ไม่ได้เอาไปวาด แต่เอาไปเปิดตาราง ⇒ ถ้าไม่เจอก็ทิ้งไปเงียบ ๆ ไม่ตกเป็นใบอื่น
         (ตกเป็นใบอื่น = พาคนไปสมัครแพ็กที่เขาไม่ได้กด ซึ่งแย่กว่าไม่พาไปไหนเลย) */
+  /* `?plan=` เดิมถูกใช้สองความหมาย: รหัสแพ็กสมาชิก (จากหน้าราคา) และรหัสแพ็กเครดิต
+     (จาก open.html → billing.html ซึ่งตอนนี้ยุบมาที่นี่แล้ว) ⇒ ต้องรับทั้งสอง
+     ไม่งั้นคนที่กด "ซื้อเครดิต 400" จากลิงก์เก่าจะมาโผล่แพ็กเริ่มต้น = ได้ของไม่ตรงที่กด */
+  var wantPack=B.getCredit(B.qs('plan')||'');
   var want=B.getPlan(B.qs('plan')||'');
   if(want&&!want.contact){
     S.mode='new';
     if(B.isCoachPlan(want)){S.aud='coach';S.seats=B.seatsOf(want);}
     else {S.aud='me';S.planKey=want.k;}
   }
+  /* `?mode=` — ทางเข้าจาก billing.html (ที่ยุบมาแล้ว) และจากริชเมนู LINE
+     รับเฉพาะโหมดที่มีจริงในตาราง MODES · `?plan=` ชนะ เพราะเจาะจงกว่า */
+  var wm=B.qs('mode')||'';
+  var okMode=false;
+  for(var mi=0;mi<MODES.length;mi++)if(MODES[mi].k===wm)okMode=true;
   renderModes();
+  if(wantPack){S.mode='credit';S.pack=wantPack.k;renderModes();}
+  else if(okMode&&wm!=='new'&&!want)setMode(wm);
   B.initCreditIdentity(function(){render();});
   render();
   B.loadMerchantPay(function(){if(!S.paying&&!S.qr)render();});

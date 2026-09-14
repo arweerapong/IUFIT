@@ -250,7 +250,7 @@
     return '<div class="ftcontact"><b>'+t('contact_title')+'</b>'+
       '<div>'+CONTACT.name+'</div>'+
       '<div>'+t('c_email')+': <a class="blue" href="mailto:'+CONTACT.email+'">'+CONTACT.email+'</a> · LINE: <a class="blue" href="'+LINE_URL+'" target="_blank" rel="noopener">'+CONTACT.line+'</a></div>'+
-      '<div style="margin-top:6px"><a class="blue" href="pricing.html?lang='+LANG+'">'+t('nav_pricing')+'</a> · <a class="blue" href="refund.html?lang='+LANG+'">'+t('nav_refund')+'</a> · <a class="blue" href="'+docHref('terms')+'">'+(DOC_EN?'Terms':'ข้อกำหนด')+'</a> · <a class="blue" href="'+docHref('privacy')+'">'+(DOC_EN?'Privacy':'ความเป็นส่วนตัว')+'</a> · <a class="blue" href="contact.html?lang='+LANG+'">'+t('nav_contact')+'</a></div>'+
+      '<div style="margin-top:6px"><a class="blue" href="onboarding.html?lang='+LANG+'">'+t('nav_packs')+'</a> · <a class="blue" href="refund.html?lang='+LANG+'">'+t('nav_refund')+'</a> · <a class="blue" href="'+docHref('terms')+'">'+(DOC_EN?'Terms':'ข้อกำหนด')+'</a> · <a class="blue" href="'+docHref('privacy')+'">'+(DOC_EN?'Privacy':'ความเป็นส่วนตัว')+'</a> · <a class="blue" href="contact.html?lang='+LANG+'">'+t('nav_contact')+'</a></div>'+
       '</div><div class="ftcopy">© 2026 IUFIT · <a class="blue" href="https://iufit.com">iufit.com</a></div>';
   }
 
@@ -268,7 +268,10 @@
   function setLang(l){try{localStorage.setItem('iufit_biller_lang',l);}catch(e){}location.reload();}
   var T={
     th:{
-      nav_pricing:'เครดิต',nav_billing:'ซื้อเครดิต',nav_myplan:'ยอดของฉัน',
+      nav_pricing:'เครดิต',nav_billing:'ซื้อเครดิต',
+      /* 🪦 2569-09-14 · nav เหลือสองหัวข้อตามคำสั่งเจ้าของ: แพ็กเกจ IUFIT · เครดิตของฉัน
+         nav_pricing/nav_billing ยังไม่ลบ — ยังถูกอ้างในหน้าที่ redirect และในฟุตเตอร์เก่า */
+      nav_packs:'แพ็กเกจ IUFIT',nav_myplan:'เครดิตของฉัน',
       pricing_title:'แพ็กเทรนเนอร์',pricing_sub:'ดูแลลูกเทรนเป็นระบบ — ส่งแผน รับการบ้าน ติดตามผล และให้ IU MATE ช่วยลดงานทุกวัน',
       personal_title:'สำหรับผู้ใช้ทั่วไป',personal_sub:'ไม่ใช่เทรนเนอร์? Personal ใช้ฟรี 100% · AI เป็นเครดิต (แจกฟรี 10 ครั้งแรก · ซื้อแพ็กเสริมได้)',
       /* ⭐ 2569-07-30 · ยกเลิก "ทดลองฟรี 30 วัน" แล้ว (ตรงกับ src/views/PricingView.vue: ยืนยันอีเมล → รับ Coach Pro)
@@ -367,6 +370,9 @@
       ob_cap_m:'ช่องทางชำระเงินจำกัด ฿{max} ต่อรายการ · ทักไลน์เพื่อให้เราช่วยจัดให้',
       ob_acct_plan:'แพ็กปัจจุบัน', ob_acct_credit:'เครดิตคงเหลือ',
       ob_contact_t:'ยิม / สตูดิโอ', ob_contact_m:'จำนวนที่นั่งและราคาจัดให้ตามจริง — ติดต่อ IUFIT',
+      cyc_yr_plain:'รายปี',ob_cyc_save:'ประหยัด 2 เดือน',ob_cyc_soon:'เร็ว ๆ นี้',
+      ob_renew_pick:'เลือกแพ็กที่จะต่ออายุ — หน้าเว็บไม่ได้เห็นแพ็กปัจจุบันของคุณเสมอไป',
+      /* 🪦 ob_line_* ไม่ได้ใช้ใน onboarding แล้ว (การ์ดผูก LINE ถูกถอด) แต่ยังคงไว้เพราะหน้าอื่นเรียก */
       ob_line_t:'ผูก LINE OA',
       ob_line_m:'ผูกแล้วพิมพ์มื้ออาหารหรือส่งรูปเข้า LINE ได้เลย ข้อมูลเข้าแอปให้อัตโนมัติ',
       ob_line_cta:'เปิด LINE OA',
@@ -504,6 +510,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
          🔴 ถ้อยคำต้องตรงกับสิ่งที่โค้ดทำจริงเป๊ะ ๆ — worker `/autopay` แตะแค่ฟิลด์ `autopay`
             **ไม่แตะ `exp` เลย** ⇒ ที่เขียนว่า "ใช้งานได้ถึงวันที่ …" เป็นความจริง ไม่ใช่คำปลอบ
             ถ้าวันไหนมีใครแก้ให้ตัดสิทธิ์ทันที ต้องมาแก้ข้อความชุดนี้ด้วย */
+      mp_plan_h:'แพ็กที่ใช้อยู่',mp_until:'ใช้ได้ถึง',mp_topup:'เติมเครดิต',
+      mp_no_plan:'ตอนนี้ยังไม่มีแพ็กแบบเสียเงิน — ใช้ฟีเจอร์หลักได้ฟรีตามปกติ และซื้อเครดิต AI เพิ่มได้',
       ap_title:'การต่ออายุอัตโนมัติ',
       ap_loading:'กำลังตรวจสอบสถานะการต่ออายุ…',
       ap_working:'กำลังดำเนินการ…',
@@ -548,7 +556,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       testmode_m:'หน้านี้กำลังใช้คีย์ทดสอบของ Omise · รับได้เฉพาะบัตรทดสอบเท่านั้น บัตรจริงจะถูกปฏิเสธ · ถ้าคุณเห็นข้อความนี้บนเว็บจริง กรุณาแจ้งเราทาง LINE'
     },
     en:{
-      nav_pricing:'Credits',nav_billing:'Buy credits',nav_myplan:'My balance',
+      nav_pricing:'Credits',nav_billing:'Buy credits',
+      nav_packs:'IUFIT plans',nav_myplan:'My credits',
       pricing_title:'Trainer plans',pricing_sub:'Coach clients systematically — send plans, collect homework, track results, and let IU MATE cut your daily work.',
       personal_title:'For individuals',personal_sub:'Not a coach? Personal is 100% free · AI runs on credits (10 free to start · add-on packs available).',
       /* ⭐ 2569-07-30 · 30-day free trial was cancelled — keep the keys (pricing.html calls them), change the copy */
@@ -625,6 +634,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       ob_cap_m:'Our payment provider caps each transaction at ฿{max} · message us on LINE and we will arrange it',
       ob_acct_plan:'Current plan', ob_acct_credit:'Credits left',
       ob_contact_t:'Gym / studio', ob_contact_m:'Seats and pricing are arranged to fit — contact IUFIT',
+      cyc_yr_plain:'Yearly',ob_cyc_save:'Save 2 months',ob_cyc_soon:'Soon',
+      ob_renew_pick:'Pick the plan you want to renew — this page cannot always see your current plan',
       ob_line_t:'Link LINE OA',
       ob_line_m:'Once linked you can log meals or send photos straight from LINE — everything lands in the app',
       ob_line_cta:'Open LINE OA',
@@ -734,6 +745,8 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       pay_charged_m:'Your payment went through. We are activating your access right now — **do not pay again.** Please stay on this page for a moment.',
       pay_slow_paid:'Your card has been charged successfully. We are still activating your access and it will complete automatically. **Please do not pay again** — check My plan, or message us on LINE with the time you paid.',
       /* ===== cancel / resume auto-renewal (my-plan.html) ============================= */
+      mp_plan_h:'Your plan',mp_until:'Active until',mp_topup:'Top up credits',
+      mp_no_plan:'No paid plan right now — core features stay free, and you can buy AI credits any time',
       ap_title:'Auto-renewal',
       ap_loading:'Checking your auto-renewal status…',
       ap_working:'Working…',
@@ -774,9 +787,9 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
 
   var PLANS=[
     {k:'free',name:'Free',sub:'ผู้ใช้ทั่วไป + เทรนเนอร์ลองระบบ',subEn:'General users & trial coaches',clients:3,mo:0,yr:0,
-     feats:['ลูกเทรน 3 คน','เครื่องมือโค้ชเต็ม (จำกัดแค่จำนวน)','IU MATE ฟรีไม่อั้น','เครดิต AI 10 ครั้ง (ครั้งเดียว)'],featsEn:['3 clients','Full coach tools (limited by count)','IU MATE free unlimited','AI credits 10 (one-time)']},
+     feats:['ลูกเทรน 3 คน','เครื่องมือโค้ชเต็ม (จำกัดแค่จำนวน)','IU MATE ฟรีไม่อั้น','เครดิต AI 10 ครั้ง (ครั้งเดียว)','บันทึกอาหารผ่าน LINE OA'],featsEn:['3 clients','Full coach tools (limited by count)','IU MATE free unlimited','AI credits 10 (one-time)','Log meals via LINE OA']},
     {k:'personal_pro',name:'Personal',sub:'ผู้ใช้ทั่วไป — ฟรี 100%',subEn:'For individuals — 100% free',badge:'ฟรี',badgeEn:'Free',clients:0,mo:0,yr:0,
-     feats:['ใช้ฟรีทุกฟีเจอร์หลัก','IU MATE ฟรีไม่อั้น','เครดิต AI แจกฟรี 90 เครดิต (สแกนได้ 10 ครั้ง)','ซื้อเครดิตเพิ่มได้'],featsEn:['All core features free','IU MATE free unlimited','90 free AI credits (10 scans)','Buy more credit packs']},
+     feats:['ใช้ฟรีทุกฟีเจอร์หลัก','IU MATE ฟรีไม่อั้น','เครดิต AI แจกฟรี 90 เครดิต (สแกนได้ 10 ครั้ง)','ซื้อเครดิตเพิ่มได้','บันทึกอาหารผ่าน LINE OA'],featsEn:['All core features free','IU MATE free unlimited','90 free AI credits (10 scans)','Buy more credit packs','Log meals via LINE OA']},
     /* ⭐ 2569-09-11 · **แพลนรายเดือนฝั่งผู้ใช้ทั่วไป — ของที่หายไปจากแคตตาล็อกมาตลอด**
        เดิมมี subscription เฉพาะฝั่งโค้ช/ยิม ⇒ ผู้ใช้ทั่วไปมีแต่ซื้อเครดิตเป็นก้อน
        ⇒ รายได้ทำนายไม่ได้ · ARPU ถูกกำหนดโดยความถี่ซื้อที่เราคุมไม่ได้ · และคนที่ตั้งใจ
@@ -787,29 +800,29 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
           ไม่ใช่ซ่อนในเงื่อนไข (ผู้ใช้ที่เพิ่งรู้ตอนสิ้นเดือน = ผู้ใช้ที่รู้สึกถูกโกง)
        ⚠️ ตัวเลขต้องตรงกับ `core/pricing.B2C_PLANS` และ `CR_PLAN_CREDITS` ใน worker */
     {k:'b2c_lite',name:'Lite',sub:'สแกน 1 มื้อ/วัน',subEn:'One meal a day',b2c:1,mo:99,yr:990,cr:350,
-     feats:['เครดิต AI 350/เดือน','สแกนอาหารได้ 38 ครั้ง/เดือน','IU MATE ฟรีไม่อั้น (ฝั่งกติกาในเครื่อง)','ฟีเจอร์หลักครบทุกอย่าง','เครดิตไม่ทบเดือน'],
-     featsEn:['350 AI credits / month','38 food scans a month','IU MATE free unlimited (on-device)','All core features','Credits do not roll over']},
+     feats:['เครดิต AI 350/เดือน','สแกนอาหารได้ 38 ครั้ง/เดือน','IU MATE ฟรีไม่อั้น (ฝั่งกติกาในเครื่อง)','ฟีเจอร์หลักครบทุกอย่าง','เครดิตไม่ทบเดือน','บันทึกอาหารผ่าน LINE OA'],
+     featsEn:['350 AI credits / month','38 food scans a month','IU MATE free unlimited (on-device)','All core features','Credits do not roll over','Log meals via LINE OA']},
     {k:'b2c_plus',name:'Plus',sub:'สแกน 2 มื้อ/วัน + จัดแผน',subEn:'Two meals a day + planning',b2c:1,hot:1,badge:'แนะนำ',badgeEn:'Recommended',mo:199,yr:1990,cr:750,
-     feats:['เครดิต AI 750/เดือน','สแกนอาหารได้ 83 ครั้ง/เดือน','จัดโปรแกรม/แผนอาหารได้ 68 ครั้ง','ถาม-ตอบ IU MATE ได้ 250 ครั้ง','ฟีเจอร์หลักครบทุกอย่าง','เครดิตไม่ทบเดือน'],
-     featsEn:['750 AI credits / month','83 food scans a month','68 program or meal plans','250 IU MATE questions','All core features','Credits do not roll over']},
+     feats:['เครดิต AI 750/เดือน','สแกนอาหารได้ 83 ครั้ง/เดือน','จัดโปรแกรม/แผนอาหารได้ 68 ครั้ง','ถาม-ตอบ IU MATE ได้ 250 ครั้ง','ฟีเจอร์หลักครบทุกอย่าง','เครดิตไม่ทบเดือน','บันทึกอาหารผ่าน LINE OA'],
+     featsEn:['750 AI credits / month','83 food scans a month','68 program or meal plans','250 IU MATE questions','All core features','Credits do not roll over','Log meals via LINE OA']},
     {k:'b2c_pro',name:'Pro',sub:'สแกนทุกมื้อ + จัดแผนบ่อย',subEn:'Every meal + frequent planning',b2c:1,mo:349,yr:3490,cr:1500,
-     feats:['เครดิต AI 1,500/เดือน','สแกนอาหารได้ 166 ครั้ง/เดือน','จัดโปรแกรม/แผนอาหารได้ 136 ครั้ง','ถาม-ตอบ IU MATE ได้ 500 ครั้ง','ฟีเจอร์หลักครบทุกอย่าง','เครดิตไม่ทบเดือน'],
-     featsEn:['1,500 AI credits / month','166 food scans a month','136 program or meal plans','500 IU MATE questions','All core features','Credits do not roll over']},
+     feats:['เครดิต AI 1,500/เดือน','สแกนอาหารได้ 166 ครั้ง/เดือน','จัดโปรแกรม/แผนอาหารได้ 136 ครั้ง','ถาม-ตอบ IU MATE ได้ 500 ครั้ง','ฟีเจอร์หลักครบทุกอย่าง','เครดิตไม่ทบเดือน','บันทึกอาหารผ่าน LINE OA'],
+     featsEn:['1,500 AI credits / month','166 food scans a month','136 program or meal plans','500 IU MATE questions','All core features','Credits do not roll over','Log meals via LINE OA']},
     {k:'starter',name:'Trainer Starter',sub:'เริ่มดูแลลูกเทรน 10 คนแบบเป็นระบบ',subEn:'Coach up to 10 clients',clients:10,mo:399,yr:3990,
      cr:300,
-     feats:['ลูกเทรน 10 คน','เครดิต AI 300/เดือน (30 ต่อที่นั่ง)','ส่งแผนอาหาร / แผนฝึก','รับ-ตรวจการบ้าน','แชทกับลูกเทรน','ดู progress รายคน','IU MATE ฟรีไม่อั้น','เครื่องมือโค้ชเต็ม (จำกัดแค่จำนวน)'],
-     featsEn:['10 clients','300 AI credits / month (30 per seat)','Send meal & workout plans','Receive & review homework','Chat with clients','Per-client progress','IU MATE free unlimited','Full coach tools (limited by count)']},
+     feats:['ลูกเทรน 10 คน','เครดิต AI 300/เดือน (30 ต่อที่นั่ง)','ส่งแผนอาหาร / แผนฝึก','รับ-ตรวจการบ้าน','แชทกับลูกเทรน','ดู progress รายคน','IU MATE ฟรีไม่อั้น','เครื่องมือโค้ชเต็ม (จำกัดแค่จำนวน)','บันทึกอาหารผ่าน LINE OA'],
+     featsEn:['10 clients','300 AI credits / month (30 per seat)','Send meal & workout plans','Receive & review homework','Chat with clients','Per-client progress','IU MATE free unlimited','Full coach tools (limited by count)','Log meals via LINE OA']},
     {k:'pro',name:'Trainer Pro',sub:'สำหรับเทรนเนอร์ที่ใช้งานจริง',subEn:'For working coaches',hot:1,badge:'แนะนำ',badgeEn:'Recommended',clients:20,mo:599,yr:5990,
      cr:600,
-     feats:['ลูกเทรน 20 คน','เครดิต AI 600/เดือน (30 ต่อที่นั่ง)','ทุกอย่างใน Starter','กลุ่ม + ภารกิจ + leaderboard','สรุปลูกเทรนที่น่าห่วง','สรุปการบ้านหลายรายการ','IU MATE ฟรีไม่อั้น','ประวัติ/รายงานเต็ม (ไม่ gate)','Progress report + share card'],
-     featsEn:['20 clients','600 AI credits / month (30 per seat)','Everything in Starter','Groups + missions + leaderboard','At-risk client summary','Batch homework summary','IU MATE free unlimited','Full history/reports (no gate)','Progress report + share card']},
+     feats:['ลูกเทรน 20 คน','เครดิต AI 600/เดือน (30 ต่อที่นั่ง)','ทุกอย่างใน Starter','กลุ่ม + ภารกิจ + leaderboard','สรุปลูกเทรนที่น่าห่วง','สรุปการบ้านหลายรายการ','IU MATE ฟรีไม่อั้น','ประวัติ/รายงานเต็ม (ไม่ gate)','Progress report + share card','บันทึกอาหารผ่าน LINE OA'],
+     featsEn:['20 clients','600 AI credits / month (30 per seat)','Everything in Starter','Groups + missions + leaderboard','At-risk client summary','Batch homework summary','IU MATE free unlimited','Full history/reports (no gate)','Progress report + share card','Log meals via LINE OA']},
     {k:'growth',name:'Trainer Growth',sub:'สำหรับโค้ชออนไลน์ลูกเทรนเยอะ',subEn:'For online coaches with many clients',clients:30,mo:799,yr:7990,
      cr:900,
-     feats:['ลูกเทรน 30 คน','เครดิต AI 900/เดือน (30 ต่อที่นั่ง)','ทุกอย่างใน Pro','ผู้ช่วย 1 คน (เร็ว ๆ นี้)','จัดการกลุ่มได้ถึง 10 กลุ่ม','รายงานลูกเทรนละเอียดขึ้น','ระบบต่ออายุ / Payment Tracker','Priority support'],
-     featsEn:['30 clients','900 AI credits / month (30 per seat)','Everything in Pro','1 assistant seat (soon)','Up to 10 groups','Detailed client reports','Renewal / Payment Tracker','Priority support']},
+     feats:['ลูกเทรน 30 คน','เครดิต AI 900/เดือน (30 ต่อที่นั่ง)','ทุกอย่างใน Pro','ผู้ช่วย 1 คน (เร็ว ๆ นี้)','จัดการกลุ่มได้ถึง 10 กลุ่ม','รายงานลูกเทรนละเอียดขึ้น','ระบบต่ออายุ / Payment Tracker','Priority support','บันทึกอาหารผ่าน LINE OA'],
+     featsEn:['30 clients','900 AI credits / month (30 per seat)','Everything in Pro','1 assistant seat (soon)','Up to 10 groups','Detailed client reports','Renewal / Payment Tracker','Priority support','Log meals via LINE OA']},
     {k:'studio',name:'Studio',sub:'ฟิตเนส สตูดิโอ ทีม หรือองค์กร',subEn:'Gyms, studios, teams & orgs',contact:1,clients:'100+',
-     feats:['หลายเทรนเนอร์ / หลายกลุ่ม','รองรับลูกเทรนจำนวนมาก','Team dashboard','รายงานภาพรวมทีม','ระบบจัดการสิทธิ์แอดมิน','ปรับแพ็กตามการใช้งานจริง'],
-     featsEn:['Multiple coaches / groups','Many clients','Team dashboard','Team-wide reports','Admin role management','Custom to your usage']}
+     feats:['หลายเทรนเนอร์ / หลายกลุ่ม','รองรับลูกเทรนจำนวนมาก','Team dashboard','รายงานภาพรวมทีม','ระบบจัดการสิทธิ์แอดมิน','ปรับแพ็กตามการใช้งานจริง','บันทึกอาหารผ่าน LINE OA'],
+     featsEn:['Multiple coaches / groups','Many clients','Team dashboard','Team-wide reports','Admin role management','Custom to your usage','Log meals via LINE OA']}
   ];
   var ADDON={clients:5,mo:99};
 
@@ -1054,6 +1067,92 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       else cb('');
     }).catch(function(){cb('');});
   }
+
+  /* ══════════════════════════════════════════════════════════════════════════════════
+     ⭐ 2569-09-14 · ต่อสายปุ่ม "ยกเลิกการต่ออายุอัตโนมัติ" เข้ากับ worker
+     ══════════════════════════════════════════════════════════════════════════════════
+     ของสองฝั่งมีมาตั้งแต่ 2569-07-31 แล้วแต่ไม่เคยต่อถึงกัน:
+       · worker `iufit-omise` มี `POST /autopay` และ `GET /status?account=` ครบ
+       · ชุดข้อความ `ap_*` ในไฟล์นี้ก็เขียนไว้ครบ
+       · แต่ **ไม่มีโค้ดฝั่งเว็บที่ยิงไปหามันเลย** ⇒ `refund.html` (refund_p4) และ
+         `terms.html` ข้อ 4 สัญญาว่า "ยกเลิกได้ทุกเมื่อ" โดยไม่มีปุ่มไหนทำได้จริง
+     ⇒ สองฟังก์ชันนี้คือส่วนที่ขาด
+
+     🔴 `account` ที่ส่งไปต้องเท่ากับ **localId ของ Firebase เป๊ะ ๆ** (worker เทียบตรงตัว
+        `v.uid !== acct` ⇒ 403 not_your_account) · ห้ามใช้ `accountKey()` ซึ่งคืน
+        `line:` / `email:<sha256>` คนละรูปกันคนละเรื่อง
+     ⇒ อ่านจาก claim ของโทเคน **ใบที่เราจะส่งไปเอง** — ตรงตามนิยาม ไม่ต้องเดา */
+  function uidFromToken(tok){
+    try{
+      var p=String(tok||'').split('.')[1]||'';
+      p=p.replace(/-/g,'+').replace(/_/g,'/');
+      while(p.length%4)p+='=';
+      /* 🔴 สองบรรทัดข้างบนคือของจริงที่พลาดได้ — JWT ใช้ base64**url** (`-` `_` และไม่มี `=`)
+         ส่ง p ดิบเข้า atob() ⇒ InvalidCharacterError ⇒ คืน '' ⇒ ยิงไปแล้วได้ 400 no_account
+         ทุกครั้ง โดยที่หน้าเว็บจะโทษว่า "ระบบล่ม" ทั้งที่เป็นเราถอดรหัสผิดเอง
+         ── ส่วนการถอด UTF-8 ด้านล่าง: ทดสอบแล้วว่า JSON.parse(atob(p)) **ไม่พัง** กับ claim
+         ภาษาไทย (ไบต์ UTF-8 ทุกตัวอยู่ในช่วงที่ JSON ยอมให้อยู่ในสตริง) และเราอ่านแค่
+         user_id/sub ซึ่งเป็น ASCII ⇒ เขียนแบบนี้เพื่อให้ค่าที่ถอดออกมาถูกต้องทั้งก้อน
+         ไม่ใช่เพื่อกันแครช · อย่าเข้าใจผิดว่าบรรทัดนี้กันบั๊กที่มีอยู่จริง */
+      var bin=atob(p),hex='';
+      for(var i=0;i<bin.length;i++)hex+='%'+('00'+bin.charCodeAt(i).toString(16)).slice(-2);
+      var j=JSON.parse(decodeURIComponent(hex));
+      return String(j.user_id||j.sub||'');
+    }catch(e){return '';}
+  }
+  function _subCall(build,cb){
+    authToken(function(tok){
+      if(!tok){cb({error:'no_auth'});return;}
+      /* 🔴 ส่ง `email:<sha256>` แบบเดียวกับที่ `/charge` ส่งตอนจ่ายเงิน
+         เพราะนั่นคือโหนดที่สิทธิ์ถูกเก็บจริง · ส่ง localId ของ Firebase ไปจะได้
+         `entitlement:null` แบบแยกไม่ออกว่า "ไม่มีแพ็ก" หรือ "worker ยังไม่ได้แก้"
+         ⇒ ส่งแบบนี้ worker รุ่นเก่าตอบ 403 ชัดเจน · รุ่นใหม่ตอบข้อมูลจริง
+         (localId เก็บไว้เป็นทางสำรองกรณี resolve กระเป๋าไม่ได้) */
+      resolveCreditWalletUid(function(wuid){
+        var acct=(wuid&&isCanonEmailUid(wuid))?wuid:uidFromToken(tok);
+        if(!acct){cb({error:'bad_token'});return;}
+        _subSend(build(acct,tok),cb);
+      });
+    });
+  }
+  function _subSend(r,cb){
+    (function(){
+      fetch(r.url,r.opt).then(function(res){
+        return res.json().catch(function(){return {};}).then(function(j){return {s:res.status,j:j||{}};});
+      }).then(function(x){
+        if(x.j.error){cb({error:String(x.j.error),status:x.s});return;}
+        cb({ok:true,status:x.s,changed:x.j.changed===true,ent:x.j.entitlement||null});
+      }).catch(function(){cb({error:'network'});});
+    })();
+  }
+  /** อ่านแพ็ก/วันหมดอายุ/สถานะต่ออายุของ **ตัวเอง** */
+  function subStatus(cb){
+    _subCall(function(acct,tok){
+      return {url:CHARGE_ENDPOINT+'/status?account='+encodeURIComponent(acct),
+              opt:{headers:{'Authorization':'Bearer '+tok}}};
+    },cb);
+  }
+  /** เปิด/ปิดการต่ออายุอัตโนมัติ · worker แตะแค่ฟิลด์ autopay ไม่แตะวันหมดอายุ */
+  function setAutopay(on,cb){
+    _subCall(function(acct,tok){
+      return {url:CHARGE_ENDPOINT+'/autopay',
+              opt:{method:'POST',
+                   headers:{'Content-Type':'application/json','Authorization':'Bearer '+tok},
+                   body:JSON.stringify({account:acct,autopay:!!on})}};
+    },cb);
+  }
+  /** แปลงรหัสผิดพลาดของ worker เป็นคู่ข้อความที่พูดกับผู้ใช้ได้
+      🔴 "อ่านไม่ได้" ต้องไม่ถูกพูดเป็น "คุณไม่มีแพ็ก" — คนที่จ่ายเงินมาแล้วจะไปกดจ่ายซ้ำ */
+  function autopayErr(code){
+    var c=String(code||'');
+    if(c==='no_auth'||c==='bad_token'||c==='expired'||c==='wrong_project')return {t:t('ap_login_t'),m:t('ap_login_m')};
+    if(c==='not_your_account')return {t:t('ap_mismatch_t'),m:t('ap_mismatch_m')};
+    if(c==='entitlement_unavailable'||c==='verify_unavailable'||c==='network'||c==='not_configured')
+      return {t:t('ap_read_t'),m:t('ap_read_m')};
+    if(c==='no_entitlement')return null;   /* ไม่มีแพ็กจริง ๆ — ไม่ใช่ error ที่ต้องเตือน */
+    return {t:t('ap_fail_t'),m:t('ap_fail_m')};
+  }
+
   /* จัดการแพ็กเองบนเว็บได้ไหม — ต้องเป็นบัญชีอีเมลที่มี Firebase session อยู่จริง
      บัญชี LINE ล้วนไม่มี session แบบนี้ ⇒ ต้องไปทางแอดมิน (ทักไลน์) และหน้าเว็บต้องบอกตรง ๆ */
   function canSelfServe(){
@@ -1385,6 +1484,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     initCreditIdentity:initCreditIdentity, resolveCreditWalletUid:resolveCreditWalletUid,
     fetchWallet:fetchWallet, creditShow:creditShow,
     authToken:authToken, canSelfServe:canSelfServe,
+    subStatus:subStatus, setAutopay:setAutopay, autopayErr:autopayErr, uidFromToken:uidFromToken,
     currentPlanKey:currentPlanKey, planExpiry:planExpiry,
     trialDaysLeft:trialDaysLeft, trialActive:trialActive, trialExpired:trialExpired,
     paidActive:paidActive, daysUntil:daysUntil, reminderTier:reminderTier, today:today, qs:qs,

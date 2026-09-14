@@ -3,9 +3,21 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My AI credits · IUFIT</title>
-<meta name="description" content="Your IUFIT AI credit balance linked to LINE OA / e-mail">
+<title>เครดิตของฉัน · IUFIT</title>
+<meta name="description" content="เครดิต AI คงเหลือ แพ็กที่ใช้อยู่ และการต่ออายุอัตโนมัติของบัญชี IUFIT">
 <link rel="stylesheet" href="billing.css?v=v110">
+<style>
+  .mp-row{display:flex;align-items:baseline;gap:10px;padding:7px 0}
+  .mp-row span{flex:1;min-width:0;font-size:12.5px;color:var(--muted)}
+  .mp-row b{flex:none;font-size:14px;font-weight:800;color:var(--navy);text-align:right}
+  .mp-big{font-size:34px;font-weight:800;color:var(--navy);letter-spacing:-.03em;line-height:1.15}
+  .mp-big i{font-size:13px;font-weight:700;color:var(--muted);font-style:normal;margin-left:6px}
+  .mp-sep{margin:11px 0 0;padding-top:11px;border-top:1px solid var(--line)}
+  .mp-card{background:var(--card);border-radius:18px;padding:16px;margin-top:14px;
+    box-shadow:inset 0 0 0 1px rgba(12,26,58,.05),0 1px 2px rgba(12,26,58,.05),0 10px 26px -16px rgba(12,26,58,.4)}
+  .mp-h{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.02em}
+  .mp-note{margin-top:10px;padding:10px 12px;border-radius:12px;background:#ecf1fb;font-size:11.5px;line-height:1.7;color:var(--ink)}
+</style>
 </head>
 <body>
 <div class="wrap">
@@ -13,59 +25,163 @@
   <a class="logo" href="https://iufit.com">IU<span>FIT</span></a>
   <span id="langtog" style="font-size:12px;font-weight:800;color:var(--muted);cursor:pointer"></span>
 </div>
-<div class="nav"><a id="n-ob" href="onboarding.html"></a><a id="n-pr" href="pricing.html"></a><a id="n-bl" href="billing.html"></a><a class="on" id="n-mp" href="my-plan.html"></a></div>
+<!-- 🪦 2569-09-14 · nav เหลือสองหัวข้อ · pricing/billing ยุบเข้า onboarding แล้ว -->
+<div class="nav"><a id="n-ob" href="onboarding.html"></a><a class="on" id="n-mp" href="my-plan.html"></a></div>
 
 <h1 id="h-title"></h1>
 <p class="sub" id="acctLine"></p>
-<div class="card" id="statusCard"></div>
-<div id="actions" style="margin-top:14px"></div>
+
+<div class="mp-card" id="crCard"></div>
+<div class="mp-card" id="planCard"></div>
+<div class="mp-card" id="apCard"></div>
+
+<div id="actions" style="margin-top:16px"></div>
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v128"></script>
+<script src="billing-common.js?v=v129"></script>
 <script>
+/* ══════════════════════════════════════════════════════════════════════════════════
+   หน้า "เครดิตของฉัน" — สามคำถามที่คนเปิดหน้านี้มาถาม และต้องตอบได้ครบทั้งสาม
+     1. เครดิตเหลือเท่าไร
+     2. ตอนนี้อยู่แพ็กอะไร ถึงเมื่อไร
+     3. จะเลิกจ่ายยังไง
+   🔴 ข้อ 3 เคยเป็นคำสัญญาลอย — `refund.html` เขียนว่า "ยกเลิกได้ทุกเมื่อ" มาตั้งแต่
+      2569-07-31 แต่ไม่เคยมีปุ่มไหนทำได้จริง · ตอนนี้ต่อสายเข้า `/autopay` แล้ว
+   ⚠️ "ยกเลิก" ที่นี่ = **หยุดตัดบัตรรอบหน้า** ไม่ใช่ตัดสิทธิ์ทันที — worker ไม่แตะ `exp`
+      ถ้อยคำบนจอต้องพูดแบบนั้นเป๊ะ ๆ ไม่งั้นคนจะกลัวว่ากดแล้วของที่จ่ายไปแล้วหาย
+   ══════════════════════════════════════════════════════════════════════════════════ */
 var B=window.IUFIT_BILLING;
-function T(id,k){var el=document.getElementById(id);if(el)el.innerHTML=B.t(k);}
-document.getElementById('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
-document.getElementById('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
-T('n-ob','ob_title');T('n-pr','nav_pricing');T('n-bl','nav_billing');T('n-mp','nav_myplan');
-T('h-title','wal_title');
+function el(id){return document.getElementById(id);}
+function T(id,k){var e=el(id);if(e)e.innerHTML=B.t(k);}
+el('langtog').textContent=(B.LANG==='en'?'ไทย':'EN');
+el('langtog').onclick=function(){B.setLang(B.LANG==='en'?'th':'en');};
+T('n-ob','nav_packs');T('n-mp','nav_myplan');
+T('h-title','nav_myplan');
+
+/* ── 1 · เครดิตคงเหลือ ────────────────────────────────────────────────────────── */
+function renderCredits(){
+  var c=el('crCard');
+  if(!B.walletUid()){
+    c.innerHTML='<div class="mp-h">'+B.esc(B.t('wal_title'))+'</div>'
+      +'<div class="bn warn" style="margin:10px 0 0"><b>'+B.t('cr_need_email_t')+'</b>'
+      +'<span style="display:block;margin-top:6px;font-weight:500">'+B.t('wal_oa_hint')+'</span></div>';
+    return;
+  }
+  c.innerHTML='<div class="mp-h">'+B.esc(B.t('wal_title'))+'</div>'
+    +'<div class="psub" style="margin:8px 0 0">'+B.esc(B.t('wal_loading'))+'</div>';
+  B.fetchWallet(function(w){
+    var h='<div class="mp-h">'+B.esc(B.t('wal_title'))+'</div>';
+    if(w&&w.ok){
+      h+='<div class="mp-big" style="margin-top:6px">'+B.esc(B.creditShow(w.scan,w.unlimited))+'<i>'+B.esc(B.t('cr_scan'))+'</i></div>'
+        +'<div class="mp-big" style="font-size:22px;margin-top:2px">'+B.esc(B.creditShow(w.analyze,w.unlimited))+'<i>'+B.esc(B.t('cr_analyze'))+'</i></div>';
+    }else if(w&&w.locked){
+      h+='<div class="bn warn" style="margin:10px 0 0"><b>'+B.t('wal_locked')+'</b></div>';
+    }else{
+      /* 🔴 อ่านไม่ได้ ≠ เครดิตเป็นศูนย์ — โชว์ 0 คือโกหกคนที่เพิ่งซื้อเครดิตมา */
+      h+='<div class="bn info" style="margin:10px 0 0"><b>'+B.t('wal_unavailable')+'</b></div>';
+    }
+    el('crCard').innerHTML=h;
+  });
+}
+
+/* ── 2 + 3 · แพ็กปัจจุบัน และการต่ออายุ ───────────────────────────────────────── */
+function planName(k){var p=k?B.getPlan(k):null;return p?p.name:(k||'');}
+function renderPlanFromEnt(ent){
+  var pc=el('planCard');
+  var nm=planName(ent.plan);
+  var h='<div class="mp-h">'+B.esc(B.t('mp_plan_h'))+'</div>'
+    +'<div class="mp-big" style="font-size:22px;margin-top:6px">'+B.esc(nm)+'</div>';
+  h+='<div class="mp-sep">';
+  if(ent.cycle)h+='<div class="mp-row"><span>'+B.esc(B.t('billing_cycle'))+'</span><b>'+B.esc(B.t(ent.cycle==='yr'?'yearly':'monthly'))+'</b></div>';
+  if(ent.exp)h+='<div class="mp-row"><span>'+B.esc(B.t('mp_until'))+'</span><b>'+B.esc(ent.exp)+'</b></div>';
+  h+='</div>';
+  pc.innerHTML=h;
+}
+function renderPlanUnknown(msg){
+  el('planCard').innerHTML='<div class="mp-h">'+B.esc(B.t('mp_plan_h'))+'</div>'
+    +'<div class="mp-note" style="margin-top:8px">'+B.esc(msg)+'</div>';
+}
+function renderAutopay(ent){
+  var ac=el('apCard');
+  var date=B.esc(ent.exp||'-');
+  var on=ent.autopay===true;
+  var h='<div class="mp-h">'+B.esc(B.t('ap_title'))+'</div>';
+  if(on)      h+='<p style="margin:8px 0 0;font-size:12.5px;line-height:1.7;color:var(--ink)">'+B.t('ap_on').replace('{date}',date)+'</p>';
+  else if(ent.hasCard) h+='<p style="margin:8px 0 0;font-size:12.5px;line-height:1.7;color:var(--ink)">'+B.t('ap_off').replace('{date}',date)+'</p>';
+  else        h+='<p style="margin:8px 0 0;font-size:12.5px;line-height:1.7;color:var(--ink)">'+B.t('ap_off_nocard').replace('{date}',date)+'</p>';
+  /* ปุ่ม "เปิดกลับ" ขึ้นเฉพาะตอนที่ worker จะรับจริง (ต้องมีบัตรผูกอยู่)
+     ไม่งั้นกดแล้วได้ no_saved_card = ปุ่มที่มีไว้ให้กดพลาดอย่างเดียว */
+  if(on)                        h+='<button type="button" class="btn ghost" id="apBtn" style="margin-top:12px">'+B.esc(B.t('ap_cancel'))+'</button>';
+  else if(ent.hasCard)          h+='<button type="button" class="btn ghost" id="apBtn" style="margin-top:12px">'+B.esc(B.t('ap_resume'))+'</button>';
+  h+='<div id="apMsg"></div>';
+  ac.innerHTML=h;
+  var btn=el('apBtn'); if(!btn)return;
+  btn.onclick=function(){
+    var want=!on;
+    var q=(want?B.t('ap_confirm_on'):B.t('ap_confirm')).replace('{plan}',planName(ent.plan)).replace(/\{date\}/g,ent.exp||'-');
+    if(!window.confirm(q))return;
+    btn.disabled=true; btn.textContent=B.t('ap_working');
+    B.setAutopay(want,function(r){
+      if(r&&r.ok){
+        el('apMsg').innerHTML='<div class="bn ok" style="margin:12px 0 0"><b>'+B.t(want?'ap_res_t':'ap_done_t')+'</b>'
+          +'<span style="display:block;margin-top:6px;font-weight:500">'+B.t(want?'ap_res_m':'ap_done_m').replace('{date}',B.esc((r.ent&&r.ent.exp)||ent.exp||'-'))+'</span></div>';
+        if(r.ent)setTimeout(function(){renderAutopay(r.ent);},1200);
+        return;
+      }
+      var e=B.autopayErr(r&&r.error)||{t:B.t('ap_fail_t'),m:B.t('ap_fail_m')};
+      el('apMsg').innerHTML='<div class="bn warn" style="margin:12px 0 0"><b>'+B.esc(e.t)+'</b>'
+        +'<span style="display:block;margin-top:6px;font-weight:500">'+B.esc(e.m)+'</span></div>';
+      btn.disabled=false; btn.textContent=B.t(want?'ap_resume':'ap_cancel');
+    });
+  };
+}
+function renderAutopayViaLine(){
+  /* บัญชี LINE ล้วน / ไม่มี session — ยกเลิกเองบนเว็บไม่ได้จริง ⇒ บอกทางที่ทำได้จริง
+     ไม่ใช่โชว์ปุ่มที่กดแล้วได้ 401 (ปุ่มแบบนั้นคือจอโกหก) */
+  var msg=(B.LANG==='en')?'Please cancel auto-renew for my plan':'ขอยกเลิกการต่ออายุอัตโนมัติ';
+  el('apCard').innerHTML='<div class="mp-h">'+B.esc(B.t('ap_title'))+'</div>'
+    +'<p style="margin:8px 0 0;font-size:13px;font-weight:800;color:var(--navy)">'+B.esc(B.t('ap_line_t'))+'</p>'
+    +'<p style="margin:4px 0 0;font-size:12.5px;line-height:1.7;color:var(--muted)">'+B.esc(B.t('ap_line_m'))+'</p>'
+    +'<a class="btn line" style="margin-top:12px" target="_blank" rel="noopener" href="'+B.esc(B.lineOaCreditMsgUrl(msg))+'">'+B.esc(B.t('ap_line_t'))+'</a>';
+}
+
+function renderSub(){
+  if(!B.canSelfServe()){
+    renderPlanUnknown(B.t('ap_login_m'));
+    renderAutopayViaLine();
+    return;
+  }
+  el('planCard').innerHTML='<div class="mp-h">'+B.esc(B.t('mp_plan_h'))+'</div><div class="psub" style="margin:8px 0 0">'+B.esc(B.t('ap_loading'))+'</div>';
+  el('apCard').innerHTML='';
+  B.subStatus(function(r){
+    if(r&&r.ok&&r.ent&&r.ent.plan){renderPlanFromEnt(r.ent);renderAutopay(r.ent);return;}
+    /* `ok` + ไม่มี entitlement = **ยังไม่เคยซื้อแพ็กจริง ๆ** (ไม่ใช่ error)
+       เชื่อคำตอบนี้ได้เพราะเราส่ง `email:<sha256>` ซึ่งเป็นโหนดเดียวกับที่ตอนจ่ายเขียน
+       🔴 ห้ามกลับไปส่ง localId ของ Firebase — worker จะตอบ entitlement:null เหมือนกัน
+          แต่แปลว่า "หาไม่เจอเพราะคนละโหนด" ⇒ แยกจาก "ไม่มีแพ็ก" ไม่ออก
+          แล้วเราจะบอกคนที่จ่ายเงินมาแล้วว่าเขาไม่ได้จ่าย พร้อมซ่อนปุ่มยกเลิกไปด้วย */
+    if(r&&r.ok){renderPlanUnknown(B.t('mp_no_plan'));el('apCard').innerHTML='';return;}
+    /* ทุก error ที่เหลือ = **ยังดูไม่ได้** ไม่ใช่ "ไม่มีแพ็ก" ⇒ ต้องเปิดทางยกเลิกไว้เสมอ
+       รวมถึงกรณี worker ยังเป็นรุ่นเก่า (ตอบ not_your_account เพราะยังรับ uid แบบเดียว) */
+    var e=B.autopayErr(r&&r.error)||{m:B.t('ap_read_m')};
+    renderPlanUnknown(e.m);
+    renderAutopayViaLine();
+  });
+}
 
 function render(){
   var lbl=B.accountLabel();
-  document.getElementById('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl):(B.walletUid()?'':B.t('wal_no_acct'));
-  var card=document.getElementById('statusCard');
-  var uid=B.walletUid();
-  if(!uid){
-    card.innerHTML='<div class="bn warn" style="margin:0"><b>'+B.t('cr_need_email_t')+'</b><span style="display:block;margin-top:6px;font-weight:500">'+B.t('wal_oa_hint')+'</span></div>';
-    document.getElementById('actions').innerHTML=
-      '<a class="btn pri" href="'+B.esc(B.lineOaCreditMsgUrl(B.LANG==='en'?'my credits':'ยอดของฉัน'))+'">'+B.t('wal_title')+'</a>'+
-      '<a class="btn ghost" style="margin-top:8px" href="billing.html?lang='+B.LANG+'">'+B.t('nav_billing')+'</a>';
-    return;
-  }
-  loadWallet(card);
-  document.getElementById('actions').innerHTML=
-    '<a class="btn pri" href="billing.html?lang='+B.LANG+'">'+B.t('nav_billing')+'</a>'+
-    '<a class="btn ghost" style="margin-top:8px" href="pricing.html?lang='+B.LANG+'">'+B.t('nav_pricing')+'</a>';
-}
-function loadWallet(card){
-  card.innerHTML='<div class="psub" style="margin:0">'+B.t('wal_loading')+'</div>';
-  B.fetchWallet(function(w){
-    var h='';
-    if(w&&w.ok){
-      h+='<div class="psub" style="margin:0">'+B.t('wal_title')+'</div>';
-      h+='<div class="pname" style="font-size:22px;margin-top:6px">'+B.esc(B.creditShow(w.scan,w.unlimited))+' <span style="font-size:13px;font-weight:700;color:var(--muted)">'+B.t('cr_scan')+'</span></div>';
-      h+='<div class="pname" style="font-size:22px;margin-top:4px">'+B.esc(B.creditShow(w.analyze,w.unlimited))+' <span style="font-size:13px;font-weight:700;color:var(--muted)">'+B.t('cr_analyze')+'</span></div>';
-    }else if(w&&w.locked){
-      h+='<div class="bn warn" style="margin:0"><b>'+B.t('wal_locked')+'</b></div>';
-    }else{
-      h+='<div class="bn info" style="margin:0"><b>'+B.t('wal_unavailable')+'</b></div>';
-    }
-    card.innerHTML=h;
-  });
+  el('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl):(B.walletUid()?'':B.t('wal_no_acct'));
+  renderCredits();
+  renderSub();
+  /* ประตูเดียว: ทั้งเติมเครดิตและดูแพ็ก ไปที่ onboarding.html ที่เดียว */
+  el('actions').innerHTML=
+    '<a class="btn pri" href="onboarding.html?lang='+B.LANG+'&mode=credit">'+B.esc(B.t('mp_topup'))+'</a>'+
+    '<a class="btn ghost" style="margin-top:8px" href="onboarding.html?lang='+B.LANG+'">'+B.esc(B.t('nav_packs'))+'</a>';
 }
 B.initCreditIdentity(function(){ render(); });
-document.getElementById('foot').innerHTML=B.footerHtml();
+el('foot').innerHTML=B.footerHtml();
 </script>
 </body>
 </html>
