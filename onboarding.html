@@ -67,7 +67,10 @@
   .ob-feats li{display:flex;gap:9px;padding:3px 0;font-size:12.5px;line-height:1.7;color:var(--ink)}
   .ob-feats i{flex:none;color:var(--green);font-style:normal}
   .ob-note{margin-top:12px;padding:11px 13px;border-radius:14px;background:#ecf1fb;font-size:11.5px;line-height:1.7;color:var(--ink)}
-  .ob-warn{margin-top:12px;padding:11px 13px;border-radius:14px;background:#fff7e6;border:1px solid #f3d99a;
+  /* 🔴 ต้องมี margin-bottom ด้วย — กล่องนี้ถูกวางไว้เหนือชิปเลือกกลุ่มผู้ใช้ใน stepSize
+     ซึ่ง .toggle มีแต่ margin-bottom ไม่มี margin-top ⇒ ไม่มีใครกันระยะตรงรอยต่อเลย
+     ผลคือกล่องเตือนไปแปะติดปุ่มพอดี อ่านแล้วเหมือนเป็นก้อนเดียวกัน */
+  .ob-warn{margin:12px 0 14px;padding:11px 13px;border-radius:14px;background:#fff7e6;border:1px solid #f3d99a;
     font-size:12px;line-height:1.65;color:var(--amber)}
   .ob-warn b{display:block;color:var(--amber)}
   .ob-field{margin-top:11px}
@@ -142,7 +145,7 @@
 <div id="footSlot"></div>
 </div>
 
-<script src="billing-common.js?v=v129"></script>
+<script src="billing-common.js?v=v130"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════════════════════════════
    โฟลวสมัคร/จ่ายเงิน 4 ก้าว (2569-09-11) — เขียนใหม่ตามดีไซน์ที่เจ้าของส่งมา
@@ -232,7 +235,17 @@ function orderItem(){
   return {kind:'plan',key:p.k,cycle:S.cycle==='yr'?'yr':'mo',
           label:p.name+' · '+B.t(S.cycle==='yr'?'ob_cyc_yr':'ob_cyc_mo'),thb:v};
 }
-function orderTotal(){var o=orderItem();return o?o.thb:0;}
+/** ของพ่วง — มีได้เฉพาะตอนสมัคร/ต่ออายุ (โหมดซื้อเครดิตล้วน แพ็กเครดิตเป็นรายการหลักอยู่แล้ว) */
+function addonItem(){
+  if(S.mode==='credit')return null;
+  var c=pickedPack(); if(!c)return null;
+  var p=pickedPlan(); if(!p||p.contact||!(B.price(p,S.cycle==='yr')>0))return null;
+  return {kind:'credit',key:c.k,cycle:'once',
+          label:B.t('ob_cr_n').replace('{n}',B.fmt(c.cr))+' · '+B.t('ob_cr_once_line'),thb:c.price};
+}
+/* 🔴 ยอดรวมต้องเท่าผลบวกของบรรทัดที่โชว์เสมอ (ด่าน [ป] ตรวจ) ⇒ คิดจากรายการชุดเดียวกัน */
+function orderLines(){var a=[];var m=orderItem();if(m)a.push(m);var x=addonItem();if(x)a.push(x);return a;}
+function orderTotal(){var t=0,a=orderLines();for(var i=0;i<a.length;i++)t+=a[i].thb;return t;}
 
 /* ── สามชั้นที่บล็อกการจ่าย — คืน "เหตุผล" ไม่ใช่แค่ true/false ───────────────────
    จอที่ปิดปุ่มโดยไม่บอกเหตุผล = จอที่ผู้ใช้คิดว่าเว็บพัง แล้วกดซ้ำ */
@@ -243,7 +256,12 @@ function blockReason(){
   /* 🔴 รายปีมีด่านของตัวเอง — ห้ามพึ่งเพดานอย่างเดียว · `b2c_lite` รายปี ฿990 **ต่ำกว่า**
      เพดาน ฿1,000 ⇒ ถ้าเช็กแต่เพดาน ใบนั้นใบเดียวจะหลุดออกขายตอนที่รอบปีทั้งระบบยังไม่เปิด */
   if(o&&o.kind==='plan'&&S.cycle==='yr'&&!B.YEARLY_OPEN)return {t:B.t('ob_yr_t'),m:B.t('ob_yr_m')};
-  if(o&&B.overCap(o.thb))return {t:B.t('ob_cap_t'),m:B.t('ob_cap_m').replace('{max}',B.fmt(B.MAX_THB_PER_CHARGE))};
+  /* 🔴 2569-09-14 · เพดานต้องคิดจาก **ยอดรวมทั้งใบ** ไม่ใช่ราคารายการเดียว
+     ตั้งแต่มีของพ่วง หนึ่งใบมีได้สองบรรทัด · Trainer Growth ฿799 + เครดิต L ฿319 = ฿1,118
+     ซึ่งเกินเพดาน ฿1,000 ทั้งที่แต่ละบรรทัดไม่เกินสักอัน
+     ⇒ เช็คทีละบรรทัดแบบเดิม = ปุ่มกดได้ ไม่มีคำเตือน แล้ว worker ตอบ over_limit ทีหลัง
+       ผู้ใช้เห็นแค่ "ชำระเงินไม่สำเร็จ" ซึ่งชี้ไปที่บัตรเขา ไม่ใช่ที่เรา (เจอจากการเดินจอจริง) */
+  if(orderTotal()>0&&B.overCap(orderTotal()))return {t:B.t('ob_cap_t'),m:B.t('ob_cap_m').replace('{max}',B.fmt(B.MAX_THB_PER_CHARGE))};
   return null;
 }
 function blockHtml(){
@@ -356,11 +374,28 @@ function stepCredit(){
     var sel=pickedPack();
     if(sel)h+='<div class="ob-box">'+crBoxHtml(sel.cr,false)+'</div>';
   }else{
-    /* โหมดสมัคร/ต่ออายุ — ก้าวนี้ **บอกว่าได้อะไร** ไม่ใช่ก้าวซื้อ (กติกาข้อที่สอง) */
+    /* ⭐ 2569-09-14 · โหมดสมัคร/ต่ออายุ — เลือกซื้อเครดิตพ่วงได้ในก้าวนี้เลย
+       🪦 เดิมก้าวนี้ "บอกว่าได้อะไร" อย่างเดียว (กติกาข้อที่สองเดิม) แล้วมีแค่ลิงก์
+          ชวนไปโหมดซื้อเครดิต ซึ่ง **ทิ้งแพ็กที่เลือกไว้ทั้งหมด** ⇒ คนที่อยากได้เพิ่ม
+          ต้องจ่ายแพ็กให้จบก่อน แล้วเริ่มโฟลวใหม่ = ผ่าน 3DS สองรอบ
+       ⚠️ ของพ่วงเป็น "ของแถมให้เลือก" ไม่ใช่ของบังคับ ⇒ ไม่เลือกก็เดินต่อได้
+          (ปุ่มล่างขึ้นว่า "ข้ามไปก่อน" เองเมื่อยังไม่เลือก — ไม่ต้องมีแถวปฏิเสธซ้ำอีกแถว) */
     var p=pickedPlan();
     if(p&&(p.cr||0)>0)h+='<div class="ob-box">'+crBoxHtml(p.cr,true)+'</div>';
     h+='<div class="ob-note">'+B.esc(B.t('ob_norollover'))+'</div>';
-    h+='<div class="ob-note">'+B.esc(B.t('ob_cr_more'))+' — <button type="button" class="ob-link" data-go="credit">'+B.esc(B.t('ob_m_credit'))+'</button></div>';
+    var payable=p&&!p.contact&&B.price(p,S.cycle==='yr')>0;
+    if(!payable)return h+'<div class="ob-note">'+B.esc(B.t('ob_cr_rule').replace('{d}',B.fmt(B.CREDIT_EXPIRY_DAYS)))+'</div>'+blockHtml();
+    var packs2=B.CREDIT_PACKS;
+    h+='<div class="ob-m" style="margin-top:16px">'+B.esc(B.t('ob_addon_m'))+'</div>';
+    h+='<div role="radiogroup" aria-label="'+B.esc(B.t('ob_addon_t'))+'" style="margin-top:10px">';
+    for(var j=0;j<packs2.length;j++){
+      var c2=packs2[j], on2=(S.pack===c2.k);
+      h+='<button type="button" role="radio" aria-checked="'+(on2?'true':'false')+'" class="ob-row'+(on2?' on':'')+'" data-pack="'+B.esc(c2.k)+'">'
+        +'<span class="ob-dot"></span><span class="ob-rowmain"><b>'+B.esc(B.t('ob_cr_n').replace('{n}',B.fmt(c2.cr)))+'</b>'
+        +'<span>'+B.esc(B.t('ob_do_scan'))+' '+B.fmt(B.creditTimes(c2.cr,'food_scan'))+' '+B.esc(B.t('ob_times'))+'</span></span>'
+        +'<span class="ob-rowmoney">'+money(c2.price)+'</span></button>';
+    }
+    h+='</div>';
   }
   h+='<div class="ob-note">'+B.esc(B.t('ob_cr_rule').replace('{d}',B.fmt(B.CREDIT_EXPIRY_DAYS)))+'</div>';
   h+=blockHtml();
@@ -458,7 +493,8 @@ function footHtml(){
       +B.esc(ex.href)+'"'+(ex.blank?' target="_blank" rel="noopener"':'')+'>'+B.esc(ex.lbl)+'</a>';
   }
   var h='';
-  if(o)h+='<div class="ob-line"><span>'+B.esc(o.label)+'</span><b>'+money(o.thb)+'</b></div>';
+  var lines=orderLines();
+  for(var li=0;li<lines.length;li++)h+='<div class="ob-line"><span>'+B.esc(lines[li].label)+'</span><b>'+money(lines[li].thb)+'</b></div>';
   h+='<div class="ob-total"><span>'+B.esc(B.t('ob_total'))+'</span><b>'+money(total)+'</b></div>';
   /* แถบล่างพูดยอดรอบหน้าเสมอ — ไม่ใช่พูดแต่ยอดวันนี้ */
   var nx;
@@ -550,7 +586,13 @@ function wire(){
   n=body.querySelectorAll('[data-plan]');
   for(i=0;i<n.length;i++)n[i].onclick=function(){S.planKey=this.getAttribute('data-plan');render();};
   n=body.querySelectorAll('[data-pack]');
-  for(i=0;i<n.length;i++)n[i].onclick=function(){S.pack=this.getAttribute('data-pack');render();};
+  for(i=0;i<n.length;i++)n[i].onclick=function(){
+    var k=this.getAttribute('data-pack');
+    /* กดซ้ำ = เอาออก · โหมดซื้อเครดิตล้วนห้ามเอาออก (ไม่งั้นเหลือบิลเปล่า)
+       นี่คือเหตุผลที่ไม่ต้องมีแถว "ยังไม่เอาตอนนี้" — ปุ่มล่างขึ้น "ข้ามไปก่อน" ให้เองอยู่แล้ว */
+    S.pack=(S.mode!=='credit'&&S.pack===k)?'':k;
+    render();
+  };
   n=body.querySelectorAll('[data-pm]');
   for(i=0;i<n.length;i++)n[i].onclick=function(){if(this.disabled)return;S.method=this.getAttribute('data-pm');render();};
   n=body.querySelectorAll('[data-go]');
@@ -624,6 +666,9 @@ function payWith(acct,o){
   if(!B.OMISE_READY){try{window.open(B.LINE_URL,'_blank');}catch(x){}return;}
   setPaying(true);
   var body={plan:o.key,cycle:o.cycle,account:acct};
+  /* ของพ่วงไปในใบเดียวกัน — worker คิดยอดรวมเองจากตารางราคาฝั่ง server
+     (ห้ามส่งยอดไปเอง · ราคาที่คิดต้องมาจากฝั่ง server เสมอ) */
+  var ad=addonItem(); if(ad)body.addon=ad.key;
   if(S.method==='pp'){
     if(!B.omisePpOpen()){setPaying(false);alert(B.t('pm_pp_soon'));return;}
     B.checkout.payPromptPay(body,onCharge);
