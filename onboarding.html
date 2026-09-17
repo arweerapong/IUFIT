@@ -145,7 +145,7 @@
 <div id="footSlot"></div>
 </div>
 
-<script src="billing-common.js?v=v130"></script>
+<script src="billing-common.js?v=v135"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════════════════════════════
    โฟลวสมัคร/จ่ายเงิน 4 ก้าว (2569-09-11) — เขียนใหม่ตามดีไซน์ที่เจ้าของส่งมา
@@ -184,6 +184,10 @@ var S={
   seats:0,
   planKey:'',
   pack:'',               /* '' = ยังไม่เลือก */
+  coupon:'',             /* รหัสที่ผ่านการตรวจแล้วเท่านั้น */
+  couponOff:0,           /* ยอดลด (ตัวอย่างจาก server — ยอดจริงคิดใหม่ตอน /charge) */
+  couponMsg:null,        /* {ok:bool, text:string} ข้อความใต้ช่องกรอก */
+  couponBusy:false,
   method:B.PROMPTPAY_DEFAULT&&B.omisePpOpen()?'pp':'card',
   step:0,
   agree:false,
@@ -245,7 +249,14 @@ function addonItem(){
 }
 /* 🔴 ยอดรวมต้องเท่าผลบวกของบรรทัดที่โชว์เสมอ (ด่าน [ป] ตรวจ) ⇒ คิดจากรายการชุดเดียวกัน */
 function orderLines(){var a=[];var m=orderItem();if(m)a.push(m);var x=addonItem();if(x)a.push(x);return a;}
-function orderTotal(){var t=0,a=orderLines();for(var i=0;i<a.length;i++)t+=a[i].thb;return t;}
+function orderGross(){var t=0,a=orderLines();for(var i=0;i<a.length;i++)t+=a[i].thb;return t;}
+/** ส่วนลดที่ใช้ได้จริงกับบิลนี้ — ลดเกินยอดไม่ได้ */
+function discountThb(){
+  if(!S.coupon)return 0;
+  var g=orderGross();
+  return Math.min(Number(S.couponOff)||0,g);
+}
+function orderTotal(){return orderGross()-discountThb();}
 
 /* ── สามชั้นที่บล็อกการจ่าย — คืน "เหตุผล" ไม่ใช่แค่ true/false ───────────────────
    จอที่ปิดปุ่มโดยไม่บอกเหตุผล = จอที่ผู้ใช้คิดว่าเว็บพัง แล้วกดซ้ำ */
@@ -420,6 +431,7 @@ function stepContact(){
       +'<input id="obMail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" value="'+B.esc(S.email||mail||'')+'"></div>';
   }
   h+='</div>';
+  h+=couponHtml();
   h+='<div class="ob-t" style="margin-top:16px;font-size:14px">'+B.esc(B.t('ob_pm_t'))+'</div>';
   var ms=[{k:'card',t:'ob_pm_card',s:'ob_pm_card_s',on:true},
           {k:'pp',  t:'ob_pm_pp',  s:'ob_pm_pp_s',  on:B.omisePpOpen()}];
@@ -440,6 +452,61 @@ function stepContact(){
     +' — <a class="blue" href="refund.html?lang='+B.esc(B.LANG)+'" target="_blank" rel="noopener">'+B.esc(B.t('nav_refund'))+'</a></span></label>';
   h+=blockHtml();
   return h;
+}
+
+/* ── ช่องกรอกรหัสส่วนลด ─────────────────────────────────────────────────────────
+   🔴 ยอดที่โชว์ตรงนี้เป็น "ตัวอย่าง" ที่ server คำนวณให้ — ไม่ใช่ตัวที่ตัดจริง
+      ตอนกดจ่าย worker คิดใหม่จากตารางของตัวเองทั้งหมด (Omise ตัดตามยอดที่เราส่งเป๊ะ ๆ
+      ไม่มีแนวคิดส่วนลด ⇒ ถ้าเชื่อตัวเลขจากเบราว์เซอร์ = แก้ราคาใน devtools แล้วซื้อถูกได้) */
+function couponHtml(){
+  var h='<div class="ob-t" style="margin-top:16px;font-size:14px">'+B.esc(B.t('cp_t'))+'</div>';
+  if(S.coupon){
+    h+='<div class="ob-crbox" style="margin-top:8px"><span>'+B.esc(S.coupon)+'</span>'
+      +'<b>-'+money(S.couponOff)+'</b></div>'
+      +'<button type="button" class="ob-link" id="cpDel" style="margin-top:8px">'+B.esc(B.t('cp_remove'))+'</button>';
+    return h;
+  }
+  h+='<div style="display:flex;gap:8px;margin-top:8px">'
+    +'<input id="cpCode" type="text" inputmode="latin" autocapitalize="characters" autocomplete="off" spellcheck="false"'
+    +' placeholder="'+B.esc(B.t('cp_ph'))+'" style="flex:1;min-width:0;min-height:48px;padding:0 13px;'
+    +'border:1.5px solid var(--line-strong);border-radius:14px;background:#fff;font-family:inherit;'
+    +'font-size:14.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink)">'
+    +'<button type="button" class="btn ghost" id="cpGo" style="flex:none;width:auto;margin:0;padding:0 16px;min-height:48px"'
+    +(S.couponBusy?' disabled':'')+'>'+B.esc(B.t(S.couponBusy?'cp_checking':'cp_apply'))+'</button></div>';
+  if(S.couponMsg){
+    h+='<div class="ob-m" style="margin-top:6px;color:'+(S.couponMsg.ok?'var(--green)':'var(--red)')+'">'
+      +B.esc(S.couponMsg.text)+'</div>';
+  }
+  return h;
+}
+/* 🔴 เปลี่ยนของในบิลแล้วต้องล้างส่วนลด — คูปองอาจผูกกับแพ็กใดแพ็กหนึ่งหรือมียอดขั้นต่ำ
+   ถ้าไม่ล้าง ผู้ใช้จะเห็นส่วนลดค้างบนบิลที่มันใช้ไม่ได้แล้ว แล้วยอดตอนจ่ายจะไม่ตรงกับที่เห็น */
+function clearCoupon(){S.coupon='';S.couponOff=0;S.couponMsg=null;}
+function applyCoupon(){
+  var el2=el('cpCode'); if(!el2)return;
+  var code=String(el2.value||'').trim().toUpperCase();
+  if(!code)return;
+  var o=orderItem(); if(!o)return;
+  var ad=addonItem();
+  S.couponBusy=true; S.couponMsg=null; renderBodyFoot();
+  B.checkCoupon(code,o.key,o.cycle,ad?ad.key:'',function(j){
+    S.couponBusy=false;
+    if(j&&j.ok){
+      S.coupon=j.code; S.couponOff=Number(j.discountThb)||0;
+      S.couponMsg={ok:true,text:B.t('cp_ok').replace('{v}',money(S.couponOff))};
+    }else{
+      S.coupon=''; S.couponOff=0;
+      S.couponMsg={ok:false,text:B.couponErr(j&&j.error)};
+    }
+    render();
+  });
+}
+/** วาดเฉพาะเนื้อก้าว + แถบล่าง (ใช้ตอนรออยู่ ไม่ให้กระพริบทั้งจอ) */
+function renderBodyFoot(){
+  var a=steps(), i=Math.min(S.step,a.length-1), cur=a[i];
+  el('stepBody').innerHTML=(cur==='size')?stepSize():(cur==='credit')?stepCredit():(cur==='contact')?stepContact():stepPay();
+  el('stepFoot').innerHTML=footHtml();
+  wire();
 }
 
 /* ── ก้าว 4 · จ่ายเงิน ─────────────────────────────────────────────────────────── */
@@ -495,6 +562,8 @@ function footHtml(){
   var h='';
   var lines=orderLines();
   for(var li=0;li<lines.length;li++)h+='<div class="ob-line"><span>'+B.esc(lines[li].label)+'</span><b>'+money(lines[li].thb)+'</b></div>';
+  var dc=discountThb();
+  if(dc>0)h+='<div class="ob-line"><span>'+B.esc(B.t('ob_discount'))+' · '+B.esc(S.coupon)+'</span><b style="color:var(--green)">-'+money(dc)+'</b></div>';
   h+='<div class="ob-total"><span>'+B.esc(B.t('ob_total'))+'</span><b>'+money(total)+'</b></div>';
   /* แถบล่างพูดยอดรอบหน้าเสมอ — ไม่ใช่พูดแต่ยอดวันนี้ */
   var nx;
@@ -580,17 +649,18 @@ function go(n){
 function wire(){
   var body=el('stepBody'), i, n;
   n=body.querySelectorAll('[data-aud]');
-  for(i=0;i<n.length;i++)n[i].onclick=function(){S.aud=this.getAttribute('data-aud');S.planKey='';S.agree=false;render();};
+  for(i=0;i<n.length;i++)n[i].onclick=function(){S.aud=this.getAttribute('data-aud');S.planKey='';S.agree=false;clearCoupon();render();};
   n=body.querySelectorAll('[data-cyc]');
   for(i=0;i<n.length;i++)n[i].onclick=function(){S.cycle=this.getAttribute('data-cyc');render();};
   n=body.querySelectorAll('[data-plan]');
-  for(i=0;i<n.length;i++)n[i].onclick=function(){S.planKey=this.getAttribute('data-plan');render();};
+  for(i=0;i<n.length;i++)n[i].onclick=function(){S.planKey=this.getAttribute('data-plan');clearCoupon();render();};
   n=body.querySelectorAll('[data-pack]');
   for(i=0;i<n.length;i++)n[i].onclick=function(){
     var k=this.getAttribute('data-pack');
     /* กดซ้ำ = เอาออก · โหมดซื้อเครดิตล้วนห้ามเอาออก (ไม่งั้นเหลือบิลเปล่า)
        นี่คือเหตุผลที่ไม่ต้องมีแถว "ยังไม่เอาตอนนี้" — ปุ่มล่างขึ้น "ข้ามไปก่อน" ให้เองอยู่แล้ว */
     S.pack=(S.mode!=='credit'&&S.pack===k)?'':k;
+    clearCoupon();
     render();
   };
   n=body.querySelectorAll('[data-pm]');
@@ -616,8 +686,14 @@ function wire(){
         el('stepFoot').innerHTML=footHtml(); wireFoot();
       });
     };
-    r.onchange=function(){S.seats=Number(this.value)||0;render();};
+    /* 🔴 เลื่อนตัวเลื่อน = **เปลี่ยนแพ็ก** (10 คนคือ Starter · 20 คือ Pro)
+       ต้องล้างส่วนลดเหมือนกดเปลี่ยนแพ็กตรง ๆ ไม่งั้นส่วนลดของแพ็กเดิมค้างอยู่บนบิลใบใหม่
+       แล้วยอดตอนกดจ่ายจะไม่ตรงกับที่เห็น (เจอจากการเดินจอจริง) */
+    r.onchange=function(){S.seats=Number(this.value)||0;clearCoupon();render();};
   }
+  var cg=el('cpGo'); if(cg)cg.onclick=applyCoupon;
+  var cc=el('cpCode'); if(cc)cc.onkeydown=function(e){if(e.key==='Enter'){e.preventDefault();applyCoupon();}};
+  var cd=el('cpDel'); if(cd)cd.onclick=function(){S.coupon='';S.couponOff=0;S.couponMsg=null;render();};
   var mi=el('obMail');
   if(mi)mi.onblur=function(){S.email=this.value||'';};
   var ac=el('obAgree');
@@ -669,6 +745,8 @@ function payWith(acct,o){
   /* ของพ่วงไปในใบเดียวกัน — worker คิดยอดรวมเองจากตารางราคาฝั่ง server
      (ห้ามส่งยอดไปเอง · ราคาที่คิดต้องมาจากฝั่ง server เสมอ) */
   var ad=addonItem(); if(ad)body.addon=ad.key;
+  /* ส่งแค่ "รหัส" ไม่ส่งยอดลด — worker คิดเองใหม่ทั้งหมด (ห้ามให้เบราว์เซอร์กำหนดราคา) */
+  if(S.coupon)body.coupon=S.coupon;
   if(S.method==='pp'){
     if(!B.omisePpOpen()){setPaying(false);alert(B.t('pm_pp_soon'));return;}
     B.checkout.payPromptPay(body,onCharge);
@@ -680,7 +758,21 @@ function payWith(acct,o){
   },body,onCharge,function(msg){setPaying(false);alert(msg);});
 }
 function onCharge(act){
-  if(act.kind==='error'){setPaying(false);alert(B.t(act.t)+'\n\n'+B.t(act.m));return;}
+  if(act.kind==='error'){
+    setPaying(false);
+    /* \ud83d\udd34 รหัสส่วนลดใช้ไม่ได้ = เอารหัสออกให้เลย แล้วบอกว่ากดจ่ายซ้ำได้
+       ไม่เอาออก = เขากดจ่ายอีกกี่ครั้งก็เจอข้อความเดิม เพราะบิลยังพารหัสใบเดิมไปทุกครั้ง
+       (ไม่จ่ายแทนเขาเอง — ราคาเปลี่ยนแล้ว ต้องให้เขาเห็นยอดใหม่ก่อนกดเอง) */
+    if(act.coupon){
+      clearCoupon();
+      S.couponMsg={ok:false,text:B.couponErr(act.code)};
+      render();
+      alert(B.t('cp_fail_t')+'\n\n'+B.t(act.m)+'\n\n'+B.t('cp_fail_go'));
+      return;
+    }
+    alert(B.t(act.t)+'\n\n'+B.t(act.m));
+    return;
+  }
   if(act.kind==='redirect'){location.href=act.url;return;}
   if(act.kind==='qr'){
     setPaying(false);
@@ -710,7 +802,7 @@ function showResult(kind){
   var frame=document.querySelector('.ob-frame');
   el('modeBar').innerHTML='';
   frame.innerHTML='<div class="ob-body ob-mid"><div style="font-size:38px">'+map+'</div>'
-    +'<h2 style="font-size:19px;color:var(--navy);margin:6px 0 4px">'+B.esc(B.t('res_'+kind+'_t'))+'</h2>'
+    +'<h2 id="resTitle" style="font-size:19px;color:var(--navy);margin:6px 0 4px">'+B.esc(B.t('res_'+kind+'_t'))+'</h2>'
     +'<p class="ob-m" id="resMsg">'+B.esc(kind==='success'?B.t('cr_success_m'):B.t('res_'+kind+'_m'))+'</p>'
     +'<a class="btn pri" style="margin-top:12px" href="my-plan.html?lang='+B.esc(B.LANG)+'">'+B.esc(B.t('go_myplan'))+'</a>'
     +(kind!=='success'?'<a class="btn line" style="margin-top:8px" href="'+B.esc(B.LINE_URL)+'" target="_blank" rel="noopener">'+B.esc(B.t('line_help'))+'</a>':'')
@@ -722,7 +814,17 @@ function showResult(kind){
       B.checkout.pollCharge(rf,{
         paid:function(){location.href='onboarding.html?lang='+B.LANG+'&result=success';},
         failed:function(){location.href='onboarding.html?lang='+B.LANG+'&result=failed';},
-        charged:function(){el('resMsg').textContent=B.t('pay_charged_m');el('resPoll').textContent=B.t('pay_charged_m');},
+        /* 🔴🔴 2569-09-16 · **หัวข้อต้องเปลี่ยนด้วย ไม่ใช่แค่บรรทัดข้อความ**
+           ที่มา: ตอนยุบ billing.html เข้ามาที่นี่ (14 ก.ย.) สายที่เปลี่ยน **หัวการ์ด** หลุดไป
+           ⇒ เงินถูกตัดแล้วจริง แต่หัวการ์ดยังค้างว่า "รอการยืนยันการชำระ" (`res_pending_t`)
+             ซึ่งคนอ่านก่อนทุกบรรทัด ⇒ อ่านว่ายังไม่จ่ายผ่าน แล้วไปกดจ่ายซ้ำ = ถูกตัดรอบสอง
+           (คีย์ `pay_charged_t` ถูกแปลไว้ครบสองภาษาอยู่แล้วแต่ไม่มีใครเรียก = หลักฐานว่าหลุด)
+           ⛔ ห้ามลบบรรทัดนี้ — `charged` ยิงครั้งเดียวและไม่ถอนคืน (ดู `pollCharge`) */
+        charged:function(){
+          var ti=el('resTitle'); if(ti)ti.textContent=B.t('pay_charged_t');
+          el('resMsg').textContent=B.t('pay_charged_m');
+          el('resPoll').textContent=B.t('pay_charged_m');
+        },
         giveUp:function(seen){el('resPoll').textContent=B.t(seen?'pay_slow_paid':'pay_slow');}
       });
     }

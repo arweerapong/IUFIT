@@ -6,7 +6,10 @@
 <title>นโยบายความเป็นส่วนตัว · IUFIT</title>
 <meta name="description" content="นโยบายความเป็นส่วนตัวของ IUFIT — เราเก็บและใช้ข้อมูลของคุณอย่างไร และสิทธิของคุณตาม PDPA">
 <style>
-:root{--navy:#071E4A;--blue:#1150C8;--bg:#F6F9FF;--card:#fff;--line:#DDE7F5;--muted:#6B7890;--ink:#10233F;--surface-inverse:#071E4A}
+:root{--navy:#071E4A;--blue:#1150C8;--bg:#F6F9FF;--card:#fff;--line:#DDE7F5;--muted:#657289;--ink:#10233F;--surface-inverse:#071E4A;
+  /* --line-strong = ขอบที่บอกขอบเขตของตัวควบคุม (WCAG 1.4.11 ≥3:1) · ค่าเดียวกับ billing.css/onboarding.html
+     🔴 2569-09-16 · `--line` (#DDE7F5) วัดได้ **1.25:1** บนพื้นการ์ดขาว = ขอบที่มองไม่เห็นจริง */
+  --line-strong:#7B8AA5}
 *{box-sizing:border-box}
 body{margin:0;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,'Noto Sans Thai',sans-serif;background:var(--bg);color:var(--ink);line-height:1.7}
 .wrap{max-width:780px;margin:0 auto;padding:28px 18px 70px}
@@ -27,7 +30,7 @@ table{width:100%;border-collapse:collapse;margin:8px 0;font-size:13.5px}
 td,th{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
 th{background:#eef4ff;color:var(--navy)}
 .legal-bar{position:sticky;top:0;z-index:5;display:flex;gap:8px;padding:10px 0 8px;margin:-8px 0 10px;background:var(--bg)}
-.legal-btn{height:40px;padding:0 16px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
+.legal-btn{height:40px;padding:0 16px;border-radius:12px;border:1px solid var(--line-strong);background:var(--card);color:var(--ink);font:inherit;font-weight:700;cursor:pointer}
 .legal-btn.pri{background:var(--surface-inverse,#071E4A);border:0;color:#fff}
 </style>
 </head>

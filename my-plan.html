@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>เครดิตของฉัน · IUFIT</title>
+<title>แพ็กเกจของฉัน · IUFIT</title>
 <meta name="description" content="เครดิต AI คงเหลือ แพ็กที่ใช้อยู่ และการต่ออายุอัตโนมัติของบัญชี IUFIT">
 <link rel="stylesheet" href="billing.css?v=v110">
 <style>
@@ -17,6 +17,14 @@
     box-shadow:inset 0 0 0 1px rgba(12,26,58,.05),0 1px 2px rgba(12,26,58,.05),0 10px 26px -16px rgba(12,26,58,.4)}
   .mp-h{font-size:12px;font-weight:800;color:var(--muted);letter-spacing:.02em}
   .mp-note{margin-top:10px;padding:10px 12px;border-radius:12px;background:#ecf1fb;font-size:11.5px;line-height:1.7;color:var(--ink)}
+  /* โซนจัดการต่ออายุ — เล็กและเงียบ แต่ยังอ่านออกและกดได้จริง
+     ⚠️ ห้ามลดคอนทราสต์จนต่ำกว่าเกณฑ์ หรือย่อจนแตะไม่โดนบนมือถือ (เป้าแตะ ≥ 44px) */
+  .mp-quiet{margin-top:26px;padding-top:16px;border-top:1px solid var(--line)}
+  .mp-quiet .mp-h{font-size:11.5px}
+  .mp-quiet p{font-size:11.5px;line-height:1.7;color:var(--muted);margin:6px 0 0}
+  .mp-link{display:inline-flex;align-items:center;min-height:44px;background:none;border:0;padding:0;
+    font-family:inherit;font-size:12.5px;font-weight:800;color:var(--muted);cursor:pointer;text-decoration:underline}
+  .mp-link:hover{color:var(--blue)}
 </style>
 </head>
 <body>
@@ -33,13 +41,15 @@
 
 <div class="mp-card" id="crCard"></div>
 <div class="mp-card" id="planCard"></div>
-<div class="mp-card" id="apCard"></div>
-
 <div id="actions" style="margin-top:16px"></div>
+
+<!-- การจัดการต่ออายุอยู่ล่างสุด ตัวเล็ก — คนเปิดหน้านี้ 9 ใน 10 มาดูยอด ไม่ได้มายกเลิก
+     แต่คนที่ตั้งใจมายกเลิกต้องหาเจอในหน้าเดียว ไม่ต้องกดเข้าไปอีกชั้น -->
+<div id="apCard" class="mp-quiet"></div>
 <div id="foot"></div>
 </div>
 
-<script src="billing-common.js?v=v130"></script>
+<script src="billing-common.js?v=v135"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════════════════════════
    หน้า "เครดิตของฉัน" — สามคำถามที่คนเปิดหน้านี้มาถาม และต้องตอบได้ครบทั้งสาม
@@ -107,13 +117,13 @@ function renderAutopay(ent){
   var date=B.esc(ent.exp||'-');
   var on=ent.autopay===true;
   var h='<div class="mp-h">'+B.esc(B.t('ap_title'))+'</div>';
-  if(on)      h+='<p style="margin:8px 0 0;font-size:12.5px;line-height:1.7;color:var(--ink)">'+B.t('ap_on').replace('{date}',date)+'</p>';
-  else if(ent.hasCard) h+='<p style="margin:8px 0 0;font-size:12.5px;line-height:1.7;color:var(--ink)">'+B.t('ap_off').replace('{date}',date)+'</p>';
-  else        h+='<p style="margin:8px 0 0;font-size:12.5px;line-height:1.7;color:var(--ink)">'+B.t('ap_off_nocard').replace('{date}',date)+'</p>';
+  if(on)               h+='<p>'+B.t('ap_on').replace('{date}',date)+'</p>';
+  else if(ent.hasCard) h+='<p>'+B.t('ap_off').replace('{date}',date)+'</p>';
+  else                 h+='<p>'+B.t('ap_off_nocard').replace('{date}',date)+'</p>';
   /* ปุ่ม "เปิดกลับ" ขึ้นเฉพาะตอนที่ worker จะรับจริง (ต้องมีบัตรผูกอยู่)
      ไม่งั้นกดแล้วได้ no_saved_card = ปุ่มที่มีไว้ให้กดพลาดอย่างเดียว */
-  if(on)                        h+='<button type="button" class="btn ghost" id="apBtn" style="margin-top:12px">'+B.esc(B.t('ap_cancel'))+'</button>';
-  else if(ent.hasCard)          h+='<button type="button" class="btn ghost" id="apBtn" style="margin-top:12px">'+B.esc(B.t('ap_resume'))+'</button>';
+  if(on)                        h+='<button type="button" class="mp-link" id="apBtn">'+B.esc(B.t('ap_cancel'))+'</button>';
+  else if(ent.hasCard)          h+='<button type="button" class="mp-link" id="apBtn">'+B.esc(B.t('ap_resume'))+'</button>';
   h+='<div id="apMsg"></div>';
   ac.innerHTML=h;
   var btn=el('apBtn'); if(!btn)return;
@@ -141,9 +151,8 @@ function renderAutopayViaLine(){
      ไม่ใช่โชว์ปุ่มที่กดแล้วได้ 401 (ปุ่มแบบนั้นคือจอโกหก) */
   var msg=(B.LANG==='en')?'Please cancel auto-renew for my plan':'ขอยกเลิกการต่ออายุอัตโนมัติ';
   el('apCard').innerHTML='<div class="mp-h">'+B.esc(B.t('ap_title'))+'</div>'
-    +'<p style="margin:8px 0 0;font-size:13px;font-weight:800;color:var(--navy)">'+B.esc(B.t('ap_line_t'))+'</p>'
-    +'<p style="margin:4px 0 0;font-size:12.5px;line-height:1.7;color:var(--muted)">'+B.esc(B.t('ap_line_m'))+'</p>'
-    +'<a class="btn line" style="margin-top:12px" target="_blank" rel="noopener" href="'+B.esc(B.lineOaCreditMsgUrl(msg))+'">'+B.esc(B.t('ap_line_t'))+'</a>';
+    +'<p>'+B.esc(B.t('ap_line_m'))+'</p>'
+    +'<a class="mp-link" target="_blank" rel="noopener" href="'+B.esc(B.lineOaCreditMsgUrl(msg))+'">'+B.esc(B.t('ap_line_t'))+'</a>';
 }
 
 function renderSub(){

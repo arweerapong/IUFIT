@@ -271,7 +271,7 @@
       nav_pricing:'เครดิต',nav_billing:'ซื้อเครดิต',
       /* 🪦 2569-09-14 · nav เหลือสองหัวข้อตามคำสั่งเจ้าของ: แพ็กเกจ IUFIT · เครดิตของฉัน
          nav_pricing/nav_billing ยังไม่ลบ — ยังถูกอ้างในหน้าที่ redirect และในฟุตเตอร์เก่า */
-      nav_packs:'แพ็กเกจ IUFIT',nav_myplan:'เครดิตของฉัน',
+      nav_packs:'แพ็กเกจ IUFIT',nav_myplan:'แพ็กเกจของฉัน',
       pricing_title:'แพ็กเทรนเนอร์',pricing_sub:'ดูแลลูกเทรนเป็นระบบ — ส่งแผน รับการบ้าน ติดตามผล และให้ IU MATE ช่วยลดงานทุกวัน',
       personal_title:'สำหรับผู้ใช้ทั่วไป',personal_sub:'ไม่ใช่เทรนเนอร์? Personal ใช้ฟรี 100% · AI เป็นเครดิต (แจกฟรี 10 ครั้งแรก · ซื้อแพ็กเสริมได้)',
       /* ⭐ 2569-07-30 · ยกเลิก "ทดลองฟรี 30 วัน" แล้ว (ตรงกับ src/views/PricingView.vue: ยืนยันอีเมล → รับ Coach Pro)
@@ -371,6 +371,28 @@
       ob_acct_plan:'แพ็กปัจจุบัน', ob_acct_credit:'เครดิตคงเหลือ',
       ob_contact_t:'ยิม / สตูดิโอ', ob_contact_m:'จำนวนที่นั่งและราคาจัดให้ตามจริง — ติดต่อ IUFIT',
       cyc_yr_plain:'รายปี',ob_cyc_save:'ประหยัด 2 เดือน',ob_cyc_soon:'เร็ว ๆ นี้',
+      cp_t:'มีรหัสส่วนลดไหม',cp_ph:'กรอกรหัส',cp_apply:'ใช้รหัส',cp_remove:'เอาออก',
+      cp_checking:'กำลังตรวจรหัส…',cp_ok:'ใช้รหัสแล้ว ลด {v}',
+      cp_bad:'ใช้รหัสนี้ไม่ได้',
+      cp_not_found:'ไม่พบรหัสนี้ — ลองพิมพ์ใหม่อีกครั้ง',
+      cp_bad_format:'รูปแบบรหัสไม่ถูกต้อง',
+      cp_inactive:'รหัสนี้ถูกปิดใช้งานแล้ว',
+      cp_not_started:'รหัสนี้ยังไม่ถึงวันเริ่มใช้',
+      cp_expired:'รหัสนี้หมดอายุแล้ว',
+      cp_used_up:'รหัสนี้ถูกใช้ครบจำนวนแล้ว',
+      cp_already_used:'อีเมลนี้ใช้รหัสนี้ไปแล้ว — หนึ่งรหัสใช้ได้ครั้งเดียวต่ออีเมล',
+      cp_needs_email:'ใส่อีเมลก่อนใช้รหัสส่วนลด (รหัสผูกกับอีเมล)',
+      cp_one_per_charge:'ใช้ได้ครั้งละหนึ่งรหัสเท่านั้น',
+      cp_fail_t:'ใช้รหัสส่วนลดไม่ได้',
+      cp_fail_go:'เรานำรหัสออกให้แล้ว — กดจ่ายอีกครั้งเพื่อจ่ายราคาเต็ม หรือใส่รหัสใบอื่น',
+      cp_plan_only:'รหัสนี้ใช้ได้กับแพ็กสมาชิกเท่านั้น',
+      cp_credit_only:'รหัสนี้ใช้ได้กับการซื้อเครดิตเท่านั้น',
+      cp_other_plan:'รหัสนี้ใช้กับแพ็กที่เลือกอยู่ไม่ได้',
+      cp_min_not_met:'ยอดยังไม่ถึงขั้นต่ำของรหัสนี้',
+      cp_below_minimum:'ลดแล้วยอดต่ำกว่าขั้นต่ำที่ระบบรับชำระได้',
+      cp_unavailable:'ตรวจรหัสไม่ได้ตอนนี้ ลองใหม่อีกครั้ง',
+      cp_network:'ต่อเน็ตไม่ได้ ลองใหม่อีกครั้ง',
+      ob_discount:'ส่วนลด',
       ob_addon_t:'อยากได้เครดิตเพิ่มไหม',
       ob_addon_m:'เลือกได้เลย จะรวมไปในบิลเดียวกัน · ไม่เอาก็กดถัดไปได้ · กดซ้ำที่แพ็กเดิมเพื่อเอาออก',
       ob_renew_pick:'หน้าเว็บนี้ยังไม่รู้ว่าคุณใช้แพ็กไหนอยู่ เพราะข้อมูลแพ็กอยู่ในแอป ไม่ได้อยู่บนเว็บ · เลือกแพ็กที่ต้องการต่ออายุด้านล่างได้เลย',
@@ -559,7 +581,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     },
     en:{
       nav_pricing:'Credits',nav_billing:'Buy credits',
-      nav_packs:'IUFIT plans',nav_myplan:'My credits',
+      nav_packs:'IUFIT plans',nav_myplan:'My plan',
       pricing_title:'Trainer plans',pricing_sub:'Coach clients systematically — send plans, collect homework, track results, and let IU MATE cut your daily work.',
       personal_title:'For individuals',personal_sub:'Not a coach? Personal is 100% free · AI runs on credits (10 free to start · add-on packs available).',
       /* ⭐ 2569-07-30 · 30-day free trial was cancelled — keep the keys (pricing.html calls them), change the copy */
@@ -637,6 +659,28 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       ob_acct_plan:'Current plan', ob_acct_credit:'Credits left',
       ob_contact_t:'Gym / studio', ob_contact_m:'Seats and pricing are arranged to fit — contact IUFIT',
       cyc_yr_plain:'Yearly',ob_cyc_save:'Save 2 months',ob_cyc_soon:'Soon',
+      cp_t:'Have a discount code?',cp_ph:'Enter code',cp_apply:'Apply',cp_remove:'Remove',
+      cp_checking:'Checking code…',cp_ok:'Code applied · {v} off',
+      cp_bad:'This code cannot be used',
+      cp_not_found:'Code not found — check the spelling',
+      cp_bad_format:'Code format is not valid',
+      cp_inactive:'This code has been turned off',
+      cp_not_started:'This code is not active yet',
+      cp_expired:'This code has expired',
+      cp_used_up:'This code has reached its limit',
+      cp_already_used:'This email already used this code — one use per email',
+      cp_needs_email:'Add your email before using a discount code (codes are tied to an email)',
+      cp_one_per_charge:'Only one code per order',
+      cp_fail_t:'Discount code cannot be used',
+      cp_fail_go:'We removed the code — tap pay again for the full price, or enter another code',
+      cp_plan_only:'This code works on membership plans only',
+      cp_credit_only:'This code works on credit packs only',
+      cp_other_plan:'This code does not apply to the selected plan',
+      cp_min_not_met:'Order total is below this code minimum',
+      cp_below_minimum:'After the discount the total falls below the payable minimum',
+      cp_unavailable:'Cannot check the code right now, try again',
+      cp_network:'Network problem, try again',
+      ob_discount:'Discount',
       ob_addon_t:'Want extra credits?',
       ob_addon_m:'Pick one and it goes on the same bill · skip it and tap next · tap the same pack again to remove it',
       ob_renew_pick:'This page cannot tell which plan you are on, because that lives in the app rather than on the web · just pick the plan you want to renew below',
@@ -1129,6 +1173,37 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       }).catch(function(){cb({error:'network'});});
     })();
   }
+  /* ══════════════════════════════════════════════════════════════════════════
+     คูปองส่วนลด — ฝั่งเว็บ "ถามเพื่อโชว์" เท่านั้น
+     🔴 ยอดที่ตอบกลับมาเป็นตัวอย่าง · ยอดที่ตัดจริงคิดใหม่ที่ worker ตอน /charge เสมอ
+        (Omise ไม่มีแนวคิดส่วนลด — มันตัดตามยอดที่เราส่งไปก้อนเดียวเป๊ะ ๆ
+         ⇒ ถ้าเชื่อยอดจากเบราว์เซอร์ ใครก็แก้ใน devtools แล้วจ่าย 20 บาทได้) */
+  function checkCoupon(code,plan,cycle,addon,cb){
+    var body={code:String(code||'').trim().toUpperCase(),plan:plan,cycle:cycle};
+    if(addon)body.addon=addon;
+    /* 🔴 ส่งบัญชีไปด้วยถ้ารู้แล้ว — หนึ่งรหัสใช้ได้ครั้งเดียวต่ออีเมล
+       ไม่ส่ง = ชิปขึ้น "ใช้รหัสแล้ว ลด ฿X" แล้วไปเด้งตอนกดจ่าย
+       = จอที่สัญญาสิ่งที่ทำไม่ได้ · ผู้ใช้จะไปโทษบัตรตัวเอง
+       (ยังไม่กรอกอีเมล = ไม่ส่ง ⇒ worker ตอบเหมือนเดิม ไม่ได้บังคับให้กรอกก่อนเช็ครหัส) */
+    try{
+      var s0=appState();
+      if(isCanonEmailUid(s0&&s0.fbuid))body.account=s0.fbuid;
+      var em0=creditEmailHint(s0);
+      if(em0)body.email=em0;
+    }catch(e){}
+    fetch(CHARGE_ENDPOINT+'/coupon/check',{
+      method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)
+    }).then(function(r){return r.json().catch(function(){return {};});})
+      .then(function(j){cb(j||{ok:false,error:'network'});})
+      .catch(function(){cb({ok:false,error:'network'});});
+  }
+  /** แปลรหัสผิดพลาดของคูปองเป็นข้อความที่พูดกับผู้ใช้ได้ */
+  function couponErr(code){
+    var k='cp_'+String(code||'').replace(/^coupon_/,'');
+    var s=t(k);
+    return (s===k)?t('cp_bad'):s;
+  }
+
   /** อ่านแพ็ก/วันหมดอายุ/สถานะต่ออายุของ **ตัวเอง** */
   function subStatus(cb){
     _subCall(function(acct,tok){
@@ -1196,9 +1271,24 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     var s=appState();var m=s.mem;
     if(s.lic&&s.lic.n&&s.lic.c)return 'personal_pro';
     if(m&&m.via==='seat')return 'free';
-    if(m&&m.exp&&m.exp>=today()&&m.tier==='pro'){
-      var seats=m.seats||0;
-      if(seats>=50)return 'studio';if(seats>=30)return 'growth';if(seats>=20)return 'pro';return 'starter';
+    if(m&&m.exp&&m.exp>=today()){
+      if(m.tier==='pro'){
+        var seats=m.seats||0;
+        if(seats>=50)return 'studio';if(seats>=30)return 'growth';if(seats>=20)return 'pro';return 'starter';
+      }
+      /* 🔴 2569-09-16 · **บั๊กเรื่องเงิน** — แพลนฝั่งผู้ใช้ทั่วไปที่จ่ายเงินแล้วถูกอ่านว่า 'free'
+         ══════════════════════════════════════════════════════════════════════════════════
+         2569-09-11 มีแพลน B2C (`b2c_lite/plus/pro`) และ `services/entitlementSync.ts`
+         เขียน `mem.tier='b2c'` ให้ (ไม่ใช่ 'pro') โดยตั้งใจ เพื่อไม่ให้คนซื้อแพลนส่วนตัว
+         ถูกจัดเป็นโค้ช · แต่ที่นี่มีเงื่อนไข `m.tier==='pro'` ติดอยู่กับ `m.exp>=today()`
+         ⇒ tier 'b2c' ร่วงทะลุทุกสาขาแล้วไปจบที่ `return 'free'` ท้ายฟังก์ชัน
+         ⇒ **ลูกค้าที่จ่ายเงินแล้วเปิด `my-plan.html` เห็นว่าตัวเองเป็นแพ็กฟรี**
+           ขณะที่แอปอ่านค่าเดียวกันเป็น `personal_pro` (ดู `core/entitlements.acctPlan()`)
+         ⇒ แยกสองเงื่อนไขออกจากกัน: "ยังไม่หมดอายุ" กับ "เป็นแพ็กโค้ชไหม" เป็นคนละคำถาม
+         ⚠️ ค่าที่คืนต้องเป็น `'personal_pro'` เท่ากับ `acctPlan()` เป๊ะ ๆ — ไม่ใช่ชื่อแพ็ก
+            (`b2c_lite`) เพราะสองฝั่งต้องพูด **ชื่อชั้น** เดียวกัน ไม่ใช่ชื่อสินค้า
+         ⚠️ `via==='seat'` ถูกดักไปก่อนหน้านี้แล้ว ⇒ ที่นั่งของโค้ชไม่หลุดมาทางนี้ */
+      return 'personal_pro';
     }
     if(s.trial&&s.trial.start&&trialDaysLeft()>0)return 'pro';
     return 'free';
@@ -1239,10 +1329,25 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
 
      ผลพลอยได้: `?plan=อะไรก็ไม่รู้` เดิมทำให้ `getPlan()` คืน null แล้ว `renderPay()` โยน
      TypeError จนการ์ดชำระเงินหายทั้งใบแบบเงียบ ๆ — ตอนนี้ตกกลับเป็นค่าตั้งต้นแทน */
+  /**
+   * 🔴 2569-09-17 · แพ็กสำรอง **ต้องอ่านจากตารางจริง ห้ามพิมพ์รหัสไว้**
+   * ที่มา: ค่าสำรองเดิมพิมพ์ไว้ว่า `'credit_m'` ซึ่งเป็นรหัสของโมเดลเครดิตแบบเก่า
+   * พอเจ้าของเคาะโมเดลแบบ B (2569-09-11) ตารางเปลี่ยนเป็น `cr_s/cr_m/cr_l`
+   * ⇒ ค่าสำรองชี้ไปที่แพ็กที่ **ไม่มีอยู่แล้ว** · `onboarding.html` หาไม่เจอก็ทิ้งเงียบ ๆ
+   *   ⇒ คนที่กด "ซื้อเครดิต" จากแอปมาถึงหน้าเว็บแล้วไม่มีแพ็กไหนถูกเลือกให้
+   * ⇒ อ่านตัวที่ตารางเองชูว่าแนะนำ (`hot`) แล้วค่อยถอยไปตัวกลาง — ตารางเปลี่ยนเมื่อไหร่
+   *   ค่าสำรองเลื่อนตามเอง ไม่ต้องมีใครมาตามแก้
+   */
+  function defaultCreditKey(){
+    for(var i=0;i<CREDIT_PACKS.length;i++)if(CREDIT_PACKS[i].hot)return CREDIT_PACKS[i].k;
+    return (CREDIT_PACKS[1]||CREDIT_PACKS[0]||{}).k||'';
+  }
   function planKeyOf(raw,fallback){
     var k=''+(raw||'');
     if(getPlan(k)||getCredit(k))return k;
-    return fallback||'credit_m';
+    /* ค่าสำรองที่ผู้เรียกส่งมาก็ต้องเป็นของจริง — ส่งรหัสตายมาก็ใช้ไม่ได้เหมือนกัน */
+    if(fallback&&(getPlan(fallback)||getCredit(fallback)))return fallback;
+    return defaultCreditKey();
   }
 
   /* PromptPay EMVCo — สูตรเดียวกับ `services/courseTrack.ts` `promptPayPayload`
@@ -1295,7 +1400,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   }
   /** URL หน้าซื้อเครดิตในเบราว์เซอร์/LINE ปัจจุบัน — ห้ามผ่าน open.html (intent เข้า TWA) */
   function billingExternalUrl(plan,lang){
-    var pk=planKeyOf(plan,'credit_m');
+    var pk=planKeyOf(plan,defaultCreditKey());
     var q=['plan='+encodeURIComponent(pk),'lang='+encodeURIComponent(String(lang)==='en'?'en':'th')];
     var origin=(location.origin&&location.origin!=='null')?location.origin:'https://iufit.com';
     return origin+'/billing.html?'+q.join('&');
@@ -1347,6 +1452,11 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     if(e==='rate_limited')      return {kind:'error',code:e,t:'pay_rate_t',m:'pay_rate_m'};
     if(e==='plans_not_open')    return {kind:'error',code:e,t:'ob_closed_t',m:'ob_closed_m'};
     if(e==='over_limit')        return {kind:'error',code:e,t:'ob_cap_t',m:'ob_cap_m'};
+    /* 🔴 error ของคูปองต้องบอกว่าเป็นเรื่องคูปอง
+       เดิมตกลงมาเป็น `failed` ⇒ ขึ้น "ชำระเงินไม่สำเร็จ" ให้คนที่บัตรไม่มีปัญหาอะไรเลย
+       แล้วเขาจะกดจ่ายซ้ำด้วยรหัสเดิม เจอข้อความเดิม วนอยู่อย่างนั้น */
+    if(e.indexOf('coupon_')===0)
+      return {kind:'error',code:e,t:'cp_fail_t',m:'cp_'+e.replace(/^coupon_/,''),coupon:true};
     if(j&&j.qr)            return {kind:'qr',qr:safeHttpsUrl(j.qr),ref:(j&&j.ref)?String(j.ref):''};
     if(j&&j.authorize_uri){
       var au=safeHttpsUrl(j.authorize_uri);
@@ -1489,6 +1599,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     fetchWallet:fetchWallet, creditShow:creditShow,
     authToken:authToken, canSelfServe:canSelfServe,
     subStatus:subStatus, setAutopay:setAutopay, autopayErr:autopayErr, uidFromToken:uidFromToken,
+    checkCoupon:checkCoupon, couponErr:couponErr,
     currentPlanKey:currentPlanKey, planExpiry:planExpiry,
     trialDaysLeft:trialDaysLeft, trialActive:trialActive, trialExpired:trialExpired,
     paidActive:paidActive, daysUntil:daysUntil, reminderTier:reminderTier, today:today, qs:qs,
