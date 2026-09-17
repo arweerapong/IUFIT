@@ -12,6 +12,16 @@
    * ด่านสโตร์ใช้ได้เฉพาะตอนเปลือกนี้เป็นแอปจริง: `?twa=1` · referrer android-app ·
    * **และ** display-mode standalone/fullscreen คู่กับ latch
    */
+  /**
+   * 🪦 2569-09-17 · **`store_guard_m` เคยบอกว่า "ทักไลน IUFIT แล้วเลือกแพ็ก จ่ายบัตร/พร้อมเพย"**
+   * ซึ่งคือ in-app steering — Google Play Payments policy ห้าม **การชี้ช่องทาง
+   * จ่ายเงินอื่นภายในแอป** ไม่ใช่แค่ห้ามปุ่มจ่าย · การบอกชื่อช่องทางก็นับ
+   * ⇒ ข้อความนี้พูดได้แค่ว่า "หน้านี้ซื้อในแอปไม่ได้ ดูสิทธิ์ได้ที่ไหน"
+   *   — ห้ามเอ่ยชื่อช่องทาง (LINE · เว็บ · บัตร · พร้อมเพย) หรือราคา
+   * ⭐ สตริงอื่นทั้งหมดในไฟล์นี้ (`faq1_a` · `cta_line` · `ob_closed_m` …) **ไม่ต้องแก้**
+   *   เพราะมันเรนเดอร์บนเว็บ iufit.com ซึ่งเป็น **นอกแอป** ⇒ พูดราคาได้เต็มที่
+   *   จุดที่ต้องสะอาดคือสิ่งที่เรนเดอร์เมื่อ `IS_STORE` เป็นจริงเท่านั้น · ด่าน `verify:storepay`
+   */
   function isStandaloneShell(){
     try{
       if(navigator&&navigator.standalone===true)return true;
@@ -432,7 +442,7 @@
       /* ⭐ 2569-07-30 · ถอด book_line / reserve_local ออก — ไม่มีปุ่มเรียกแล้ว
          (มีไว้ตอนยังไม่มีช่องทางจ่ายจริง · ตอนนี้เหลือทางเดียวคือชำระผ่าน Omise) */
       order_total:'ยอดชำระ',equiv:'เทียบเท่า',
-      store_guard_t:'ซื้อเครดิตทาง LINE',store_guard_m:'แอปจากสโตร์เปิดหน้าชำระเงินในแอปไม่ได้ · ทักไลน์ IUFIT แล้วเลือกแพ็ก จ่ายบัตรหรือพร้อมเพย์ — เครดิตเข้าอีเมลที่ผูกกับแอป',
+      store_guard_t:'สิทธิ์ของแพลนคุณ',store_guard_m:'หน้านี้เปิดการชำระเงินในแอปไม่ได้ · เครดิตคงเหลือและสิทธิ์ของแพลนดูได้ที่หน้าแพลนในแอป',
       store_guard_btn:'ทักไลน์ซื้อเครดิต',
       line_btn:'💬 ทักไลน์ @987qyznd',
       res_success_t:'ชำระเงินสำเร็จ',/* ⭐ 2569-07-30 (รอบสอง) · คืนข้อความ "อัตโนมัติ" แล้ว — ตอนนี้**เป็นจริง**
@@ -717,7 +727,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       omise_soon_t:'Online payment is opening soon',omise_soon_m:'Reserve the launch price now — it will be locked for you and our team activates your plan right away.',
 
       order_total:'Total',equiv:'Equivalent',
-      store_guard_t:'Buy credits on LINE',store_guard_m:'The store app cannot open checkout inside itself · message IUFIT on LINE, pick a pack, and pay by card or PromptPay — credits go to the e-mail linked to your app.',
+      store_guard_t:'Your plan',store_guard_m:'Checkout cannot open inside the app · your credit balance and plan benefits are shown on the plans page in the app',
       store_guard_btn:'Buy on LINE',
       line_btn:'💬 Chat on LINE @987qyznd',
       res_success_t:'Payment successful',res_success_m:'Your plan is active · open IUFIT with the same account and it unlocks automatically within seconds.',
