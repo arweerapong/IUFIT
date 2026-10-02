@@ -376,6 +376,9 @@
       ob_cta_pay:'จ่าย {v}', ob_cta_paid:'ฉันโอนแล้ว',
       ob_after_t:'หลังจ่ายแล้วต้องทำอะไรต่อไหม',
       ob_after_m:'ไม่ต้อง — ระบบอัปเดตให้เอง · ใบเสร็จส่งไปที่ {mail} · ปิดจอนี้ได้ การชำระเงินไม่ถูกยกเลิก',
+      cr_paid_t:'เติมเครดิตได้เฉพาะโค้ชที่มีแพ็ก',
+      cr_paid_m:'เครดิตเติมได้เมื่อมีแพ็กที่จ่ายอยู่ (Pro หรือ Growth) · ยังไม่ได้ตัดเงิน',
+      cr_trial_m:'ช่วงทดลองใช้เครดิตทดลองที่ได้รับ · เติมเครดิตได้หลังสมัครแพ็ก · ยังไม่ได้ตัดเงิน',
       ob_closed_t:'ยังไม่เปิดขายแพ็กผ่านเว็บ',
       ob_closed_m:'ตอนนี้ซื้อได้เฉพาะเครดิต AI · แพ็กรายเดือนทักไลน์เพื่อให้เราเปิดให้',
       ob_cap_t:'ยอดนี้เกินเพดานต่อรายการ',
@@ -664,6 +667,9 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       ob_cta_pay:'Pay {v}', ob_cta_paid:'I have transferred',
       ob_after_t:'Anything to do after paying?',
       ob_after_m:'No — it updates itself · receipt sent to {mail} · you can close this screen, the payment stands',
+      cr_paid_t:'Top-ups are for coaches on a plan',
+      cr_paid_m:'Credits can be topped up with an active paid plan (Pro or Growth) · you were not charged',
+      cr_trial_m:'Your trial uses its trial credits · top up after you subscribe · you were not charged',
       ob_closed_t:'Plans are not on sale on the website yet',
       ob_closed_m:'Only AI credits can be bought right now · message us on LINE for a monthly plan',
       ob_cap_t:'This amount is over the per-transaction cap',
@@ -1463,6 +1469,9 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     if(e==='duplicate_recent')  return {kind:'error',code:e,t:'pay_recent_t',m:'pay_recent_m'};
     if(e==='rate_limited')      return {kind:'error',code:e,t:'pay_rate_t',m:'pay_rate_m'};
     if(e==='plans_not_open')    return {kind:'error',code:e,t:'ob_closed_t',m:'ob_closed_m'};
+    /* 2026-10-03 · ไม่ขายเครดิตแยก — เติมเครดิตได้เฉพาะโค้ชแพ็กจ่าย (worker creditBuyBlock · 403 · ไม่ตัดเงิน) */
+    if(e==='credit_needs_paid_plan'||e==='credit_plan_expired'||e==='credit_not_in_trial')
+      return {kind:'error',code:e,t:'cr_paid_t',m:e==='credit_not_in_trial'?'cr_trial_m':'cr_paid_m'};
     if(e==='over_limit')        return {kind:'error',code:e,t:'ob_cap_t',m:'ob_cap_m'};
     /* 🔴 error ของคูปองต้องบอกว่าเป็นเรื่องคูปอง
        เดิมตกลงมาเป็น `failed` ⇒ ขึ้น "ชำระเงินไม่สำเร็จ" ให้คนที่บัตรไม่มีปัญหาอะไรเลย
