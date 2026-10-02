@@ -49,6 +49,7 @@
 <div id="foot"></div>
 </div>
 
+<script src="v7-web-flags.js?v=1"></script>
 <script src="billing-common.js?v=v137"></script>
 <script>
 /* ══════════════════════════════════════════════════════════════════════════════════
@@ -164,7 +165,7 @@ function renderSub(){
   el('planCard').innerHTML='<div class="mp-h">'+B.esc(B.t('mp_plan_h'))+'</div><div class="psub" style="margin:8px 0 0">'+B.esc(B.t('ap_loading'))+'</div>';
   el('apCard').innerHTML='';
   B.subStatus(function(r){
-    if(r&&r.ok&&r.ent&&r.ent.plan){renderPlanFromEnt(r.ent);renderAutopay(r.ent);return;}
+    if(r&&r.ok&&r.ent&&r.ent.plan){renderPlanFromEnt(r.ent);renderAutopay(r.ent);showBuyIfCoach(r.ent);return;}
     /* `ok` + ไม่มี entitlement = **ยังไม่เคยซื้อแพ็กจริง ๆ** (ไม่ใช่ error)
        เชื่อคำตอบนี้ได้เพราะเราส่ง `email:<sha256>` ซึ่งเป็นโหนดเดียวกับที่ตอนจ่ายเขียน
        🔴 ห้ามกลับไปส่ง localId ของ Firebase — worker จะตอบ entitlement:null เหมือนกัน
@@ -182,8 +183,22 @@ function renderSub(){
 function render(){
   var lbl=B.accountLabel();
   el('acctLine').textContent=lbl?(B.t('acct_prefix')+lbl):(B.walletUid()?'':B.t('wal_no_acct'));
+  el('actions').innerHTML='';
   renderCredits();
   renderSub();
+  /* 2026-10-02 · คำตัดสินเจ้าของ "ขายเฉพาะโค้ช": ปุ่มเติมเครดิต/ดูแพ็กขึ้นเฉพาะบัญชีที่มีแพ็กโค้ช (showBuyIfCoach)
+     ลูกเทรน/ผู้ใช้ทั่วไป/ยังไม่รู้แพ็ก = ไม่มีปุ่มซื้อ · สิทธิ์ที่จ่ายแล้วยังแสดง/ยกเลิกได้ตามเดิม (ล้างก่อน renderSub เผื่อคำตอบกลับเร็ว) */
+}
+function showBuyIfCoach(ent){
+  var p=ent&&ent.plan?B.getPlan(ent.plan):null;
+  if(!p||!B.isCoachPlan(p))return;
+  /* 2026-10-02 · หน้าขาย v7.5 เปิด (IUFIT_V7_PACK) ⇒ ปุ่มพาไปหน้าแพ็กใหม่ในแอป (ลิงก์เดิมของแอป) · ธงปิด = onboarding.html เดิม */
+  if(window.IUFIT_V7_PACK===true){
+    el('actions').innerHTML=
+      '<a class="btn pri" href="'+window.iufitPackUrl('credit')+'">'+B.esc(B.t('mp_topup'))+'</a>'+
+      '<a class="btn ghost" style="margin-top:8px" href="'+window.iufitPackUrl('')+'">'+B.esc(B.t('nav_packs'))+'</a>';
+    return;
+  }
   /* ประตูเดียว: ทั้งเติมเครดิตและดูแพ็ก ไปที่ onboarding.html ที่เดียว */
   el('actions').innerHTML=
     '<a class="btn pri" href="onboarding.html?lang='+B.LANG+'&mode=credit">'+B.esc(B.t('mp_topup'))+'</a>'+

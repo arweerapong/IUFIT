@@ -1,0 +1,113 @@
+/*
+ * ฟอนต์ติดตัวแอป (self-host) — แทน Google Fonts · 2569-09-28
+ * ═══════════════════════════════════════════════════════════════════════════
+ * เหตุผล: ใช้ได้ออฟไลน์ (PWA/TWA) · ไม่ส่ง IP ผู้ใช้ไป Google ทุกครั้งที่เปิดแอป (PDPA) · ไม่ขึ้นกับ CDN ภายนอก
+ * ชื่อ family ตรงชื่อเดิมทุกตัว ('Kanit' / 'Noto Sans Thai' / 'Sarabun' / 'Inter') ⇒ ไม่ต้องแก้ CSS ที่อื่นเลย
+ *
+ * ไฟล์ = subset woff2 (ไทย U+0E00-0E7F + Basic Latin + Latin-1 + เครื่องหมายที่แอปใช้ ฿ • · – — ‘ ’ “ ” … ° × ÷ ≤ ≥ ≈ ≠ − ← → ✓ ✕)
+ *   ตัวอักษรนอกช่วงนี้ (เวียดนาม/latin-ext ฯลฯ) ตกไปฟอนต์ถัดไปในสแต็กตามปกติ
+ *   Kanit 400/500/600/700 + 600 italic (เวิร์ดมาร์ก — face เอียงจริง ห้ามเฉือนตัวตรง สเปก v4 §3)
+ *   Noto Sans Thai = variable wght 400–700 · Sarabun 400/500/600/700 · Inter = variable wght 500–700 (opsz 14, ละตินเท่านั้น)
+ *   ⚠️ Kanit 800 ยังไม่มีไฟล์ในเครื่อง → index.html ยังโหลดจาก Google เฉพาะ Kanit 800 (ดูคอมเมนต์ที่นั่น)
+ *
+ * สร้างด้วย fontTools pyftsubset (--flavor=woff2 --no-hinting) · ต้นฉบับ .ttf อยู่นอก repo
+ * ใบอนุญาต: SIL Open Font License 1.1 — ดู *-OFL.txt ในโฟลเดอร์นี้ (ต้องแจกคู่กับไฟล์ฟอนต์เสมอ)
+ * แก้ไฟล์นี้หรือเปลี่ยนไฟล์ฟอนต์ → ต้อง bump CACHE ใน public/sw.js (sw เก็บ /fonts/* แบบ cache-first)
+ * ด่าน: scripts/verify-css-tokens.mjs §V4-3
+ */
+
+/* ── Kanit · หัวข้อ/ตัวเลข/ปุ่ม (แอปเดิม + v7) ── */
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('kanit-400.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('kanit-500.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('kanit-600.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('kanit-700.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: italic;
+  font-weight: 600;
+  font-display: swap;
+  src: url('kanit-600-italic.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+}
+
+/* ── Noto Sans Thai · เนื้อหาแอปเดิม (variable 400–700) ── */
+@font-face {
+  font-family: 'Noto Sans Thai';
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url('noto-sans-thai-var.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+}
+
+/* ── Sarabun · เนื้อหา v7 ── */
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('sarabun-400.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+}
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('sarabun-500.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+}
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('sarabun-600.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+}
+@font-face {
+  font-family: 'Sarabun';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('sarabun-700.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+}
+
+/* ── Inter · ตัวเลข/ละติน v7 (variable 500–700 · ไม่มีอักษรไทย ⇒ ไทยตกไปฟอนต์ถัดไป) ── */
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 500 700;
+  font-display: swap;
+  src: url('inter-var.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265;
+}

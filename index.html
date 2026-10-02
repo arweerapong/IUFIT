@@ -22,15 +22,10 @@
                บิลด์นี้โหลด Chart.js (BodyChart.vue) และ html2canvas (lib/exportCard.ts)
                จาก cdnjs แบบ dynamic <script> · แอปจริงไม่ได้ใช้สองตัวนี้จึงไม่มีในลิสต์
                ⚠️ ถ้าไม่ใส่ = กราฟร่างกายและการ์ดผลลัพธ์พังทันที
-           + script-src  https://www.youtube.com https://s.ytimg.com
-               IFrame Player API (www.youtube.com/iframe_api → โหลด widgetapi จาก s.ytimg)
-               จำเป็นเพราะเราต้องรู้ให้ได้ว่าคลิปถูกเจ้าของปิดการฝังไว้ (error 101/150)
-               ไม่งั้นผู้ใช้จะเจอจอดำเงียบ ๆ
-           + frame-src   https://www.youtube-nocookie.com https://www.youtube.com
-               ⚠️ **จุดที่พังแน่ถ้าลืม** — ไม่มี frame-src จะตกไปใช้ default-src 'self'
-               ⇒ iframe ของ YouTube ถูกบล็อก 100% (แอปจริงก็ขาดบรรทัดนี้อยู่เหมือนกัน)
-           + img-src     https://i.ytimg.com https://i9.ytimg.com
-               ภาพปกคลิปที่ตัวเล่นดึงมาโชว์ก่อนกดเล่น
+           - YouTube ทั้งหมด (2569-09-30 · ตรวจโฟลว์รอบ 2 · คำตัดสิน UX หลังเจ้าของสั่ง "ไม่ต้องมีแล้ว ปุ่มไปดูยูทูป เอาออก")
+               ถอด script-src www.youtube.com / s.ytimg.com · img-src i.ytimg.com / i9.ytimg.com ·
+               frame-src youtube-nocookie.com / youtube.com ⇒ IUFIT ใช้คลิปของตัวเอง (/exercise-media) เท่านั้น
+               frame-src 'none' = ไม่มี iframe ภายนอกเลย (บิลด์นี้ไม่มีจอไหนฝัง iframe · ด่าน verify:exvideo §5 คุม)
            - script-src  ถอด https://static.line-scdn.net / https://*.line-scdn.net
            - connect-src ถอด line.me / line-scdn / generativelanguage / openfoodfacts
            - form-action ถอด https://access.line.me
@@ -51,7 +46,7 @@
          อยากกัน clickjacking จริงจังต้องส่งเป็น HTTP header ที่ฝั่งโฮสต์ -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com https://www.youtube.com https://s.ytimg.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://*.workers.dev https://i.ytimg.com https://i9.ytimg.com; media-src 'self' blob: https://*.workers.dev; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.workers.dev https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; frame-src https://www.youtube-nocookie.com https://www.youtube.com; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://*.workers.dev; media-src 'self' blob: https://*.workers.dev; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.workers.dev https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; frame-src 'none'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
     />
 
     <!-- ── PWA ─────────────────────────────────────────────────────────────────────────
@@ -81,6 +76,7 @@
 
     <!--
       Design-system fonts — สเปก v4 §3
+      ⚠️ 2569-09-28: ย้ายไปโหลดจาก /fonts/fonts.css (ติดตัวแอป) แล้ว — คำว่า "ลิงก์" ด้านล่างเป็นประวัติ · หลักการ face เอียง 1,600 / ตัวหนักยังใช้เหมือนเดิม
       ══════════════════════════════════════════════════════════════════════════
       สเปกสั่งสองตระกูล: Kanit (ตัวเลข/หัวข้อ · สูงสุด 600) · Noto Sans Thai (เนื้อหา)
 
@@ -103,20 +99,38 @@
          สังเคราะห์หนาเอง) ไม่ใช่ regression ที่มองแล้วเห็นชัดจากซอร์ส ⇒ ปล่อยไว้ตามเดิม
          จนกว่าจะมีรอบตรวจ/ลดตัวหนักของหัวข้อลงเหลือ 600 ทั้งแอปโดยตั้งใจ
     -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <!-- v7 (2569-09-28): เพิ่ม Sarabun (body) + Inter (ตัวเลข) + Kanit 400 ตาม Design Kit v7.1 · ฟอนต์โหลดเฉพาะเมื่อมีตัวอักษรใช้ จอเดิมที่ไม่ใช้ไม่โหลด -->
+    <!--
+      ฟอนต์ติดตัวแอป (self-host · 2569-09-28) — แทนลิงก์ Google Fonts เดิม
+      ══════════════════════════════════════════════════════════════════════════
+      /fonts/fonts.css ประกาศ @font-face ชื่อเดิมทุกตัว ('Kanit' 400–700 + 600 italic · 'Noto Sans Thai' 400–700
+      · 'Sarabun' 400–700 · 'Inter' 500–700) จากไฟล์ woff2 subset ใน public/fonts/ (ใบอนุญาต OFL อยู่คู่กัน)
+      ⇒ ใช้ได้ออฟไลน์ · ไม่ส่ง IP ผู้ใช้ไป Google · ไม่ต้องแก้ CSS ที่อื่น · face เอียง 600 ของเวิร์ดมาร์กยังเป็นของจริง (สเปก v4 §3)
+      ด่าน: scripts/verify-css-tokens.mjs §V4-3 (ตรวจ fonts.css + ไฟล์ woff2 แทนลิงก์ Google)
+      preload 3 ไฟล์ที่จอแรกของแอปเดิมใช้จริง: Kanit 600 (ตัวเลข/ปุ่ม --fw-num) · Kanit 700 (หัวข้อ v7 + คลาสหนักใน base.css) · Noto Sans Thai (เนื้อหา)
+      Sarabun/Inter ใช้เฉพาะจอ v7 ⇒ ยังไม่ preload ขณะธง V7_* ปิด (preload ที่ไม่ถูกใช้ = โหลดเปล่า + คำเตือนในคอนโซล)
+        เปิดธง v7 จริงเมื่อไร → สลับ preload Noto เป็น /fonts/sarabun-400.woff2 และเพิ่ม /fonts/inter-var.woff2
+      แก้ fonts.css หรือไฟล์ฟอนต์ → bump CACHE ใน public/sw.js (sw เก็บ /fonts/* แบบ cache-first)
+    -->
+    <link rel="preload" href="/fonts/kanit-600.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/kanit-700.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/noto-sans-thai-var.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
+    <!--
+      ⚠️ ชั่วคราว: Kanit 800 ยังไม่มีไฟล์ในเครื่อง (base.css ใช้ weight 800 คู่ Kanit หลายคลาส) ⇒ โหลดจาก Google เฉพาะตัวนี้
+         ออฟไลน์/บล็อก Google = เบราว์เซอร์ใช้ Kanit 700 ในเครื่องแทน (ไม่หนาปลอม)
+         เมื่อได้ Kanit-ExtraBold.ttf มา → ทำ subset kanit-800.woff2 ใส่ fonts.css แล้วลบ 2 บรรทัดนี้ + fonts.gstatic/googleapis ออกจาก CSP
+    -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Kanit:ital,wght@0,500;0,600;0,700;0,800;1,600&family=Noto+Sans+Thai:wght@400;500;600;700&display=swap"
-      rel="stylesheet"
-    />
-    <script type="module" crossorigin src="/assets/index-B4rWw6_E.js"></script>
-    <link rel="modulepreload" crossorigin href="/assets/vendor-4hTcdKrO.js">
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@800&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="/assets/index-Dmxz8z34.js"></script>
+    <link rel="modulepreload" crossorigin href="/assets/vendor-DgQG8d4N.js">
     <link rel="modulepreload" crossorigin href="/assets/iumate-kb-Ry4n96HN.js">
     <link rel="modulepreload" crossorigin href="/assets/iumate-features-Cj6_eDiI.js">
     <link rel="modulepreload" crossorigin href="/assets/iumate-lex-BdNILQNR.js">
     <link rel="modulepreload" crossorigin href="/assets/iumate-persona-C4Cur3yz.js">
-    <link rel="stylesheet" crossorigin href="/assets/index-DjrP7f33.css">
-  <link rel="modulepreload" crossorigin href="/assets/HomeView-DL2kw4Zl.js"><link rel="modulepreload" crossorigin href="/assets/IuIcon-QctIjvTk.js"><link rel="modulepreload" crossorigin href="/assets/useAllergyRecipe-CB5e7K09.js"><link rel="modulepreload" crossorigin href="/assets/exDisplayName-BIHAbdXV.js"><link rel="modulepreload" crossorigin href="/assets/wearSports-WgkzkA3n.js"><link rel="modulepreload" crossorigin href="/assets/activityLedger-CAzP1LAx.js"><link rel="modulepreload" crossorigin href="/assets/AllergyWarnBadge-CdgnPg3w.js"><link rel="modulepreload" crossorigin href="/assets/TargetCautionNote-DdTlAqDa.js"><link rel="modulepreload" crossorigin href="/assets/MealPlanPickModal-4mnQZmgx.js"><link rel="modulepreload" crossorigin href="/assets/PickSaveBar-C0up7wh1.js"><link rel="modulepreload" crossorigin href="/assets/trainingScreens.i18n-CyMiiBdc.js"><link rel="modulepreload" crossorigin href="/assets/useDebouncedSearchQuery-DCN0MyKs.js"><link rel="modulepreload" crossorigin href="/assets/TodayPlanWorkout.vue_vue_type_script_setup_true_lang-sOZWea7m.js"><link rel="modulepreload" crossorigin href="/assets/PlanRowsCard-CW-iMsXa.js"><link rel="modulepreload" crossorigin href="/assets/FoodPageActions-BBJIhVD1.js"><link rel="modulepreload" crossorigin href="/assets/FoodPageNote-BBcz4zAz.js"><link rel="modulepreload" crossorigin href="/assets/ExerciseVideoSheet-Biu4zrCN.js"><link rel="modulepreload" crossorigin href="/assets/exvideo.th-C37zqNpQ.js"><link rel="modulepreload" crossorigin href="/assets/exvideo.en-CC1Rx7fK.js"><link rel="modulepreload" crossorigin href="/assets/exerciseVideo-CoQWl4in.js"><link rel="modulepreload" crossorigin href="/assets/workoutplan.i18n-Wx52VPTF.js"><link rel="modulepreload" crossorigin href="/assets/WorkoutSheet.vue_vue_type_script_setup_true_lang-BI7iT-f8.js"><link rel="modulepreload" crossorigin href="/assets/PlanTodayEmpty-DAeX7rBV.js"><link rel="modulepreload" crossorigin href="/assets/foodScreens.i18n-Ddwnbsdp.js"><link rel="modulepreload" crossorigin href="/assets/TargetEditSheet-DsofOJXT.js"><link rel="modulepreload" crossorigin href="/assets/BodyLogSheet.vue_vue_type_script_setup_true_lang-B77Wg_DM.js"><link rel="modulepreload" crossorigin href="/assets/useUnits-B2FQIwTQ.js"><link rel="modulepreload" crossorigin href="/assets/normalize-Bs5t0RvA.js"><link rel="modulepreload" crossorigin href="/assets/health-BqoCeRrz.js"><link rel="modulepreload" crossorigin href="/assets/IuDateField-CGD5PqGf.js"><link rel="modulepreload" crossorigin href="/assets/HistoryCalendar-DtQH2C1I.js"><link rel="modulepreload" crossorigin href="/assets/FoodAdjustSheet-Baj47VAV.js"><link rel="modulepreload" crossorigin href="/assets/MetricBar-DCt0MW_Z.js"><link rel="modulepreload" crossorigin href="/assets/MetricEvidence-BgbLaqID.js"><link rel="modulepreload" crossorigin href="/assets/homeCardData-C0JLvg5U.js"><link rel="modulepreload" crossorigin href="/assets/sport-aYFimXBm.js"><link rel="modulepreload" crossorigin href="/assets/wearSport-CAbIFNFO.js"><link rel="modulepreload" crossorigin href="/assets/heartZones-BgZPxuDw.js"><link rel="modulepreload" crossorigin href="/assets/sportSessionLog-BctjEigF.js"><link rel="modulepreload" crossorigin href="/assets/sportRest-Di1P7CeV.js"><link rel="modulepreload" crossorigin href="/assets/HomeSourceBadge-Bq93qUaO.js"><link rel="modulepreload" crossorigin href="/assets/sportReason-BxqHv-uK.js"><link rel="modulepreload" crossorigin href="/assets/sport.th-DfKFnxDw.js"><link rel="modulepreload" crossorigin href="/assets/sport.en-BruLLtro.js"></head>
+    <link rel="stylesheet" crossorigin href="/assets/index-DlXh_Ed5.css">
+  <link rel="modulepreload" crossorigin href="/assets/HomeView-wr3T1w9u.js"><link rel="modulepreload" crossorigin href="/assets/IuIcon-C6YLW0yT.js"><link rel="modulepreload" crossorigin href="/assets/useAllergyRecipe-DI1ISRAs.js"><link rel="modulepreload" crossorigin href="/assets/exDisplayName-CKIjGTgs.js"><link rel="modulepreload" crossorigin href="/assets/wearSports-WgkzkA3n.js"><link rel="modulepreload" crossorigin href="/assets/activityLedger-CAzP1LAx.js"><link rel="modulepreload" crossorigin href="/assets/AllergyWarnBadge-BNAP8mIL.js"><link rel="modulepreload" crossorigin href="/assets/TargetCautionNote-wJpb4-ii.js"><link rel="modulepreload" crossorigin href="/assets/MealPlanPickModal-BCVLTPS0.js"><link rel="modulepreload" crossorigin href="/assets/PickSaveBar-Bsz3EArW.js"><link rel="modulepreload" crossorigin href="/assets/trainingScreens.i18n-CyMiiBdc.js"><link rel="modulepreload" crossorigin href="/assets/useDebouncedSearchQuery-jeSk6h9A.js"><link rel="modulepreload" crossorigin href="/assets/TodayPlanWorkout.vue_vue_type_script_setup_true_lang-BfweaARc.js"><link rel="modulepreload" crossorigin href="/assets/PlanRowsCard-Cx1-osb5.js"><link rel="modulepreload" crossorigin href="/assets/FoodPageActions-Dm9a9GFd.js"><link rel="modulepreload" crossorigin href="/assets/workoutplan.i18n-r6hx9lDm.js"><link rel="modulepreload" crossorigin href="/assets/exerciseMedia-C-fHMFvK.js"><link rel="modulepreload" crossorigin href="/assets/useGate-CcLpjaGD.js"><link rel="modulepreload" crossorigin href="/assets/stretchGuide-7Zr95hZK.js"><link rel="modulepreload" crossorigin href="/assets/WorkoutSheet.vue_vue_type_script_setup_true_lang-D7qThZ4g.js"><link rel="modulepreload" crossorigin href="/assets/PlanTodayEmpty-C7-mckvV.js"><link rel="modulepreload" crossorigin href="/assets/foodScreens.i18n-Ddwnbsdp.js"><link rel="modulepreload" crossorigin href="/assets/TargetEditSheet-6kVqvitU.js"><link rel="modulepreload" crossorigin href="/assets/BodyLogSheet-0ks08DBI.js"><link rel="modulepreload" crossorigin href="/assets/useUnits-DgSLWoKU.js"><link rel="modulepreload" crossorigin href="/assets/normalize-BzKijM5v.js"><link rel="modulepreload" crossorigin href="/assets/health-BVg9QFSY.js"><link rel="modulepreload" crossorigin href="/assets/IuDateField-B-2NgNRw.js"><link rel="modulepreload" crossorigin href="/assets/HistoryCalendar-CZMXzNsB.js"><link rel="modulepreload" crossorigin href="/assets/FoodAdjustSheet-B4RZU-On.js"><link rel="modulepreload" crossorigin href="/assets/MetricBar-BpVAph0U.js"><link rel="modulepreload" crossorigin href="/assets/MetricEvidence-ljyA6pRC.js"><link rel="modulepreload" crossorigin href="/assets/homeCardData-Ca-D_mWJ.js"><link rel="modulepreload" crossorigin href="/assets/sport-DtQtpGau.js"><link rel="modulepreload" crossorigin href="/assets/wearSport-C4rbhpPw.js"><link rel="modulepreload" crossorigin href="/assets/heartZones-DsJhV2nO.js"><link rel="modulepreload" crossorigin href="/assets/sportSessionLog-B3a1uZnK.js"><link rel="modulepreload" crossorigin href="/assets/sportRest-esgcuAWT.js"><link rel="modulepreload" crossorigin href="/assets/HomeSourceBadge-kqDt3oIe.js"><link rel="modulepreload" crossorigin href="/assets/sportReason-BxqHv-uK.js"><link rel="modulepreload" crossorigin href="/assets/sport.th-Dluhw4C4.js"><link rel="modulepreload" crossorigin href="/assets/sport.en-BruLLtro.js"></head>
   <body>
     <div id="app"></div>
 

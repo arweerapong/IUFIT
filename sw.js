@@ -697,7 +697,13 @@
    อายุคอมโพเนนต์ · แก้ด้วยตัวนับ `pairedRev` ที่ตัวอ่าน touch และตัวเขียน bump
    ⇒ ครอบคลุมทั้งจับคู่ · เลิกจับคู่ · เปลี่ยนชื่อเล่น โดยไม่ต้องแก้ที่เรียกสักจุด
    ด่าน: `verify:wearreactive` (14 ข้อ · mutation แดง 5) */
-const CACHE = 'iufit-v1455-homeexname'
+/* v1457 = v7 · WP21 ปิดรอบหลังบ้าน — push เปิด `data.url` (deep link ของ /notify/event · แผน 3.7)
+   · URL ต้องเป็นพาธในโดเมนเดียวกันเท่านั้น (ขึ้นต้น `/` ไม่ใช่ `//`) อย่างอื่น = `/` (กัน open redirect)
+   · อ่าน `silent` (สรุปบันทึกฝึกรายวัน tag `log_{วันที่}` = เงียบ · ไม่ renotify) · FCM เนทีฟส่ง `'1'`
+   · รองรับ payload ห่อ `{data:{url,tag,title,body,silent}}` ด้วย · ด่าน: `verify:v7` [SW] */
+/* v1458 = v7 · UI01 รอบหน้าจอ — runtime cache แบบ stale-while-revalidate ให้ `/v7/*` (asset ของจอ v7 ·
+   ไม่ precache: ผู้ใช้ที่ธงปิดไม่ต้องโหลดเลย) · ด่าน: `verify:pwa` / `verify:v7` [S] */
+const CACHE = 'iufit-v1459-v7final'
 
 /* เน€เธโฌเน€เธยเน€เธเธ…เน€เธเธ—เน€เธเธเน€เธยเน€เธยเน€เธเธเน€เธยเน€เธโ€”เน€เธเธ•เน€เธยเน€เธยเน€เธเธ—เน€เธยเน€เธเธเน€เธยเน€เธยเน€เธเธ…เน€เธยเน€เธยเน€เธยเน€เธโ€”เน€เธเธ•เน€เธย (เน€เธยเน€เธเธ—เน€เธยเน€เธเธ hash เน€เธยเน€เธเธเน€เธย /assets/* เน€เธโฌเน€เธยเน€เธยเน€เธยเน€เธโ€ขเน€เธเธเน€เธย runtime เน€เธยเน€เธโ€”เน€เธย)
 
@@ -772,6 +778,29 @@ self.addEventListener('fetch', (e) => {
      ทุกคลิปที่เคยเปิดจะค้างในเครื่องจนกว่าชื่อ CACHE จะเปลี่ยน ⇒ ปล่อยเบราว์เซอร์ใช้ HTTP cache เอง
      ด่าน: scripts/verify-exmedia.mjs */
   if (sameOrigin && url.pathname.startsWith('/exercise-media/')) return
+  /* ⭐ v7 · UI01 — asset ของจอ v7 (`/v7/*` · webp/รูปฉาก/มาสคอต) = stale-while-revalidate
+     ตอบจากแคชทันทีถ้ามี แล้วดึงของใหม่มาเก็บเบื้องหลัง · ไม่อยู่ใน precache (ธงปิด = ไม่มีใครขอ)
+     เก็บเฉพาะ 200 (ไม่เก็บ 206/opaque) · ออฟไลน์และไม่เคยโหลด = ปล่อย error ตามจริง ไม่ตอบ index.html */
+  if (sameOrigin && url.pathname.startsWith('/v7/')) {
+    e.respondWith(
+      caches.open(CACHE).then((c) =>
+        c.match(e.request).then((hit) => {
+          const fresh = fetch(e.request)
+            .then((n) => {
+              if (n && n.status === 200) c.put(e.request, n.clone())
+              return n
+            })
+            .catch(() => hit || Response.error())
+          if (hit) {
+            e.waitUntil(fresh)
+            return hit
+          }
+          return fresh
+        }),
+      ),
+    )
+    return
+  }
   /* history-mode SPA: /food, /coach/... เน€เธเธเน€เธเธ’เน€เธโฌเน€เธยเน€เธยเน€เธย mode==='navigate' เน€เธโ€”เน€เธเธ‘เน€เธยเน€เธยเน€เธเธเน€เธเธเน€เธโ€ เนยโ€ เน€เธโฌเน€เธยเน€เธยเน€เธเธ’เน€เธโ€”เน€เธเธ’เน€เธย network-first
      เน€เธยเน€เธเธ…เน€เธเธเน€เธโ€ขเน€เธเธเน€เธยเน€เธเธเน€เธเธเน€เธยเน€เธยเน€เธเธ…เน€เธยเน€เธยเน€เธโ€ขเน€เธยเน€เธเธเน€เธเธ’เน€เธโ€”เน€เธเธ•เน€เธย ./index.html เน€เธยเน€เธเธเน€เธย router เน€เธโฌเน€เธโ€เน€เธเธ”เน€เธยเน€เธโฌเน€เธเธเน€เธยเน€เธยเน€เธโ€”เน€เธเธ’เน€เธยเน€เธโ€ขเน€เธยเน€เธเธเน€เธโฌเน€เธเธเน€เธยเน€เธยเน€เธเธ‘เน€เธยเน€เธย client */
   /* เนยยย 2569-07-28 เธขเธ— **เน€เธยเน€เธเธเน€เธยเน€เธเธเน€เธยเน€เธยเน€เธเธ’เน€เธโฌเน€เธเธเน€เธยเน€เธเธเน€เธเธ’เน€เธเธเน€เธเธเน€เธเธเน€เธยเน€เธยเน€เธเธ’เน€เธย app shell** (P0 เธขเธ— เน€เธเธเน€เธเธ’เน€เธเธเน€เธยเน€เธเธ’เน€เธยเน€เธโ€ขเน€เธเธเน€เธเธเน€เธยเน€เธยเน€เธยเน€เธยเน€เธโ€ 28 เน€เธย.เน€เธย.)
@@ -879,6 +908,24 @@ self.addEventListener('fetch', (e) => {
 })
 
 /* Web push (FCM) เนโฌโ€ เน€เธยเน€เธเธเน€เธเธเน€เธยเน€เธโ€ขเน€เธโ€ขเน€เธเธเน€เธยเน€เธยเน€เธเธ’เน€เธย sw.js เน€เธยเน€เธเธเน€เธยเน€เธยเน€เธเธเน€เธเธ”เน€เธย เน€เธเธเน€เธยเน€เธเธ’เน€เธเธเน€เธโ€ขเน€เธเธ‘เน€เธโ€เน€เธโ€”เน€เธเธ”เน€เธยเน€เธย เน€เธยเน€เธเธเน€เธยเน€เธยเน€เธเธ‘เน€เธยเน€เธย noti เน€เธโ€”เน€เธเธ•เน€เธยเน€เธเธเน€เธยเน€เธยเน€เธเธเน€เธเธเน€เธเธเน€เธยเน€เธยเน€เธเธ…เน€เธยเน€เธเธเน€เธโฌเน€เธยเน€เธเธ•เน€เธเธเน€เธยเน€เธเธเน€เธเธ’เน€เธเธ */
+/* v7 · WP21 — deep link จาก push ต้องเป็นพาธในโดเมนนี้ (`/coach?focus=…`, `/notify/inbox?open=…`)
+   URL เต็มโดเมนเดียวกัน = ตัดเหลือพาธ · โดเมนอื่น / `//x` / `/\x` / `javascript:` = `/` */
+function iufitSafeUrl(u) {
+  if (typeof u !== 'string' || !u) return '/'
+  let s = u.trim()
+  try {
+    if (/^https?:\/\//i.test(s)) {
+      const x = new URL(s)
+      if (x.origin !== self.location.origin) return '/'
+      s = x.pathname + x.search + x.hash
+    }
+  } catch (_) {
+    return '/'
+  }
+  if (s.charAt(0) !== '/' || s.charAt(1) === '/' || s.charAt(1) === '\\') return '/'
+  return s.length > 512 ? '/' : s
+}
+
 self.addEventListener('push', function (e) {
   let d = {}
   try {
@@ -890,14 +937,22 @@ self.addEventListener('push', function (e) {
       d = {}
     }
   }
-  const title = d.title || 'IUFIT เนยโ€เธ'
+  /* v7 · WP21 — payload ห่อ `{data:{...}}` (FCM) */
+  const dd = d && d.data && typeof d.data === 'object' ? d.data : {}
+  const pick = function (k) {
+    return d[k] !== undefined && d[k] !== null && d[k] !== '' ? d[k] : dd[k]
+  }
+  const sv = pick('silent')
+  const silent = sv === true || sv === 1 || sv === '1' || sv === 'true'
+  const title = pick('title') || 'IUFIT เนยโ€เธ'
   const opts = {
-    body: d.body || '',
-    icon: d.icon || '/icon-192.png',
+    body: pick('body') || '',
+    icon: pick('icon') || '/icon-192.png',
     badge: '/icon-192.png',
-    tag: d.tag || 'iufit',
-    renotify: true,
-    data: { url: d.url || '/' },
+    tag: pick('tag') || 'iufit',
+    renotify: !silent,
+    silent: silent,
+    data: { url: iufitSafeUrl(pick('url')) },
   }
   e.waitUntil(self.registration.showNotification(title, opts))
 })
@@ -958,7 +1013,7 @@ self.addEventListener('pushsubscriptionchange', function (e) {
 
 self.addEventListener('notificationclick', function (e) {
   e.notification.close()
-  const target = (e.notification.data && e.notification.data.url) || '/'
+  const target = iufitSafeUrl(e.notification.data && e.notification.data.url)
   e.waitUntil(
     clients.matchAll({ type: 'window', includeUncontrolled: true }).then(function (cl) {
       for (let i = 0; i < cl.length; i++) {

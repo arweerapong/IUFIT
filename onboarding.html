@@ -145,8 +145,14 @@
 <div id="footSlot"></div>
 </div>
 
+<script src="v7-web-flags.js?v=1"></script>
 <script src="billing-common.js?v=v137"></script>
 <script>
+/* 2026-10-02 · คำตัดสินเจ้าของ "หน้าแพ็กใช้ลิงก์เดิม": หน้าขาย v7.5 เปิด (IUFIT_V7_PACK) ⇒ ลิงก์เก่าที่มาหน้านี้
+   (รวม billing.html / pricing.html ที่ส่งต่อมา) พาไปหน้าแพ็กใหม่ในแอป · mode=credit ⇒ ชีตเติมเครดิต
+   · ขากลับจากการจ่ายเงิน (?ref= / ?result=) ไม่ถูกพาออก — ต้องจบรายการที่เริ่มบนเว็บให้ได้
+   · แอปตัดสินต่อเอง: โค้ช = หน้าแพ็ก · ไม่ใช่โค้ช = หน้าแรก (ไม่เห็นการขาย) · ธงปิด = หน้านี้ทำงานแบบเดิม 100% */
+(function(){try{var Bq=window.IUFIT_BILLING;if(window.IUFIT_V7_PACK===true&&!Bq.qs('ref')&&!Bq.qs('result')){location.replace(window.iufitPackUrl(Bq.qs('mode')==='credit'?'credit':''));}}catch(e){}})();
 /* ══════════════════════════════════════════════════════════════════════════════════════
    โฟลวสมัคร/จ่ายเงิน 4 ก้าว (2569-09-11) — เขียนใหม่ตามดีไซน์ที่เจ้าของส่งมา
    ══════════════════════════════════════════════════════════════════════════════════════
@@ -328,10 +334,10 @@ function cycleTogHtml(){
     +(tag?'<i class="ob-cyctag'+(B.YEARLY_OPEN?'':' soon')+'">'+B.esc(tag)+'</i>':'')+'</button></div>';
 }
 function stepSize(){
+  /* 2026-10-02 · คำตัดสินเจ้าของ "ขายเฉพาะโค้ช": ไม่มีแท็บแพ็กผู้ใช้ทั่วไป (B2C) แล้ว ⇒ แพ็กโค้ชอย่างเดียว
+     (ตรรกะ B2C ข้างล่างคงไว้เป็นทางตาย ไม่ลบ · ตั้งกลับได้ด้วยการเอาบรรทัดนี้ + บล็อกปุ่มสลับกลับมา) */
+  S.aud='coach';
   var h=S.notice?('<div class="ob-warn">'+B.esc(S.notice)+'</div>'):'';
-  h+='<div class="toggle" role="group" aria-label="'+B.esc(B.t('ob_tab_me'))+'">'
-    +'<button type="button" data-aud="me" class="'+(S.aud==='me'?'on':'')+'">'+B.esc(B.t('ob_tab_me'))+'</button>'
-    +'<button type="button" data-aud="coach" class="'+(S.aud==='coach'?'on':'')+'">'+B.esc(B.t('ob_tab_coach'))+'</button></div>';
   if(S.aud==='coach'){
     var p=B.planBySeats(S.seats);
     h+='<div class="ob-t">'+B.esc(B.t('ob_size_t'))+'</div><div class="ob-m">'+B.esc(B.t('ob_size_m'))+'</div>';
@@ -858,7 +864,7 @@ if(B.IS_STORE){el('storeNote').classList.remove('hide');T('sn-t','store_guard_t'
   if(want&&!want.contact){
     S.mode='new';
     if(B.isCoachPlan(want)){S.aud='coach';S.seats=B.seatsOf(want);}
-    else {S.aud='me';S.planKey=want.k;}
+    /* 2026-10-02 · แพ็กผู้ใช้ทั่วไป (B2C) ไม่ขายแล้ว ⇒ ลิงก์เก่า ?plan=<B2C> ไม่เปิดใบนั้น (ทิ้งเงียบ ๆ ตามกติกาเดิมของ ?plan=) */
   }
   /* `?mode=` — ทางเข้าจาก billing.html (ที่ยุบมาแล้ว) และจากริชเมนู LINE
      รับเฉพาะโหมดที่มีจริงในตาราง MODES · `?plan=` ชนะ เพราะเจาะจงกว่า */

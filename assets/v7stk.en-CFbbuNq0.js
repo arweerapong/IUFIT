@@ -1,0 +1,1 @@
+const e={v7stk:{inbox:{title:"Chat",empty:"No chats yet · trainee messages appear here",loading:"Loading chats…",failed:"Couldn't load chats · try again",unread:"New message",noName:"Trainee"}}};export{e as default};

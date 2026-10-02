@@ -1,0 +1,1 @@
+const o={snap:{th:"ถ่ายรูปอาหารส่งโค้ช",en:"Snap food for your coach"},snapHint:{th:"ถ่ายรูปมื้อนี้ส่งให้โค้ชดูได้เลย ไม่ต้องกรอกเมนูหรือแคลอรี",en:"Snap this meal for your coach. No need to enter dishes or calories"},buffet:{th:"บุฟเฟต์",en:"Buffet"}};function t(e,n){return n?e.en:e.th}export{o as FOOD_ENTRY,t as txFe};
