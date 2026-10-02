@@ -9,7 +9,7 @@
  * ⚠️ สวิตช์ปิดฉุกเฉินระยะไกล (`/ops/v7kill`) ไม่มีผลกับหน้าเว็บนี้ — ปิดถาวร = แก้ธง → build → UP-WEB
  * ไฟล์โหลดไม่ขึ้น = ไม่มี `IUFIT_V7_PACK` ⇒ หน้าเว็บถือว่า "ปิด" (เดิม)
  */
-window.IUFIT_V7_PACK = false;
+window.IUFIT_V7_PACK = true;
 /** ลิงก์หน้าแพ็กใหม่ในแอป (ลิงก์เดิมของแอป · `sheet=credit|seats` เปิดชีตตามเดิม) */
 window.iufitPackUrl = function (sheet) {
   return '/coach/pack' + (sheet === 'credit' || sheet === 'seats' ? '?sheet=' + sheet : '');
