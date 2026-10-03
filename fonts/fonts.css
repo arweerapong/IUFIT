@@ -8,7 +8,7 @@
  *   ตัวอักษรนอกช่วงนี้ (เวียดนาม/latin-ext ฯลฯ) ตกไปฟอนต์ถัดไปในสแต็กตามปกติ
  *   Kanit 400/500/600/700 + 600 italic (เวิร์ดมาร์ก — face เอียงจริง ห้ามเฉือนตัวตรง สเปก v4 §3)
  *   Noto Sans Thai = variable wght 400–700 · Sarabun 400/500/600/700 · Inter = variable wght 500–700 (opsz 14, ละตินเท่านั้น)
- *   ⚠️ Kanit 800 ยังไม่มีไฟล์ในเครื่อง → index.html ยังโหลดจาก Google เฉพาะ Kanit 800 (ดูคอมเมนต์ที่นั่น)
+ *   Kanit 400–800 ตัวตรง = ไฟล์จาก Google Fonts (2026-10-03 · ตรงต้นแบบ) · 600 italic = subset เดิม
  *
  * สร้างด้วย fontTools pyftsubset (--flavor=woff2 --no-hinting) · ต้นฉบับ .ttf อยู่นอก repo
  * ใบอนุญาต: SIL Open Font License 1.1 — ดู *-OFL.txt ในโฟลเดอร์นี้ (ต้องแจกคู่กับไฟล์ฟอนต์เสมอ)
@@ -17,37 +17,127 @@
  */
 
 /* ── Kanit · หัวข้อ/ตัวเลข/ปุ่ม (แอปเดิม + v7) ── */
+/* 2026-10-03 · Kanit 400–800 = ไฟล์ชุดเดียวกับ Google Fonts ที่ต้นแบบ v7.5 ใช้ (ไทย/ละติน/ละตินขยาย · unicode-range ตาม Google)
+   เดิมเป็น subset ที่สร้างเอง ⇒ ความกว้างตัวอักษรต่างต้นแบบ ~4% (Kanit 500) · ไฟล์เดิมย้ายไป _to_delete/v7design-fonts-1003 */
 @font-face {
   font-family: 'Kanit';
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url('kanit-400.woff2') format('woff2');
-  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+  src: url('kanit-400-thai.woff2') format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('kanit-400-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('kanit-400-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: 'Kanit';
   font-style: normal;
   font-weight: 500;
   font-display: swap;
-  src: url('kanit-500.woff2') format('woff2');
-  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+  src: url('kanit-500-thai.woff2') format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('kanit-500-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url('kanit-500-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: 'Kanit';
   font-style: normal;
   font-weight: 600;
   font-display: swap;
-  src: url('kanit-600.woff2') format('woff2');
-  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+  src: url('kanit-600-thai.woff2') format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('kanit-600-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('kanit-600-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: 'Kanit';
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url('kanit-700.woff2') format('woff2');
-  unicode-range: U+0020-007E, U+00A0-00FF, U+0E00-0E7F, U+200B-200D, U+2013-2014, U+2018-2019, U+201C-201D, U+2022, U+2026, U+2039-203A, U+2060, U+20AC, U+2190-2193, U+2212, U+2248, U+2260, U+2264-2265, U+2713, U+2715, U+25CC, U+FEFF;
+  src: url('kanit-700-thai.woff2') format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('kanit-700-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: url('kanit-700-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('kanit-800-thai.woff2') format('woff2');
+  unicode-range: U+02D7, U+0303, U+0331, U+0E01-0E5B, U+200C-200D, U+25CC;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('kanit-800-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Kanit';
+  font-style: normal;
+  font-weight: 800;
+  font-display: swap;
+  src: url('kanit-800-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 @font-face {
   font-family: 'Kanit';
