@@ -57,11 +57,11 @@ a{color:var(--blue);font-weight:700}
 <div class="step">
 <ol>
 <li>เปิดแอป IUFIT</li>
-<li>ลูกเทรน: แตะรูปโปรไฟล์ → <b>ตั้งค่า → อื่น ๆ → ความเป็นส่วนตัว &amp; ความยินยอม</b><br>โค้ช: แท็บวันนี้ แตะปุ่มตัวอักษรมุมขวาบน (หน้า "ฉัน") → <b>อื่น ๆ → บัญชีและเครดิต AI → ความเป็นส่วนตัว &amp; ความยินยอม</b></li>
+<li>ลูกเทรน: แตะรูปโปรไฟล์ → <b>ตั้งค่า → อื่น ๆ → ความเป็นส่วนตัว &amp; ความยินยอม</b><br>โค้ช: แท็บ <b>ฉัน → บัญชี → ลบบัญชี</b></li>
 <li>กด <b>ลบบัญชี</b> แล้วยืนยัน</li>
 </ol>
 </div>
-<p class="muted">การลบจะลบ: บัญชี ข้อมูลสำรองบนคลาวด์ และทะเบียนผู้ใช้ของคุณทันที</p>
+<p class="muted">การลบจะลบทันที: บัญชีเข้าสู่ระบบ ข้อมูลสุขภาพและบันทึก รูปอาหาร แชตที่คุณส่ง ข้อมูลสำรองบนคลาวด์ และถอดคุณออกจากโค้ช</p>
 </div>
 
 <div class="card">
@@ -78,10 +78,12 @@ a{color:var(--blue);font-weight:700}
 <h2>ข้อมูลที่จะถูกลบ</h2>
 <ul>
 <li>ข้อมูลโปรไฟล์ (ชื่อ เพศ วันเกิด ส่วนสูง น้ำหนัก รูป)</li>
-<li>ข้อมูลสุขภาพ/การออกกำลังกาย (น้ำหนัก สัดส่วน บันทึกอาหาร การฝึก น้ำดื่ม)</li>
+<li>ข้อมูลสุขภาพ/การออกกำลังกาย (น้ำหนัก สัดส่วน บันทึกอาหาร การฝึก การนอน น้ำดื่ม ข้อควรระวัง)</li>
+<li>รูปอาหารที่เคยส่ง และข้อความแชตที่คุณส่ง</li>
 <li>ข้อมูลสำรองบนคลาวด์ (Firebase) และทะเบียนผู้ใช้</li>
-<li>อีเมล/LINE ที่ผูกไว้กับบัญชี</li>
+<li>อีเมล/LINE ที่ผูกไว้กับบัญชี และบัญชีเข้าสู่ระบบ</li>
 </ul>
+<p class="muted" style="margin-top:10px">ที่ไม่ถูกลบ: ข้อมูลการซื้อและหลักฐานการชำระเงินของโค้ช (กฎหมายบัญชีและภาษีกำหนดให้เก็บ) · ข้อมูลที่ค้างในระบบสำรองหมดไปเองภายใน 14 วัน</p>
 <p class="muted" style="margin-top:10px">รูป/วิดีโอที่เคยส่งในแชท (เก็บบน Cloudflare R2) <b>ถูกลบอัตโนมัติภายใน 24 ชั่วโมง</b>อยู่แล้ว</p>
 <div class="warn" style="margin-top:12px">การลบบัญชีเป็นการลบถาวร กู้คืนไม่ได้ — หากต้องการเก็บข้อมูล ให้ส่งออก (Backup/Export) ในตั้งค่าก่อนลบ</div>
 </div>
@@ -99,11 +101,11 @@ a{color:var(--blue);font-weight:700}
 <div class="step">
 <ol>
 <li>Open the IUFIT app</li>
-<li>Trainee: tap your profile picture → <b>Settings → More → Privacy &amp; consent</b><br>Coach: on the Today tab tap the letter button at the top right ("Me") → <b>More → Account &amp; AI credits → Privacy &amp; consent</b></li>
+<li>Trainee: tap your profile picture → <b>Settings → More → Privacy &amp; consent</b><br>Coach: <b>Me tab → Account → Delete account</b></li>
 <li>Tap <b>Delete account</b> and confirm</li>
 </ol>
 </div>
-<p class="muted">Deleting removes, immediately: your account, your cloud backup, and your user registration</p>
+<p class="muted">Deleting removes, immediately: your sign-in account, health data and logs, food photos, chat messages you sent, your cloud backup, and your link to your coach</p>
 </div>
 
 <div class="card">
@@ -120,10 +122,12 @@ a{color:var(--blue);font-weight:700}
 <h2>What will be deleted</h2>
 <ul>
 <li>Profile data (name, sex, date of birth, height, weight, photo)</li>
-<li>Health / exercise data (weight, body measurements, food logs, training, water intake)</li>
+<li>Health / exercise data (weight, body measurements, food logs, training, sleep, water intake, cautions)</li>
+<li>Food photos you sent and chat messages you sent</li>
 <li>Cloud backup (Firebase) and your user registration</li>
-<li>The email address / LINE account linked to your account</li>
+<li>The email address / LINE account linked to your account, and your sign-in account</li>
 </ul>
+<p class="muted" style="margin-top:10px">Not deleted: coaches' purchase data and payment records (kept as required by accounting and tax law) · anything left in system backups expires on its own within 14 days</p>
 <!-- ⚠️ 2569-08-08 · ประโยค 24 ชั่วโมงข้างล่างถูก **ยกมาตรงตัว** จากฝั่งไทยบรรทัดเดียวกัน
      (และตรงกับ terms.html ข้อ 7 / 7.4) · ห้ามทำให้อ่อนลง ห้ามทำให้หนักแน่นขึ้น และห้ามลบ
      ออกจากฝั่งเดียว — ถ้าจะเปลี่ยน ต้องเปลี่ยนพร้อมกันทั้งสองฝั่งและใน terms.html
