@@ -1,0 +1,1 @@
+import{z as s}from"./vendor-Cu_eBDa7.js";const o=s({hosts:0,req:null});let r=null;function f(e,n={}){return o.hosts<=0?Promise.resolve(typeof confirm=="function"?confirm(e):!0):(r&&r(!1),new Promise(t=>{r=t,o.req={msg:e,...n}}))}function l(e){const n=r;r=null,o.req=null,n&&n(e)}export{f as a,l as b,o as v};
