@@ -1,0 +1,1 @@
+import{c$ as a,O as s,N as o,M as r,K as n,D as f,C as i}from"./index-B9D2DSpJ.js";const c={on:()=>a,get:n,put:r,patch:o,del:s,read:e=>i(e),write:(e,t)=>void f(e,t)};function d(){return O.on()}let O=c;export{d as s};
