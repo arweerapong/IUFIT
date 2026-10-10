@@ -1,0 +1,1 @@
+import{d as u,r as a}from"./vendor-En1aoAjn.js";const f=u("v7DeskNav",()=>{const e=a({});function s(r,n){const t=Number(n),o={...e.value};Number.isFinite(t)&&t>=0?o[r]=Math.floor(t):delete o[r],e.value=o}return{pub:e,publish:s}});export{f as useDeskNavStore};

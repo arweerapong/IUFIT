@@ -1,0 +1,1 @@
+import{j as o}from"./vendor-En1aoAjn.js";import{r as i}from"./PageBackBar.vue_vue_type_style_index_0_scoped_d1d2e696_lang-CYlrluSs.js";function l(e){const r=o();return()=>{var a;if((a=e.intercept)!=null&&a.call(e))return;const t=typeof window>"u"?null:window.history.state,n=i(t?t.back:null,e.fallback());n.kind==="history"?r.back():r.replace(n.to)}}export{l as u};
