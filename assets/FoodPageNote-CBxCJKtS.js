@@ -1,0 +1,1 @@
+import{a as t,b as e,t as a,o as s}from"./vendor-6MMRSvfw.js";import{ad as c}from"./index-ChR4eAjD.js";const n={class:"fpn","data-block":"note"},p=t({__name:"FoodPageNote",props:{text:{}},setup(o){return(r,_)=>(s(),e("p",n,a(o.text),1))}}),m=c(p,[["__scopeId","data-v-ffc3b0e4"]]);export{m as F};
