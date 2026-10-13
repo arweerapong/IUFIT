@@ -1,0 +1,1 @@
+const e={BASE_URL:"/"},t=(()=>{const n=e,r=n&&n.BASE_URL?n.BASE_URL:"/";return r.endsWith("/")?r:r+"/"})();function i(n){return`${t}ray/still/${n}.webp`}function a(n){return`${t}ray/${n}.webp`}function s(n){return`${t}ray/anim/${n}.webp`}function o(n){return n.kind==="still"?i(n.name):a(n.name)}export{o as a,a as b,s as r};
