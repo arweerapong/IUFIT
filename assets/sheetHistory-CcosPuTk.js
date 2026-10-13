@@ -1,0 +1,1 @@
+function s(n=450){return typeof window>"u"?Promise.resolve():new Promise(i=>{let e=!1;const t=()=>{e||(e=!0,window.removeEventListener("popstate",o),i())},o=()=>void setTimeout(t,0);window.addEventListener("popstate",o),setTimeout(t,n)})}export{s};
