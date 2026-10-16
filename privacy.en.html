@@ -77,7 +77,7 @@ th{background:#eef4ff;color:var(--navy)}
       <li><b>Health data <span class="tag">Sensitive</span>:</b> weight, body fat percentage, muscle mass, body measurements (neck, chest, waist, hips, upper arm, thigh, calf), goals, workout logs, food logs, sleep hours, and cautions or pain areas you report</li>
       <li><b>Photos and clips:</b> food photos you send, profile photos, homework photos or clips attached in chat, and exercise clips you send for your coach to check your form (form check · up to 60 seconds each · clips recorded with the in-app camera have no sound · clips picked from your gallery are sent as they are), together with the training day, the moves, any note you add and your coach's review (text and points marked on the clip)</li>
       <li><b>Messages:</b> chat messages and stickers with your coach · messages you type to the IU Mate assistant</li>
-      <li><b>Purchase data (coaches):</b> service subscribed, billing cycle, amount, status and reference IDs from Google Play or Omise · usage allowance balance and usage history · <b>we never store card numbers</b></li>
+      <li><b>Purchase data (coaches):</b> service subscribed, billing cycle, amount, status and reference IDs from Google Play, the App Store (Apple) or Omise · usage allowance balance and usage history · <b>we never store card numbers</b></li>
       <li><b>Device and usage data:</b> app device ID, log times, language, operating system, and aggregated feature usage (only when you turn on "Usage data")</li>
       <li><b>App error reports (automatic):</b> when the app hits an error we receive the error message, the screen where it happened (without link parameters), the app version and the platform (web/Android/iOS) · <b>no account ID, email or device ID</b>, and Thai text, emails, phone numbers, numbers and data values are removed before sending, so no health data is included</li>
       <li><b>IU Mate chat reports (only when you tap):</b> when you tap "Report chat" we send only the question and answer shown on screen (weight, height, age, calorie target and BMI numbers are removed before sending) so our team can improve answers</li>
@@ -109,6 +109,7 @@ th{background:#eef4ff;color:var(--navy)}
           <li>Cloudflare — backend and photo storage</li>
           <li>Google Gemini — nutrition estimates from food photos (only that photo is sent; no name, email or account ID) · the IU Mate assistant (your message, recent conversation and basic facts such as sex, age, weight (only values you or your coach entered, never values imported from Health Connect or Apple Health), height, goal and activity level; no name, email, allergies or medical conditions) · program or meal-plan drafts when a coach taps (goal, level, equipment and caution areas; no name)</li>
           <li>Google Play — in-app payments on Android</li>
+          <li>App Store (Apple) — in-app payments on iPhone/iPad (Apple sends us only the signed purchase record, never card details)</li>
           <li>Omise — card and PromptPay payments on the web · card details go straight from your browser to Omise and IUFIT never stores card numbers</li>
           <li>LINE — notifications and photo intake through the LINE Official Account (when you link LINE)</li>
           <li>Resend — sign-in code, coach welcome and receipt emails</li>
