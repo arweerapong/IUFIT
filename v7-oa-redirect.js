@@ -9,6 +9,10 @@
  * ⚠️ แยกเป็นไฟล์ (ไม่ใช่ inline) โดยตั้งใจ: ด่าน verify-billing-guard ดึง inline script ของหน้าตามลำดับ
  */
 (function () {
+  /* 🔴 2026-10-16 · ปิดตัวเด้ง (เจ้าของสั่ง hotfix): หน้าเติมเครดิต/แพ็กเกจ/ราคา (Omise) ใน LINE OA/เบราว์เซอร์ต้องกลับมาใช้ได้
+   * ไม่เด้งเข้าแอปอีก · แอป iOS ไม่มีทางมาหน้าเหล่านี้ (ด่าน verify-ios-nopay) · เปิดคืน = ลบบรรทัด return ข้างล่าง */
+  return;
+  // eslint-disable-next-line no-unreachable
   try {
     if (window.IUFIT_V7_PACK !== true || typeof window.iufitPackUrl !== 'function') return;
     var q = new URLSearchParams(location.search);
