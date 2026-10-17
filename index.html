@@ -22,6 +22,9 @@
                บิลด์นี้โหลด Chart.js (BodyChart.vue) และ html2canvas (lib/exportCard.ts)
                จาก cdnjs แบบ dynamic <script> · แอปจริงไม่ได้ใช้สองตัวนี้จึงไม่มีในลิสต์
                ⚠️ ถ้าไม่ใส่ = กราฟร่างกายและการ์ดผลลัพธ์พังทันที
+           + img-src  https://api.omise.co  (2026-10-17 · เจ้าของสั่ง)
+               QR พร้อมเพย์ของหน้าจ่ายแพ็ก (CoachPackPayView) = รูปจาก download_uri ของ Omise
+               ⚠️ ถ้าไม่ใส่ = QR พร้อมเพย์บนเว็บไม่ขึ้น (เบราว์เซอร์บล็อกรูป)
            - YouTube ทั้งหมด (2569-09-30 · ตรวจโฟลว์รอบ 2 · คำตัดสิน UX หลังเจ้าของสั่ง "ไม่ต้องมีแล้ว ปุ่มไปดูยูทูป เอาออก")
                ถอด script-src www.youtube.com / s.ytimg.com · img-src i.ytimg.com / i9.ytimg.com ·
                frame-src youtube-nocookie.com / youtube.com ⇒ IUFIT ใช้คลิปของตัวเอง (/exercise-media) เท่านั้น
@@ -46,7 +49,7 @@
          อยากกัน clickjacking จริงจังต้องส่งเป็น HTTP header ที่ฝั่งโฮสต์ -->
     <meta
       http-equiv="Content-Security-Policy"
-      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://*.workers.dev; media-src 'self' blob: https://*.workers.dev; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.workers.dev https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; frame-src 'none'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
+      content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https://*.workers.dev https://api.omise.co; media-src 'self' blob: https://*.workers.dev; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://*.workers.dev https://*.firebasedatabase.app https://identitytoolkit.googleapis.com https://securetoken.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com; frame-src 'none'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'self'"
     />
 
     <!-- ── PWA ─────────────────────────────────────────────────────────────────────────
