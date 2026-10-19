@@ -324,8 +324,20 @@
          โฟลว 4 ก้าวตามดีไซน์ที่เจ้าของส่งมา · ob_free_t/ob_free_m ถูกถอดพร้อมกันเพราะ
          การ์ดแพลนฟรีบอกเรื่องเดียวกันอยู่แล้วในก้าวแรก (พูดสองที่ = วันหนึ่งจะเลื่อนจากกัน) */
       ob_m_new:'สมัครใหม่', ob_m_new_s:'ยังไม่เคยมีแพ็ก',
-      ob_m_renew:'ต่ออายุ', ob_m_renew_s:'มีแพ็กอยู่แล้ว',
-      ob_m_credit:'ซื้อเครดิตอย่างเดียว', ob_m_credit_s:'ไม่แตะค่าสมาชิก',
+      ob_m_renew:'ต่ออายุ', ob_m_renew_s:'เฉพาะคนที่มีแพ็กอยู่แล้ว',
+      ob_m_credit:'ซื้อเครดิตอย่างเดียว', ob_m_credit_s:'เฉพาะคนที่มีแพ็กอยู่แล้ว',
+      /* ⭐ 2026-10-19 · เจ้าของ: ต่ออายุ/เติมเครดิต = เฉพาะคนที่มีแพ็ก · เพิ่มซื้อวิดีโอท่าฝึกอย่างเดียว (แพ็กฟรี) */
+      ob_m_video:'วิดีโอท่าฝึกอย่างเดียว', ob_m_video_s:'สำหรับแพ็กฟรี · 30 วัน',
+      ob_h_video:'วิดีโอท่าฝึก',
+      ob_vd_t:'ลูกเทรนดูท่าฝึกเป็นวิดีโอ 30 วัน',
+      ob_vd_m:'แพ็กฟรี ลูกเทรนเห็นท่าฝึกเป็นภาพนิ่ง · ซื้อวิดีโอท่าฝึกแล้วลูกเทรนของคุณทุกคนเปิดคลิปท่าได้ 30 วัน',
+      ob_vd_once:'จ่ายครั้งเดียว ไม่ตัดเงินซ้ำ · ครบ 30 วันกลับเป็นภาพนิ่ง ซื้อใหม่ได้ทุกเมื่อ',
+      ob_vd_line:'วิดีโอท่าฝึก 30 วัน',
+      ob_vd_paid_t:'แพ็กของคุณมีวิดีโอท่าฝึกอยู่แล้ว',
+      ob_vd_paid_m:'แพ็กที่จ่ายอยู่และช่วงทดลองเปิดวิดีโอท่าฝึกให้ลูกเทรนอยู่แล้ว ไม่ต้องซื้อเพิ่ม · ยังไม่ได้ตัดเงิน',
+      ob_holder_t:'ต่ออายุและเติมเครดิตได้เฉพาะคนที่มีแพ็กอยู่แล้ว',
+      ob_holder_m:'บัญชีนี้ยังไม่มีแพ็กที่ใช้อยู่ · กด "สมัครใหม่" ด้านบนเพื่อเริ่มแพ็ก · ยังไม่ได้ตัดเงิน',
+      vd_success_m:'เปิดวิดีโอท่าฝึกแล้ว · เปิดแอป IUFIT ด้วยบัญชีเดิม ลูกเทรนจะเห็นคลิปท่าฝึกเอง',
       ob_tab_me:'สำหรับผู้ใช้ทั่วไป', ob_tab_coach:'สำหรับโค้ช',
       ob_h_size:'เลือกแพ็ก', ob_h_credit:'เครดิต AI', ob_h_contact:'บัญชีและวิธีชำระเงิน',
       ob_h_card:'ข้อมูลบัตร', ob_h_qr:'สแกนเพื่อชำระ',
@@ -619,8 +631,19 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
       ob_title:'Subscribe to IUFIT',
       ob_sub:'Plan → credits → confirm account → pay',
       ob_m_new:'New subscription', ob_m_new_s:'No plan yet',
-      ob_m_renew:'Renew', ob_m_renew_s:'Already on a plan',
-      ob_m_credit:'Credits only', ob_m_credit_s:'Membership untouched',
+      ob_m_renew:'Renew', ob_m_renew_s:'Current plan holders only',
+      ob_m_credit:'Credits only', ob_m_credit_s:'Current plan holders only',
+      ob_m_video:'Exercise videos only', ob_m_video_s:'For the Free plan · 30 days',
+      ob_h_video:'Exercise videos',
+      ob_vd_t:'Your trainees see exercises as video for 30 days',
+      ob_vd_m:'On the Free plan trainees see exercises as still images · with exercise videos every trainee of yours can play the exercise clips for 30 days',
+      ob_vd_once:'One-off payment, nothing recurs · after 30 days it goes back to stills, buy again any time',
+      ob_vd_line:'Exercise videos 30 days',
+      ob_vd_paid_t:'Your plan already includes exercise videos',
+      ob_vd_paid_m:'Paid plans and the trial already give trainees exercise videos, nothing to buy · you were not charged',
+      ob_holder_t:'Renewals and top-ups are for current plan holders',
+      ob_holder_m:'This account has no active plan · tap "New subscription" above to start one · you were not charged',
+      vd_success_m:'Exercise videos are on · open IUFIT with the same account and your trainees see the clips automatically.',
       ob_tab_me:'For everyday users', ob_tab_coach:'For coaches',
       ob_h_size:'Choose a plan', ob_h_credit:'AI credits', ob_h_contact:'Account & payment method',
       ob_h_card:'Card details', ob_h_qr:'Scan to pay',
@@ -941,6 +964,9 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
   var CREDIT_W={food_scan:9,menu_analyze:2,mate_chat:3,mate_reasoning:7,mate_program:11};
   /** เครดิตเท่านี้ ทำงานนี้ได้กี่ครั้ง */
   function creditTimes(cr,action){var w=CREDIT_W[action];return (w>0)?Math.floor((cr||0)/w):0;}
+  /* ⭐ 2026-10-19 · วิดีโอท่าฝึก (แพ็กฟรี) — ต้องตรงกับ `core/pricing.VIDEO_ADDON` (price 99 · days 30)
+     ยอดจริงคิดที่ worker omise เท่านั้น · ตัวเลขนี้ใช้โชว์บนจอ */
+  var VIDEO_ADDON={k:'video_addon',price:99,days:30};
   function getCredit(k){for(var i=0;i<CREDIT_PACKS.length;i++)if(CREDIT_PACKS[i].k===k)return CREDIT_PACKS[i];return null;}
   function isCredit(k){return !!getCredit(k);}
   function getPlan(k){for(var i=0;i<PLANS.length;i++)if(PLANS[i].k===k)return PLANS[i];return null;}
@@ -1473,6 +1499,9 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     if(e==='credit_needs_paid_plan'||e==='credit_plan_expired'||e==='credit_not_in_trial')
       return {kind:'error',code:e,t:'cr_paid_t',m:e==='credit_not_in_trial'?'cr_trial_m':'cr_paid_m'};
     if(e==='over_limit')        return {kind:'error',code:e,t:'ob_cap_t',m:'ob_cap_m'};
+    /* ⭐ 2026-10-19 · วิดีโอท่าฝึกบนแพ็กจ่าย/ทดลอง (worker ไม่ตัดเงิน) · ต่ออายุโดยไม่มีแพ็ก (worker รุ่นใหม่) */
+    if(e==='video_not_needed')  return {kind:'error',code:e,t:'ob_vd_paid_t',m:'ob_vd_paid_m'};
+    if(e==='renew_needs_plan')  return {kind:'error',code:e,t:'ob_holder_t',m:'ob_holder_m'};
     /* 🔴 error ของคูปองต้องบอกว่าเป็นเรื่องคูปอง
        เดิมตกลงมาเป็น `failed` ⇒ ขึ้น "ชำระเงินไม่สำเร็จ" ให้คนที่บัตรไม่มีปัญหาอะไรเลย
        แล้วเขาจะกดจ่ายซ้ำด้วยรหัสเดิม เจอข้อความเดิม วนอยู่อย่างนั้น */
@@ -1608,7 +1637,7 @@ res_success_m:'แพ็กของคุณเปิดใช้งานแ�
     seatsOf:seatsOf, maxSeats:maxSeats, planBySeats:planBySeats,
     CREDIT_W:CREDIT_W, creditTimes:creditTimes,
     MAX_THB_PER_CHARGE:MAX_THB_PER_CHARGE, overCap:overCap, capNote:capNote,
-    CREDIT_PACKS:CREDIT_PACKS, getCredit:getCredit, isCredit:isCredit,
+    CREDIT_PACKS:CREDIT_PACKS, getCredit:getCredit, isCredit:isCredit, VIDEO_ADDON:VIDEO_ADDON,
     planSub:planSub, planFeats:planFeats, planBadge:planBadge,
     appState:appState, accountKey:accountKey, accountLabel:accountLabel,
     walletUid:walletUid, creditAccountKey:creditAccountKey, isEmailVerifiedForCredits:isEmailVerifiedForCredits,
